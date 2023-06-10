@@ -19,23 +19,24 @@ function Register() {
         }
         
         // Firebase registration logic here
-        createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                // Signed in 
-                // var user = userCredential.user;
-                // Create a document for the new user
-                setDoc(doc(db, 'Users', user.uid), {
-                    email: user.email,
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Signed in 
+                    // var user = userCredential.user;
+                    // Create a document for the new user
+                    setDoc(doc(db, 'Users', userCredential.user.uid), {
+                        email: userCredential.user.email,
+                    });
+
+                    // Redirect to login page after successful registration
+                    navigate('/login');
+                })
+                .catch((error) => {
+                    // var errorCode = error.code;
+                    var errorMessage = error.message;
+                    setError(errorMessage); // Update the error state with error message
                 });
 
-                // Redirect to login page after successful registration
-                navigate('/login');
-            })
-            .catch((error) => {
-                // var errorCode = error.code;
-                var errorMessage = error.message;
-                setError(errorMessage); // Update the error state with error message
-            });
     }
 
     return (
