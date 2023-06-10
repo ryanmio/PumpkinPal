@@ -21,12 +21,12 @@ function Login() {
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 // Signed in 
-                var user = userCredential.user;
+                // var user = userCredential.user;
                 // Redirect to dashboard page after successful login
                 navigate('/dashboard');
             })
             .catch((error) => {
-                var errorCode = error.code;
+                // var errorCode = error.code;
                 var errorMessage = error.message;
                 setError(errorMessage); // Update the error state with error message
             });

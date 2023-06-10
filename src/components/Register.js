@@ -22,7 +22,7 @@ function Register() {
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 // Signed in 
-                var user = userCredential.user;
+                // var user = userCredential.user;
                 // Create a document for the new user
                 setDoc(doc(db, 'Users', user.uid), {
                     email: user.email,
@@ -32,7 +32,7 @@ function Register() {
                 navigate('/login');
             })
             .catch((error) => {
-                var errorCode = error.code;
+                // var errorCode = error.code;
                 var errorMessage = error.message;
                 setError(errorMessage); // Update the error state with error message
             });

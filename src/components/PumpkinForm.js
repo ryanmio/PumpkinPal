@@ -41,7 +41,7 @@ function PumpkinForm() {
             navigate('/dashboard');
         })
         .catch((error) => {
-            var errorCode = error.code;
+            // var errorCode = error.code;
             var errorMessage = error.message;
             setError(errorMessage); // Update the error state with error message
         });
