@@ -36,3 +36,40 @@
     transform: rotate(360deg);
   }
 }
+
+/* Dashboard styles */
+.dashboard-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  padding: 20px;
+}
+
+.dashboard-pumpkin {
+  width: 300px;
+  border: 1px solid black;
+  border-radius: 10px;
+  margin: 10px;
+  padding: 10px;
+}
+
+.dashboard-pumpkin h3 {
+  cursor: pointer;
+}
+
+.dashboard-pumpkin button {
+  margin-right: 10px;
+}
+
+.delete-button {
+  color: white;
+  background-color: red;
+  border: none;
+  border-radius: 3px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  background-color: darkred;
+}
