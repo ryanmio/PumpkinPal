@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { useSpring, animated } from 'react-spring';
 import { ParallaxProvider, Parallax } from 'react-scroll-parallax';
-import { useDarkMode } from './DarkModeContext';
 
 export default function Homepage() {
     const [flipped, set] = useState(false);
-    const { colorMode, setColorMode } = useDarkMode();
 
     const { transform, opacity } = useSpring({
         opacity: flipped ? 1 : 0,
@@ -15,11 +13,7 @@ export default function Homepage() {
 
     return (
         <ParallaxProvider>
-            <div className={colorMode === 'dark' ? 'dark-mode' : 'light-mode'}>
-                <button onClick={() => setColorMode(colorMode === 'dark' ? 'light' : 'dark')}>
-                    Toggle Dark Mode
-                </button>
-
+            <div>
                 <Parallax y={[-20, 20]} tagOuter="figure">
                     <animated.div
                         className="c"
@@ -30,7 +24,7 @@ export default function Homepage() {
                         }}
                     >
                         {/* Your logo or a placeholder image */}
-                        <img src="/logo512.png" alt="Logo" />
+                        <img src="/logo.png" alt="Logo" />
                     </animated.div>
                 </Parallax>
 
