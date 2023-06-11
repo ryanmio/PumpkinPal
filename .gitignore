@@ -5,6 +5,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# .gitignore
+.DS_Store
+
+
 # Runtime data
 pids
 *.pid
