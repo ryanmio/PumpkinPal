@@ -1,20 +1,11 @@
 import React, { useState } from 'react';
 import { useSpring, animated } from 'react-spring';
 import { ParallaxProvider, Parallax } from 'react-scroll-parallax';
-import { useMediaQuery } from 'react-responsive';
-
-// Assuming you have a dark mode context
 import { useDarkMode } from './DarkModeContext';
 
 export default function Homepage() {
     const [flipped, set] = useState(false);
     const { colorMode, setColorMode } = useDarkMode();
-
-    const isDesktopOrLaptop = useMediaQuery({ query: '(min-device-width: 1224px)' });
-    const isBigScreen = useMediaQuery({ query: '(min-device-width: 1824px)' });
-    const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' });
-    const isPortrait = useMediaQuery({ query: '(orientation: portrait)' });
-    const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' });
 
     const { transform, opacity } = useSpring({
         opacity: flipped ? 1 : 0,
