@@ -20,7 +20,8 @@ function Dashboard() {
 
         for (let pumpkinDoc of snapshot.docs) {
           let pumpkinData = pumpkinDoc.data();
-          
+          console.log('Pumpkin data:', pumpkinData);  // Added logging statement
+
           // Query for the latest measurement
           const measurementsQuery = query(
             collection(db, 'Users', user.uid, 'Pumpkins', pumpkinDoc.id, 'Measurements'), 
@@ -30,6 +31,8 @@ function Dashboard() {
 
           const measurementSnapshot = await getDocs(measurementsQuery);
           const latestMeasurement = measurementSnapshot.docs[0]?.data() || null;
+
+          console.log('Latest measurement:', latestMeasurement);  // Added logging statement
 
           // Add latestMeasurement to pumpkinData
           pumpkinData.latestMeasurement = latestMeasurement;
