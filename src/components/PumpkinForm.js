@@ -93,6 +93,7 @@ function PumpkinForm() {
             </label>
             <br />
             <button type="submit">Add Pumpkin</button>
+            <button type="button" onClick={() => navigate('/dashboard')}>Cancel</button>
         </form>
     </div>
 );

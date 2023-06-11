@@ -46,7 +46,8 @@ function Register() {
             <form onSubmit={register}>
                 <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
                 <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
-                <button type="submit">Register</button>
+                <button type="submit">Register</button> 
+                <br>
                 <button onClick={() => navigate('/login')} type="button">Already registered? Login here</button>
             </form>
         </div>
