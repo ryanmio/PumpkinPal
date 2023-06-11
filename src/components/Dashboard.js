@@ -79,7 +79,7 @@ function Dashboard() {
           <h3 onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
           <p>{pumpkin.description}</p>
           {pumpkin.latestMeasurement && <p>Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
-          {pumpkin.pollinationDate && <p>Days since pollination: {daysSincePollination(new Date(pumpkin.pollinationDate.seconds * 1000))} days</p>}
+          {pumpkin.pollinated && <p>Days since pollination: {daysSincePollination(new Date(pumpkin.pollinated.seconds * 1000))} days</p>}
           <div className="pumpkin-buttons">
             <button onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>Add Measurement</button>
             <button onClick={() => navigate(`/edit-pumpkin/${pumpkin.id}`)}>Edit Details</button>
