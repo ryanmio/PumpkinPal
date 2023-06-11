@@ -1,7 +1,7 @@
 .App {
   text-align: center;
-  background-color: #F2EEE3; /* Background color */
-  color: #36382E; /* Tertiary color for text */
+  background-color: #F2EEE3;
+  color: #36382E;
 }
 
 .App-logo {
@@ -9,22 +9,26 @@
   pointer-events: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.App-header {
+  background-color: #36382E; /* Dark color for contrast */
+  display: flex;
+  flex-direction: row; /* Align items in a row */
+  align-items: center; /* Center items vertically */
+  justify-content: space-around; /* Distribute space evenly around items */
+  padding: 10px 0; /* Add some vertical padding */
+  color: #F2EEE3; /* Light color for text and links */
 }
 
-.App-header {
-  background-color: #F2EEE3;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: #36382E;
+.nav-link {
+  color: inherit; /* Use the color from the parent component */
+  text-decoration: none; /* Remove underline from links */
+  margin: 0 15px; /* Add some horizontal margin */
 }
+
+.nav-link:hover {
+  color: #61dafb; /* Change color on hover */
+}
+
 
 .App-link {
   color: #61dafb;
