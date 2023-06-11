@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { auth, db } from '../firebase';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db, Timestamp } from '../firebase';
+import { doc, setDoc } from 'firebase/firestore';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 function AddMeasurement() {
   const { id } = useParams();
@@ -12,6 +14,7 @@ function AddMeasurement() {
   const [sideToSide, setSideToSide] = useState('');
   const [circumference, setCircumference] = useState('');
   const [measurementUnit, setMeasurementUnit] = useState('inches');
+  const [measurementDate, setMeasurementDate] = useState(new Date());
 
   const calculateEstimatedWeight = (endToEnd, sideToSide, circumference) => {
     let ott = endToEnd + sideToSide + circumference;
@@ -35,7 +38,7 @@ function AddMeasurement() {
       circumference,
       measurementUnit,
       estimatedWeight,
-      timestamp: serverTimestamp(),
+      timestamp: Timestamp.fromDate(measurementDate),
     });
 
     navigate(`/pumpkin/${id}`); // Navigate to the details page of the current pumpkin after adding a measurement
@@ -63,6 +66,10 @@ function AddMeasurement() {
             <option value="inches">Inches</option>
             <option value="cm">Centimeters</option>
           </select>
+        </label>
+        <label>
+          Measurement Date:
+          <DatePicker selected={measurementDate} onChange={(date) => setMeasurementDate(date)} />
         </label>
         <br />
         <button type="submit">Save Measurement</button>
