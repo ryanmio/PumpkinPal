@@ -32,25 +32,23 @@ function Dashboard() {
     }
   }
 
-  return (
-    <div>
+    return (
+    <div className="dashboard-container">
       <h2>Welcome to your Dashboard</h2>
       <p>{email ? `Logged in as ${email}` : 'Not logged in'}</p>
       {deletionStatus && <p>{deletionStatus}</p>}
-      <div className="pumpkin-grid">
-        {pumpkins.map(pumpkin => (
-          <div className="pumpkin-tile" key={pumpkin.id}>
-            <h3 onClick={() => navigate(`/pumpkin/${pumpkin.id}`)} style={{ cursor: 'pointer' }}>{pumpkin.name}</h3>
-            <p>{pumpkin.description}</p>
-            <div className="pumpkin-buttons">
-              <button onClick={() => navigate(`/edit-pumpkin/${pumpkin.id}`)}>Edit</button>
-              <button onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>Add Measurement</button>
-              <button onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>Details</button>
-              <button onClick={() => deletePumpkin(pumpkin.id)}>Delete</button>
-            </div>
+      {pumpkins.map(pumpkin => (
+        <div className="dashboard-pumpkin" key={pumpkin.id}>
+          <h3 onClick={() => navigate(`/pumpkin/${pumpkin.id}`)} style={{ cursor: 'pointer' }}>{pumpkin.name}</h3>
+          <p>{pumpkin.description}</p>
+          <div className="pumpkin-buttons">
+            <button onClick={() => navigate(`/edit-pumpkin/${pumpkin.id}`)}>Edit</button>
+            <button onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>Add Measurement</button>
+            <button onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>Details</button>
+            <button className="delete-button" onClick={() => deletePumpkin(pumpkin.id)}>Delete</button>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
       <button onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
     </div>
   );
