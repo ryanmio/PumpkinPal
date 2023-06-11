@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  background-color: #f7f4ed; /* Background color */
+  color: #757761; /* Tertiary color for text */
 }
 
 .App-logo {
@@ -46,8 +48,8 @@
 }
 
 .dashboard-pumpkin {
-  flex-basis: calc(50% - 20px); /* This makes two items per row, adjust for more/less items per row. Subtract twice the gap */
-  background-color: #f8f9fa;
+  flex-basis: 100%; /* On mobile, take full width */
+  background-color: #febb59; /* Secondary color for tiles */
   border-radius: 5px;
   padding: 20px;
   box-sizing: border-box;
@@ -56,6 +58,7 @@
 
 .dashboard-pumpkin h3 {
   cursor: pointer;
+  color: #FB9336; /* Primary color for headings */
 }
 
 .dashboard-pumpkin button {
@@ -70,7 +73,7 @@
 
 .delete-button {
   color: white;
-  background-color: red;
+  background-color: #df6139; /* Warning color for delete button */
   border: none;
   border-radius: 3px;
   padding: 5px 10px;
@@ -79,4 +82,28 @@
 
 .delete-button:hover {
   background-color: darkred;
+}
+
+/* For larger screens (tablets and desktops) */
+@media (min-width: 768px) {
+  .dashboard-pumpkin {
+    flex-basis: calc(50% - 20px); /* Two items per row */
+  }
+}
+
+/* Button to add a pumpkin */
+.add-pumpkin-button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin: 20px 0;
+  background-color: #FB9336; /* Primary color for button */
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.add-pumpkin-button:hover {
+  background-color: #da8329; /* Darker shade for hover */
 }
