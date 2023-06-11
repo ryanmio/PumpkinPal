@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore, Timestamp, query as firestoreQuery, collection, orderBy, limit } from "firebase/firestore';
+import { getFirestore, Timestamp, query as firestoreQuery, orderBy, limit } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -21,9 +21,8 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
-// Additional exports
 export const query = firestoreQuery;
-export const orderBy = orderBy;
-export const limit = limit;
+export const orderByFirestore = orderBy;
+export const limitFirestore = limit;
 
 export { auth, db, storage, Timestamp };
