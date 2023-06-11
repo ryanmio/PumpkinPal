@@ -17,6 +17,14 @@
   justify-content: space-around; /* Distribute space evenly around items */
   padding: 10px 0; /* Add some vertical padding */
   color: #F2EEE3; /* Light color for text and links */
+  flex-wrap: wrap; /* make the navbar responsive */
+}
+
+/* Adjust the layout when the screen size is less than a specific breakpoint */
+@media only screen and (max-width: 600px) {
+  .App-header {
+    flex-direction: column;
+  }
 }
 
 .nav-link {
@@ -27,6 +35,10 @@
 
 .nav-link:hover {
   color: #61dafb; /* Change color on hover */
+}
+
+.logout-button {
+  margin-left: 20px; /* Move logout button to the right */
 }
 
 
