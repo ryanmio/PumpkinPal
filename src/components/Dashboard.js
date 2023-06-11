@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { auth, db } from '../firebase';
+import { auth, db, query, orderBy, limit } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { collection, doc, getDocs, deleteDoc } from 'firebase/firestore';
@@ -16,7 +16,27 @@ function Dashboard() {
         setEmail(user.email);
         const q = collection(db, 'Users', user.uid, 'Pumpkins');
         const snapshot = await getDocs(q);
-        setPumpkins(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+        let pumpkinsData = [];
+
+        for (let pumpkinDoc of snapshot.docs) {
+          let pumpkinData = pumpkinDoc.data();
+          
+          // Query for the latest measurement
+          const measurementsQuery = query(
+            collection(db, 'Users', user.uid, 'Pumpkins', pumpkinDoc.id, 'Measurements'), 
+            orderBy('measurementDate', 'desc'), 
+            limit(1)
+          );
+
+          const measurementSnapshot = await getDocs(measurementsQuery);
+          const latestMeasurement = measurementSnapshot.docs[0]?.data() || null;
+
+          // Add latestMeasurement to pumpkinData
+          pumpkinData.latestMeasurement = latestMeasurement;
+          pumpkinsData.push({ ...pumpkinData, id: pumpkinDoc.id });
+        }
+
+        setPumpkins(pumpkinsData);
       }
     });
     return () => unsubscribe();
@@ -32,7 +52,14 @@ function Dashboard() {
     }
   }
 
-return (
+  function daysSincePollination(pollinationDate) {
+    const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+    const now = new Date();
+    const diffDays = Math.round(Math.abs((now - pollinationDate) / oneDay));
+    return diffDays;
+  }
+
+  return (
     <div className="dashboard-container">
       <div className="dashboard-header">
         <h2>Welcome to your Dashboard</h2>
@@ -47,21 +74,23 @@ return (
       </div>
       <div className="section-break"></div>
       {deletionStatus && <p>{deletionStatus}</p>}
-    {pumpkins.map(pumpkin => (
-      <div className="dashboard-pumpkin" key={pumpkin.id}>
-        <h3 onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
-        <p>{pumpkin.description}</p>
-        <div className="pumpkin-buttons">
-          <button onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>Add Measurement</button>
-          <button onClick={() => navigate(`/edit-pumpkin/${pumpkin.id}`)}>Edit Details</button>
-          <button onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>Open Detailed View</button>
-          <button className="delete-button" onClick={() => deletePumpkin(pumpkin.id)}>Delete</button>
+      {pumpkins.map(pumpkin => (
+        <div className="dashboard-pumpkin" key={pumpkin.id}>
+          <h3 onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
+          <p>{pumpkin.description}</p>
+          {pumpkin.latestMeasurement && <p>Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
+          {pumpkin.pollinationDate && <p>Days since pollination: {daysSincePollination(new Date(pumpkin.pollinationDate.seconds * 1000))} days</p>}
+          <div className="pumpkin-buttons">
+            <button onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>Add Measurement</button>
+            <button onClick={() => navigate(`/edit-pumpkin/${pumpkin.id}`)}>Edit Details</button>
+            <button onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>Open Detailed View</button>
+            <button className="delete-button" onClick={() => deletePumpkin(pumpkin.id)}>Delete</button>
+          </div>
         </div>
-      </div>
-    ))}
-    <button className="add-pumpkin-button" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
-  </div>
-);
+      ))}
+      <button className="add-pumpkin-button" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
+    </div>
+  );
 }
 
 export default Dashboard;
