@@ -3,8 +3,10 @@ import { ParallaxProvider, useParallax } from 'react-scroll-parallax';
 
 // Define a FeatureCard component
 function FeatureCard({ title, description }) {
+    const { ref } = useParallax({ speed: 10 });
+
     return (
-        <div className="feature-card">
+        <div className="feature-card" ref={ref}>
             <img src="/logo192.png" alt="Feature" />
             <h2>{title}</h2>
             <p>{description}</p>
@@ -13,11 +15,9 @@ function FeatureCard({ title, description }) {
 }
 
 export default function Homepage() {
-    const { ref } = useParallax({ speed: 10 });
-
     return (
         <ParallaxProvider>
-            <div ref={ref}>
+            <div>
                 <div className="hero">
                     <img src="/hero.png" alt="Hero" />
                 </div>
