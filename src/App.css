@@ -1,7 +1,7 @@
 .App {
   text-align: center;
   background-color: #f7f4ed; /* Background color */
-  color: #757761; /* Tertiary color for text */
+  color: #36382E; /* Tertiary color for text */
 }
 
 .App-logo {
@@ -49,7 +49,7 @@
 
 .dashboard-pumpkin {
   flex-basis: 100%; /* On mobile, take full width */
-  background-color: #febb59; /* Secondary color for tiles */
+  background-color: #F2EEE3; /* wheat color for tiles */
   border-radius: 5px;
   padding: 20px;
   box-sizing: border-box;
@@ -58,7 +58,7 @@
 
 .dashboard-pumpkin h3 {
   cursor: pointer;
-  color: #757761; /* Primary color for headings */
+  color: #36382E;
 }
 
 .dashboard-pumpkin button {
