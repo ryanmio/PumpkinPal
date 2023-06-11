@@ -1,3 +1,11 @@
+body {
+  overflow-x: hidden;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 .App {
   text-align: center;
   background-color: #F2EEE3;
@@ -5,12 +13,12 @@
 }
 
 .App-logo {
-  height: 40vmin;
+  height: 40px;
   pointer-events: none;
 }
 
 .App-header {
-  background-color: #36382E; /* Dark color for contrast */
+  background-color: #80876E; /* Dark color for contrast */
   display: flex;
   flex-direction: row; /* Align items in a row */
   align-items: center; /* Center items vertically */
