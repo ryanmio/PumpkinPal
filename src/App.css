@@ -1,6 +1,10 @@
 .App {
   text-align: center;
-  background-color: #f7f4ed; /* Background color */
+  background-color: #F2EEE3; /* Background color */
+  color: #36382E; /* Tertiary color for text */
+}
+
+.h2 {
   color: #36382E; /* Tertiary color for text */
 }
 
@@ -16,7 +20,7 @@
 }
 
 .App-header {
-  background-color: #f7f4ed;
+  background-color: #F2EEE3;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -49,7 +53,7 @@
 
 .dashboard-pumpkin {
   flex-basis: 100%; /* On mobile, take full width */
-  background-color: #F2EEE3; /* wheat color for tiles */
+  background-color: #FFD699;
   border-radius: 5px;
   padding: 20px;
   box-sizing: border-box;
