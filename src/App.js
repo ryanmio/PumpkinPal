@@ -12,6 +12,7 @@ import PumpkinForm from './components/PumpkinForm';
 import EditPumpkin from './components/EditPumpkin';
 import AddMeasurement from './components/AddMeasurement';
 import PumpkinDetail from './components/PumpkinDetail';
+import Homepage from './components/Homepage';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -49,6 +50,7 @@ function App() {
           <Route path="/edit-pumpkin/:id" element={<EditPumpkin />} />
           <Route path="/add-measurement/:id" element={<AddMeasurement />} />
           <Route path="/pumpkin/:id" element={<PumpkinDetail />} />
+          <Route path="/" element={<Homepage />} />
         </Routes>
       </Router>
     </div>
