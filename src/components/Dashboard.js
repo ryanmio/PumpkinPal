@@ -30,7 +30,9 @@ function Dashboard() {
     );
 
     const measurementSnapshot = await getDocs(measurementsQuery);
-    console.log('Measurement snapshot:', measurementSnapshot);  // New logging statement
+    console.log('Measurement snapshot docs length:', measurementSnapshot.docs.length);
+    console.log('Measurement snapshot docs:', measurementSnapshot.docs);
+
 
     const latestMeasurement = measurementSnapshot.docs[0]?.data() || null;
     console.log('Latest measurement:', latestMeasurement);  // Existing logging statement
