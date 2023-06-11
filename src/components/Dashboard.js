@@ -34,8 +34,8 @@ function Dashboard() {
 
 return (
   <div className="dashboard-container">
-    <h2>Welcome to your Dashboard</h2>
-    <p>{email ? `Logged in as ${email}` : 'Not logged in'}</p>
+    <h2>Welcome to your Dashboard</h2> <br />
+    <p>{email ? `Logged in as ${email}` : 'Not logged in'}</p> <br />
     {deletionStatus && <p>{deletionStatus}</p>}
     {pumpkins.map(pumpkin => (
       <div className="dashboard-pumpkin" key={pumpkin.id}>

@@ -26,6 +26,7 @@ function App() {
   return (
     <div className="App">
       <Router>
+      <div>
         {currentUser && (
           <header className="App-header">
             <img src="logo.png" alt="Logo" className="App-logo" />
@@ -43,6 +44,7 @@ function App() {
           <Route path="/add-measurement/:id" element={<AddMeasurement />} />
           <Route path="/pumpkin/:id" element={<PumpkinDetail />} />
         </Routes>
+      </div> 
       </Router>
     </div>
   );
