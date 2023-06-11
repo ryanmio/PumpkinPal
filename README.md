@@ -22,7 +22,7 @@ The goal of this project is to develop a user-friendly web-based application for
 
 ## 🛠️ Technical Requirements
 
-1. **Technology Stack:** 
+1. **Technology Stack:** The application will leverage the power of the React library for building the user interface. The backend will be handled by Firebase Firestore for storing user data and managing user authentication.
 
 2. **Mobile Responsiveness:** The web application will be designed to be responsive and provide a seamless experience on both desktop and mobile devices.
 
