@@ -29,11 +29,15 @@ function App() {
         <header className="App-header">
           {currentUser && (
             <div className="nav-bar">
-              <img src="/logo192.png" alt="Logo" className="App-logo" />
-              <Link className="nav-link" to="/dashboard">Dashboard</Link>
-              <Link className="nav-link" to="/add-pumpkin">Add Pumpkin</Link>
-              <span>User: {currentUser.email}</span>
-              <Logout className="logout-button"/>
+              <div className="nav-row">
+                <img src="/logo192.png" alt="Logo" className="App-logo" />
+                <span>User: {currentUser.email}</span>
+                <Logout className="logout-button"/>
+              </div>
+              <div className="nav-row">
+                <Link className="nav-link" to="/dashboard">Dashboard</Link>
+                <Link className="nav-link" to="/add-pumpkin">Add Pumpkin</Link>
+              </div>
             </div>
           )}
         </header>

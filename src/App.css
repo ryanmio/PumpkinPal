@@ -49,6 +49,22 @@ body {
   margin-left: 20px; /* Move logout button to the right */
 }
 
+.nav-bar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.nav-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  padding: 5px 0;
+}
+
 
 .App-link {
   color: #61dafb;
@@ -130,4 +146,11 @@ body {
 
 .add-pumpkin-button:hover {
   background-color: #da8329; /* Darker shade for hover */
+}
+
+
+.section-break {
+  width: 100%; /* Full width */
+  border-bottom: 1px solid #ccc; /* Border at the bottom */
+  margin: 20px 0; /* Some margin at the top and bottom */
 }
