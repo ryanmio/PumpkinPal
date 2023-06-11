@@ -16,7 +16,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #f7f4ed;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -58,7 +58,7 @@
 
 .dashboard-pumpkin h3 {
   cursor: pointer;
-  color: #FB9336; /* Primary color for headings */
+  color: #757761; /* Primary color for headings */
 }
 
 .dashboard-pumpkin button {
