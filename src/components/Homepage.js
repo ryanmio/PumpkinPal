@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useSpring, animated } from 'react-scroll-parallax';
+import React from 'react';
+import { ParallaxProvider, useParallax } from 'react-scroll-parallax';
 
 // Define a FeatureCard component
 function FeatureCard({ title, description }) {
@@ -13,17 +13,11 @@ function FeatureCard({ title, description }) {
 }
 
 export default function Homepage() {
-    const [flipped, set] = useState(false);
-
-    const { transform, opacity } = useSpring({
-        opacity: flipped ? 1 : 0,
-        transform: `perspective(600px) rotateX(${flipped ? 180 : 0}deg)`,
-        config: { mass: 5, tension: 500, friction: 80 },
-    });
+    const { ref } = useParallax({ speed: 10 });
 
     return (
         <ParallaxProvider>
-            <div>
+            <div ref={ref}>
                 <div className="hero">
                     <img src="/hero.png" alt="Hero" />
                 </div>
