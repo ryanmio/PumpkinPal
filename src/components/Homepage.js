@@ -30,7 +30,7 @@ export default function Homepage() {
                         }}
                     >
                         {/* Your logo or a placeholder image */}
-                        <img src="/logo.png" alt="Logo" />
+                        <img src="/logo512.png" alt="Logo" />
                     </animated.div>
                 </Parallax>
 
