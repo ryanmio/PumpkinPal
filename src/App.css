@@ -35,6 +35,17 @@ body {
   }
 }
 
+/* Desktop styles */
+@media only screen and (min-width: 600px) {
+  .nav-bar {
+    flex-direction: row;
+  }
+}
+
+.dashboard-header {
+  text-align: center;
+}
+
 .nav-link {
   color: inherit; /* Use the color from the parent component */
   text-decoration: none; /* Remove underline from links */
