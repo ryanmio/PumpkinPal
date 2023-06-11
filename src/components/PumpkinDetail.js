@@ -51,6 +51,7 @@ function PumpkinDetail() {
       <h2>Pumpkin Detail</h2>
       <p>Name: {pumpkin?.name}</p>
       <p>Description: {pumpkin?.description}</p>
+      <button onClick={() => navigate('/dashboard')}>Back to Dashboard</button>
       <button onClick={() => navigate(`/edit-pumpkin/${id}`)}>Edit Pumpkin</button>
       <button onClick={() => navigate(`/add-measurement/${id}`)}>Add Measurement</button>
       <table>

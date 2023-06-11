@@ -4,10 +4,6 @@
   color: #36382E; /* Tertiary color for text */
 }
 
-.h2 {
-  color: #36382E; /* Tertiary color for text */
-}
-
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -27,7 +23,7 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: #36382E;
 }
 
 .App-link {

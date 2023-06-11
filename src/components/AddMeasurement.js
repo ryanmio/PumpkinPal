@@ -64,7 +64,8 @@ function AddMeasurement() {
             <option value="cm">Centimeters</option>
           </select>
         </label>
-        <button type="submit">Add Measurement</button>
+        <button type="submit">Save Measurement</button>
+        <button type="button" onClick={() => navigate('/dashboard')}>Cancel</button> {/* New Button */}
       </form>
     </div>
   );

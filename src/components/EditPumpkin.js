@@ -66,6 +66,7 @@ function EditPumpkin() {
         <input type="date" name="weighOff" value={pumpkin.weighOff} onChange={handleChange} />
       </label>
       <button type="submit">Save Changes</button>
+      <button onClick={() => navigate('/dashboard')}>Back to Dashboard</button>
     </form>
   );
 }
