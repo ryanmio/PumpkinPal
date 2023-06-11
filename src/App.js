@@ -25,18 +25,18 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>Welcome to PumpkinPal</h1>
-        {currentUser && (
-          <nav>
-            <Link to="/dashboard">Dashboard</Link>
-            <Link to="/add-pumpkin">Add Pumpkin</Link>
-            <span>User: {currentUser.email}</span>
-            <Logout />
-          </nav>
-        )}
-      </header>
       <Router>
+        <header className="App-header">
+          <h1>Welcome to PumpkinPal</h1>
+          {currentUser && (
+            <nav>
+              <Link to="/dashboard">Dashboard</Link>
+              <Link to="/add-pumpkin">Add Pumpkin</Link>
+              <span>User: {currentUser.email}</span>
+              <Logout />
+            </nav>
+          )}
+        </header>
         <Routes>
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
