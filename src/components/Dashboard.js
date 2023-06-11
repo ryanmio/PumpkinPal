@@ -18,26 +18,27 @@ function Dashboard() {
         const snapshot = await getDocs(q);
         let pumpkinsData = [];
 
-        for (let pumpkinDoc of snapshot.docs) {
-          let pumpkinData = pumpkinDoc.data();
-          console.log('Pumpkin data:', pumpkinData);  // Added logging statement
+          for (let pumpkinDoc of snapshot.docs) {
+    let pumpkinData = pumpkinDoc.data();
+    console.log('Pumpkin data:', pumpkinData);  // Existing logging statement
 
-          // Query for the latest measurement
-          const measurementsQuery = query(
-            collection(db, 'Users', user.uid, 'Pumpkins', pumpkinDoc.id, 'Measurements'), 
-            orderBy('measurementDate', 'desc'), 
-            limit(1)
-          );
+    // Query for the latest measurement
+    const measurementsQuery = query(
+      collection(db, 'Users', user.uid, 'Pumpkins', pumpkinDoc.id, 'Measurements'), 
+      orderBy('measurementDate', 'desc'), 
+      limit(1)
+    );
 
-          const measurementSnapshot = await getDocs(measurementsQuery);
-          const latestMeasurement = measurementSnapshot.docs[0]?.data() || null;
+    const measurementSnapshot = await getDocs(measurementsQuery);
+    console.log('Measurement snapshot:', measurementSnapshot);  // New logging statement
 
-          console.log('Latest measurement:', latestMeasurement);  // Added logging statement
+    const latestMeasurement = measurementSnapshot.docs[0]?.data() || null;
+    console.log('Latest measurement:', latestMeasurement);  // Existing logging statement
 
-          // Add latestMeasurement to pumpkinData
-          pumpkinData.latestMeasurement = latestMeasurement;
-          pumpkinsData.push({ ...pumpkinData, id: pumpkinDoc.id });
-        }
+    // Add latestMeasurement to pumpkinData
+    pumpkinData.latestMeasurement = latestMeasurement;
+    pumpkinsData.push({ ...pumpkinData, id: pumpkinDoc.id });
+  }
 
         setPumpkins(pumpkinsData);
       }
