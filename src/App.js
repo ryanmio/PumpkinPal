@@ -1,5 +1,6 @@
 import React from 'react';
 import 'chart.js/auto';
+import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Register from './components/Register';
 import Login from './components/Login'; // Ensure you have this component
@@ -8,6 +9,7 @@ import PumpkinForm from './components/PumpkinForm';
 import EditPumpkin from './components/EditPumpkin';
 import AddMeasurement from './components/AddMeasurement';
 import PumpkinDetail from './components/PumpkinDetail';
+
 
 
 

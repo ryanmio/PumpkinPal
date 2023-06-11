@@ -46,11 +46,12 @@
 }
 
 .dashboard-pumpkin {
-  width: 300px;
-  border: 1px solid black;
-  border-radius: 10px;
-  margin: 10px;
-  padding: 10px;
+  flex-basis: calc(50% - 20px); /* This makes two items per row, adjust for more/less items per row. Subtract twice the gap */
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  padding: 20px;
+  box-sizing: border-box;
+  margin-bottom: 20px;
 }
 
 .dashboard-pumpkin h3 {
@@ -59,6 +60,12 @@
 
 .dashboard-pumpkin button {
   margin-right: 10px;
+}
+
+.pumpkin-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
 }
 
 .delete-button {

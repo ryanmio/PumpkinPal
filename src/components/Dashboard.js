@@ -39,7 +39,7 @@ function Dashboard() {
       {deletionStatus && <p>{deletionStatus}</p>}
       {pumpkins.map(pumpkin => (
         <div className="dashboard-pumpkin" key={pumpkin.id}>
-          <h3 onClick={() => navigate(`/pumpkin/${pumpkin.id}`)} style={{ cursor: 'pointer' }}>{pumpkin.name}</h3>
+          <h3 onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
           <p>{pumpkin.description}</p>
           <div className="pumpkin-buttons">
             <button onClick={() => navigate(`/edit-pumpkin/${pumpkin.id}`)}>Edit</button>
