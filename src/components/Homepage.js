@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useSpring, animated } from 'react-scroll-parallax';
+import { useSpring } from 'react-spring';
+import { ParallaxProvider } from 'react-scroll-parallax';
 
 // Define a FeatureCard component
 function FeatureCard({ title, description }) {
