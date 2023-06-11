@@ -34,10 +34,17 @@ function Dashboard() {
 
 return (
     <div className="dashboard-container">
-     <div className="dashboard-header">
-      <h2>Welcome to your Dashboard</h2>
-      <p>{email ? `Logged in as ${email}` : 'Not logged in'}</p>
-        </div>
+      <div className="dashboard-header">
+        <h2>Welcome to your Dashboard</h2>
+        {email ? (
+          <>
+            <p>Logged in as {email}</p>
+            <button onClick={() => auth.signOut()}>Logout</button>
+          </>
+        ) : (
+          <button onClick={() => navigate("/login")}>Login</button>
+        )}
+      </div>
       <div className="section-break"></div>
       {deletionStatus && <p>{deletionStatus}</p>}
     {pumpkins.map(pumpkin => (
