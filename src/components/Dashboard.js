@@ -60,14 +60,15 @@ function daysSincePollination(pollinationDateStr) {
   const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
   const now = new Date();
 
-  // Manually parse the date string
+  console.log('PollinationDateStr:', pollinationDateStr); // New log here
+  
   const [year, month, day] = pollinationDateStr.split("-");
   const pollinationDate = new Date(year, month - 1, day);
-console.log('Parsed date:', pollinationDate);
 
   const diffDays = Math.round(Math.abs((now - pollinationDate) / oneDay));
   return diffDays;
 }
+
 
 
 
