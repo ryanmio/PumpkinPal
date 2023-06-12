@@ -10,29 +10,34 @@ function UserProfile() {
   const [preferredUnit, setPreferredUnit] = useState('cm'); // Local state for user's preferred measurement unit
 
   // Fetch user preferences on component mount
-  useEffect(() => {
-    const fetchPreferences = async () => {
-      if (auth.currentUser) {
-        const userRef = doc(db, 'Users', auth.currentUser.uid);
-        const userDoc = await getDoc(userRef);
-        if (userDoc.exists()) {
-          setPreferredUnit(userDoc.data().preferredUnit || 'cm');
-        }
-      }
-    };
-    fetchPreferences();
-  }, []);
-
-  const updatePreferences = async (e) => {
-    e.preventDefault();
+useEffect(() => {
+  const fetchPreferences = async () => {
     if (auth.currentUser) {
       const userRef = doc(db, 'Users', auth.currentUser.uid);
-      await updateDoc(userRef, { preferredUnit });
-      alert("Preferences updated successfully");
-    } else {
-      alert("User not logged in");
+      console.log('Fetching preferences...');
+      const userDoc = await getDoc(userRef);
+      if (userDoc.exists()) {
+        console.log('Fetched preferences: ', userDoc.data());
+        setPreferredUnit(userDoc.data().preferredUnit || 'cm');
+      }
     }
   };
+  fetchPreferences();
+}, []);
+
+const updatePreferences = async (e) => {
+  e.preventDefault();
+  if (auth.currentUser) {
+    console.log('Updating preferences to: ', preferredUnit);
+    const userRef = doc(db, 'Users', auth.currentUser.uid);
+    await updateDoc(userRef, { preferredUnit });
+    console.log('Preferences updated');
+    alert("Preferences updated successfully");
+  } else {
+    alert("User not logged in");
+  }
+};
+
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
