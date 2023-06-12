@@ -13,6 +13,7 @@ import EditPumpkin from './components/EditPumpkin';
 import AddMeasurement from './components/AddMeasurement';
 import PumpkinDetail from './components/PumpkinDetail';
 import Homepage from './components/Homepage';
+import UserProfile from './components/UserProfile';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -37,7 +38,8 @@ function App() {
               </div>
               <div className="nav-row">
                 <Link className="nav-link" to="/dashboard">Dashboard</Link>
-                <Link className="nav-link" to="/add-pumpkin">Add Pumpkin</Link>
+                // <Link className="nav-link" to="/add-pumpkin">Add Pumpkin</Link>
+                <Link className="nav-link" to="/user-profile">User Profile</Link>
               </div>
             </div>
           )}
@@ -51,6 +53,7 @@ function App() {
           <Route path="/add-measurement/:id" element={<AddMeasurement />} />
           <Route path="/pumpkin/:id" element={<PumpkinDetail />} />
           <Route path="/" element={<Homepage />} />
+          <Route path="/user-profile" element={<UserProfile />} />
         </Routes>
       </Router>
     </div>
