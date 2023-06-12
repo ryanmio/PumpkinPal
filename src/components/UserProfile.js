@@ -4,40 +4,36 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
 
 function UserProfile() {
+  const [loading, setLoading] = useState(true);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
-  const [preferredUnit, setPreferredUnit] = useState('cm'); // Local state for user's preferred measurement unit
+  const [preferredUnit, setPreferredUnit] = useState('cm');
 
-  // Fetch user preferences on component mount
-useEffect(() => {
-  const fetchPreferences = async () => {
+  useEffect(() => {
+    const fetchPreferences = async () => {
+      if (auth.currentUser) {
+        const userRef = doc(db, 'Users', auth.currentUser.uid);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          setPreferredUnit(userDoc.data().preferredUnit || 'cm');
+        }
+      }
+      setLoading(false);
+    };
+    fetchPreferences();
+  }, []);
+
+  const updatePreferences = async (e) => {
+    e.preventDefault();
     if (auth.currentUser) {
       const userRef = doc(db, 'Users', auth.currentUser.uid);
-      console.log('Fetching preferences...');
-      const userDoc = await getDoc(userRef);
-      if (userDoc.exists()) {
-        console.log('Fetched preferences: ', userDoc.data());
-        setPreferredUnit(userDoc.data().preferredUnit || 'cm');
-      }
+      await updateDoc(userRef, { preferredUnit });
+      alert("Preferences updated successfully");
+    } else {
+      alert("User not logged in");
     }
   };
-  fetchPreferences();
-}, []);
-
-const updatePreferences = async (e) => {
-  e.preventDefault();
-  if (auth.currentUser) {
-    console.log('Updating preferences to: ', preferredUnit);
-    const userRef = doc(db, 'Users', auth.currentUser.uid);
-    await updateDoc(userRef, { preferredUnit });
-    console.log('Preferences updated');
-    alert("Preferences updated successfully");
-  } else {
-    alert("User not logged in");
-  }
-};
-
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
@@ -55,6 +51,10 @@ const updatePreferences = async (e) => {
       alert("Error updating password: ", error.message);
     }
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="user-profile-container">
