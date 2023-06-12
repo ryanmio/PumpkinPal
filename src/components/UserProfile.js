@@ -10,29 +10,31 @@ function UserProfile() {
   const [currentPassword, setCurrentPassword] = useState('');
 
   // Fetch user preferences on component mount
-  useEffect(() => {
-    const fetchPreferences = async () => {
-      if (auth.currentUser) {
-        const userRef = doc(db, 'Users', auth.currentUser.uid);
-        const userDoc = await getDoc(userRef);
-        if (userDoc.exists()) {
-          setPreferredUnit(userDoc.data().preferredUnit || 'cm');
-        }
-      }
-    };
-    fetchPreferences();
-  }, []);
-
-  const updatePreferences = async (e) => {
-    e.preventDefault();
+useEffect(() => {
+  const fetchPreferences = async () => {
     if (auth.currentUser) {
       const userRef = doc(db, 'Users', auth.currentUser.uid);
-      await updateDoc(userRef, { preferredUnit });
-      alert("Preferences updated successfully");
-    } else {
-      alert("User not logged in");
+      const userDoc = await getDoc(userRef);
+      if (userDoc.exists()) {
+        auth.currentUser.preferredUnit = userDoc.data().preferredUnit || 'cm';
+        setPreferredUnit(auth.currentUser.preferredUnit);
+      }
     }
   };
+  fetchPreferences();
+}, []);
+
+const updatePreferences = async (e) => {
+  e.preventDefault();
+  if (auth.currentUser) {
+    const userRef = doc(db, 'Users', auth.currentUser.uid);
+    await updateDoc(userRef, { preferredUnit: auth.currentUser.preferredUnit });
+    alert("Preferences updated successfully");
+  } else {
+    alert("User not logged in");
+  }
+};
+
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
@@ -70,7 +72,7 @@ function UserProfile() {
       <form onSubmit={updatePreferences}>
         <label>
           Preferred Measurement Unit:
-          <select value={preferredUnit} onChange={e => setPreferredUnit(e.target.value)}>
+          <select value={auth.currentUser ? auth.currentUser.preferredUnit : 'cm'} onChange={e => setPreferredUnit(e.target.value)}>
             <option value="cm">cm</option>
             <option value="in">in</option>
           </select>
