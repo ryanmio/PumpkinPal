@@ -8,7 +8,7 @@ function UserProfile() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
-  const [preferredUnit, setPreferredUnit] = useState('cm');
+  const [preferredUnit, setPreferredUnit] = useState(null); // Initial state is now null
 
   useEffect(() => {
     const fetchPreferences = async () => {
@@ -16,7 +16,13 @@ function UserProfile() {
         const userRef = doc(db, 'Users', auth.currentUser.uid);
         const userDoc = await getDoc(userRef);
         if (userDoc.exists()) {
-          setPreferredUnit(userDoc.data().preferredUnit || 'cm');
+          console.log("Fetched preferences: ", userDoc.data()); // Log fetched data
+          const fetchedUnit = userDoc.data().preferredUnit;
+          if (fetchedUnit) {
+            setPreferredUnit(fetchedUnit);
+          } else {
+            setPreferredUnit('cm'); // Set to 'cm' if no preference exists
+          }
         }
       }
       setLoading(false);
@@ -26,6 +32,7 @@ function UserProfile() {
 
   const updatePreferences = async (e) => {
     e.preventDefault();
+    console.log("Updating preferences to: ", preferredUnit); // Log the preference being updated
     if (auth.currentUser) {
       const userRef = doc(db, 'Users', auth.currentUser.uid);
       await updateDoc(userRef, { preferredUnit });
