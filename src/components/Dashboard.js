@@ -56,12 +56,14 @@ function Dashboard() {
     }
   }
 
-  function daysSincePollination(pollinationDate) {
-    const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-    const now = new Date();
-    const diffDays = Math.round(Math.abs((now - pollinationDate) / oneDay));
-    return diffDays;
-  }
+  function daysSincePollination(pollinationDateString) {
+  const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+  const now = new Date();
+  const pollinationDate = new Date(pollinationDateString);
+  const diffDays = Math.round(Math.abs((now - pollinationDate) / oneDay));
+  return diffDays;
+}
+
 
   return (
     <div className="dashboard-container">
