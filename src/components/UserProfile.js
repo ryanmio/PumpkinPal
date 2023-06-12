@@ -7,6 +7,7 @@ function UserProfile() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
+  const [preferredUnit, setPreferredUnit] = useState('cm'); // Local state for user's preferred measurement unit
 
   // Fetch user preferences on component mount
   useEffect(() => {
@@ -15,7 +16,7 @@ function UserProfile() {
         const userRef = doc(db, 'Users', auth.currentUser.uid);
         const userDoc = await getDoc(userRef);
         if (userDoc.exists()) {
-          auth.currentUser.preferredUnit = userDoc.data().preferredUnit || 'cm';
+          setPreferredUnit(userDoc.data().preferredUnit || 'cm');
         }
       }
     };
@@ -26,7 +27,7 @@ function UserProfile() {
     e.preventDefault();
     if (auth.currentUser) {
       const userRef = doc(db, 'Users', auth.currentUser.uid);
-      await updateDoc(userRef, { preferredUnit: auth.currentUser.preferredUnit });
+      await updateDoc(userRef, { preferredUnit });
       alert("Preferences updated successfully");
     } else {
       alert("User not logged in");
@@ -56,7 +57,7 @@ function UserProfile() {
       <form onSubmit={updatePreferences}>
         <label>
           Preferred Measurement Unit:
-          <select value={auth.currentUser ? auth.currentUser.preferredUnit : 'cm'} onChange={e => auth.currentUser.preferredUnit = e.target.value}>
+          <select value={preferredUnit} onChange={e => setPreferredUnit(e.target.value)}>
             <option value="cm">cm</option>
             <option value="in">in</option>
           </select>
