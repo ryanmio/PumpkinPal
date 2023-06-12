@@ -56,26 +56,13 @@ function Dashboard() {
     }
   }
 
-function daysSincePollination(pollinationDateStr) {
+function daysSincePollination(pollinationDate) {
   const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
   const now = new Date();
-
-  console.log('PollinationDateStr:', pollinationDateStr); // New log here
-  
-  const [year, month, day] = pollinationDateStr.split("-");
-  const pollinationDate = new Date(year, month - 1, day); // Months are 0-based in JavaScript
-
-  console.log('Converted PollinationDate:', pollinationDate); // New log to verify the converted date
 
   const diffDays = Math.round(Math.abs((now - pollinationDate) / oneDay));
   return diffDays;
 }
-
-
-
-
-
-
 
   return (
     <div className="dashboard-container">
@@ -92,20 +79,23 @@ function daysSincePollination(pollinationDateStr) {
       </div>
       <div className="section-break"></div>
       {deletionStatus && <p>{deletionStatus}</p>}
-      {pumpkins.map(pumpkin => (
-        <div className="dashboard-pumpkin" key={pumpkin.id}>
-          <h3 onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
-          <p>{pumpkin.description}</p>
-          {pumpkin.latestMeasurement && <p>Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
-          {pumpkin.pollinated && <p>Days since pollination: {daysSincePollination(new Date(pumpkin.pollinated.seconds * 1000))} days</p>}
-          <div className="pumpkin-buttons">
-            <button onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>Add Measurement</button>
-            <button onClick={() => navigate(`/edit-pumpkin/${pumpkin.id}`)}>Edit Details</button>
-            <button onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>Open Detailed View</button>
-            <button className="delete-button" onClick={() => deletePumpkin(pumpkin.id)}>Delete</button>
+      {pumpkins.map(pumpkin => {
+        console.log('Pollination Timestamp:', pumpkin.pollinated);  // add this log
+        return (
+          <div className="dashboard-pumpkin" key={pumpkin.id}>
+            <h3 onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
+            <p>{pumpkin.description}</p>
+            {pumpkin.latestMeasurement && <p>Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
+            {pumpkin.pollinated && <p>Days since pollination: {daysSincePollination(new Date(pumpkin.pollinated.seconds * 1000))} days</p>}
+            <div className="pumpkin-buttons">
+              <button onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>Add Measurement</button>
+              <button onClick={() => navigate(`/edit-pumpkin/${pumpkin.id}`)}>Edit Details</button>
+              <button onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>Open Detailed View</button>
+              <button className="delete-button" onClick={() => deletePumpkin(pumpkin.id)}>Delete</button>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
       <button className="add-pumpkin-button" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
     </div>
   );
