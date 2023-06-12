@@ -20,19 +20,13 @@ function Dashboard() {
 
         for (let pumpkinDoc of snapshot.docs) {
             let pumpkinData = pumpkinDoc.data();
-            console.log('Pumpkin data:', pumpkinData);
 
             // Query for the latest measurement
             const measurementsCollection = collection(db, 'Users', user.uid, 'Pumpkins', pumpkinDoc.id, 'Measurements');
             const measurementsQuery = query(measurementsCollection, orderBy('timestamp', 'desc'), limit(1));
             const measurementSnapshot = await getDocs(measurementsQuery);
 
-            console.log('Measurement snapshot:', measurementSnapshot);
-            console.log('Measurement snapshot docs length:', measurementSnapshot.docs.length);
-            console.log('Measurement snapshot docs:', measurementSnapshot.docs);
-
             const latestMeasurement = measurementSnapshot.docs[0]?.data() || null;
-            console.log('Latest measurement:', latestMeasurement);
 
             // Add latestMeasurement to pumpkinData
             pumpkinData.latestMeasurement = latestMeasurement;
@@ -57,14 +51,10 @@ function Dashboard() {
   }
 
 function daysSincePollination(pollinationDateStr) {
-  console.log("pollinationDateStr:", pollinationDateStr); // NEW
   const pollinationDate = new Date(pollinationDateStr);
-  console.log("pollinationDate:", pollinationDate); // NEW
   const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
   const now = new Date();
-  console.log("now:", now); // NEW
-  const diffDays = Math.round(Math.abs((now - pollinationDate) / oneDay));
-  console.log("diffDays:", diffDays); // NEW
+  const diffDays = Math.round(Math.abs((now - pollinationDate) / oneDay)) - 1;
   return diffDays;
 }
 
@@ -88,7 +78,7 @@ function daysSincePollination(pollinationDateStr) {
       <h3 onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
       <p>{pumpkin.description}</p>
       {pumpkin.latestMeasurement && <p>Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
-      {pumpkin.pollinated && <p>Days since pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
+      {pumpkin.pollinated && <p>Days After Pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
       <div className="pumpkin-buttons">
         <button onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>Add Measurement</button>
         <button onClick={() => navigate(`/edit-pumpkin/${pumpkin.id}`)}>Edit Details</button>
