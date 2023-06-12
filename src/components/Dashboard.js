@@ -79,23 +79,20 @@ function daysSincePollination(pollinationDate) {
       </div>
       <div className="section-break"></div>
       {deletionStatus && <p>{deletionStatus}</p>}
-      {pumpkins.map(pumpkin => {
-        console.log('Pollination Timestamp:', pumpkin.pollinated);  // add this log
-        return (
-          <div className="dashboard-pumpkin" key={pumpkin.id}>
-            <h3 onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
-            <p>{pumpkin.description}</p>
-            {pumpkin.latestMeasurement && <p>Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
-            {pumpkin.pollinated && <p>Days since pollination: {daysSincePollination(new Date(pumpkin.pollinated.seconds * 1000))} days</p>}
-            <div className="pumpkin-buttons">
-              <button onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>Add Measurement</button>
-              <button onClick={() => navigate(`/edit-pumpkin/${pumpkin.id}`)}>Edit Details</button>
-              <button onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>Open Detailed View</button>
-              <button className="delete-button" onClick={() => deletePumpkin(pumpkin.id)}>Delete</button>
-            </div>
-          </div>
-        );
-      })}
+      {pumpkins.map(pumpkin => (
+    <div className="dashboard-pumpkin" key={pumpkin.id}>
+      <h3 onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
+      <p>{pumpkin.description}</p>
+      {pumpkin.latestMeasurement && <p>Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
+      {pumpkin.pollinated && <p>Days since pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
+      <div className="pumpkin-buttons">
+        <button onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>Add Measurement</button>
+        <button onClick={() => navigate(`/edit-pumpkin/${pumpkin.id}`)}>Edit Details</button>
+        <button onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>Open Detailed View</button>
+        <button className="delete-button" onClick={() => deletePumpkin(pumpkin.id)}>Delete</button>
+      </div>
+    </div>
+  ))}
       <button className="add-pumpkin-button" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
     </div>
   );
