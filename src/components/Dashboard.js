@@ -56,20 +56,17 @@ function Dashboard() {
     }
   }
 
-  function daysSincePollination(pollinationDateString) {
+  function daysSincePollination(pollinationDate) {
   const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
   const now = new Date();
   
-  // Extract year, month and day from pollinationDateString
-  const [year, month, day] = pollinationDateString.split("-").map(Number);
-  
-  // Create a new date object with extracted year, month and day.
-  // Note: JavaScript counts months from 0 (January), so we subtract 1 from the month.
-  const pollinationDate = new Date(year, month - 1, day);
-  
-  const diffDays = Math.round(Math.abs((now - pollinationDate) / oneDay));
+  // Convert Firestore Timestamp to JavaScript Date object
+  const pollinationDateJS = new Date(pollinationDate.seconds * 1000);
+
+  const diffDays = Math.round(Math.abs((now - pollinationDateJS) / oneDay));
   return diffDays;
 }
+
 
 
 
