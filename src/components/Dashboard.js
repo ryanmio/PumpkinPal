@@ -56,12 +56,17 @@ function Dashboard() {
     }
   }
 
-function daysSincePollination(pollinationDate) {
+function daysSincePollination(pollinationDateStr) {
   const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
   const now = new Date();
 
-  console.log('PollinationDate:', pollinationDate); // New log here
+  console.log('PollinationDateStr:', pollinationDateStr); // New log here
   
+  const [year, month, day] = pollinationDateStr.split("-");
+  const pollinationDate = new Date(year, month - 1, day); // Months are 0-based in JavaScript
+
+  console.log('Converted PollinationDate:', pollinationDate); // New log to verify the converted date
+
   const diffDays = Math.round(Math.abs((now - pollinationDate) / oneDay));
   return diffDays;
 }
