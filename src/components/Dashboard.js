@@ -18,35 +18,33 @@ function Dashboard() {
         const snapshot = await getDocs(q);
         let pumpkinsData = [];
 
-          for (let pumpkinDoc of snapshot.docs) {
-    let pumpkinData = pumpkinDoc.data();
-    console.log('Pumpkin data:', pumpkinData);  // Existing logging statement
+        for (let pumpkinDoc of snapshot.docs) {
+            let pumpkinData = pumpkinDoc.data();
+            console.log('Pumpkin data:', pumpkinData);
 
-    // Query for the latest measurement
-    const measurementsQuery = query(
-      collection(db, 'Users', user.uid, 'Pumpkins', pumpkinDoc.id, 'Measurements'), 
-      orderBy('measurementDate', 'desc'), 
-      limit(1)
-    );
+            // Query for the latest measurement
+            const measurementsCollection = collection(db, 'Users', user.uid, 'Pumpkins', pumpkinDoc.id, 'Measurements');
+            const measurementsQuery = query(measurementsCollection, orderBy('timestamp', 'desc'), limit(1));
+            const measurementSnapshot = await getDocs(measurementsQuery);
 
-    const measurementSnapshot = await getDocs(measurementsQuery);
-    console.log('Measurement snapshot docs length:', measurementSnapshot.docs.length);
-    console.log('Measurement snapshot docs:', measurementSnapshot.docs);
+            console.log('Measurement snapshot:', measurementSnapshot);
+            console.log('Measurement snapshot docs length:', measurementSnapshot.docs.length);
+            console.log('Measurement snapshot docs:', measurementSnapshot.docs);
 
+            const latestMeasurement = measurementSnapshot.docs[0]?.data() || null;
+            console.log('Latest measurement:', latestMeasurement);
 
-    const latestMeasurement = measurementSnapshot.docs[0]?.data() || null;
-    console.log('Latest measurement:', latestMeasurement);  // Existing logging statement
-
-    // Add latestMeasurement to pumpkinData
-    pumpkinData.latestMeasurement = latestMeasurement;
-    pumpkinsData.push({ ...pumpkinData, id: pumpkinDoc.id });
-  }
+            // Add latestMeasurement to pumpkinData
+            pumpkinData.latestMeasurement = latestMeasurement;
+            pumpkinsData.push({ ...pumpkinData, id: pumpkinDoc.id });
+        }
 
         setPumpkins(pumpkinsData);
       }
     });
     return () => unsubscribe();
-  }, []);
+}, []);
+
 
   async function deletePumpkin(id) {
     if (window.confirm("Are you sure you want to delete this pumpkin?")) {
