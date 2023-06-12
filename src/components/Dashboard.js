@@ -56,11 +56,15 @@ function Dashboard() {
     }
   }
 
-function daysSincePollination(pollinationDate) {
+function daysSincePollination(pollinationDateStr) {
+  console.log("pollinationDateStr:", pollinationDateStr); // NEW
+  const pollinationDate = new Date(pollinationDateStr);
+  console.log("pollinationDate:", pollinationDate); // NEW
   const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
   const now = new Date();
-
+  console.log("now:", now); // NEW
   const diffDays = Math.round(Math.abs((now - pollinationDate) / oneDay));
+  console.log("diffDays:", diffDays); // NEW
   return diffDays;
 }
 
@@ -84,7 +88,12 @@ function daysSincePollination(pollinationDate) {
       <h3 onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
       <p>{pumpkin.description}</p>
       {pumpkin.latestMeasurement && <p>Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
-      {pumpkin.pollinated && <p>Days since pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
+      {pumpkin.pollinated && (
+  <>
+    console.log("Before calling daysSincePollination:", pumpkin.pollinated);
+    <p>Days since pollination: {daysSincePollination(pumpkin.pollinated)} days</p>
+  </>
+)}
       <div className="pumpkin-buttons">
         <button onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>Add Measurement</button>
         <button onClick={() => navigate(`/edit-pumpkin/${pumpkin.id}`)}>Edit Details</button>
