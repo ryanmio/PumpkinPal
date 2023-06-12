@@ -56,14 +56,15 @@ function Dashboard() {
     }
   }
 
-  function daysSincePollination(pollinationDate) {
+ function daysSincePollination(pollinationDateStr) {
   const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
   const now = new Date();
-  
-  // Convert Firestore Timestamp to JavaScript Date object
-  const pollinationDateJS = new Date(pollinationDate.seconds * 1000);
 
-  const diffDays = Math.round(Math.abs((now - pollinationDateJS) / oneDay));
+  // Parse string into a Date object
+  const pollinationDate = new Date(pollinationDateStr);
+console.log('Pollination date:', pollinationDateStr, 'Parsed date:', pollinationDate);
+
+  const diffDays = Math.round(Math.abs((now - pollinationDate) / oneDay));
   return diffDays;
 }
 
