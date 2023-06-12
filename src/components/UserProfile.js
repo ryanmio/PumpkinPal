@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { updatePassword } from 'firebase/auth';
+import { updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
 
 function UserProfile() {
   const [preferredUnit, setPreferredUnit] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
 
   // Fetch user preferences on component mount
   useEffect(() => {
@@ -29,14 +30,30 @@ function UserProfile() {
   const handleChangePassword = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      alert("New passwords do not match");
       return;
     }
-    try {
-      await updatePassword(auth.currentUser, password);
-      alert("Password updated successfully");
-    } catch (error) {
-      alert("Error updating password: ", error.message);
+    if(auth.currentUser) {
+      try {
+        // re-authenticate the user
+        const credential = EmailAuthProvider.credential(auth.currentUser.email, currentPassword);
+        await reauthenticateWithCredential(auth.currentUser, credential);
+        
+        // update password
+        await updatePassword(auth.currentUser, password);
+        alert("Password updated successfully");
+      } catch (error) {
+        console.log("Error updating password: ", error);
+        if (error.code === 'auth/wrong-password') {
+          alert("Current password is incorrect");
+        }
+        else if (error.code === 'auth/user-mismatch' || error.code === 'auth/user-not-found') {
+          alert("The current user does not match the requested credential. You may need to login again.");
+        }
+        else {
+          alert("Something went wrong: " + error.message);
+        }
+      }
     }
   };
 
@@ -54,6 +71,10 @@ function UserProfile() {
         <button type="submit">Update Preferences</button>
       </form>
       <form onSubmit={handleChangePassword}>
+        <label>
+          Current Password:
+          <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} />
+        </label>
         <label>
           New Password:
           <input type="password" value={password} onChange={e => setPassword(e.target.value)} />
