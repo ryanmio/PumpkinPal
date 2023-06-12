@@ -88,12 +88,7 @@ function daysSincePollination(pollinationDateStr) {
       <h3 onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
       <p>{pumpkin.description}</p>
       {pumpkin.latestMeasurement && <p>Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
-      {pumpkin.pollinated && (
-  <>
-    console.log("Before calling daysSincePollination:", pumpkin.pollinated);
-    <p>Days since pollination: {daysSincePollination(pumpkin.pollinated)} days</p>
-  </>
-)}
+      {pumpkin.pollinated && <p>Days since pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
       <div className="pumpkin-buttons">
         <button onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>Add Measurement</button>
         <button onClick={() => navigate(`/edit-pumpkin/${pumpkin.id}`)}>Edit Details</button>
