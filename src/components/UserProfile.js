@@ -12,10 +12,12 @@ function UserProfile() {
   // Fetch user preferences on component mount
   useEffect(() => {
     const fetchPreferences = async () => {
-      const userRef = doc(db, 'Users', auth.currentUser.uid);
-      const userDoc = await getDoc(userRef);
-      if (userDoc.exists()) {
-        setPreferredUnit(userDoc.data().preferredUnit || '');
+      if (auth.currentUser) {
+        const userRef = doc(db, 'Users', auth.currentUser.uid);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          setPreferredUnit(userDoc.data().preferredUnit || 'cm');
+        }
       }
     };
     fetchPreferences();
@@ -23,8 +25,13 @@ function UserProfile() {
 
   const updatePreferences = async (e) => {
     e.preventDefault();
-    const userRef = doc(db, 'Users', auth.currentUser.uid);
-    await updateDoc(userRef, { preferredUnit });
+    if (auth.currentUser) {
+      const userRef = doc(db, 'Users', auth.currentUser.uid);
+      await updateDoc(userRef, { preferredUnit });
+      alert("Preferences updated successfully");
+    } else {
+      alert("User not logged in");
+    }
   };
 
   const handleChangePassword = async (e) => {
