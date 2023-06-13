@@ -45,7 +45,7 @@ function App() {
             </div>
           )}
         </header>
-        <Routes>
+       <Routes>
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
@@ -55,6 +55,7 @@ function App() {
           <Route path="/pumpkin/:id" element={<PumpkinDetail />} />
           <Route path="/" element={<Homepage />} />
           <Route path="/user-profile" element={<UserProfile />} />
+          <Route path="/edit-measurement/:pumpkinId/:measurementId" element={<EditMeasurement />} />
         </Routes>
       </Router>
     </div>
