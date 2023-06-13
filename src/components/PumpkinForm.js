@@ -54,22 +54,22 @@ function PumpkinForm() {
         <form onSubmit={addPumpkin}>
             <label>
                 Name:
-                <input type="text" placeholder="Big Max" onChange={(e) => setName(e.target.value)} required />
+                <input type="text" placeholder="Bear Swipe" onChange={(e) => setName(e.target.value)} required />
             </label>
             <br />
             <label>
                 Description:
-                <textarea placeholder="Beautiful orange color" onChange={(e) => setDescription(e.target.value)} />
+                <textarea placeholder="150 patch" onChange={(e) => setDescription(e.target.value)} />
             </label>
             <br />
             <label>
                 Maternal Lineage:
-                <input type="text" placeholder="Atlantic Giant" onChange={(e) => setMaternalLineage(e.target.value)} />
+                <input type="text" placeholder="1375 Connolly" onChange={(e) => setMaternalLineage(e.target.value)} />
             </label>
             <br />
             <label>
                 Paternal Lineage:
-                <input type="text" placeholder="Dill's Atlantic Giant" onChange={(e) => setPaternalLineage(e.target.value)} />
+                <input type="text" placeholder="1676 New" onChange={(e) => setPaternalLineage(e.target.value)} />
             </label>
             <br />
             <label>
