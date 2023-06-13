@@ -46,14 +46,15 @@ function PumpkinDetail() {
     ],
   };
 
- // Function to delete a measurement
-const deleteMeasurement = async (measurementId) => {
+ const deleteMeasurement = async (measurementId) => {
   if (window.confirm("Are you sure you want to delete this measurement?")) {
     try {
-      if (auth.currentUser) {
-        await deleteDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id, 'Measurements', measurementId));
+      if (auth.currentUser && auth.currentUser.uid && id && measurementId) {
+        const measurementPath = `Users/${auth.currentUser.uid}/Pumpkins/${id}/Measurements/${measurementId}`;
+        console.log('Measurement path: ', measurementPath);
+        await deleteDoc(doc(db, measurementPath));
       } else {
-        throw new Error('User not authenticated');
+        throw new Error('Missing required fields for deletion');
       }
     } catch (error) {
       console.error('Error deleting measurement: ', error);
