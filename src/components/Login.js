@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { auth } from '../firebase';
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
@@ -32,6 +32,23 @@ function Login() {
             });
     };
 
+    const handleForgotPassword = (e) => {
+        e.preventDefault();
+        if(email.trim() === ''){
+            setError('Please input your email');
+            return;
+        }
+        sendPasswordResetEmail(auth, email)
+            .then(() => {
+                // Password reset email sent!
+                alert('Password reset email sent to ' + email);
+            })
+            .catch((error) => {
+                // An error happened.
+                setError(error.message);
+            });
+    }
+
     return (
         <div>
             <h2>Login</h2>
@@ -42,6 +59,7 @@ function Login() {
                 <button type="submit">Login</button>
             </form>
             <button onClick={() => navigate('/register')} type="button">Don't have an account? Register</button>
+            <button onClick={handleForgotPassword} type="button">Forgot Password?</button>
         </div>
     );
 }
