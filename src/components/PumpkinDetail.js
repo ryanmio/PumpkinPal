@@ -10,6 +10,9 @@ function PumpkinDetail() {
   const [pumpkin, setPumpkin] = useState(null);
   const navigate = useNavigate();
 
+  // New state variable to track auth state
+  const [authInitialized, setAuthInitialized] = useState(false);
+
   // Define a Firestore query to retrieve the pumpkin's measurements ordered by timestamp
   const measurementsQuery = query(collection(db, 'Users', auth.currentUser?.uid, 'Pumpkins', id, 'Measurements'), orderBy('timestamp'));
   
@@ -19,15 +22,14 @@ function PumpkinDetail() {
   // Fetch the pumpkin data
   useEffect(() => {
     const fetchPumpkin = async () => {
-      if(auth.currentUser) {
-        const docRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setPumpkin(docSnap.data());
-        }
+      const docRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setPumpkin(docSnap.data());
       }
     };
     auth.onAuthStateChanged((user) => {
+      setAuthInitialized(true);
       if (user) fetchPumpkin();
     });
   }, [id]);
@@ -46,22 +48,22 @@ function PumpkinDetail() {
     ],
   };
 
- const deleteMeasurement = async (measurementId) => {
-  if (window.confirm("Are you sure you want to delete this measurement?")) {
-    try {
-      if (auth.currentUser && auth.currentUser.uid && id && measurementId) {
+  const deleteMeasurement = async (measurementId) => {
+    if (window.confirm("Are you sure you want to delete this measurement?")) {
+      try {
         const measurementPath = `Users/${auth.currentUser.uid}/Pumpkins/${id}/Measurements/${measurementId}`;
         console.log('Measurement path: ', measurementPath);
         await deleteDoc(doc(db, measurementPath));
-      } else {
-        throw new Error('Missing required fields for deletion');
+      } catch (error) {
+        console.error('Error deleting measurement: ', error);
       }
-    } catch (error) {
-      console.error('Error deleting measurement: ', error);
     }
-  }
-};
+  };
 
+  // Return early if auth has not initialized
+  if (!authInitialized) {
+    return null;
+  }
 
   return (
     <div>
