@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase';
-import { collection, doc, getDoc, query, orderBy, deleteDoc } from 'firebase/firestore';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
+import { collection, doc, getDoc, query, orderBy, deleteDoc, onSnapshot } from 'firebase/firestore';
 import { Line } from 'react-chartjs-2';
 
 function PumpkinDetail() {
@@ -25,9 +24,14 @@ function PumpkinDetail() {
         const measurementsQuery = query(collection(db, 'Users', auth.currentUser.uid, 'Pumpkins', id, 'Measurements'), orderBy('timestamp'));
   
         // Subscribe to the measurements in real time
-        const measurementData = await useCollectionData(measurementsQuery, { idField: 'id' });
-        setMeasurements(measurementData);
-        console.log("Measurements: ", measurementData);  // Check what's logged
+        onSnapshot(measurementsQuery, (snapshot) => {
+          let measurementData = [];
+          snapshot.forEach((doc) => {
+            measurementData.push({ id: doc.id, ...doc.data() });
+          });
+          setMeasurements(measurementData);
+          console.log("Measurements: ", measurementData);  // Check what's logged
+        });
       }
     };
     auth.onAuthStateChanged((user) => {
@@ -49,21 +53,21 @@ function PumpkinDetail() {
     ],
   };
 
- const deleteMeasurement = async (measurementId) => {
-  if (window.confirm("Are you sure you want to delete this measurement?")) {
-    try {
-      if (auth.currentUser && auth.currentUser.uid && id && measurementId) {
-        const measurementPath = `Users/${auth.currentUser.uid}/Pumpkins/${id}/Measurements/${measurementId}`;
-        console.log('Measurement path: ', measurementPath);
-        await deleteDoc(doc(db, measurementPath));
-      } else {
-        throw new Error('Missing required fields for deletion');
+  const deleteMeasurement = async (measurementId) => {
+    if (window.confirm("Are you sure you want to delete this measurement?")) {
+      try {
+        if (auth.currentUser && auth.currentUser.uid && id && measurementId) {
+          const measurementPath = `Users/${auth.currentUser.uid}/Pumpkins/${id}/Measurements/${measurementId}`;
+          console.log('Measurement path: ', measurementPath);
+          await deleteDoc(doc(db, measurementPath));
+        } else {
+          throw new Error('Missing required fields for deletion');
+        }
+      } catch (error) {
+        console.error('Error deleting measurement: ', error);
       }
-    } catch (error) {
-      console.error('Error deleting measurement: ', error);
     }
-  }
-};
+  };
 
 
   return (
@@ -71,8 +75,8 @@ function PumpkinDetail() {
       <h2>Pumpkin Detail</h2>
       <p>Name: {pumpkin?.name}</p>
       <p>Description: {pumpkin?.description}</p>
-      <button onClick={() => navigate('/dashboard')}>Back to Dashboard</button>
       <button onClick={() => navigate(`/edit-pumpkin/${id}`)}>Edit Pumpkin</button>
+      <h3>Measurements</h3>
       <button onClick={() => navigate(`/add-measurement/${id}`)}>Add Measurement</button>
       <table>
         <thead>
