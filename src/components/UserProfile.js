@@ -11,29 +11,38 @@ function UserProfile() {
   const [preferredUnit, setPreferredUnit] = useState(null); // Initial state is now null
 
   useEffect(() => {
-    const fetchPreferences = async () => {
-        console.log('Running fetchPreferences');
-        if (auth.currentUser) {
-            const userRef = doc(db, 'Users', auth.currentUser.uid);
-            const userDoc = await getDoc(userRef);
-            if (userDoc.exists()) {
-                console.log("Fetched preferences: ", userDoc.data());
-                const fetchedUnit = userDoc.data().preferredUnit;
-                if (fetchedUnit) {
-                    console.log('Setting preferredUnit state to fetched value:', fetchedUnit);
-                    setPreferredUnit(fetchedUnit);
-                } else {
-                    console.log('No preferred unit found, setting to default cm');
-                    setPreferredUnit('cm');
-                }
-                setLoading(false); // Move this here to ensure it only runs after preferences have been fetched
-            }
+  const fetchPreferences = async () => {
+    console.log('Running fetchPreferences');
+    if (auth.currentUser) {
+      const userRef = doc(db, 'Users', auth.currentUser.uid);
+      const userDoc = await getDoc(userRef);
+      if (userDoc.exists()) {
+        console.log("Fetched preferences: ", userDoc.data());
+        const fetchedUnit = userDoc.data().preferredUnit;
+        if (fetchedUnit) {
+          console.log('Setting preferredUnit state to fetched value:', fetchedUnit);
+          setPreferredUnit(fetchedUnit);
         } else {
-            setLoading(false); // If user not logged in, we can't fetch preferences. Allow rendering to continue.
+          console.log('No preferred unit found, setting to default cm');
+          setPreferredUnit('cm');
         }
-    };
-    fetchPreferences();
+      }
+      setLoading(false); // Only set loading to false after preferences have been fetched
+    }
+  };
+
+  const unsubscribe = auth.onAuthStateChanged(user => {
+    if (user) {
+      fetchPreferences();
+    } else {
+      setLoading(false); // If user not logged in, we can't fetch preferences. Allow rendering to continue.
+    }
+  });
+
+  // Clean up subscription on unmount
+  return () => unsubscribe();
 }, []);
+
 
 
   const updatePreferences = async (e) => {
