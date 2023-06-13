@@ -8,46 +8,38 @@ function UserProfile() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
-  const [preferredUnit, setPreferredUnit] = useState(null); // Initial state is now null
+  const [preferredUnit, setPreferredUnit] = useState(null);
 
   useEffect(() => {
-  const fetchPreferences = async () => {
-    console.log('Running fetchPreferences');
-    if (auth.currentUser) {
-      const userRef = doc(db, 'Users', auth.currentUser.uid);
-      const userDoc = await getDoc(userRef);
-      if (userDoc.exists()) {
-        console.log("Fetched preferences: ", userDoc.data());
-        const fetchedUnit = userDoc.data().preferredUnit;
-        if (fetchedUnit) {
-          console.log('Setting preferredUnit state to fetched value:', fetchedUnit);
-          setPreferredUnit(fetchedUnit);
-        } else {
-          console.log('No preferred unit found, setting to default cm');
-          setPreferredUnit('cm');
+    const fetchPreferences = async () => {
+      if (auth.currentUser) {
+        const userRef = doc(db, 'Users', auth.currentUser.uid);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          const fetchedUnit = userDoc.data().preferredUnit;
+          if (fetchedUnit) {
+            setPreferredUnit(fetchedUnit);
+          } else {
+            setPreferredUnit('cm');
+          }
         }
+        setLoading(false);
       }
-      setLoading(false); // Only set loading to false after preferences have been fetched
-    }
-  };
+    };
 
-  const unsubscribe = auth.onAuthStateChanged(user => {
-    if (user) {
-      fetchPreferences();
-    } else {
-      setLoading(false); // If user not logged in, we can't fetch preferences. Allow rendering to continue.
-    }
-  });
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user) {
+        fetchPreferences();
+      } else {
+        setLoading(false);
+      }
+    });
 
-  // Clean up subscription on unmount
-  return () => unsubscribe();
-}, []);
-
-
+    return () => unsubscribe();
+  }, []);
 
   const updatePreferences = async (e) => {
     e.preventDefault();
-    console.log("Updating preferences to: ", preferredUnit); // Log the preference being updated
     if (auth.currentUser) {
       const userRef = doc(db, 'Users', auth.currentUser.uid);
       await updateDoc(userRef, { preferredUnit });
