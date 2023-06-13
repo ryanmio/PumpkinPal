@@ -12,23 +12,29 @@ function UserProfile() {
 
   useEffect(() => {
     const fetchPreferences = async () => {
-      if (auth.currentUser) {
-        const userRef = doc(db, 'Users', auth.currentUser.uid);
-        const userDoc = await getDoc(userRef);
-        if (userDoc.exists()) {
-          console.log("Fetched preferences: ", userDoc.data()); // Log fetched data
-          const fetchedUnit = userDoc.data().preferredUnit;
-          if (fetchedUnit) {
-            setPreferredUnit(fetchedUnit);
-          } else {
-            setPreferredUnit('cm'); // Set to 'cm' if no preference exists
-          }
+        console.log('Running fetchPreferences');
+        if (auth.currentUser) {
+            const userRef = doc(db, 'Users', auth.currentUser.uid);
+            const userDoc = await getDoc(userRef);
+            if (userDoc.exists()) {
+                console.log("Fetched preferences: ", userDoc.data());
+                const fetchedUnit = userDoc.data().preferredUnit;
+                if (fetchedUnit) {
+                    console.log('Setting preferredUnit state to fetched value:', fetchedUnit);
+                    setPreferredUnit(fetchedUnit);
+                } else {
+                    console.log('No preferred unit found, setting to default cm');
+                    setPreferredUnit('cm');
+                }
+                setLoading(false); // Move this here to ensure it only runs after preferences have been fetched
+            }
+        } else {
+            setLoading(false); // If user not logged in, we can't fetch preferences. Allow rendering to continue.
         }
-      }
-      setLoading(false);
     };
     fetchPreferences();
-  }, []);
+}, []);
+
 
   const updatePreferences = async (e) => {
     e.preventDefault();
