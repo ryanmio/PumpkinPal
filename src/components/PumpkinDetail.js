@@ -30,7 +30,7 @@ function PumpkinDetail() {
             measurementData.push({ id: doc.id, ...doc.data() });
           });
           setMeasurements(measurementData);
-          console.log("Measurements: ", measurementData);  // Check what's logged
+          // console.log("Measurements: ", measurementData);  // Check what's logged
         });
       }
     };
@@ -58,7 +58,7 @@ function PumpkinDetail() {
       try {
         if (auth.currentUser && auth.currentUser.uid && id && measurementId) {
           const measurementPath = `Users/${auth.currentUser.uid}/Pumpkins/${id}/Measurements/${measurementId}`;
-          console.log('Measurement path: ', measurementPath);
+          // console.log('Measurement path: ', measurementPath);
           await deleteDoc(doc(db, measurementPath));
         } else {
           throw new Error('Missing required fields for deletion');
@@ -68,7 +68,6 @@ function PumpkinDetail() {
       }
     }
   };
-
 
   return (
     <div>
