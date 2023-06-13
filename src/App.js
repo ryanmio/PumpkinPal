@@ -14,6 +14,7 @@ import AddMeasurement from './components/AddMeasurement';
 import PumpkinDetail from './components/PumpkinDetail';
 import Homepage from './components/Homepage';
 import UserProfile from './components/UserProfile';
+import EditMeasurement from './components/EditMeasurement';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
