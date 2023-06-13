@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { auth, db, Timestamp } from '../firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -9,12 +9,27 @@ function AddMeasurement() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Define state variables for each measurement attribute.
   const [endToEnd, setEndToEnd] = useState('');
   const [sideToSide, setSideToSide] = useState('');
   const [circumference, setCircumference] = useState('');
-  const [measurementUnit, setMeasurementUnit] = useState('inches');
+  const [measurementUnit, setMeasurementUnit] = useState('cm'); // Changed default to 'cm' for consistency
   const [measurementDate, setMeasurementDate] = useState(new Date());
+
+  useEffect(() => {
+    const fetchPreferences = async () => {
+      if (auth.currentUser) {
+        const userRef = doc(db, 'Users', auth.currentUser.uid);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          const fetchedUnit = userDoc.data().preferredUnit;
+          if (fetchedUnit) {
+            setMeasurementUnit(fetchedUnit);
+          }
+        }
+      }
+    };
+    fetchPreferences();
+  }, []);
 
   const calculateEstimatedWeight = (endToEnd, sideToSide, circumference) => {
     let ott = endToEnd + sideToSide + circumference;
@@ -29,7 +44,6 @@ function AddMeasurement() {
     e.preventDefault();
     const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumference);
 
-    // Generate a unique ID for the new measurement.
     const measurementId = Date.now().toString();
 
     await setDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id, 'Measurements', measurementId), {
@@ -41,7 +55,7 @@ function AddMeasurement() {
       timestamp: Timestamp.fromDate(measurementDate),
     });
 
-    navigate(`/pumpkin/${id}`); // Navigate to the details page of the current pumpkin after adding a measurement
+    navigate(`/pumpkin/${id}`);
   };
 
   return (
@@ -63,8 +77,8 @@ function AddMeasurement() {
         <label>
           Measurement Unit:
           <select value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)}>
-            <option value="inches">Inches</option>
-            <option value="cm">Centimeters</option>
+            <option value="in">in</option>
+            <option value="cm">cm</option>
           </select>
         </label>
         <label>
@@ -73,7 +87,7 @@ function AddMeasurement() {
         </label>
         <br />
         <button type="submit">Save Measurement</button>
-        <button type="button" onClick={() => navigate('/dashboard')}>Cancel</button> {/* New Button */}
+        <button type="button" onClick={() => navigate('/dashboard')}>Cancel</button>
       </form>
     </div>
   );
