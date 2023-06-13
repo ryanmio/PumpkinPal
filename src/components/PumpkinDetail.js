@@ -8,28 +8,29 @@ import { Line } from 'react-chartjs-2';
 function PumpkinDetail() {
   const { id } = useParams();
   const [pumpkin, setPumpkin] = useState(null);
+  const [measurements, setMeasurements] = useState([]);
   const navigate = useNavigate();
-
-  // New state variable to track auth state
-  const [authInitialized, setAuthInitialized] = useState(false);
-
-  // Define a Firestore query to retrieve the pumpkin's measurements ordered by timestamp
-  const measurementsQuery = query(collection(db, 'Users', auth.currentUser?.uid, 'Pumpkins', id, 'Measurements'), orderBy('timestamp'));
-  
-  // Subscribe to the measurements in real time
-  const [measurements] = useCollectionData(measurementsQuery, { idField: 'id' });
 
   // Fetch the pumpkin data
   useEffect(() => {
     const fetchPumpkin = async () => {
-      const docRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setPumpkin(docSnap.data());
+      if(auth.currentUser) {
+        const docRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setPumpkin(docSnap.data());
+        }
+
+        // Define a Firestore query to retrieve the pumpkin's measurements ordered by timestamp
+        const measurementsQuery = query(collection(db, 'Users', auth.currentUser.uid, 'Pumpkins', id, 'Measurements'), orderBy('timestamp'));
+  
+        // Subscribe to the measurements in real time
+        const measurementData = await useCollectionData(measurementsQuery, { idField: 'id' });
+        setMeasurements(measurementData);
+        console.log("Measurements: ", measurementData);  // Check what's logged
       }
     };
     auth.onAuthStateChanged((user) => {
-      setAuthInitialized(true);
       if (user) fetchPumpkin();
     });
   }, [id]);
@@ -48,22 +49,22 @@ function PumpkinDetail() {
     ],
   };
 
-  const deleteMeasurement = async (measurementId) => {
-    if (window.confirm("Are you sure you want to delete this measurement?")) {
-      try {
+ const deleteMeasurement = async (measurementId) => {
+  if (window.confirm("Are you sure you want to delete this measurement?")) {
+    try {
+      if (auth.currentUser && auth.currentUser.uid && id && measurementId) {
         const measurementPath = `Users/${auth.currentUser.uid}/Pumpkins/${id}/Measurements/${measurementId}`;
         console.log('Measurement path: ', measurementPath);
         await deleteDoc(doc(db, measurementPath));
-      } catch (error) {
-        console.error('Error deleting measurement: ', error);
+      } else {
+        throw new Error('Missing required fields for deletion');
       }
+    } catch (error) {
+      console.error('Error deleting measurement: ', error);
     }
-  };
-
-  // Return early if auth has not initialized
-  if (!authInitialized) {
-    return null;
   }
+};
+
 
   return (
     <div>
