@@ -46,12 +46,21 @@ function PumpkinDetail() {
     ],
   };
 
-  // Function to delete a measurement
-  const deleteMeasurement = async (measurementId) => {
-    if (window.confirm("Are you sure you want to delete this measurement?")) {
-      await deleteDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id, 'Measurements', measurementId));
+ // Function to delete a measurement
+const deleteMeasurement = async (measurementId) => {
+  if (window.confirm("Are you sure you want to delete this measurement?")) {
+    try {
+      if (auth.currentUser) {
+        await deleteDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id, 'Measurements', measurementId));
+      } else {
+        throw new Error('User not authenticated');
+      }
+    } catch (error) {
+      console.error('Error deleting measurement: ', error);
     }
-  };
+  }
+};
+
 
   return (
     <div>
