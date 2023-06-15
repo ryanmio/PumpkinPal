@@ -30,18 +30,23 @@ The goal of this project is to develop a user-friendly, open-source application 
 
 ```plaintext
 .
-├── package.json
-├── .gitignore
+├── Dashboard.js
 ├── node_modules
 ├── package-lock.json
+├── package.json
 ├── public
 │   ├── _redirects
+│   ├── apple-touch-icon.png
+│   ├── favicon-16x16.png
+│   ├── favicon-32x32.png
 │   ├── favicon.ico
+│   ├── hero.png
 │   ├── index.html
+│   ├── logo.png
 │   ├── logo192.png
 │   ├── logo512.png
 │   ├── manifest.json
-│   ├── robots.txt
+│   └── robots.txt
 ├── README.md
 └── src
     ├── App.css
@@ -49,14 +54,17 @@ The goal of this project is to develop a user-friendly, open-source application 
     ├── App.test.js
     ├── components
     │   ├── AddMeasurement.js
-    │   ├── Dashboard.js
+    │   ├── DarkModeContext.js
+    │   ├── EditMeasurement.js
     │   ├── EditPumpkin.js
+    │   ├── Homepage.js
     │   ├── Login.js
-    │   ├── Navbar.js
+    │   ├── Logout.js
     │   ├── PumpkinDetail.js
     │   ├── PumpkinForm.js
     │   ├── Register.js
-    ├── firebase.js
+    │   └── UserProfile.js
+    └── firebase.js
     ├── index.css
     ├── index.js
     └── logo.svg
