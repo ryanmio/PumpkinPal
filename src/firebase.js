@@ -4,7 +4,7 @@ import { getFirestore, Timestamp, query as firestoreQuery, orderBy as orderByFir
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDLMBA-2O7W3ZlGnkOSvz-hr4_xstcRstU",
+  apiKey: process.env.REACT_APP_API_KEY,
   authDomain: "pumpkinpal-b60be.firebaseapp.com",
   projectId: "pumpkinpal-b60be",
   storageBucket: "pumpkinpal-b60be.appspot.com",
