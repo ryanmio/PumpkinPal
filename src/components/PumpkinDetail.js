@@ -69,6 +69,26 @@ function PumpkinDetail() {
     }
   };
 
+  const exportData = async () => {
+    const idToken = await auth.currentUser.getIdToken();
+
+    fetch('https://us-central1-pumpkinpal-b60be.cloudfunctions.net/exportData?pumpkinId=' + id, {
+        headers: {
+            'Authorization': 'Bearer ' + idToken
+        }
+    }).then(response => response.blob())
+      .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download ='export.csv';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    }).catch(e => console.error(e));
+};
+
   return (
     <div>
       <h2>Pumpkin Detail</h2>
@@ -77,6 +97,7 @@ function PumpkinDetail() {
       <button onClick={() => navigate(`/edit-pumpkin/${id}`)}>Edit Pumpkin</button>
       <h3>Measurements</h3>
       <button onClick={() => navigate(`/add-measurement/${id}`)}>Add Measurement</button>
+      <button onClick={exportData}>Export Data</button>
       <table>
         <thead>
           <tr>
