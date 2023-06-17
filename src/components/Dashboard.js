@@ -59,37 +59,37 @@ function daysSincePollination(pollinationDateStr) {
 }
 
   return (
-    <div className="dashboard-container">
-      <div className="dashboard-header">
-        <h2>Welcome to your Dashboard</h2>
-        {email ? (
-          <>
-            <p>Logged in as {email}</p>
-            <button onClick={() => auth.signOut()}>Logout</button>
-          </>
-        ) : (
-          <button onClick={() => navigate("/login")}>Login</button>
-        )}
-      </div>
-      <div className="section-break"></div>
-      {deletionStatus && <p>{deletionStatus}</p>}
+  <div className="container mx-auto px-4">
+    <div className="my-8">
+      <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
+      {email ? (
+        <>
+          <p className="mb-4">Logged in as {email}</p>
+          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => auth.signOut()}>Logout</button>
+        </>
+      ) : (
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => navigate("/login")}>Login</button>
+      )}
+    </div>
+    <div className="my-8">
+      {deletionStatus && <p className="mb-4">{deletionStatus}</p>}
       {pumpkins.map(pumpkin => (
-    <div className="dashboard-pumpkin" key={pumpkin.id}>
-      <h3 onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
-      <p>{pumpkin.description}</p>
-      {pumpkin.latestMeasurement && <p>Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
-      {pumpkin.pollinated && <p>Days After Pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
-      <div className="pumpkin-buttons">
-        <button onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>Add Measurement</button>
-        <button onClick={() => navigate(`/edit-pumpkin/${pumpkin.id}`)}>Edit Details</button>
-        <button onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>Open Detailed View</button>
-        <button className="delete-button" onClick={() => deletePumpkin(pumpkin.id)}>Delete</button>
-      </div>
+        <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-4" key={pumpkin.id}>
+          <div className="px-4 py-5 sm:px-6">
+            <h3 className="text-lg leading-6 font-medium text-gray-900" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
+            <p className="mt-1 max-w-2xl text-sm text-gray-500">{pumpkin.description}</p>
+            {pumpkin.latestMeasurement && <p className="mt-1 max-w-2xl text-sm text-gray-500">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
+            {pumpkin.pollinated && <p className="mt-1 max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
+            <div className="mt-4">
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2" onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>Add Measurement</button>
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2" onClick={() => navigate(`/edit-pumpkin/${pumpkin.id}`)}>Edit Details</button>
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>Open Detailed View</button>
+              <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => deletePumpkin(pumpkin.id)}>Delete</button>
+            </div>
+          </div>
+        </div>
+      ))}
+      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
     </div>
-  ))}
-      <button className="add-pumpkin-button" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
-    </div>
-  );
-}
-
-export default Dashboard;
+  </div>
+);
