@@ -3,12 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase';
 import { collection, doc, getDoc, query, orderBy, deleteDoc, onSnapshot } from 'firebase/firestore';
 import { Line } from 'react-chartjs-2';
+const [alert, setAlert] = useState(null);
 
 function PumpkinDetail() {
   const { id } = useParams();
   const [pumpkin, setPumpkin] = useState(null);
   const [measurements, setMeasurements] = useState([]);
   const navigate = useNavigate();
+  const [alert, setAlert] = useState(null);
 
   // Fetch the pumpkin data
   useEffect(() => {
@@ -70,25 +72,27 @@ function PumpkinDetail() {
   };
 
   const exportData = async () => {
-    const idToken = await auth.currentUser.getIdToken();
+  setAlert('Exporting...');
+  setTimeout(() => setAlert(null), 3000);
+  const idToken = await auth.currentUser.getIdToken();
 
-    fetch('https://us-central1-pumpkinpal-b60be.cloudfunctions.net/exportData?pumpkinId=' + id, {
-        headers: {
-            'Authorization': 'Bearer ' + idToken
-        }
-    }).then(response => response.blob())
-      .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = url;
-        // Format the current date as YYYY-MM-DD
-        const date = new Date().toISOString().slice(0, 10);
-        a.download = `PumpkinPal_${pumpkin.name}_${date}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-    }).catch(e => console.error(e));
+  fetch('https://us-central1-pumpkinpal-b60be.cloudfunctions.net/exportData?pumpkinId=' + id, {
+      headers: {
+          'Authorization': 'Bearer ' + idToken
+      }
+  }).then(response => response.blob())
+    .then(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      // Format the current date as YYYY-MM-DD
+      const date = new Date().toISOString().slice(0, 10);
+      a.download = `PumpkinPal_${pumpkin.name}_${date}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+  }).catch(e => console.error(e));
 };
 
 
@@ -101,6 +105,8 @@ function PumpkinDetail() {
       <h3>Measurements</h3>
       <button onClick={() => navigate(`/add-measurement/${id}`)}>Add Measurement</button>
       <button onClick={exportData}>Export Data</button>
+      <div>
+    {alert && <div className="alert">{alert}</div>}
       <table>
         <thead>
           <tr>

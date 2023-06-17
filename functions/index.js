@@ -32,13 +32,13 @@ exports.exportData = functions.https.onRequest((req, res) => {
             const data = snapshot.docs.map((doc) => {
               const docData = doc.data();
               // Convert the timestamp to a date string
-              docData.timestamp = new Date(docData.timestamp.seconds * 1000).toLocaleDateString();
+              docData.date = new Date(docData.timestamp.seconds * 1000).toLocaleDateString();
               return docData;
             });
 
             const json2csv = new Parser({
               fields: [
-                'timestamp',
+                'date',
                 'estimatedWeight',
                 'circumference',
                 'endToEnd',
