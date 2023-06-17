@@ -75,9 +75,9 @@ function PumpkinDetail() {
   setTimeout(() => setAlert(null), 3000);
   const idToken = await auth.currentUser.getIdToken();
 
-  fetch('https://us-central1-pumpkinpal-b60be.cloudfunctions.net/exportData?pumpkinId=' + id, {
+    fetch(`https://us-central1-pumpkinpal-b60be.cloudfunctions.net/exportData?pumpkinId=${id}&timeZone=${Intl.DateTimeFormat().resolvedOptions().timeZone}`, {
       headers: {
-          'Authorization': 'Bearer ' + idToken
+        'Authorization': 'Bearer ' + idToken
       }
   }).then(response => response.blob())
     .then(blob => {

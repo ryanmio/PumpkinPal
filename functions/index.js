@@ -32,7 +32,8 @@ exports.exportData = functions.https.onRequest((req, res) => {
             const data = snapshot.docs.map((doc) => {
               const docData = doc.data();
               // Convert the timestamp to a date string
-              docData.date = new Date(docData.timestamp.seconds * 1000).toLocaleDateString();
+              const date = new Date(docData.timestamp.seconds * 1000);
+              docData.date = date.toLocaleDateString('en-US', { timeZone: req.query.timeZone });
               return docData;
             });
 
