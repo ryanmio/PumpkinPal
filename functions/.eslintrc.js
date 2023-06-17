@@ -1,32 +1,17 @@
 module.exports = {
+  root: true, // This will make sure ESLint stops looking in parent folders once it finds this config file.
   env: {
     es6: true,
     node: true,
   },
-  parserOptions: {
-    "ecmaVersion": 2018,
-  },
   extends: [
-    "eslint:recommended",
-    "google",
+    'eslint:recommended',
+    'google',
   ],
   rules: {
-    "no-restricted-globals": ["error", "name", "length"],
-    "prefer-arrow-callback": "error",
-    "quotes": ["error", "double", {"allowTemplateLiterals": true}],
-    "max-len": "off",
-    "object-curly-spacing": ["error", "never"],
-    "comma-dangle": ["error", "only-multiline"],
-    "indent": ["error", 2, {"SwitchCase": 1}]
+    'indent': ['error', 2],
+    'quotes': ['error', 'single'],
+    'object-curly-spacing': ['error', 'always'],
+    'max-len': ['error', { 'code': 120 }], // Or whatever max length you're comfortable with
   },
-  overrides: [
-    {
-      files: ["**/*.spec.*"],
-      env: {
-        mocha: true,
-      },
-      rules: {},
-    },
-  ],
-  globals: {},
 };

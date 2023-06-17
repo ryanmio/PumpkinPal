@@ -82,12 +82,15 @@ function PumpkinDetail() {
         const a = document.createElement('a');
         a.style.display = 'none';
         a.href = url;
-        a.download ='export.csv';
+        // Format the current date as YYYY-MM-DD
+        const date = new Date().toISOString().slice(0, 10);
+        a.download = `PumpkinPal_${pumpkin.name}_${date}.csv`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
     }).catch(e => console.error(e));
 };
+
 
   return (
     <div>
