@@ -96,7 +96,7 @@ function PumpkinDetail() {
 };
 
 
-  return (
+ return (
     <div>
       <h2>Pumpkin Detail</h2>
       <p>Name: {pumpkin?.name}</p>
@@ -105,8 +105,7 @@ function PumpkinDetail() {
       <h3>Measurements</h3>
       <button onClick={() => navigate(`/add-measurement/${id}`)}>Add Measurement</button>
       <button onClick={exportData}>Export Data</button>
-      <div>
-    {alert && <div className="alert">{alert}</div>}
+      {alert && <div className="alert">{alert}</div>}
       <table>
         <thead>
           <tr>
@@ -139,5 +138,6 @@ function PumpkinDetail() {
     </div>
   );
 }
+
 
 export default PumpkinDetail;
