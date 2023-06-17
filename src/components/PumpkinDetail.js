@@ -70,15 +70,14 @@ function PumpkinDetail() {
     }
   };
 
-  const exportData = async () => {
+const exportData = async () => {
   setAlert('Exporting...');
-  setTimeout(() => setAlert(null), 3000);
   const idToken = await auth.currentUser.getIdToken();
 
-    fetch(`https://us-central1-pumpkinpal-b60be.cloudfunctions.net/exportData?pumpkinId=${id}&timeZone=${Intl.DateTimeFormat().resolvedOptions().timeZone}`, {
-      headers: {
-        'Authorization': 'Bearer ' + idToken
-      }
+  fetch(`https://us-central1-pumpkinpal-b60be.cloudfunctions.net/exportData?pumpkinId=${id}&timeZone=${Intl.DateTimeFormat().resolvedOptions().timeZone}`, {
+    headers: {
+      'Authorization': 'Bearer ' + idToken
+    }
   }).then(response => response.blob())
     .then(blob => {
       const url = window.URL.createObjectURL(blob);
@@ -91,8 +90,13 @@ function PumpkinDetail() {
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
-  }).catch(e => console.error(e));
+      setAlert(null);  // Clear the alert after the export is complete
+  }).catch(e => {
+    console.error(e);
+    setAlert('An error occurred during export.');  // Set an error alert if the export fails
+  });
 };
+
 
 
  return (
