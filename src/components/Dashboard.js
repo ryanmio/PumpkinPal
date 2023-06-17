@@ -70,7 +70,6 @@ return (
       ) : (
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => navigate("/login")}>Login</button>
       )}
-    
     </div>
     <div className="my-8">
       {deletionStatus && <p className="mb-4">{deletionStatus}</p>}
@@ -86,15 +85,9 @@ return (
               <p className="mb-4 text-base text-gray-600">{pumpkin.description}</p>
               <p className="mb-4 text-sm text-gray-600">Maternal Lineage: {pumpkin.maternalLineage}</p>
               <p className="mb-4 text-sm text-gray-600">Paternal Lineage: {pumpkin.paternalLineage}</p>
-              {pumpkin.latestMeasurement && (
-                <p className="mb-4 text-lg text-gray-800">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>
-              )}
-              {pumpkin.pollinated && (
-                <p className="mb-4 text-sm text-gray-600">Pollinated Date: {pumpkin.pollinated}</p>
-              )}
-              {pumpkin.daysAfterPollination && (
-                <p className="mb-4 text-sm text-gray-600">Days After Pollination: {pumpkin.daysAfterPollination} days</p>
-              )}
+              {pumpkin.latestMeasurement && <p className="mb-4 text-lg text-gray-800">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
+              {pumpkin.pollinated && <p className="mb-4 text-sm text-gray-600">Pollinated Date: {pumpkin.pollinated}</p>}
+              {pumpkin.daysAfterPollination && <p className="mb-4 text-sm text-gray-600">Days After Pollination: {pumpkin.daysAfterPollination} days</p>}
               <div className="mt-4">
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2" onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>Add Measurement</button>
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>Open Detailed View</button>
