@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase';
 import { collection, doc, getDoc, query, orderBy, deleteDoc, onSnapshot } from 'firebase/firestore';
 import { Line } from 'react-chartjs-2';
-const [alert, setAlert] = useState(null);
 
 function PumpkinDetail() {
   const { id } = useParams();
