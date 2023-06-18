@@ -88,7 +88,12 @@ return (
                 {pumpkin.latestMeasurement && <p className="mt-1 max-w-2xl text-sm text-gray-500">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
                 {pumpkin.pollinated && <p className="mt-1 max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
               </div>
-              <Dropdown onEdit={() => navigate(`/edit-pumpkin/${pumpkin.id}`)} onDelete={() => deletePumpkin(pumpkin.id)} />
+              <Dropdown 
+                onAddMeasurement={() => navigate(`/add-measurement/${pumpkin.id}`)} 
+                onEdit={() => navigate(`/edit-pumpkin/${pumpkin.id}`)} 
+                onDetailedView={() => navigate(`/pumpkin/${pumpkin.id}`)} 
+                onDelete={() => deletePumpkin(pumpkin.id)} 
+              />
             </div>
           </div>
         ))
