@@ -5,8 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { collection, doc, getDocs, deleteDoc } from 'firebase/firestore';
 import Dropdown from './Dropdown';
 import Spinner from './Spinner';
-import { PlusIcon, TableCellsIcon } from '@heroicons/react/solid';
-
+import { Plus as PlusIcon, Table as TableCellsIcon } from '@heroicons/react';
 
 function Dashboard() {
   const [email, setEmail] = useState('');
