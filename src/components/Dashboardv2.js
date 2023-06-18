@@ -92,6 +92,14 @@ return (
                       <p className="max-w-2xl text-sm text-gray-500">{pumpkin.description}</p>
                       {pumpkin.latestMeasurement && <p className="max-w-2xl text-sm text-gray-500">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
                       {pumpkin.pollinated && <p className="max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
+                      <ul className="list-disc list-inside">
+                        {pumpkin.dates && pumpkin.dates.map((date, index) => 
+                          <li key={index} className="flex items-center">
+                            <CalendarIcon className="w-4 h-4 mr-2" />
+                            {new Date(date).toLocaleDateString()}
+                          </li>
+                        )}
+                      </ul>
                     </div>
                     <Dropdown 
                       onAddMeasurement={() => navigate(`/add-measurement/${pumpkin.id}`)} 
@@ -127,7 +135,6 @@ return (
     )}
   </div>
 );
-
 
 }
 
