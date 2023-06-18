@@ -4,7 +4,7 @@ import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/aut
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
-import { Col, Row, Form, Card, Button, Container, InputGroup } from '@themesberg/react-bootstrap';
+import { Col, Row, Form, Card, Button, Container, InputGroup, FormCheck } from '@themesberg/react-bootstrap';
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -74,12 +74,23 @@ function Login() {
                         <Form.Control required type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
                       </InputGroup>
                     </Form.Group>
-                    <div className="d-flex justify-content-end mb-4">
-                      <Form.Check type="checkbox" id="rememberMeCheck" checked={remember} onChange={e => setRemember(e.target.checked)}>
-                        <Form.Check.Label htmlFor="rememberMeCheck">Remember me</Form.Check.Label>
-                      </Form.Check>
-                    </div>
-                    <Button variant="primary" type="submit" className="w-100">
+                    <Row>
+                      <Col xs={6}>
+                        <FormCheck 
+                          type="checkbox" 
+                          id="rememberMeCheck" 
+                          label="Remember me"
+                          checked={remember} 
+                          onChange={e => setRemember(e.target.checked)}
+                        />
+                      </Col>
+                      <Col xs={6} className="text-right">
+                        <Card.Link onClick={handleForgotPassword} className="fw-bold">
+                          Forgot Password?
+                        </Card.Link>
+                      </Col>
+                    </Row>
+                    <Button variant="primary" type="submit" className="w-100 mt-3">
                       Sign in
                     </Button>
                   </Form>
@@ -91,9 +102,6 @@ function Login() {
                       </Card.Link>
                     </span>
                   </div>
-                  <Card.Link onClick={handleForgotPassword} className="fw-bold mt-3 text-center d-block">
-                    Forgot Password?
-                  </Card.Link>
                 </div>
               </Col>
             </Row>
@@ -102,6 +110,5 @@ function Login() {
       </main>
     );
 }
-
 
 export default Login;
