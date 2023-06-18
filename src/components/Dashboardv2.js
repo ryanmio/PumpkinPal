@@ -4,6 +4,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { collection, doc, getDocs, deleteDoc } from 'firebase/firestore';
 import Dropdown from './Dropdown';
+import Spinner from './Spinner';
 
 function Dashboard() {
   const [email, setEmail] = useState('');
