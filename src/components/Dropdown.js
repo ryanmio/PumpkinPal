@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
-import { ChevronDownIcon } from '@heroicons/react/20/solid';
+import { DotsVerticalIcon } from '@heroicons/react/solid';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -11,7 +11,7 @@ function Dropdown({ onEdit, onDelete }) {
     <Menu as="div" className="relative inline-block text-left">
       <div>
         <Menu.Button className="inline-flex justify-center w-full rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
-          <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
+          <DotsVerticalIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
         </Menu.Button>
       </div>
 
@@ -35,7 +35,7 @@ function Dropdown({ onEdit, onDelete }) {
                     'block w-full text-left px-4 py-2 text-sm'
                   )}
                 >
-                  Edit
+                  Edit Pumpkin Details
                 </button>
               )}
             </Menu.Item>
@@ -44,7 +44,7 @@ function Dropdown({ onEdit, onDelete }) {
                 <button
                   onClick={onDelete}
                   className={classNames(
-                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                    active ? 'bg-gray-100 text-red-600' : 'text-red-600',
                     'block w-full text-left px-4 py-2 text-sm'
                   )}
                 >
