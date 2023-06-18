@@ -91,7 +91,7 @@ return (
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => navigate("/login")}>Login</button>
       )}
     </div>
-    <div className="my-8 sm:grid sm:grid-cols-2 sm:gap-4">
+    <div className="my-8 md:grid md:grid-cols-2 sm:gap-4">
       {deletionStatus && <p className="mb-4">{deletionStatus}</p>}
       {loading ? (
         <Spinner />
@@ -119,12 +119,12 @@ return (
               <div className="w-full grid grid-cols-2 gap-2">
                 <button className="inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>
-                  <PlusIcon className="w-4 h-4 mr-2" />
+                  <PlusIcon className="w-4 h-4 mr-0.5" />
                   Add Measurement
                 </button>
                 <button className="inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>
-                  <TableCellsIcon className="w-4 h-4 mr-2" />
+                  <TableCellsIcon className="w-4 h-4 mr-0.5" />
                   Detailed View
                 </button>
               </div>
