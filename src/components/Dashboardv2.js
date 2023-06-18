@@ -97,7 +97,7 @@ return (
         <Spinner />
       ) : (
         pumpkins.map(pumpkin => (
-          <div className="bg-white shadow overflow-visible sm:rounded-lg mb-4 flex flex-col" key={pumpkin.id}>
+          <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-4 flex flex-col" key={pumpkin.id}>
             <div className="pt-4 pr-4 pl-4 flex-grow">
               <div className="flex justify-between items-start">
                 <div className="flex-grow text-left">
