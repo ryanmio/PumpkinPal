@@ -59,36 +59,24 @@ function AddMeasurement() {
   };
 
   return (
-    <div>
-      <h2>Add a Measurement</h2>
-      <form onSubmit={addMeasurement}>
-        <label>
-          End to End:
-          <input type="number" onChange={(e) => setEndToEnd(parseFloat(e.target.value))} required />
-        </label>
-        <label>
-          Side to Side:
-          <input type="number" onChange={(e) => setSideToSide(parseFloat(e.target.value))} required />
-        </label>
-        <label>
-          Circumference:
-          <input type="number" onChange={(e) => setCircumference(parseFloat(e.target.value))} required />
-        </label>
-        <label>
-          Measurement Unit:
-          <select value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)}>
+    <div className="container mx-auto px-4 h-screen flex justify-center items-center">
+      <div className="bg-white shadow overflow-hidden rounded-lg p-4 w-full md:max-w-md">
+        <h2 className="text-2xl font-bold mb-2 text-center">Add a Measurement</h2>
+        <form onSubmit={addMeasurement} className="space-y-4">
+          <input type="number" placeholder="End to End" onChange={(e) => setEndToEnd(parseFloat(e.target.value))} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
+          <input type="number" placeholder="Side to Side" onChange={(e) => setSideToSide(parseFloat(e.target.value))} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
+          <input type="number" placeholder="Circumference" onChange={(e) => setCircumference(parseFloat(e.target.value))} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
+          <select value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)} className="mt-1 w-full p-2 border-2 border-gray-300 rounded">
             <option value="in">in</option>
             <option value="cm">cm</option>
           </select>
-        </label>
-        <label>
-          Measurement Date:
-          <DatePicker selected={measurementDate} onChange={(date) => setMeasurementDate(date)} />
-        </label>
-        <br />
-        <button type="submit">Save Measurement</button>
-        <button type="button" onClick={() => navigate('/dashboard')}>Cancel</button>
-      </form>
+          <DatePicker selected={measurementDate} onChange={(date) => setMeasurementDate(date)} className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
+          <div className="flex justify-between items-center mt-4">
+            <button type="button" onClick={() => navigate('/dashboard')} className="text-blue-600 hover:underline">Cancel</button>
+            <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Save Measurement</button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
