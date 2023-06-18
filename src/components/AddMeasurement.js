@@ -59,8 +59,8 @@ function AddMeasurement() {
   };
 
   return (
-    <div className="container mx-auto px-4 h-screen flex justify-center items-center">
-      <div className="bg-white shadow overflow-hidden rounded-lg p-4 w-full md:max-w-md">
+    <div className="container mx-auto px-4 h-screen pt-10">
+       <div className="bg-white shadow overflow-hidden rounded-lg p-4 w-full md:max-w-md mx-auto">
         <h2 className="text-2xl font-bold mb-2 text-center">Add a Measurement</h2>
         <form onSubmit={addMeasurement} className="space-y-4">
           <input type="number" placeholder="End to End" onChange={(e) => setEndToEnd(parseFloat(e.target.value))} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
