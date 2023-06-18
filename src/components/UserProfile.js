@@ -71,7 +71,7 @@ function UserProfile() {
   }
 
   return (
-  <div className="container mx-auto px-4">
+  <div className="container mx-auto px-4 h-screen">
     <h2 className="text-2xl font-bold mb-2 text-center">User Profile</h2>
     <div className="grid gap-8 md:grid-cols-2">
       <div className="bg-white shadow overflow-hidden rounded-lg p-4">
