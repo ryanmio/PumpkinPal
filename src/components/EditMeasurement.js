@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { auth, db, Timestamp } from '../firebase';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, collection, getDocs } from 'firebase/firestore';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -9,6 +9,8 @@ function EditMeasurement() {
   const { pumpkinId, measurementId } = useParams();
   const navigate = useNavigate();
 
+  const [pumpkins, setPumpkins] = useState([]);
+  const [selectedPumpkin, setSelectedPumpkin] = useState(pumpkinId);
   const [endToEnd, setEndToEnd] = useState('');
   const [sideToSide, setSideToSide] = useState('');
   const [circumference, setCircumference] = useState('');
@@ -18,6 +20,16 @@ function EditMeasurement() {
   useEffect(() => {
     const fetchMeasurement = async () => {
       if (auth.currentUser) {
+        const userRef = doc(db, 'Users', auth.currentUser.uid);
+        const userDoc = await getDoc(userRef);
+        const fetchedUnit = userDoc.exists() ? userDoc.data().preferredUnit : 'cm';
+        setMeasurementUnit(fetchedUnit);
+
+        const q = collection(db, 'Users', auth.currentUser.uid, 'Pumpkins');
+        const snapshot = await getDocs(q);
+        const pumpkinsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setPumpkins(pumpkinsData);
+
         const measurementRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', pumpkinId, 'Measurements', measurementId);
         const measurementDoc = await getDoc(measurementRef);
         if (measurementDoc.exists()) {
@@ -42,6 +54,13 @@ function EditMeasurement() {
     return weight.toFixed(2);  // round to 2 decimal places
   };
 
+  const calculateOTT = () => {
+    if(endToEnd && sideToSide && circumference) {
+      return endToEnd + sideToSide + circumference;
+    }
+    return 0;
+  };
+
   const editMeasurement = async (e) => {
     e.preventDefault();
     const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumference);
@@ -60,36 +79,27 @@ function EditMeasurement() {
   };
 
   return (
-    <div>
-      <h2>Edit Measurement</h2>
-      <form onSubmit={editMeasurement}>
-        <label>
-          End to End:
-          <input type="number" value={endToEnd} onChange={(e) => setEndToEnd(parseFloat(e.target.value))} required />
-        </label>
-        <label>
-          Side to Side:
-          <input type="number" value={sideToSide} onChange={(e) => setSideToSide(parseFloat(e.target.value))} required />
-        </label>
-        <label>
-          Circumference:
-          <input type="number" value={circumference} onChange={(e) => setCircumference(parseFloat(e.target.value))} required />
-        </label>
-        <label>
-          Measurement Unit:
-          <select value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)}>
+    <div className="container mx-auto px-4 h-screen pt-10">
+      <div className="bg-white shadow overflow-hidden rounded-lg p-4 w-full md:max-w-md mx-auto">
+        <h2 className="text-2xl font-bold mb-2 text-center">Edit Measurement</h2>
+        <form onSubmit={editMeasurement} className="space-y-4">
+          <input type="text" value={selectedPumpkin} disabled className="mt-1 w-full p-2 border-2 border-gray-300 bg-gray-200 rounded" />
+          <input type="number" placeholder="End to End" value={endToEnd} onChange={(e) => setEndToEnd(parseFloat(e.target.value))} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
+          <input type="number" placeholder="Side to Side" value={sideToSide} onChange={(e) => setSideToSide(parseFloat(e.target.value))} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
+          <input type="number" placeholder="Circumference" value={circumference} onChange={(e) => setCircumference(parseFloat(e.target.value))} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
+          <select value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)} className="mt-1 w-full p-2 border-2 border-gray-300 rounded">
             <option value="in">in</option>
             <option value="cm">cm</option>
           </select>
-        </label>
-        <label>
-          Measurement Date:
-          <DatePicker selected={measurementDate} onChange={(date) => setMeasurementDate(date)} />
-        </label>
-        <br />
-        <button type="submit">Save Changes</button>
-        <button type="button" onClick={() => navigate(`/pumpkin/${pumpkinId}`)}>Cancel</button>
-      </form>
+          <DatePicker selected={measurementDate} onChange={(date) => setMeasurementDate(date)} className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
+          <div className="flex justify-between items-center mt-4">
+            <button type="button" onClick={() => navigate(`/pumpkin/${pumpkinId}`)} className="text-blue-600 hover:underline">Cancel</button>
+            <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+              {calculateOTT() !== 0 ? `Save Changes (OTT = ${calculateOTT()})` : 'Save Changes'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
