@@ -14,43 +14,31 @@ function AddMeasurement() {
   const [endToEnd, setEndToEnd] = useState('');
   const [sideToSide, setSideToSide] = useState('');
   const [circumference, setCircumference] = useState('');
-  const [measurementUnit, setMeasurementUnit] = useState('cm'); // Changed default to 'cm' for consistency
+  const [measurementUnit, setMeasurementUnit] = useState('cm'); 
   const [measurementDate, setMeasurementDate] = useState(new Date());
 
   useEffect(() => {
-    let unsubscribe;
-    const fetchPreferencesAndPumpkins = async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async user => {
       if (user) {
         const userRef = doc(db, 'Users', user.uid);
         const userDoc = await getDoc(userRef);
-        if (userDoc.exists()) {
-          const fetchedUnit = userDoc.data().preferredUnit;
-          if (fetchedUnit) {
-            setMeasurementUnit(fetchedUnit);
-          }
-        }
-        const pumpkinsRef = collection(db, 'Users', user.uid, 'Pumpkins');
-        const pumpkinDocs = await getDocs(pumpkinsRef);
-        const pumpkinsData = pumpkinDocs.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const fetchedUnit = userDoc.exists() ? userDoc.data().preferredUnit : 'cm';
+        setMeasurementUnit(fetchedUnit);
+
+        const q = collection(db, 'Users', user.uid, 'Pumpkins');
+        const snapshot = await getDocs(q);
+        const pumpkinsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setPumpkins(pumpkinsData);
-        if (pumpkinsData.length > 0) {
-          const currentPumpkin = pumpkinsData.find(pumpkin => pumpkin.id === id);
-          setSelectedPumpkin(currentPumpkin ? currentPumpkin.id : pumpkinsData[0].id);
+
+        if (id) {
+          setSelectedPumpkin(id);
+        } else if (pumpkinsData.length > 0) {
+          setSelectedPumpkin(pumpkinsData[0].id);
         }
       }
-    };
-
-    unsubscribe = onAuthStateChanged(auth, user => {
-      fetchPreferencesAndPumpkins(user);
     });
-
-    // Clean up function
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
-  }, [id, db]);
+    return () => unsubscribe();
+  }, [id]);
 
   const calculateEstimatedWeight = (endToEnd, sideToSide, circumference) => {
     let ott = endToEnd + sideToSide + circumference;
