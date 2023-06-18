@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { collection, doc, getDocs, deleteDoc } from 'firebase/firestore';
 import Dropdown from './Dropdown';
 import Spinner from './Spinner';
-import { Plus, ViewGridAdd } from "@heroicons/react/solid"
+import { PlusIcon, TableCellsIcon } from '@heroicons/react/solid';
 
 
 function Dashboard() {
@@ -100,13 +100,13 @@ return (
             <div className="px-4 py-2 sm:px-6 flex justify-evenly">
               <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>
-                <Plus className="w-5 h-5 mr-2" />
+                <PlusIcon className="w-5 h-5 mr-2" />
                 Add Measurement
               </button>
               <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>
                 Open Detailed View
-                <ViewGridAdd className="w-5 h-5 ml-2" />
+                <TableCellsIcon className="w-5 h-5 ml-2" />
               </button>
             </div>
           </div>
@@ -116,7 +116,6 @@ return (
     </div>
   </div>
 );
-
 }
 
 export default Dashboard;
