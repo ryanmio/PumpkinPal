@@ -148,7 +148,7 @@ body {
   width: 100%;
   padding: 10px;
   margin: 20px 0;
-  background-color: #FB9336; /* Primary color for button */
+  background-color: #80876E; /* Primary color for button */
   color: white;
   border: none;
   border-radius: 3px;
@@ -173,5 +173,5 @@ body {
 }
 
 .green-button:hover {
-  background-color: #6c755e; /* a slightly darker shade for hover */
+  background-color: #6c755e !important;
 }
