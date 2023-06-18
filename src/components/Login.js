@@ -52,23 +52,21 @@ function Login() {
           <Container>
             <Row className="justify-content-center">
               <Col xs={12} className="d-flex align-items-center justify-content-center">
-                <div className="bg-white shadow-soft border rounded border-light p-4 p-lg-5 w-100 fmxw-500">
+                <div className="bg-white shadow-soft border border-light rounded p-4 p-lg-5 w-100 fmxw-500">
                   <div className="text-center text-md-center mb-4 mt-md-0">
-                    <h3 className="mb-0">Sign in to our platform</h3>
+                    <h3 className="mb-0">Sign in</h3>
                     {error && <p className="text-danger">{error}</p>}
                   </div>
                   <Form className="mt-4" onSubmit={login}>
                     <Form.Group id="email" className="mb-4">
-                      <Form.Label>Your Email</Form.Label>
                       <InputGroup>
                         <InputGroup.Text>
                           <FontAwesomeIcon icon={faEnvelope} />
                         </InputGroup.Text>
-                        <Form.Control autoFocus required type="email" placeholder="example@company.com" onChange={(e) => setEmail(e.target.value)} />
+                        <Form.Control autoFocus required type="email" placeholder="Enter Email" onChange={(e) => setEmail(e.target.value)} />
                       </InputGroup>
                     </Form.Group>
                     <Form.Group id="password" className="mb-4">
-                      <Form.Label>Your Password</Form.Label>
                       <InputGroup>
                         <InputGroup.Text>
                           <FontAwesomeIcon icon={faUnlockAlt} />
@@ -76,11 +74,11 @@ function Login() {
                         <Form.Control required type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
                       </InputGroup>
                     </Form.Group>
-                    <Form.Group className="mb-4">
-                      <FormCheck type="checkbox" id="rememberMeCheck" checked={remember} onChange={e => setRemember(e.target.checked)}>
-                        <FormCheck.Label htmlFor="rememberMeCheck">Remember me</FormCheck.Label>
-                      </FormCheck>
-                    </Form.Group>
+                    <div className="d-flex justify-content-end mb-4">
+                      <Form.Check type="checkbox" id="rememberMeCheck" checked={remember} onChange={e => setRemember(e.target.checked)}>
+                        <Form.Check.Label htmlFor="rememberMeCheck">Remember me</Form.Check.Label>
+                      </Form.Check>
+                    </div>
                     <Button variant="primary" type="submit" className="w-100">
                       Sign in
                     </Button>
@@ -93,9 +91,9 @@ function Login() {
                       </Card.Link>
                     </span>
                   </div>
-                  <Button onClick={handleForgotPassword} variant="secondary" type="button" className="w-100 mt-3">
+                  <Card.Link onClick={handleForgotPassword} className="fw-bold mt-3 text-center d-block">
                     Forgot Password?
-                  </Button>
+                  </Card.Link>
                 </div>
               </Col>
             </Row>
