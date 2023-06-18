@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { collection, doc, getDocs, deleteDoc } from 'firebase/firestore';
 import Dropdown from './Dropdown';
 import Spinner from './Spinner';
-import { PlusIcon } from '@heroicons/react/solid';
-import { TableIcon } from '@heroicons/react/outline';
+import { Plus as PlusIcon, TableCells as DetailedViewIcon } from "@heroicons/react/mini";
+
 
 function Dashboard() {
   const [email, setEmail] = useState('');
@@ -84,25 +84,29 @@ return (
         pumpkins.map(pumpkin => (
           <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-4" key={pumpkin.id}>
             <div className="px-4 py-5 sm:px-6 flex justify-between items-start">
-              <div className="flex-grow text-center">
-                <h3 className="text-lg leading-6 font-medium text-gray-900" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
-                <p className="mt-1 max-w-2xl text-sm text-gray-500">{pumpkin.description}</p>
-                {pumpkin.latestMeasurement && <p className="mt-1 max-w-2xl text-sm text-gray-500">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
-                {pumpkin.pollinated && <p className="mt-1 max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
-              </div>
               <Dropdown 
                 onAddMeasurement={() => navigate(`/add-measurement/${pumpkin.id}`)} 
                 onEdit={() => navigate(`/edit-pumpkin/${pumpkin.id}`)} 
                 onDetailedView={() => navigate(`/pumpkin/${pumpkin.id}`)} 
                 onDelete={() => deletePumpkin(pumpkin.id)} 
               />
+              <div className="flex-grow text-center">
+                <h3 className="text-lg leading-6 font-medium text-gray-900" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
+                <p className="mt-1 max-w-2xl text-sm text-gray-500">{pumpkin.description}</p>
+                {pumpkin.latestMeasurement && <p className="mt-1 max-w-2xl text-sm text-gray-500">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
+                {pumpkin.pollinated && <p className="mt-1 max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
+              </div>
             </div>
-            <div className="px-4 py-2 sm:px-6 flex justify-between">
-              <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>
-                <PlusIcon className="w-5 h-5 mr-2 -ml-1" /> Add Measurement
+            <div className="px-4 py-2 sm:px-6 flex justify-evenly">
+              <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>
+                <PlusIcon className="w-5 h-5 mr-2" />
+                Add Measurement
               </button>
-              <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>
-                Open Detailed View <TableIcon className="w-5 h-5 ml-2 -mr-1" />
+              <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>
+                Open Detailed View
+                <DetailedViewIcon className="w-5 h-5 ml-2" />
               </button>
             </div>
           </div>
