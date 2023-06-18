@@ -47,7 +47,7 @@ function Login() {
     }
 
     return (
-      <main>
+      <main style={{ minHeight: "100vh", paddingBottom: "1rem" }}>
         <section className="d-flex align-items-center my-5 mt-lg-6 mb-lg-5">
           <Container>
             <Row className="justify-content-center">
@@ -74,15 +74,16 @@ function Login() {
                         <Form.Control required type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
                       </InputGroup>
                     </Form.Group>
-                    <Row>
-                      <Col xs={6}>
+                    <Row className="align-items-center">
+                      <Col xs={6} style={{ display: 'flex', alignItems: 'center' }}>
                         <FormCheck 
                           type="checkbox" 
                           id="rememberMeCheck" 
-                          label="Remember me"
                           checked={remember} 
                           onChange={e => setRemember(e.target.checked)}
+                          style={{ marginRight: '0.5rem' }}
                         />
+                        <FormCheck.Label htmlFor="rememberMeCheck">Remember me</FormCheck.Label>
                       </Col>
                       <Col xs={6} className="text-right">
                         <Card.Link onClick={handleForgotPassword} className="fw-bold">
