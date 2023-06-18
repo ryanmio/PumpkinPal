@@ -1,0 +1,15 @@
+@keyframes pulse {
+  0% {
+    fill: #ffcc00;
+  }
+  50% {
+    fill: #ff6600;
+  }
+  100% {
+    fill: #ffcc00;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
