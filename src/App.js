@@ -57,6 +57,7 @@ function App() {
           <Route path="/" element={<Homepage />} />
           <Route path="/user-profile" element={<UserProfile />} />
           <Route path="/edit-measurement/:pumpkinId/:measurementId" element={<EditMeasurement />} />
+          <Route path="/dashboardv2" element={<Dashboardv2 />} />
         </Routes>
       </Router>
     </div>
