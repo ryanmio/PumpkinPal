@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { auth, db, Timestamp } from '../firebase';
+import { auth, db, Timestamp, onAuthStateChanged } from '../firebase';
 import { doc, getDoc, setDoc, collection, getDocs } from 'firebase/firestore';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -17,9 +17,9 @@ function AddMeasurement() {
   const [measurementUnit, setMeasurementUnit] = useState('cm'); // Changed default to 'cm' for consistency
   const [measurementDate, setMeasurementDate] = useState(new Date());
 
-   useEffect(() => {
-    const fetchPreferences = async () => {
-      const user = auth.currentUser;
+  useEffect(() => {
+    let unsubscribe;
+    const fetchPreferencesAndPumpkins = async (user) => {
       if (user) {
         const userRef = doc(db, 'Users', user.uid);
         const userDoc = await getDoc(userRef);
@@ -29,13 +29,6 @@ function AddMeasurement() {
             setMeasurementUnit(fetchedUnit);
           }
         }
-      }
-    };
-    fetchPreferences();
-
-   const fetchPumpkins = async () => {
-      const user = auth.currentUser;
-      if (user) {
         const pumpkinsRef = collection(db, 'Users', user.uid, 'Pumpkins');
         const pumpkinDocs = await getDocs(pumpkinsRef);
         const pumpkinsData = pumpkinDocs.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -46,8 +39,18 @@ function AddMeasurement() {
         }
       }
     };
-    fetchPumpkins();
-  }, [id, auth.currentUser]);
+
+    unsubscribe = onAuthStateChanged(auth, user => {
+      fetchPreferencesAndPumpkins(user);
+    });
+
+    // Clean up function
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [id, db]);
 
   const calculateEstimatedWeight = (endToEnd, sideToSide, circumference) => {
     let ott = endToEnd + sideToSide + circumference;
@@ -63,17 +66,20 @@ function AddMeasurement() {
     const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumference);
 
     const measurementId = Date.now().toString();
+    const user = auth.currentUser;
 
-    await setDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', selectedPumpkin, 'Measurements', measurementId), {
-      endToEnd,
-      sideToSide,
-      circumference,
-      measurementUnit,
-      estimatedWeight,
-      timestamp: Timestamp.fromDate(measurementDate),
-    });
+    if(user) {
+      await setDoc(doc(db, 'Users', user.uid, 'Pumpkins', selectedPumpkin, 'Measurements', measurementId), {
+        endToEnd,
+        sideToSide,
+        circumference,
+        measurementUnit,
+        estimatedWeight,
+        timestamp: Timestamp.fromDate(measurementDate),
+      });
 
-    navigate(`/pumpkin/${selectedPumpkin}`);
+      navigate(`/pumpkin/${selectedPumpkin}`);
+    }
   };
 
   return (
