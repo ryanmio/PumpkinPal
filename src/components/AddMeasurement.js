@@ -45,7 +45,7 @@ function AddMeasurement() {
       }
     };
     fetchPumpkins();
-  }, [id]);
+   }, [id, auth.currentUser]);
 
   const calculateEstimatedWeight = (endToEnd, sideToSide, circumference) => {
     let ott = endToEnd + sideToSide + circumference;
