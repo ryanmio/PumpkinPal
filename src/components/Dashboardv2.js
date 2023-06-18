@@ -97,8 +97,8 @@ return (
         <Spinner />
       ) : (
         pumpkins.map(pumpkin => (
-          <div className="bg-white shadow overflow-visible sm:rounded-lg mb-4 flex flex-col sm:overflow-hidden" key={pumpkin.id}>
-            <div className="pt-4 pr-4 pl-4 flex-grow sm:rounded-t-lg">
+          <div className="bg-white shadow overflow-visible sm:rounded-lg mb-4 flex flex-col" key={pumpkin.id}>
+            <div className="pt-4 pr-4 pl-4 flex-grow">
               <div className="flex justify-between items-start">
                 <div className="flex-grow text-left">
                   <h3 className="text-lg leading-6 font-medium text-gray-900" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
@@ -111,11 +111,11 @@ return (
                   onEdit={() => navigate(`/edit-pumpkin/${pumpkin.id}`)} 
                   onDetailedView={() => navigate(`/pumpkin/${pumpkin.id}`)} 
                   onDelete={() => deletePumpkin(pumpkin.id)} 
-                  className="pr-0 sm:pr-4" 
+                  className="pr-0" 
                 />
               </div>
             </div>
-            <div className="p-4 sm:rounded-b-lg">
+            <div className="p-4">
               <div className="w-full grid grid-cols-2 gap-2">
                 <button className="inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>
