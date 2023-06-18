@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { collection, doc, getDocs, deleteDoc } from 'firebase/firestore';
 import Dropdown from './Dropdown';
 import Spinner from './Spinner';
-import CalendarIcon from './icons/CalendarIcon';
+// import CalendarIcon from './icons/CalendarIcon';
 import PlusIcon from './icons/PlusIcon';
 import TableCellsIcon from './icons/TableCellsIcon';
 
