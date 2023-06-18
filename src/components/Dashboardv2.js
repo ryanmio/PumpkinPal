@@ -92,7 +92,7 @@ return (
         <div className="my-8 md:grid md:grid-cols-2 sm:gap-4">
           {deletionStatus && <p className="mb-4">{deletionStatus}</p>}
           {loading ? (
-            <div className="flex justify-center">
+            <div className="flex justify-center md:col-span-2">
               <Spinner />
             </div>
           ) : (
