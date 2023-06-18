@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Dropdown } from 'react-bootstrap';
 import { auth, db, query, orderBy, limit } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { collection, doc, getDocs, deleteDoc } from 'firebase/firestore';
+import Dropdown from './Dropdown';
 
 function Dashboard() {
   const [email, setEmail] = useState('');
@@ -60,49 +60,37 @@ function daysSincePollination(pollinationDateStr) {
 }
 
 return (
-  <div className="container mx-auto px-4">
-    <div className="my-8">
-      <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
-      {email ? (
-        <>
-          <p className="mb-4">Logged in as {email}</p>
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => auth.signOut()}>Logout</button>
-        </>
-      ) : (
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => navigate("/login")}>Login</button>
-      )}
-    </div>
-    <div className="my-8">
-      {deletionStatus && <p className="mb-4">{deletionStatus}</p>}
-      {pumpkins.map(pumpkin => (
-        <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-4" key={pumpkin.id}>
-          <div className="px-4 py-5 sm:px-6 flex justify-between">
-            <div>
-              <h3 className="text-lg leading-6 font-medium text-gray-900" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
-              <p className="mt-1 max-w-2xl text-sm text-gray-500">{pumpkin.description}</p>
-              {pumpkin.latestMeasurement && <p className="mt-1 max-w-2xl text-sm text-gray-500">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
-              {pumpkin.pollinated && <p className="mt-1 max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
+    <div className="container mx-auto px-4">
+      <div className="my-8">
+        <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
+        {email ? (
+          <>
+            <p className="mb-4">Logged in as {email}</p>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => auth.signOut()}>Logout</button>
+          </>
+        ) : (
+          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => navigate("/login")}>Login</button>
+        )}
+      </div>
+      <div className="my-8">
+        {deletionStatus && <p className="mb-4">{deletionStatus}</p>}
+        {pumpkins.map(pumpkin => (
+          <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-4" key={pumpkin.id}>
+            <div className="px-4 py-5 sm:px-6 flex justify-between">
+              <div>
+                <h3 className="text-lg leading-6 font-medium text-gray-900" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
+                <p className="mt-1 max-w-2xl text-sm text-gray-500">{pumpkin.description}</p>
+                {pumpkin.latestMeasurement && <p className="mt-1 max-w-2xl text-sm text-gray-500">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
+                {pumpkin.pollinated && <p className="mt-1 max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
+              </div>
+              <Dropdown onEdit={() => navigate(`/edit-pumpkin/${pumpkin.id}`)} onDelete={() => deletePumpkin(pumpkin.id)} />
             </div>
-            <Dropdown>
-              <Dropdown.Toggle variant="success" id="dropdown-basic">
-                <span className="sr-only">Open dropdown</span>
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"></path></svg>
-              </Dropdown.Toggle>
-
-              <Dropdown.Menu>
-                <Dropdown.Item onClick={() => navigate(`/edit-pumpkin/${pumpkin.id}`)}>Edit Details</Dropdown.Item>
-                <Dropdown.Item onClick={() => deletePumpkin(pumpkin.id)}>Delete</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
           </div>
-        </div>
-      ))}
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
+        ))}
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
+      </div>
     </div>
-  </div>
-);
-
-
+  );
 }
 
 export default Dashboard;
