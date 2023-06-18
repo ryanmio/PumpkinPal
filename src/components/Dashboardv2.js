@@ -82,13 +82,12 @@ return (
   <div className="container mx-auto px-4">
     <div className="my-8">
       <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
-      {email ? (
-        <p className="mb-4">Logged in as {email}</p>
-      ) : (
+      {!email && (
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => navigate("/login")}>Login</button>
       )}
+      {email && <p className="mb-4">Logged in as {email}</p>}
     </div>
-    {email ? (
+    {email && (
       <>
         <div className="my-8 md:grid md:grid-cols-2 sm:gap-4">
           {deletionStatus && <p className="mb-4">{deletionStatus}</p>}
@@ -125,8 +124,8 @@ return (
                     </button>
                     <button className="inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                       onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>
-                      <div className="w-4 h-4 mr-2 flex items-center"><EyeIcon /></div>
-                      View
+                      <div className="w-4 h-4 mr-2 flex items-center"><TableCellsIcon /></div>
+                      Detailed View
                     </button>
                   </div>
                 </div>
@@ -138,9 +137,10 @@ return (
           <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-1/2 mx-auto mb-4" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
         </div>
       </>
-    ) : null}
+    )}
   </div>
 );
+
 }
 
 export default Dashboard;
