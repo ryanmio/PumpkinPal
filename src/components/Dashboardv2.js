@@ -81,8 +81,8 @@ return (
       ) : (
         pumpkins.map(pumpkin => (
           <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-4" key={pumpkin.id}>
-            <div className="px-4 py-5 sm:px-6 flex justify-between items-center">
-              <div className="text-center">
+            <div className="px-4 py-5 sm:px-6 flex justify-start items-center">
+              <div className="flex-grow text-center">
                 <h3 className="text-lg leading-6 font-medium text-gray-900" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
                 <p className="mt-1 max-w-2xl text-sm text-gray-500">{pumpkin.description}</p>
                 {pumpkin.latestMeasurement && <p className="mt-1 max-w-2xl text-sm text-gray-500">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
@@ -102,6 +102,7 @@ return (
     </div>
   </div>
 );
+
 }
 
 export default Dashboard;
