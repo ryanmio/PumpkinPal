@@ -97,40 +97,41 @@ return (
         <Spinner />
       ) : (
         pumpkins.map(pumpkin => (
-          <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-4" key={pumpkin.id}>
-            <div className="px-4 py-5 sm:px-6 flex justify-between items-start">
-              <Dropdown 
-                onAddMeasurement={() => navigate(`/add-measurement/${pumpkin.id}`)} 
-                onEdit={() => navigate(`/edit-pumpkin/${pumpkin.id}`)} 
-                onDetailedView={() => navigate(`/pumpkin/${pumpkin.id}`)} 
-                onDelete={() => deletePumpkin(pumpkin.id)} 
-              />
-              <div className="flex-grow text-center">
-                <h3 className="text-lg leading-6 font-medium text-gray-900" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
-                <p className="mt-1 max-w-2xl text-sm text-gray-500">{pumpkin.description}</p>
-                {pumpkin.latestMeasurement && <p className="mt-1 max-w-2xl text-sm text-gray-500">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
-                {pumpkin.pollinated && <p className="mt-1 max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
+            <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-4" key={pumpkin.id}>
+              <div className="px-4 py-5 sm:px-6 flex justify-between items-start">
+                <div className="flex-grow text-center">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
+                  <p className="mt-1 max-w-2xl text-sm text-gray-500">{pumpkin.description}</p>
+                  {pumpkin.latestMeasurement && <p className="mt-1 max-w-2xl text-sm text-gray-500">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
+                  {pumpkin.pollinated && <p className="mt-1 max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
+                </div>
+                <Dropdown 
+                  onAddMeasurement={() => navigate(`/add-measurement/${pumpkin.id}`)} 
+                  onEdit={() => navigate(`/edit-pumpkin/${pumpkin.id}`)} 
+                  onDetailedView={() => navigate(`/pumpkin/${pumpkin.id}`)} 
+                  onDelete={() => deletePumpkin(pumpkin.id)} 
+                />
+              </div>
+              <div className="px-4 py-2 sm:px-6 flex justify-evenly">
+                <button className="inline-flex items-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>
+                  <PlusIcon className="w-4 h-4 mr-2" />
+                  Add Measurement
+                </button>
+                <button className="inline-flex items-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>
+                  <TableCellsIcon className="w-4 h-4 mr-2" />
+                  Detailed View
+                </button>
               </div>
             </div>
-            <div className="px-4 py-2 sm:px-6 flex justify-evenly">
-              <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>
-                <PlusIcon className="w-5 h-5 mr-2" />
-                Add Measurement
-              </button>
-              <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>
-                Open Detailed View
-                <TableCellsIcon className="w-5 h-5 ml-2" />
-              </button>
-            </div>
-          </div>
-        ))
-      )}
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
+          ))
+        )}
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
+      </div>
     </div>
-  </div>
-);
+  );
 }
 
 export default Dashboard;
+
