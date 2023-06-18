@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { auth, db, Timestamp } from '../firebase';
 import { doc, getDoc, setDoc, collection, getDocs } from 'firebase/firestore';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 function AddMeasurement() {
+  const { id } = useParams();
   const navigate = useNavigate();
 
   const [pumpkins, setPumpkins] = useState([]);
@@ -38,12 +39,13 @@ function AddMeasurement() {
         const pumpkinsData = pumpkinDocs.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setPumpkins(pumpkinsData);
         if (pumpkinsData.length > 0) {
-          setSelectedPumpkin(pumpkinsData[0].id);
+          const currentPumpkin = pumpkinsData.find(pumpkin => pumpkin.id === id);
+          setSelectedPumpkin(currentPumpkin ? currentPumpkin.id : pumpkinsData[0].id);
         }
       }
     };
     fetchPumpkins();
-  }, []);
+  }, [id]);
 
   const calculateEstimatedWeight = (endToEnd, sideToSide, circumference) => {
     let ott = endToEnd + sideToSide + circumference;
@@ -74,7 +76,7 @@ function AddMeasurement() {
 
   return (
     <div className="container mx-auto px-4 h-screen pt-10">
-      <div className="bg-white shadow overflow-hidden rounded-lg p-4 w-full md:max-w-md mx-auto">
+       <div className="bg-white shadow overflow-hidden rounded-lg p-4 w-full md:max-w-md mx-auto">
         <h2 className="text-2xl font-bold mb-2 text-center">Add a Measurement</h2>
         <form onSubmit={addMeasurement} className="space-y-4">
           <select value={selectedPumpkin} onChange={(e) => setSelectedPumpkin(e.target.value)} className="mt-1 w-full p-2 border-2 border-gray-300 rounded">
