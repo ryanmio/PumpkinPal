@@ -71,33 +71,66 @@ function UserProfile() {
   }
 
   return (
-    <div className="user-profile-container">
-      <h2>User Profile</h2>
-      <form onSubmit={updatePreferences}>
-        <label>
-          Preferred Measurement Unit:
-          <select value={preferredUnit} onChange={e => setPreferredUnit(e.target.value)}>
-            <option value="cm">cm</option>
-            <option value="in">in</option>
-          </select>
-        </label>
-        <button type="submit">Update Preferences</button>
-      </form>
-      <form onSubmit={handleChangePassword}>
-        <label>
-          Current Password:
-          <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} required />
-        </label>
-        <label>
-          New Password:
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)} required />
-        </label>
-        <label>
-          Confirm New Password:
-          <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required />
-        </label>
-        <button type="submit">Change Password</button>
-      </form>
+    <div className="user-profile-container grid grid-cols-5 gap-8">
+      <h2 className="col-span-5 xl:col-span-3 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark py-4 px-7 font-medium text-black dark:text-white">User Profile</h2>
+      <div className="settings-container col-span-5 xl:col-span-3 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+        <div className="account-info-section border-b border-stroke py-4 px-7 dark:border-strokedark">
+          <h3 className="font-medium text-black dark:text-white">Account Information</h3>
+          <form onSubmit={updatePreferences} className="p-7">
+            <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
+              <div className="w-full sm:w-1/2">
+                <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                  Email:
+                  <div className="mt-2">
+                    <div className="relative">
+                      <input type="email" value={auth.currentUser.email} readOnly className="pr-10 input box border" />
+                    </div>
+                  </div>
+                </label>
+                <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                  Preferred Measurement Unit:
+                  <div className="mt-2">
+                    <select value={preferredUnit} onChange={e => setPreferredUnit(e.target.value)} className="input box border pr-10">
+                      <option value="cm">cm</option>
+                      <option value="in">in</option>
+                    </select>
+                  </div>
+                </label>
+                <button type="submit" className="btn btn-primary mt-5">Save</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div className="change-password-section border-b border-stroke py-4 px-7 dark:border-strokedark">
+          <h3 className="font-medium text-black dark:text-white">Change Password</h3>
+          <form onSubmit={handleChangePassword} className="p-7">
+            <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
+              <div className="w-full sm:w-1/2">
+                <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                  Current Password:
+                  <div className="mt-2">
+                    <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} required className="pr-10 input box border" />
+                  </div>
+                </label>
+                <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                  New Password:
+                  <div className="mt-2">
+                    <input type="password" value={password} onChange={e => setPassword(e.target.value)} required className="pr-10 input box border" />
+                  </div>
+                </label>
+                <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                  Confirm New Password:
+                  <div className="mt-2">
+                    <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required className="pr-10 input box border" />
+                  </div>
+                </label>
+                <button type="submit" className="btn btn-primary mt-5">Change Password</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }
