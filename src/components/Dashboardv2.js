@@ -41,7 +41,7 @@ function Dashboard() {
       }
     });
     return () => unsubscribe();
-  }, []);
+}, []);
 
   async function deletePumpkin(id) {
     if (window.confirm("Are you sure you want to delete this pumpkin?")) {
@@ -61,46 +61,47 @@ function Dashboard() {
     return diffDays;
   }
 
-  return (
-    <div className="container mx-auto px-4">
-      <div className="my-8 flex flex-col items-center">
-        <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
-        {email ? (
-          <>
-            <p className="mb-4">Logged in as {email}</p>
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => auth.signOut()}>Logout</button>
-          </>
-        ) : (
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => navigate("/login")}>Login</button>
-        )}
-      </div>
-      <div className="my-8 flex flex-col items-center">
-        {deletionStatus && <p className="mb-4">{deletionStatus}</p>}
-        {loading ? (
-          <Spinner />
-        ) : (
-          pumpkins.map(pumpkin => (
-            <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-4" key={pumpkin.id}>
-              <div className="px-4 py-5 sm:px-6 flex justify-between items-center">
-                <div>
-                  <h3 className="text-lg leading-6 font-medium text-gray-900" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
-                  <p className="mt-1 max-w-2xl text-sm text-gray-500">{pumpkin.description}</p>
-                  {pumpkin.latestMeasurement && <p className="mt-1 max-w-2xl text-sm text-gray-500">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
-                  {pumpkin.pollinated && <p className="mt-1 max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
-                </div>
-                <div className="flex gap-4">
-                  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>Add Measurement</button>
-                  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>Open Detailed View</button>
-                  <Dropdown onEdit={() => navigate(`/edit-pumpkin/${pumpkin.id}`)} onDelete={() => deletePumpkin(pumpkin.id)} />
-                </div>
-              </div>
-            </div>
-          ))
-        )}
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
-      </div>
+return (
+  <div className="container mx-auto px-4">
+    <div className="my-8">
+      <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
+      {email ? (
+        <>
+          <p className="mb-4">Logged in as {email}</p>
+          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => auth.signOut()}>Logout</button>
+        </>
+      ) : (
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => navigate("/login")}>Login</button>
+      )}
     </div>
-  );
+    <div className="my-8">
+      {deletionStatus && <p className="mb-4">{deletionStatus}</p>}
+      {loading ? (
+        <Spinner />
+      ) : (
+        pumpkins.map(pumpkin => (
+          <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-4" key={pumpkin.id}>
+            <div className="px-4 py-5 sm:px-6 flex justify-between">
+              <div>
+                <h3 className="text-lg leading-6 font-medium text-gray-900" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
+                <p className="mt-1 max-w-2xl text-sm text-gray-500">{pumpkin.description}</p>
+                {pumpkin.latestMeasurement && <p className="mt-1 max-w-2xl text-sm text-gray-500">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
+                {pumpkin.pollinated && <p className="mt-1 max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
+              </div>
+              <Dropdown 
+                onAddMeasurement={() => navigate(`/add-measurement/${pumpkin.id}`)} 
+                onEdit={() => navigate(`/edit-pumpkin/${pumpkin.id}`)} 
+                onDetailedView={() => navigate(`/pumpkin/${pumpkin.id}`)} 
+                onDelete={() => deletePumpkin(pumpkin.id)} 
+              />
+            </div>
+          </div>
+        ))
+      )}
+      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
+    </div>
+  </div>
+);
 }
 
 export default Dashboard;
