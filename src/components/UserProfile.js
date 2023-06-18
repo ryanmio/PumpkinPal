@@ -71,20 +71,20 @@ function UserProfile() {
   }
 
   return (
-  <div className="user-profile-container m-auto">
-    <h2 className="text-3xl font-bold my-6 text-center">User Profile</h2>
+  <div className="container mx-auto px-4">
+    <h2 className="text-2xl font-bold mb-2 text-center">User Profile</h2>
     <div className="grid gap-8 md:grid-cols-2">
-      <div className="p-5 bg-white rounded shadow">
-        <h3 className="text-xl font-bold mb-4">Account Information</h3>
+      <div className="bg-white shadow overflow-hidden rounded-lg p-4">
+        <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Account Information</h3>
         <form onSubmit={updatePreferences} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium">
+            <label className="block text-sm font-medium text-gray-700">
               Email
             </label>
             <input type="email" value={auth.currentUser.email} readOnly className="mt-1 w-full p-2 border-2 border-gray-300 bg-gray-100 rounded" />
           </div>
           <div>
-            <label className="block text-sm font-medium">
+            <label className="block text-sm font-medium text-gray-700">
               Preferred Measurement Unit
             </label>
             <select value={preferredUnit} onChange={e => setPreferredUnit(e.target.value)} className="mt-1 w-full p-2 border-2 border-gray-300 rounded">
@@ -93,34 +93,34 @@ function UserProfile() {
             </select>
           </div>
           <div className="text-right">
-            <button type="submit" className="btn btn-primary mt-5">Save</button>
+            <button type="submit" className="inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Save</button>
           </div>
         </form>
       </div>
       
-      <div className="p-5 bg-white rounded shadow">
-        <h3 className="text-xl font-bold mb-4">Change Password</h3>
+      <div className="bg-white shadow overflow-hidden rounded-lg p-4">
+        <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Change Password</h3>
         <form onSubmit={handleChangePassword} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium">
+            <label className="block text-sm font-medium text-gray-700">
               Current Password
             </label>
             <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
           </div>
           <div>
-            <label className="block text-sm font-medium">
+            <label className="block text-sm font-medium text-gray-700">
               New Password
             </label>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
           </div>
           <div>
-            <label className="block text-sm font-medium">
+            <label className="block text-sm font-medium text-gray-700">
               Confirm New Password
             </label>
             <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
           </div>
           <div className="text-right">
-            <button type="submit" className="btn btn-primary mt-5">Change Password</button>
+            <button type="submit" className="inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Change Password</button>
           </div>
         </form>
       </div>
