@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { collection, doc, getDocs, deleteDoc } from 'firebase/firestore';
 import Dropdown from './Dropdown';
 import Spinner from './Spinner';
+import { PlusIcon } from '@heroicons/react/solid';
+import { TableIcon } from '@heroicons/react/outline';
 
 function Dashboard() {
   const [email, setEmail] = useState('');
@@ -81,7 +83,7 @@ return (
       ) : (
         pumpkins.map(pumpkin => (
           <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-4" key={pumpkin.id}>
-            <div className="px-4 py-5 sm:px-6 flex justify-start items-center">
+            <div className="px-4 py-5 sm:px-6 flex justify-between items-start">
               <div className="flex-grow text-center">
                 <h3 className="text-lg leading-6 font-medium text-gray-900" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
                 <p className="mt-1 max-w-2xl text-sm text-gray-500">{pumpkin.description}</p>
@@ -94,6 +96,14 @@ return (
                 onDetailedView={() => navigate(`/pumpkin/${pumpkin.id}`)} 
                 onDelete={() => deletePumpkin(pumpkin.id)} 
               />
+            </div>
+            <div className="px-4 py-2 sm:px-6 flex justify-between">
+              <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>
+                <PlusIcon className="w-5 h-5 mr-2 -ml-1" /> Add Measurement
+              </button>
+              <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>
+                Open Detailed View <TableIcon className="w-5 h-5 ml-2 -mr-1" />
+              </button>
             </div>
           </div>
         ))
