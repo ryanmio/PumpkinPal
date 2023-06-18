@@ -109,7 +109,7 @@ return (
                     </div>
                     <Dropdown 
                       onAddMeasurement={() => navigate(`/add-measurement/${pumpkin.id}`)} 
-                      onEdit={() => navigate(`/edit-pumpkin/${pumpkin.id}`)} // Change "Edit Pumpkin Details" to "Edit"
+                      onEdit={() => navigate(`/edit-pumpkin/${pumpkin.id}`)} 
                       onDetailedView={() => navigate(`/pumpkin/${pumpkin.id}`)} 
                       onDelete={() => deletePumpkin(pumpkin.id)} 
                       className="pr-0" 
@@ -131,7 +131,8 @@ return (
                   </div>
                 </div>
               </div>
-            ))}
+            ))
+          )}
         </div>
         <div className="my-8">
           <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-1/2 mx-auto mb-4" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
@@ -140,7 +141,6 @@ return (
     ) : null}
   </div>
 );
-
 }
 
 export default Dashboard;
