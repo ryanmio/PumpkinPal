@@ -58,7 +58,7 @@ function daysSincePollination(pollinationDateStr) {
 }
 
 return (
-  <div className="container mx-auto px-4">
+  <div className="container mx-auto px-4 bg-white">
     <div className="my-8">
       <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
       {email ? (
@@ -81,16 +81,16 @@ return (
             </button>
           </div>
           <div className="p-6">
-            <h5 className="mb-2 text-xl font-medium leading-tight text-gray-800">{pumpkin.name}</h5>
+            <h5 className="mb-2 text-xl font-bold leading-tight text-black">{pumpkin.name}</h5>
             <p className="mb-4 text-base text-gray-600">{pumpkin.description}</p>
             <p className="mb-4 text-sm text-gray-600">Maternal Lineage: {pumpkin.maternalLineage}</p>
             <p className="mb-4 text-sm text-gray-600">Paternal Lineage: {pumpkin.paternalLineage}</p>
             {pumpkin.latestMeasurement && <p className="mb-4 text-lg text-gray-800">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
             {pumpkin.pollinated && <p className="mb-4 text-sm text-gray-600">Pollinated Date: {pumpkin.pollinated}</p>}
             {pumpkin.pollinated && <p className="mb-4 text-sm text-gray-600">Days Since Pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
-            <div className="mt-4">
+            <div className="mt-4 flex">
               <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2" onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>Add Measurement</button>
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>Open Detailed View</button>
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>Open Detailed View</button>
             </div>
           </div>
           <button className="text-red-500 hover:bg-red-100 focus:outline-none p-1.5" onClick={() => deletePumpkin(pumpkin.id)}>
