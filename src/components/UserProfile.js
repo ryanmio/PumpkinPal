@@ -75,8 +75,8 @@ function UserProfile() {
     <h2 className="text-2xl font-bold mb-2 text-center">User Profile</h2>
     <div className="grid gap-8 md:grid-cols-2">
       <div className="bg-white shadow overflow-hidden rounded-lg p-4">
-        <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Account Information</h3>
-        <form onSubmit={updatePreferences} className="space-y-4">
+        <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 text-left">Account Information</h3>
+        <form onSubmit={updatePreferences} className="space-y-4 text-left">
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Email
@@ -99,25 +99,16 @@ function UserProfile() {
       </div>
       
       <div className="bg-white shadow overflow-hidden rounded-lg p-4">
-        <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Change Password</h3>
+        <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 text-left">Change Password</h3>
         <form onSubmit={handleChangePassword} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Current Password
-            </label>
-            <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
+            <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" placeholder="Current Password"/>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              New Password
-            </label>
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" placeholder="New Password"/>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Confirm New Password
-            </label>
-            <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
+            <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" placeholder="Confirm New Password"/>
           </div>
           <div className="text-right">
             <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Change Password</button>
@@ -127,6 +118,7 @@ function UserProfile() {
     </div>
   </div>
 );
+
 
 
 
