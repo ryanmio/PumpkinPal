@@ -79,19 +79,24 @@ function Dashboard() {
   }
 
 return (
-  <div className="flex items-center justify-center h-screen">
-    {email ? (
-      loading ? (
-        <Spinner />
-      ) : (
-        <div className="container mx-auto px-4">
-          <div className="my-8">
-            <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
-            <p className="mb-4">Logged in as {email}</p>
-          </div>
-          <div className="my-8 md:grid md:grid-cols-2 sm:gap-4">
-            {deletionStatus && <p className="mb-4">{deletionStatus}</p>}
-            {pumpkins.map(pumpkin => (
+  <div className="container mx-auto px-4">
+    <div className="my-8">
+      <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
+      {!email && (
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => navigate("/login")}>Login</button>
+      )}
+      {email && <p className="mb-4">Logged in as {email}</p>}
+    </div>
+    {email && (
+      <>
+        <div className="my-8 md:grid md:grid-cols-2 sm:gap-4">
+          {deletionStatus && <p className="mb-4">{deletionStatus}</p>}
+          {loading ? (
+            <div className="flex justify-center">
+              <Spinner />
+            </div>
+          ) : (
+            pumpkins.map(pumpkin => (
               <div className="bg-white shadow overflow-hidden rounded-lg mb-4 flex flex-col" key={pumpkin.id}>
                 <div className="pt-4 pr-4 pl-4 flex-grow">
                   <div className="flex justify-between items-start">
@@ -125,20 +130,13 @@ return (
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-          <div className="my-8">
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-1/2 mx-auto mb-4" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
-          </div>
+            ))
+          )}
         </div>
-      )
-    ) : (
-      <div className="container mx-auto px-4">
         <div className="my-8">
-          <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => navigate("/login")}>Login</button>
+          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-1/2 mx-auto mb-4" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
         </div>
-      </div>
+      </>
     )}
   </div>
 );
