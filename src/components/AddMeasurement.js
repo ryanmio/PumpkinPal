@@ -17,10 +17,11 @@ function AddMeasurement() {
   const [measurementUnit, setMeasurementUnit] = useState('cm'); // Changed default to 'cm' for consistency
   const [measurementDate, setMeasurementDate] = useState(new Date());
 
-  useEffect(() => {
+   useEffect(() => {
     const fetchPreferences = async () => {
-      if (auth.currentUser) {
-        const userRef = doc(db, 'Users', auth.currentUser.uid);
+      const user = auth.currentUser;
+      if (user) {
+        const userRef = doc(db, 'Users', user.uid);
         const userDoc = await getDoc(userRef);
         if (userDoc.exists()) {
           const fetchedUnit = userDoc.data().preferredUnit;
@@ -32,9 +33,10 @@ function AddMeasurement() {
     };
     fetchPreferences();
 
-    const fetchPumpkins = async () => {
-      if (auth.currentUser) {
-        const pumpkinsRef = collection(db, 'Users', auth.currentUser.uid, 'Pumpkins');
+   const fetchPumpkins = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const pumpkinsRef = collection(db, 'Users', user.uid, 'Pumpkins');
         const pumpkinDocs = await getDocs(pumpkinsRef);
         const pumpkinsData = pumpkinDocs.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setPumpkins(pumpkinsData);
@@ -45,7 +47,7 @@ function AddMeasurement() {
       }
     };
     fetchPumpkins();
-   }, [id, auth.currentUser]);
+  }, [id, auth.currentUser]);
 
   const calculateEstimatedWeight = (endToEnd, sideToSide, circumference) => {
     let ott = endToEnd + sideToSide + circumference;
