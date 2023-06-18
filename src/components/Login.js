@@ -9,6 +9,7 @@ import { Col, Row, Form, Card, Button, FormCheck, Container, InputGroup } from '
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [remember, setRemember] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
@@ -74,6 +75,11 @@ function Login() {
                         </InputGroup.Text>
                         <Form.Control required type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
                       </InputGroup>
+                    </Form.Group>
+                    <Form.Group className="mb-4">
+                      <FormCheck type="checkbox" id="rememberMeCheck" checked={remember} onChange={e => setRemember(e.target.checked)}>
+                        <FormCheck.Label htmlFor="rememberMeCheck">Remember me</FormCheck.Label>
+                      </FormCheck>
                     </Form.Group>
                     <Button variant="primary" type="submit" className="w-100">
                       Sign in
