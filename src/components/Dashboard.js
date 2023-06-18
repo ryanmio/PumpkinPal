@@ -3,11 +3,18 @@ import { auth, db, query, orderBy, limit } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { collection, doc, getDocs, deleteDoc } from 'firebase/firestore';
+import Dropdown from './Dropdown';
+import Spinner from './Spinner';
+// import CalendarIcon from './icons/CalendarIcon';
+import PlusIcon from './icons/PlusIcon';
+import TableCellsIcon from './icons/TableCellsIcon';
+
 
 function Dashboard() {
   const [email, setEmail] = useState('');
   const [pumpkins, setPumpkins] = useState([]);
   const [deletionStatus, setDeletionStatus] = useState('');
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,11 +41,11 @@ function Dashboard() {
         }
 
         setPumpkins(pumpkinsData);
+        setLoading(false);
       }
     });
     return () => unsubscribe();
 }, []);
-
 
   async function deletePumpkin(id) {
     if (window.confirm("Are you sure you want to delete this pumpkin?")) {
@@ -50,49 +57,77 @@ function Dashboard() {
     }
   }
 
-function daysSincePollination(pollinationDateStr) {
-  const pollinationDate = new Date(pollinationDateStr);
-  const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-  const now = new Date();
-  const diffDays = Math.round(Math.abs((now - pollinationDate) / oneDay)) - 1;
-  return diffDays;
-}
+  function daysSincePollination(pollinationDateStr) {
+    const pollinationDate = new Date(pollinationDateStr);
+    const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+    const now = new Date();
+    const diffDays = Math.round(Math.abs((now - pollinationDate) / oneDay)) - 1;
+    return diffDays;
+  }
 
 return (
   <div className="container mx-auto px-4">
     <div className="my-8">
       <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
-      {email ? (
-        <>
-          <p className="mb-4">Logged in as {email}</p>
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => auth.signOut()}>Logout</button>
-        </>
-      ) : (
+      {!email && (
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => navigate("/login")}>Login</button>
       )}
+      {email && <p className="mb-4">Logged in as {email}</p>}
     </div>
-    <div className="my-8">
-      {deletionStatus && <p className="mb-4">{deletionStatus}</p>}
-      {pumpkins.map(pumpkin => (
-        <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-4" key={pumpkin.id}>
-          <div className="px-4 py-5 sm:px-6">
-            <h3 className="text-lg leading-6 font-medium text-gray-900" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
-            <p className="mt-1 max-w-2xl text-sm text-gray-500">{pumpkin.description}</p>
-            {pumpkin.latestMeasurement && <p className="mt-1 max-w-2xl text-sm text-gray-500">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
-            {pumpkin.pollinated && <p className="mt-1 max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
-            <div className="mt-4">
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2" onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>Add Measurement</button>
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2" onClick={() => navigate(`/edit-pumpkin/${pumpkin.id}`)}>Edit Details</button>
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>Open Detailed View</button>
-              <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => deletePumpkin(pumpkin.id)}>Delete</button>
+    {email && (
+      <>
+        <div className="my-8 md:grid md:grid-cols-2 sm:gap-4">
+          {deletionStatus && <p className="mb-4">{deletionStatus}</p>}
+          {loading ? (
+            <div className="flex justify-center md:col-span-2">
+              <Spinner />
             </div>
-          </div>
+          ) : (
+            pumpkins.map(pumpkin => (
+              <div className="bg-white shadow overflow-hidden rounded-lg mb-4 flex flex-col" key={pumpkin.id}>
+                <div className="pt-4 pr-4 pl-4 flex-grow">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-grow text-left">
+                      <h3 className="text-lg leading-6 font-medium text-gray-900" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
+                      <p className="max-w-2xl text-sm text-gray-500">{pumpkin.description}</p>
+                      {pumpkin.latestMeasurement && <p className="max-w-2xl text-sm text-gray-500">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
+                      {pumpkin.pollinated && <p className="max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
+                    </div>
+                    <Dropdown 
+                      onAddMeasurement={() => navigate(`/add-measurement/${pumpkin.id}`)} 
+                      onEdit={() => navigate(`/edit-pumpkin/${pumpkin.id}`)} 
+                      onDetailedView={() => navigate(`/pumpkin/${pumpkin.id}`)} 
+                      onDelete={() => deletePumpkin(pumpkin.id)} 
+                      className="pr-0" 
+                    />
+                  </div>
+                </div>
+                <div className="p-4">
+                  <div className="w-full grid grid-cols-2 gap-2">
+                    <button className="inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>
+                      <PlusIcon className="w-4 h-4 mr-2" />
+                      Add Measurement
+                    </button>
+                    <button className="inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>
+                      <TableCellsIcon className="w-4 h-4 mr-2" />
+                      Detailed View
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
-      ))}
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
-    </div>
+        <div className="my-8">
+          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-1/2 mx-auto mb-4" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
+        </div>
+      </>
+    )}
   </div>
 );
+
 
 }
 
