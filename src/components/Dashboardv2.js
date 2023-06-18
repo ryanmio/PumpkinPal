@@ -97,7 +97,7 @@ return (
         <Spinner />
       ) : (
         pumpkins.map(pumpkin => (
-          <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-4 flex flex-col" key={pumpkin.id}>
+          <div className="bg-white shadow overflow-hidden rounded-lg mb-4 flex flex-col" key={pumpkin.id}>
             <div className="pt-4 pr-4 pl-4 flex-grow">
               <div className="flex justify-between items-start">
                 <div className="flex-grow text-left">
@@ -108,7 +108,7 @@ return (
                 </div>
                 <Dropdown 
                   onAddMeasurement={() => navigate(`/add-measurement/${pumpkin.id}`)} 
-                  onEdit={() => navigate(`/edit-pumpkin/${pumpkin.id}`)} 
+                  onEdit={() => navigate(`/edit-pumpkin/${pumpkin.id}`)} // Change "Edit Pumpkin Details" to "Edit"
                   onDetailedView={() => navigate(`/pumpkin/${pumpkin.id}`)} 
                   onDelete={() => deletePumpkin(pumpkin.id)} 
                   className="pr-0" 
