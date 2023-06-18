@@ -61,34 +61,40 @@ function Dashboard() {
   }
 
 return (
-    <div className="container mx-auto px-4">
-      <div className="my-8">
-  {deletionStatus && <p className="mb-4">{deletionStatus}</p>}
-  {loading ? (
-    <button className="bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed" disabled>
-      <svg className="animate-spin h-5 w-5 mr-3 ..." viewBox="0 0 24 24">
-        <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12c0 1.33.26 2.61.74 3.77.1.24.26.47.42.69l1.42-1.42c-.16-.37-.28-.76-.28-1.18 0-3.31 2.69-6 6-6s6 2.69 6 6-2.69 6-6 6c-1.3 0-2.48-.41-3.47-1.11l-1.42 1.42C8.6 20.6 10.2 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-3.87 0-7-3.13-7-7 0-.62.08-1.21.21-1.79l2.98 2.98c.36.36 .86.59 1.41.59 1.1 0 2-.9 2-2 0-.55-.23-1.04-.59-1.41L4.2 8.21C4.78 7.08 5.86 6 7 6c3.87 0 7 3.13 7 7s-3.13 7-7 7z"/>
-      </svg>
-      Loading...
-    </button>
-  ) : (
-    pumpkins.map(pumpkin => (
-      <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-4" key={pumpkin.id}>
-        <div className="px-4 py-5 sm:px-6 flex justify-between">
-          <div>
-            <h3 className="text-lg leading-6 font-medium text-gray-900" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
-            <p className="mt-1 max-w-2xl text-sm text-gray-500">{pumpkin.description}</p>
-            {pumpkin.latestMeasurement && <p className="mt-1 max-w-2xl text-sm text-gray-500">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
-            {pumpkin.pollinated && <p className="mt-1 max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
+  <div className="container mx-auto px-4">
+    <div className="my-8">
+      <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
+      {email ? (
+        <>
+          <p className="mb-4">Logged in as {email}</p>
+          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => auth.signOut()}>Logout</button>
+        </>
+      ) : (
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => navigate("/login")}>Login</button>
+      )}
+    </div>
+    <div className="my-8">
+      {deletionStatus && <p className="mb-4">{deletionStatus}</p>}
+      {loading ? (
+        <Spinner />
+      ) : (
+        pumpkins.map(pumpkin => (
+          <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-4" key={pumpkin.id}>
+            <div className="px-4 py-5 sm:px-6 flex justify-between">
+              <div>
+                <h3 className="text-lg leading-6 font-medium text-gray-900" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
+                <p className="mt-1 max-w-2xl text-sm text-gray-500">{pumpkin.description}</p>
+                {pumpkin.latestMeasurement && <p className="mt-1 max-w-2xl text-sm text-gray-500">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
+                {pumpkin.pollinated && <p className="mt-1 max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
+              </div>
+              <Dropdown onEdit={() => navigate(`/edit-pumpkin/${pumpkin.id}`)} onDelete={() => deletePumpkin(pumpkin.id)} />
+            </div>
           </div>
-          <Dropdown onEdit={() => navigate(`/edit-pumpkin/${pumpkin.id}`)} onDelete={() => deletePumpkin(pumpkin.id)} />
-        </div>
-      </div>
-    ))
-  )}
-  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
-</div>
-</div>
+        ))
+      )}
+      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
+    </div>
+  </div>
 );
 }
 
