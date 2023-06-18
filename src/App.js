@@ -15,6 +15,7 @@ import PumpkinDetail from './components/PumpkinDetail';
 import Homepage from './components/Homepage';
 import UserProfile from './components/UserProfile';
 import EditMeasurement from './components/EditMeasurement';
+import Dashboardv2 from './components/Dashboardv2';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
