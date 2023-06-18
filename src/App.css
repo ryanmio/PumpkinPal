@@ -165,3 +165,13 @@ body {
   border-bottom: 1px solid #ccc; /* Border at the bottom */
   margin: 20px 0; /* Some margin at the top and bottom */
 }
+
+
+
+.green-button {
+  background-color: #80876E;
+}
+
+.green-button:hover {
+  background-color: #6c755e; /* a slightly darker shade for hover */
+}
