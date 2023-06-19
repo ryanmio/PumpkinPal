@@ -112,7 +112,7 @@ return (
           <p>Maternal Lineage: {pumpkin?.maternalLineage}</p>
           <p>Paternal Lineage: {pumpkin?.paternalLineage}</p>
         </div>
-        <button onClick={() => navigate(`/edit-pumpkin/${id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4 self-end">Edit Info</button>
+        <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4 self-end">Edit Info</button>
       </div>
 
       {/* Card 2: Key Dates */}
@@ -124,7 +124,7 @@ return (
           <p>Pollinated: {new Date(pumpkin?.pollinated.seconds * 1000).toLocaleDateString()}</p>
           <p>Weigh-off: {new Date(pumpkin?.weighOff.seconds * 1000).toLocaleDateString()}</p>
         </div>
-        <button onClick={() => navigate(`/edit-pumpkin/${id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4 self-end">Edit Dates</button>
+        <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4 self-end">Edit Dates</button>
       </div>
 
       {/* Card 3: Measurements */}
