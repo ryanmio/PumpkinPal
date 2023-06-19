@@ -48,14 +48,30 @@ function PumpkinForm() {
         <h2 className="text-2xl font-bold mb-2 text-center">Add a Pumpkin</h2>
         {error && <p className="text-red-600">{error}</p>}
         <form onSubmit={addPumpkin} className="space-y-4">
+          <label className="block">Name</label>
           <input type="text" placeholder="Bear Swipe" value={name} onChange={(e) => setName(e.target.value)} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
+          
+          <label className="block">Description</label>
           <textarea placeholder="150 patch" value={description} onChange={(e) => setDescription(e.target.value)} className="mt-1 w-full p-2 border-2 border-gray-300 rounded"></textarea>
+          
+          <label className="block">Maternal Lineage</label>
           <input type="text" placeholder="1375 Connolly" value={maternalLineage} onChange={(e) => setMaternalLineage(e.target.value)} className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
+          
+          <label className="block">Paternal Lineage</label>
           <input type="text" placeholder="1676 New" value={paternalLineage} onChange={(e) => setPaternalLineage(e.target.value)} className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
+          
+          <label className="block">Seed Started Date</label>
           <DatePicker selected={seedStarted} onChange={(date) => setSeedStarted(date)} className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
+          
+          <label className="block">Transplant Out Date</label>
           <DatePicker selected={transplantOut} onChange={(date) => setTransplantOut(date)} className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
+          
+          <label className="block">Pollinated Date</label>
           <DatePicker selected={pollinated} onChange={(date) => setPollinated(date)} className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
+          
+          <label className="block">Weigh-Off Date</label>
           <DatePicker selected={weighOff} onChange={(date) => setWeighOff(date)} className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
+          
           <div className="flex justify-between items-center mt-4">
             <button type="button" onClick={() => navigate('/dashboard')} className="text-blue-600 hover:underline">Cancel</button>
             <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
