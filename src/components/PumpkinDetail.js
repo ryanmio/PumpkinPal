@@ -159,7 +159,7 @@ return (
         <table className="w-full mt-4">
           <thead>
             <tr>
-              <th style={{ minWidth: '200px !important' }}>Date</th>
+              <th className="whitespace-nowrap min-w-max w-[200px]">Date</th>
               <th>End to End</th>
               <th>Side to Side</th>
               <th>Circ.</th>
@@ -172,7 +172,7 @@ return (
           <tbody>
               {measurements && measurements.map(measurement => (
                 <tr key={measurement.id}>
-                  <td>{measurement.timestamp}</td>
+                  <td className="whitespace-nowrap">{measurement.timestamp}</td>
                   <td>{measurement.endToEnd}</td>
                   <td>{measurement.sideToSide}</td>
                   <td>{measurement.circumference}</td>
