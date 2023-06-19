@@ -159,13 +159,15 @@ const exportData = async () => {
         </table>
           </div>
 
-          {/* Card 4: Graph */}
+           {/* Card 4: Graph */}
           <div className="bg-white shadow rounded-lg p-4">
             <h3 className="text-xl font-bold mb-2">Graph</h3>
             <Line data={chartData} />
           </div>
-        </div>
+        </div> {/* <- Add closing div tag here */}
+      </div> {/* <- Add closing div tag here */}
+    </div>
   );
 }
 
-export default PumpkinDetail;
+export default PumpkinDetail; 
