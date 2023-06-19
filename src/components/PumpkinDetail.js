@@ -149,10 +149,10 @@ return (
         <div className="bg-white shadow rounded-lg p-4 flex flex-col">
           <div className="mb-auto">
             <h3 className="text-xl font-bold mb-2">Key Dates</h3>
-            <p>Seed Started: {pumpkin?.seedStarted?.toDate().toLocaleDateString()}</p>
-            <p>Transplant Out: {pumpkin?.transplantOut?.toDate().toLocaleDateString()}</p>
-            <p>Pollinated: {pumpkin?.pollinated?.toDate().toLocaleDateString()}</p>
-            <p>Weigh-off: {pumpkin?.weighOff?.toDate().toLocaleDateString()}</p>
+            <p>Seed Started: {pumpkin?.seedStarted}</p>
+            <p>Transplant Out: {pumpkin?.transplantOut}</p>
+            <p>Pollinated: {pumpkin?.pollinated}</p>
+            <p>Weigh-off: {pumpkin?.weighOff}</p>
           </div>
           <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4 self-end">Edit Dates</button>
         </div>
