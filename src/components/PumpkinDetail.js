@@ -159,7 +159,7 @@ return (
         <table className="w-full mt-4">
           <thead>
             <tr>
-              <th className="min-w-32">Date</th>
+              <th style={{ minWidth: '200px !important' }}>Date</th>
               <th>End to End</th>
               <th>Side to Side</th>
               <th>Circ.</th>
