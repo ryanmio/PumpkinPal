@@ -100,7 +100,7 @@ const exportData = async () => {
 
 
 return (
-    <div className="container mx-auto px-4 h-screen pt-10 min-h-screen flex flex-col">
+    <div className="container mx-auto px-4 pt-10 flex flex-col">
     <h2 className="text-2xl font-bold mb-2 text-center">Pumpkin Detail</h2>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow">
 
@@ -131,7 +131,7 @@ return (
             {/* Card 3: Measurements */}
       <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-scroll">
         <h3 className="text-xl font-bold mb-2">Measurements</h3>
-        <div className="flex space-x-4 justify-end">
+        <div className="flex space-x-4 justify-center">
           <button onClick={() => navigate(`/add-measurement/${id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Add Measurement</button>
           <button onClick={exportData} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export Data</button>
         </div>
