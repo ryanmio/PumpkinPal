@@ -98,23 +98,39 @@ const exportData = async () => {
 };
 
 
+ return (
+    <div className="container mx-auto px-4 h-screen pt-10">
+      <div className="bg-white shadow overflow-hidden rounded-lg p-4 w-full md:max-w-md mx-auto">
+        <h2 className="text-2xl font-bold mb-2 text-center">Pumpkin Detail</h2>
 
-return (
-  <div className="container mx-auto px-4 h-screen pt-10">
-    <div className="bg-white shadow overflow-hidden rounded-lg p-4 w-full md:max-w-md mx-auto">
-      <h2 className="text-2xl font-bold mb-2 text-center">Pumpkin Detail</h2>
+        <div className="space-y-4">
+          {/* Card 1: Basic Info */}
+          <div className="bg-white shadow rounded-lg p-4">
+            <h3 className="text-xl font-bold mb-2">Basic Info</h3>
+            <p>Name: {pumpkin?.name}</p>
+            <p>Description: {pumpkin?.description}</p>
+            <p>Maternal Lineage: {pumpkin?.maternalLineage}</p>
+            <p>Paternal Lineage: {pumpkin?.paternalLineage}</p>
+            <button onClick={() => navigate(`/edit-pumpkin/${id}`)} className="green-button">Edit Pumpkin</button>
+          </div>
 
-      <div className="space-y-4">
-        <h3 className="text-xl font-bold mb-2">Basic Info</h3>
-        <p>Name: {pumpkin?.name}</p>
-        <p>Description: {pumpkin?.description}</p>
-        <button onClick={() => navigate(`/edit-pumpkin/${id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Edit Pumpkin</button>
+          {/* Card 2: Key Dates */}
+          <div className="bg-white shadow rounded-lg p-4">
+            <h3 className="text-xl font-bold mb-2">Key Dates</h3>
+            <p>Seed Started: {new Date(pumpkin?.seedStarted.seconds * 1000).toLocaleDateString()}</p>
+            <p>Transplant Out: {new Date(pumpkin?.transplantOut.seconds * 1000).toLocaleDateString()}</p>
+            <p>Pollinated: {new Date(pumpkin?.pollinated.seconds * 1000).toLocaleDateString()}</p>
+            <p>Weigh-off: {new Date(pumpkin?.weighOff.seconds * 1000).toLocaleDateString()}</p>
+            <button onClick={() => navigate(`/edit-pumpkin/${id}`)} className="green-button">Edit Pumpkin</button>
+          </div>
 
-        <h3 className="text-xl font-bold mb-2">Measurements</h3>
-        <button onClick={() => navigate(`/add-measurement/${id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Add Measurement</button>
-        <button onClick={exportData} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export Data</button>
-        {alert && <div className="alert">{alert}</div>}
-        <table className="w-full mt-4 border-2 border-gray-300 rounded shadow">
+          {/* Card 3: Measurements */}
+          <div className="bg-white shadow rounded-lg p-4">
+            <h3 className="text-xl font-bold mb-2">Measurements</h3>
+            <button onClick={() => navigate(`/add-measurement/${id}`)} className="green-button">Add Measurement</button>
+            <button onClick={exportData} className="green-button">Export Data</button>
+            {alert && <div className="alert">{alert}</div>}
+            <table className="w-full mt-4 border-2 border-gray-300 rounded shadow">
           <thead>
             <tr>
               <th>Date</th>
@@ -142,10 +158,16 @@ return (
             ))}
           </tbody>
         </table>
+          </div>
+
+          {/* Card 4: Graph */}
+          <div className="bg-white shadow rounded-lg p-4">
+            <h3 className="text-xl font-bold mb-2">Graph</h3>
+            <Line data={chartData} />
+          </div>
         </div>
-      <Line data={chartData} />
+      </div>
     </div>
-</div>
   );
 }
 
