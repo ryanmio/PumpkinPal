@@ -20,16 +20,16 @@ useEffect(() => {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
-        if (data.seedStarted && typeof data.seedStarted === 'object' && 'seconds' in data.seedStarted && 'nanoseconds' in data.seedStarted) {
+        if (data.seedStarted) {
           data.seedStarted = data.seedStarted.toDate();
         }
-        if (data.transplantOut && typeof data.transplantOut === 'object' && 'seconds' in data.transplantOut && 'nanoseconds' in data.transplantOut) {
+        if (data.transplantOut) {
           data.transplantOut = data.transplantOut.toDate();
         }
-        if (data.pollinated && typeof data.pollinated === 'object' && 'seconds' in data.pollinated && 'nanoseconds' in data.pollinated) {
+        if (data.pollinated) {
           data.pollinated = data.pollinated.toDate();
         }
-        if (data.weighOff && typeof data.weighOff === 'object' && 'seconds' in data.weighOff && 'nanoseconds' in data.weighOff) {
+        if (data.weighOff) {
           data.weighOff = data.weighOff.toDate();
         }
         setPumpkin(data);
@@ -43,7 +43,7 @@ useEffect(() => {
         let measurementData = [];
         snapshot.forEach((doc) => {
           const data = doc.data();
-          if (data.timestamp && typeof data.timestamp === 'object' && 'seconds' in data.timestamp && 'nanoseconds' in data.timestamp) {
+          if (data.timestamp) {
             data.timestamp = data.timestamp.toDate();
           }
           measurementData.push({ id: doc.id, ...data });
