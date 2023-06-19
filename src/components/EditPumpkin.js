@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { auth, db } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
@@ -7,6 +7,7 @@ function EditPumpkin() {
   const { id } = useParams();
   const [pumpkin, setPumpkin] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     // Add the auth state observer
@@ -76,7 +77,7 @@ function EditPumpkin() {
           </div>
 
           <div className="flex justify-between items-center mt-4">
-            <button type="button" onClick={() => navigate('/dashboard')} className="text-blue-600 hover:underline">Back to Dashboard</button>
+            <button type="button" onClick={() => navigate(location.state?.from || '/dashboard')} className="text-blue-600 hover:underline">Go Back</button>
             <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
               Save Changes
             </button>
