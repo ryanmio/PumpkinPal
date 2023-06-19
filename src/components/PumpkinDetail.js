@@ -15,13 +15,9 @@ function PumpkinDetail() {
 // Helper function to format a date string as Month D, YYYY
 function formatDate(dateString) {
   const date = new Date(dateString);
-  if (isNaN(date.getTime())) { // check if date is invalid
-    return 'not set';
-  }
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return date.toLocaleDateString(undefined, options);
 }
-
 
 
 // Fetch the pumpkin data
@@ -32,18 +28,10 @@ useEffect(() => {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
-        if (data.seedStarted) {
-          data.seedStarted = data.seedStarted ? formatDate(new Date(data.seedStarted)) : 'not set';
-        }
-        if (data.transplantOut) {
-          data.transplantOut = data.transplantOut ? formatDate(new Date(data.transplantOut)) : 'not set';
-        }
-        if (data.pollinated) {
-          data.pollinated = data.pollinated ? formatDate(new Date(data.pollinated)) : 'not set';
-        }
-        if (data.weighOff) {
-          data.weighOff = data.weighOff ? formatDate(new Date(data.weighOff)) : 'not set';
-        }
+        data.seedStarted = data.seedStarted && data.seedStarted !== "" ? formatDate(new Date(data.seedStarted)) : 'not set';
+        data.transplantOut = data.transplantOut && data.transplantOut !== "" ? formatDate(new Date(data.transplantOut)) : 'not set';
+        data.pollinated = data.pollinated && data.pollinated !== "" ? formatDate(new Date(data.pollinated)) : 'not set';
+        data.weighOff = data.weighOff && data.weighOff !== "" ? formatDate(new Date(data.weighOff)) : 'not set';
         setPumpkin(data);
       }
 
