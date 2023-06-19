@@ -9,11 +9,19 @@ function EditPumpkin() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchPumpkin = async () => {
-      const pumpkinDoc = await getDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id));
-      setPumpkin({ ...pumpkinDoc.data(), id: pumpkinDoc.id });
-    };
-    fetchPumpkin();
+    // Add the auth state observer
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        const fetchPumpkin = async () => {
+          const pumpkinDoc = await getDoc(doc(db, 'Users', user.uid, 'Pumpkins', id));
+          setPumpkin({ ...pumpkinDoc.data(), id: pumpkinDoc.id });
+        };
+        fetchPumpkin();
+      }
+    });
+
+    // Unsubscribe from the observer when the component is unmounted
+    return () => unsubscribe();
   }, [id]);
 
   const handleChange = (e) => {
@@ -22,7 +30,9 @@ function EditPumpkin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await updateDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id), pumpkin);
+    if (auth.currentUser) {
+      await updateDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id), pumpkin);
+    }
     navigate(`/dashboard`);
   };
 
