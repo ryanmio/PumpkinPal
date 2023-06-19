@@ -15,9 +15,13 @@ function PumpkinDetail() {
 // Helper function to format a date string as Month D, YYYY
 function formatDate(dateString) {
   const date = new Date(dateString);
+  if (isNaN(date.getTime())) { // check if date is invalid
+    return 'not set';
+  }
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return date.toLocaleDateString(undefined, options);
 }
+
 
 
 // Fetch the pumpkin data
