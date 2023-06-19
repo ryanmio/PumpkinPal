@@ -13,33 +13,41 @@ function PumpkinDetail() {
   const location = useLocation();
 
   // Fetch the pumpkin data
-  useEffect(() => {
-    const fetchPumpkin = async () => {
-      if(auth.currentUser) {
-        const docRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setPumpkin(docSnap.data());
-        }
-
-        // Define a Firestore query to retrieve the pumpkin's measurements ordered by timestamp
-        const measurementsQuery = query(collection(db, 'Users', auth.currentUser.uid, 'Pumpkins', id, 'Measurements'), orderBy('timestamp'));
-  
-        // Subscribe to the measurements in real time
-        onSnapshot(measurementsQuery, (snapshot) => {
-          let measurementData = [];
-          snapshot.forEach((doc) => {
-            measurementData.push({ id: doc.id, ...doc.data() });
-          });
-          setMeasurements(measurementData);
-          // console.log("Measurements: ", measurementData);  // Check what's logged
-        });
+useEffect(() => {
+  const fetchPumpkin = async () => {
+    if(auth.currentUser) {
+      const docRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        data.seedStarted = data.seedStarted?.toDate();
+        data.transplantOut = data.transplantOut?.toDate();
+        data.pollinated = data.pollinated?.toDate();
+        data.weighOff = data.weighOff?.toDate();
+        setPumpkin(data);
       }
-    };
-    auth.onAuthStateChanged((user) => {
-      if (user) fetchPumpkin();
-    });
-  }, [id]);
+
+      // Define a Firestore query to retrieve the pumpkin's measurements ordered by timestamp
+      const measurementsQuery = query(collection(db, 'Users', auth.currentUser.uid, 'Pumpkins', id, 'Measurements'), orderBy('timestamp'));
+
+      // Subscribe to the measurements in real time
+      onSnapshot(measurementsQuery, (snapshot) => {
+        let measurementData = [];
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          data.timestamp = data.timestamp?.toDate();
+          measurementData.push({ id: doc.id, ...data });
+        });
+        setMeasurements(measurementData);
+        // console.log("Measurements: ", measurementData);  // Check what's logged
+      });
+    }
+  };
+  auth.onAuthStateChanged((user) => {
+    if (user) fetchPumpkin();
+  });
+}, [id]);
+
 
   // Prepare the data for the chart
   const chartData = {
@@ -101,7 +109,7 @@ const exportData = async () => {
 
 return (
     <div className="container mx-auto px-4 pt-10 flex flex-col">
-    <h2 className="text-2xl font-bold mb-2 text-center">{pumpkin?.name} Detail</h2>
+    <h2 className="text-2xl font-bold mb-4 text-center">{pumpkin?.name} Details</h2>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow">
 
       {/* Card 1: Basic Info */}
@@ -116,17 +124,17 @@ return (
         <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4 self-end">Edit Info</button>
       </div>
 
-      {/* Card 2: Key Dates */}
-      <div className="bg-white shadow rounded-lg p-4 flex flex-col">
-        <div className="mb-auto">
-          <h3 className="text-xl font-bold mb-2">Key Dates</h3>
-          <p>Seed Started: {new Date(pumpkin?.seedStarted.seconds * 1000).toLocaleDateString()}</p>
-          <p>Transplant Out: {new Date(pumpkin?.transplantOut.seconds * 1000).toLocaleDateString()}</p>
-          <p>Pollinated: {new Date(pumpkin?.pollinated.seconds * 1000).toLocaleDateString()}</p>
-          <p>Weigh-off: {new Date(pumpkin?.weighOff.seconds * 1000).toLocaleDateString()}</p>
+          {/* Card 2: Key Dates */}
+        <div className="bg-white shadow rounded-lg p-4 flex flex-col">
+          <div className="mb-auto">
+            <h3 className="text-xl font-bold mb-2">Key Dates</h3>
+            <p>Seed Started: {pumpkin?.seedStarted?.toDate().toLocaleDateString()}</p>
+            <p>Transplant Out: {pumpkin?.transplantOut?.toDate().toLocaleDateString()}</p>
+            <p>Pollinated: {pumpkin?.pollinated?.toDate().toLocaleDateString()}</p>
+            <p>Weigh-off: {pumpkin?.weighOff?.toDate().toLocaleDateString()}</p>
+          </div>
+          <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4 self-end">Edit Dates</button>
         </div>
-        <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4 self-end">Edit Dates</button>
-      </div>
 
             {/* Card 3: Measurements */}
       <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-scroll">
