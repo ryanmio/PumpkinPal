@@ -46,19 +46,20 @@ useEffect(() => {
       // Define a Firestore query to retrieve the pumpkin's measurements ordered by timestamp
       const measurementsQuery = query(collection(db, 'Users', auth.currentUser.uid, 'Pumpkins', id, 'Measurements'), orderBy('timestamp'));
 
-      // Subscribe to the measurements in real time
-    onSnapshot(measurementsQuery, (snapshot) => {
-      let measurementData = [];
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        if (data.timestamp) {
-          data.timestamp = formatDate(new Date(data.timestamp.seconds * 1000));
-        }
-        measurementData.push({ id: doc.id, ...data });
-      });
-      setMeasurements(measurementData);
-      // console.log("Measurements: ", measurementData);  // Check what's logged
-    });
+   // Subscribe to the measurements in real time
+onSnapshot(measurementsQuery, (snapshot) => {
+  let measurementData = [];
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+    if (data.timestamp) {
+      data.timestamp = formatDate(data.timestamp.toDate());
+    }
+    measurementData.push({ id: doc.id, ...data });
+  });
+  setMeasurements(measurementData);
+  // console.log("Measurements: ", measurementData);  // Check what's logged
+});
+
     }
   };
   auth.onAuthStateChanged((user) => {
@@ -168,9 +169,9 @@ return (
               <th className="w-1/7">Date</th>
               <th className="w-1/7">End to End</th>
               <th className="w-1/7">Side to Side</th>
-              <th className="w-1/7">Circumference</th>
-              <th className="w-1/7">Measurement Unit</th>
-              <th className="w-1/7">Estimated Weight</th>
+              <th className="w-1/7">Circ.</th>
+              <th className="w-1/7">Units</th>
+              <th className="w-1/7">OTT Weight</th>
               <th className="w-1/7">Edit</th>
               <th className="w-1/7">Delete</th>
             </tr>
