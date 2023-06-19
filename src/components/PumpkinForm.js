@@ -48,35 +48,35 @@ function PumpkinForm() {
         <h2 className="text-2xl font-bold mb-2 text-center">Add a Pumpkin</h2>
         {error && <p className="text-red-600">{error}</p>}
         <form onSubmit={addPumpkin} className="space-y-4">
-          <label>Name:</label>
+          <label className="block text-left">Name:</label>
           <input type="text" placeholder="Bear Swipe" value={name} onChange={(e) => setName(e.target.value)} required className="w-full p-2 border-2 border-gray-300 rounded" />
           
-          <label>Description:</label>
+          <label className="block text-left">Description:</label>
           <textarea placeholder="150 patch" value={description} onChange={(e) => setDescription(e.target.value)} className="w-full p-2 border-2 border-gray-300 rounded"></textarea>
           
-          <label>Maternal Lineage:</label>
+          <label className="block text-left">Maternal Lineage:</label>
           <input type="text" placeholder="1375 Connolly" value={maternalLineage} onChange={(e) => setMaternalLineage(e.target.value)} className="w-full p-2 border-2 border-gray-300 rounded" />
 
-          <label>Paternal Lineage:</label>
+          <label className="block text-left">Paternal Lineage:</label>
           <input type="text" placeholder="1676 New" value={paternalLineage} onChange={(e) => setPaternalLineage(e.target.value)} className="w-full p-2 border-2 border-gray-300 rounded" />
           
-          <div className="flex justify-between items-center">
-            <label>Seed Started:</label>
+          <div className="flex justify-start items-center space-x-1">
+            <label className="text-left">Seed Started:</label>
             <DatePicker selected={seedStarted} onChange={(date) => setSeedStarted(date)} className="w-1/2 p-2 border-2 border-gray-300 rounded" />
           </div>
           
-          <div className="flex justify-between items-center">
-            <label>Transplant Out:</label>
+          <div className="flex justify-start items-center space-x-1">
+            <label className="text-left">Transplant Out:</label>
             <DatePicker selected={transplantOut} onChange={(date) => setTransplantOut(date)} className="w-1/2 p-2 border-2 border-gray-300 rounded" />
           </div>
           
-          <div className="flex justify-between items-center">
-            <label>Pollinated:</label>
+          <div className="flex justify-start items-center space-x-1">
+            <label className="text-left">Pollinated:</label>
             <DatePicker selected={pollinated} onChange={(date) => setPollinated(date)} className="w-1/2 p-2 border-2 border-gray-300 rounded" />
           </div>
           
-          <div className="flex justify-between items-center">
-            <label>Weigh-Off:</label>
+          <div className="flex justify-start items-center space-x-1">
+            <label className="text-left">Weigh-Off:</label>
             <DatePicker selected={weighOff} onChange={(date) => setWeighOff(date)} className="w-1/2 p-2 border-2 border-gray-300 rounded" />
           </div>
 
