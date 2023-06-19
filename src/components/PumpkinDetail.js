@@ -12,7 +12,7 @@ function PumpkinDetail() {
   const [alert, setAlert] = useState(null);
   const location = useLocation();
 
-  // Fetch the pumpkin data
+// Fetch the pumpkin data
 useEffect(() => {
   const fetchPumpkin = async () => {
     if(auth.currentUser) {
@@ -20,10 +20,18 @@ useEffect(() => {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
-        data.seedStarted = data.seedStarted?.toDate();
-        data.transplantOut = data.transplantOut?.toDate();
-        data.pollinated = data.pollinated?.toDate();
-        data.weighOff = data.weighOff?.toDate();
+        if (data.seedStarted && 'seconds' in data.seedStarted && 'nanoseconds' in data.seedStarted) {
+          data.seedStarted = data.seedStarted.toDate();
+        }
+        if (data.transplantOut && 'seconds' in data.transplantOut && 'nanoseconds' in data.transplantOut) {
+          data.transplantOut = data.transplantOut.toDate();
+        }
+        if (data.pollinated && 'seconds' in data.pollinated && 'nanoseconds' in data.pollinated) {
+          data.pollinated = data.pollinated.toDate();
+        }
+        if (data.weighOff && 'seconds' in data.weighOff && 'nanoseconds' in data.weighOff) {
+          data.weighOff = data.weighOff.toDate();
+        }
         setPumpkin(data);
       }
 
@@ -35,7 +43,9 @@ useEffect(() => {
         let measurementData = [];
         snapshot.forEach((doc) => {
           const data = doc.data();
-          data.timestamp = data.timestamp?.toDate();
+          if (data.timestamp && 'seconds' in data.timestamp && 'nanoseconds' in data.timestamp) {
+            data.timestamp = data.timestamp.toDate();
+          }
           measurementData.push({ id: doc.id, ...data });
         });
         setMeasurements(measurementData);
