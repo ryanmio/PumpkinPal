@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase';
 import { collection, doc, getDoc, query, orderBy, deleteDoc, onSnapshot } from 'firebase/firestore';
 import { Line } from 'react-chartjs-2';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+
 
 function PumpkinDetail() {
   const { id } = useParams();
@@ -10,6 +12,7 @@ function PumpkinDetail() {
   const [measurements, setMeasurements] = useState([]);
   const navigate = useNavigate();
   const [alert, setAlert] = useState(null);
+  const location = useLocation();
 
   // Fetch the pumpkin data
   useEffect(() => {
