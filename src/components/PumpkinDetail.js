@@ -28,18 +28,20 @@ useEffect(() => {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
-         if (data.seedStarted) {
-            data.seedStarted = data.seedStarted ? formatDate(new Date(data.seedStarted.seconds * 1000)) : 'not set';
-          }
-          if (data.transplantOut) {
-            data.transplantOut = data.transplantOut ? formatDate(new Date(data.transplantOut.seconds * 1000)) : 'not set';
-          }
-          if (data.pollinated) {
-            data.pollinated = data.pollinated ? formatDate(new Date(data.pollinated.seconds * 1000)) : 'not set';
-          }
-          if (data.weighOff) {
-            data.weighOff = data.weighOff ? formatDate(new Date(data.weighOff.seconds * 1000)) : 'not set';
-          }
+        if (data.seedStarted) {
+        data.seedStarted = data.seedStarted ? formatDate(new Date(data.seedStarted.seconds * 1000)) : 'not set';
+      }
+      if (data.transplantOut) {
+        data.transplantOut = data.transplantOut ? formatDate(new Date(data.transplantOut.seconds * 1000)) : 'not set';
+      }
+      if (data.pollinated) {
+        data.pollinated = data.pollinated ? formatDate(new Date(data.pollinated.seconds * 1000)) : 'not set';
+      }
+      if (data.weighOff) {
+        data.weighOff = data.weighOff ? formatDate(new Date(data.weighOff.seconds * 1000)) : 'not set';
+      }
+        setPumpkin(data);
+      }
 
       // Define a Firestore query to retrieve the pumpkin's measurements ordered by timestamp
       const measurementsQuery = query(collection(db, 'Users', auth.currentUser.uid, 'Pumpkins', id, 'Measurements'), orderBy('timestamp'));
@@ -132,7 +134,7 @@ return (
       <div className="bg-white shadow rounded-lg p-4 flex flex-col">
         <div className="mb-auto">
           <h3 className="text-xl font-bold mb-2">Basic Info</h3>
-            <p><b>Name:</b> {pumpkin?.name}</p>
+          <p><b>Name:</b> {pumpkin?.name}</p>
           <p><b>Description:</b> {pumpkin?.description}</p>
           <p><b>Maternal Lineage:</b> {pumpkin?.maternalLineage}</p>
           <p><b>Paternal Lineage:</b> {pumpkin?.paternalLineage}</p>
@@ -145,9 +147,9 @@ return (
           <div className="mb-auto">
             <h3 className="text-xl font-bold mb-2">Key Dates</h3>
             <p><b>Seed Started:</b> {pumpkin?.seedStarted}</p>
-              <p><b>Transplant Out:</b> {pumpkin?.transplantOut}</p>
-              <p><b>Pollinated:</b> {pumpkin?.pollinated}</p>
-              <p><b>Weigh-off:</b> {pumpkin?.weighOff}</p>
+            <p><b>Transplant Out:</b> {pumpkin?.transplantOut}</p>
+            <p><b>Pollinated:</b> {pumpkin?.pollinated}</p>
+            <p><b>Weigh-off:</b> {pumpkin?.weighOff}</p>
           </div>
           <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4 self-end">Edit Dates</button>
         </div>
@@ -163,25 +165,25 @@ return (
         <table className="w-full mt-4">
           <thead>
             <tr>
-              <th className="w-1/7">Date</th>
-              <th className="w-1/7">End to End</th>
-              <th className="w-1/7">Side to Side</th>
-              <th className="w-1/7">Circumference</th>
-              <th className="w-1/7">Measurement Unit</th>
-              <th className="w-1/7">Estimated Weight</th>
-              <th className="w-1/7">Edit</th>
-              <th className="w-1/7">Delete</th>
+              <th>Date</th>
+              <th>End to End</th>
+              <th>Side to Side</th>
+              <th>Circumference</th>
+              <th>Measurement Unit</th>
+              <th>Estimated Weight</th>
+              <th>Edit</th>
+              <th>Delete</th>
             </tr>
           </thead>
           <tbody>
               {measurements && measurements.map(measurement => (
                 <tr key={measurement.id}>
-                  <td>{measurement.timestamp}</td>
-                  <td>{measurement.endToEnd}</td>
-                  <td>{measurement.sideToSide}</td>
-                  <td>{measurement.circumference}</td>
-                  <td>{measurement.measurementUnit}</td>
-                  <td>{measurement.estimatedWeight}</td>
+                  <th className="w-1/7">{measurement.timestamp}</td>
+                  <th className="w-1/7">{measurement.endToEnd}</td>
+                  <th className="w-1/7">{measurement.sideToSide}</td>
+                  <th className="w-1/7">{measurement.circumference}</td>
+                  <th className="w-1/7">{measurement.measurementUnit}</td>
+                  <th className="w-1/7">{measurement.estimatedWeight}</td>
                   <td><button onClick={() => navigate(`/edit-measurement/${id}/${measurement.id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Edit</button></td>
                   <td><button onClick={() => deleteMeasurement(measurement.id)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Delete</button></td>
                 </tr>
