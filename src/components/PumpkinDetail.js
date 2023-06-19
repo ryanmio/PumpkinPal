@@ -12,6 +12,17 @@ function PumpkinDetail() {
   const [alert, setAlert] = useState(null);
   const location = useLocation();
 
+// Helper function to format a date string as YYYY-MM-DD
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  let month = '' + (date.getMonth() + 1);
+  let day = '' + date.getDate();
+  if (month.length < 2) month = '0' + month;
+  if (day.length < 2) day = '0' + day;
+  return [year, month, day].join('-');
+}
+
 // Fetch the pumpkin data
 useEffect(() => {
   const fetchPumpkin = async () => {
@@ -21,16 +32,16 @@ useEffect(() => {
       if (docSnap.exists()) {
         const data = docSnap.data();
         if (data.seedStarted) {
-          data.seedStarted = data.seedStarted.toDate();
+          data.seedStarted = formatDate(data.seedStarted);
         }
         if (data.transplantOut) {
-          data.transplantOut = data.transplantOut.toDate();
+          data.transplantOut = formatDate(data.transplantOut);
         }
         if (data.pollinated) {
-          data.pollinated = data.pollinated.toDate();
+          data.pollinated = formatDate(data.pollinated);
         }
         if (data.weighOff) {
-          data.weighOff = data.weighOff.toDate();
+          data.weighOff = formatDate(data.weighOff);
         }
         setPumpkin(data);
       }
@@ -44,7 +55,7 @@ useEffect(() => {
         snapshot.forEach((doc) => {
           const data = doc.data();
           if (data.timestamp) {
-            data.timestamp = data.timestamp.toDate();
+            data.timestamp = formatDate(data.timestamp);
           }
           measurementData.push({ id: doc.id, ...data });
         });
