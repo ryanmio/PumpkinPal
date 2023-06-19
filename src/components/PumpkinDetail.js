@@ -147,5 +147,4 @@ const exportData = async () => {
   );
 }
 
-
 export default PumpkinDetail;
