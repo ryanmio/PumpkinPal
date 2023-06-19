@@ -148,13 +148,14 @@ return (
         </div>
 
             {/* Card 3: Measurements */}
-      <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-scroll">
+      <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto">
         <h3 className="text-xl font-bold mb-2">Measurements</h3>
         <div className="flex space-x-4 justify-center">
           <button onClick={() => navigate(`/add-measurement/${id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Add Measurement</button>
           <button onClick={exportData} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export Data</button>
         </div>
         {alert && <div className="alert">{alert}</div>}
+<div className="overflow-x-auto">
         <table className="w-full mt-4">
           <thead>
             <tr>
@@ -183,6 +184,7 @@ return (
               ))}
             </tbody>
         </table>
+      </div>
       </div>
 
       {/* Card 4: Graph */}
