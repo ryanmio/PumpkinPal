@@ -61,18 +61,18 @@ onSnapshot(measurementsQuery, (snapshot) => {
 
 
   // Prepare the data for the chart
-  const chartData = {
-    labels: measurements?.map(m => new Date(m.timestamp.seconds * 1000).toLocaleDateString()),
-    datasets: [
-      {
-        label: 'Estimated Weight over Time (lbs)',
-        data: measurements?.map(m => m.estimatedWeight),
-        fill: false,
-        backgroundColor: 'rgb(75, 192, 192)',
-        borderColor: 'rgba(75, 192, 192, 0.2)',
-      },
-    ],
-  };
+const chartData = {
+  labels: measurements?.map(m => m.timestamp),
+  datasets: [
+    {
+      label: 'Estimated Weight over Time (lbs)',
+      data: measurements?.map(m => m.estimatedWeight),
+      fill: false,
+      backgroundColor: 'rgb(75, 192, 192)',
+      borderColor: 'rgba(75, 192, 192, 0.2)',
+    },
+  ],
+};
 
   const deleteMeasurement = async (measurementId) => {
     if (window.confirm("Are you sure you want to delete this measurement?")) {
@@ -159,7 +159,7 @@ return (
         <table className="w-full mt-4">
           <thead>
             <tr>
-              <th className="whitespace-nowrap min-w-max w-[200px]">Date</th>
+              <th className="whitespace-nowrap min-w-max w-[100px]">Date</th>
               <th>End to End</th>
               <th>Side to Side</th>
               <th>Circ.</th>
