@@ -159,14 +159,14 @@ return (
         <table className="w-full mt-4">
           <thead>
             <tr>
-              <th className="w-2/7">Date</th>
-              <th className="w-1/7">End to End</th>
-              <th className="w-1/7">Side to Side</th>
-              <th className="w-1/7">Circ.</th>
-              <th className="w-1/7">Units</th>
-              <th className="w-1/7">OTT Weight</th>
-              <th className="w-1/14">Edit</th>
-              <th className="w-1/14">Delete</th>
+              <th className="min-w-32">Date</th>
+              <th>End to End</th>
+              <th>Side to Side</th>
+              <th>Circ.</th>
+              <th>Units</th>
+              <th>OTT Weight</th>
+              <th>Edit</th>
+              <th>Delete</th>
             </tr>
           </thead>
           <tbody>
