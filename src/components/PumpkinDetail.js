@@ -165,8 +165,6 @@ const exportData = async () => {
             <Line data={chartData} />
           </div>
         </div>
-      </div>
-    </div>
   );
 }
 
