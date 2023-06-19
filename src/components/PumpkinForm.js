@@ -60,31 +60,29 @@ function PumpkinForm() {
           <label>Paternal Lineage:</label>
           <input type="text" placeholder="1676 New" value={paternalLineage} onChange={(e) => setPaternalLineage(e.target.value)} className="w-full p-2 border-2 border-gray-300 rounded" />
           
-          <div className="flex justify-between items-center">
+          <div className="flex justify-start items-center space-x-2">
             <label>Seed Started:</label>
             <DatePicker selected={seedStarted} onChange={(date) => setSeedStarted(date)} className="w-1/2 p-2 border-2 border-gray-300 rounded" />
           </div>
           
-          <div className="flex justify-between items-center">
+          <div className="flex justify-start items-center space-x-2">
             <label>Transplant Out:</label>
             <DatePicker selected={transplantOut} onChange={(date) => setTransplantOut(date)} className="w-1/2 p-2 border-2 border-gray-300 rounded" />
           </div>
           
-          <div className="flex justify-between items-center">
+          <div className="flex justify-start items-center space-x-2">
             <label>Pollinated:</label>
             <DatePicker selected={pollinated} onChange={(date) => setPollinated(date)} className="w-1/2 p-2 border-2 border-gray-300 rounded" />
           </div>
           
-          <div className="flex justify-between items-center">
+          <div className="flex justify-start items-center space-x-2">
             <label>Weigh-Off:</label>
             <DatePicker selected={weighOff} onChange={(date) => setWeighOff(date)} className="w-1/2 p-2 border-2 border-gray-300 rounded" />
           </div>
 
           <div className="flex justify-between items-center mt-4">
             <button type="button" onClick={() => navigate('/dashboard')} className="text-blue-600 hover:underline">Cancel</button>
-            <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-              Add Pumpkin
-            </button>
+            <button type="submit" className="bg-green-500 hover:bg-green-600 px-4 py-2 text-white rounded">Add Pumpkin</button>
           </div>
         </form>
       </div>
@@ -92,4 +90,4 @@ function PumpkinForm() {
   );
 }
 
-export default PumpkinForm;
+export default PumpkinForm;;
