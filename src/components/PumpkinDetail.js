@@ -100,42 +100,47 @@ const exportData = async () => {
 
 
  return (
-    <div>
-      <h2>Pumpkin Detail</h2>
-      <p>Name: {pumpkin?.name}</p>
-      <p>Description: {pumpkin?.description}</p>
-      <button onClick={() => navigate(`/edit-pumpkin/${id}`)}>Edit Pumpkin</button>
-      <h3>Measurements</h3>
-      <button onClick={() => navigate(`/add-measurement/${id}`)}>Add Measurement</button>
-      <button onClick={exportData}>Export Data</button>
-      {alert && <div className="alert">{alert}</div>}
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>End to End</th>
-            <th>Side to Side</th>
-            <th>Circumference</th>
-            <th>Measurement Unit</th>
-            <th>Estimated Weight</th>
-            <th>Edit</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody>
-          {measurements && measurements.map(measurement => (
-            <tr key={measurement.id}>
-              <td>{new Date(measurement.timestamp.seconds * 1000).toLocaleDateString()}</td>
-              <td>{measurement.endToEnd}</td>
-              <td>{measurement.sideToSide}</td>
-              <td>{measurement.circumference}</td>
-              <td>{measurement.measurementUnit}</td>
-              <td>{measurement.estimatedWeight}</td>
-              <td><button onClick={() => navigate(`/edit-measurement/${id}/${measurement.id}`)}>Edit</button></td>
-              <td><button onClick={() => deleteMeasurement(measurement.id)}>Delete</button></td>
-            </tr>
-          ))}
-        </tbody>
+    <div className="container mx-auto px-4 h-screen pt-10">
+      <div className="bg-white shadow overflow-hidden rounded-lg p-4 w-full md:max-w-md mx-auto">
+        <h2 className="text-2xl font-bold mb-2 text-center">Pumpkin Detail</h2>
+
+        <div className="space-y-4">
+          <h3 className="text-xl font-bold mb-2">Basic Info</h3>
+          <p>Name: {pumpkin?.name}</p>
+          <p>Description: {pumpkin?.description}</p>
+          <button onClick={() => navigate(`/edit-pumpkin/${id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Edit Pumpkin</button>
+
+          <h3 className="text-xl font-bold mb-2">Measurements</h3>
+          <button onClick={() => navigate(`/add-measurement/${id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Add Measurement</button>
+          <button onClick={exportData} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export Data</button>
+          {alert && <div className="alert">{alert}</div>}
+          <table className="w-full mt-4 border-2 border-gray-300 rounded shadow">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>End to End</th>
+                <th>Side to Side</th>
+                <th>Circumference</th>
+                <th>Measurement Unit</th>
+                <th>Estimated Weight</th>
+                <th>Edit</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              {measurements && measurements.map(measurement => (
+                <tr key={measurement.id}>
+                  <td>{new Date(measurement.timestamp.seconds * 1000).toLocaleDateString()}</td>
+                  <td>{measurement.endToEnd}</td>
+                  <td>{measurement.sideToSide}</td>
+                  <td>{measurement.circumference}</td>
+                  <td>{measurement.measurementUnit}</td>
+                  <td>{measurement.estimatedWeight}</td>
+                  <td><button onClick={() => navigate(`/edit-measurement/${id}/${measurement.id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Edit</button></td>
+                  <td><button onClick={() => deleteMeasurement(measurement.id)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Delete</button></td>
+                </tr>
+              ))}
+            </tbody>
       </table>
       <Line data={chartData} />
     </div>
