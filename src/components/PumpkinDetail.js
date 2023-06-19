@@ -50,18 +50,18 @@ useEffect(() => {
       const measurementsQuery = query(collection(db, 'Users', auth.currentUser.uid, 'Pumpkins', id, 'Measurements'), orderBy('timestamp'));
 
       // Subscribe to the measurements in real time
-      onSnapshot(measurementsQuery, (snapshot) => {
-        let measurementData = [];
-        snapshot.forEach((doc) => {
-          const data = doc.data();
-          if (data.timestamp) {
-            data.timestamp = formatDate(data.timestamp);
-          }
-          measurementData.push({ id: doc.id, ...data });
-        });
-        setMeasurements(measurementData);
-        // console.log("Measurements: ", measurementData);  // Check what's logged
+    onSnapshot(measurementsQuery, (snapshot) => {
+      let measurementData = [];
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.timestamp) {
+          data.timestamp = formatDate(new Date(data.timestamp.seconds * 1000));
+        }
+        measurementData.push({ id: doc.id, ...data });
       });
+      setMeasurements(measurementData);
+      // console.log("Measurements: ", measurementData);  // Check what's logged
+    });
     }
   };
   auth.onAuthStateChanged((user) => {
@@ -179,19 +179,19 @@ return (
             </tr>
           </thead>
           <tbody>
-            {measurements && measurements.map(measurement => (
-              <tr key={measurement.id}>
-                <td>{new Date(measurement.timestamp.seconds * 1000).toLocaleDateString()}</td>
-                <td>{measurement.endToEnd}</td>
-                <td>{measurement.sideToSide}</td>
-                <td>{measurement.circumference}</td>
-                <td>{measurement.measurementUnit}</td>
-                <td>{measurement.estimatedWeight}</td>
-                <td><button onClick={() => navigate(`/edit-measurement/${id}/${measurement.id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Edit</button></td>
-                <td><button onClick={() => deleteMeasurement(measurement.id)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Delete</button></td>
-              </tr>
-            ))}
-          </tbody>
+              {measurements && measurements.map(measurement => (
+                <tr key={measurement.id}>
+                  <td>{measurement.timestamp}</td>
+                  <td>{measurement.endToEnd}</td>
+                  <td>{measurement.sideToSide}</td>
+                  <td>{measurement.circumference}</td>
+                  <td>{measurement.measurementUnit}</td>
+                  <td>{measurement.estimatedWeight}</td>
+                  <td><button onClick={() => navigate(`/edit-measurement/${id}/${measurement.id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Edit</button></td>
+                  <td><button onClick={() => deleteMeasurement(measurement.id)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Delete</button></td>
+                </tr>
+              ))}
+            </tbody>
         </table>
       </div>
 
