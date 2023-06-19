@@ -144,6 +144,7 @@ return (
         </table>
       <Line data={chartData} />
     </div>
+</div>
   );
 }
 
