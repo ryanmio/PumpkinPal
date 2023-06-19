@@ -104,13 +104,17 @@ return (
                 </div>
                 <div className="p-4">
                   <div className="w-full grid grid-cols-2 gap-2">
-                    <button className="inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}>
-                      <PlusIcon className="w-4 h-4 mr-2" />
-                      Add Measurement
-                    </button>
-                    <button className="inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>
+                    <button 
+                          className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                          onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}
+                        >
+                     <PlusIcon className="w-4 h-4 mr-2" />
+                          Add Measurement
+                        </button>
+                        <button 
+                          className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                          onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}
+                        >
                       <TableCellsIcon className="w-4 h-4 mr-2" />
                       Detailed View
                     </button>
@@ -121,7 +125,10 @@ return (
           )}
         </div>
         <div className="my-8">
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-1/2 mx-auto mb-4" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
+         <button 
+  className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-1/2 mx-auto mb-4" 
+  onClick={() => navigate('/add-pumpkin')}
+>
         </div>
       </>
     )}
