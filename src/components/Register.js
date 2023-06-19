@@ -5,7 +5,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
-import { Col, Row, Form, Card, Button, Container, InputGroup } from '@themesberg/react-bootstrap';
+import { Col, Row, Form, Card, Container, InputGroup } from '@themesberg/react-bootstrap';
 
 function Register() {
     const [email, setEmail] = useState('');
