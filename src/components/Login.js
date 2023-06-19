@@ -92,12 +92,12 @@ function Login() {
                       </Col>
                     </Row>
                     <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-100 mt-3">
-                  Sign in&nbsp;
+                  Sign in
                 </button>
                   </Form>
                   <div className="d-flex justify-content-center align-items-center mt-4">
                     <span className="fw-normal">
-                      Not registered? 
+                      Not registered?&nbsp;
                       <Card.Link onClick={() => navigate('/register')} className="fw-bold">
                         {`Create account `}
                       </Card.Link>
