@@ -12,16 +12,13 @@ function PumpkinDetail() {
   const [alert, setAlert] = useState(null);
   const location = useLocation();
 
-// Helper function to format a date string as YYYY-MM-DD
+// Helper function to format a date string as Month D, YYYY
 function formatDate(dateString) {
   const date = new Date(dateString);
-  const year = date.getFullYear();
-  let month = '' + (date.getMonth() + 1);
-  let day = '' + date.getDate();
-  if (month.length < 2) month = '0' + month;
-  if (day.length < 2) day = '0' + day;
-  return [year, month, day].join('-');
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return date.toLocaleDateString(undefined, options);
 }
+
 
 // Fetch the pumpkin data
 useEffect(() => {
@@ -31,20 +28,18 @@ useEffect(() => {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
-        if (data.seedStarted) {
-          data.seedStarted = formatDate(data.seedStarted);
-        }
-        if (data.transplantOut) {
-          data.transplantOut = formatDate(data.transplantOut);
-        }
-        if (data.pollinated) {
-          data.pollinated = formatDate(data.pollinated);
-        }
-        if (data.weighOff) {
-          data.weighOff = formatDate(data.weighOff);
-        }
-        setPumpkin(data);
-      }
+         if (data.seedStarted) {
+            data.seedStarted = data.seedStarted ? formatDate(new Date(data.seedStarted.seconds * 1000)) : 'not set';
+          }
+          if (data.transplantOut) {
+            data.transplantOut = data.transplantOut ? formatDate(new Date(data.transplantOut.seconds * 1000)) : 'not set';
+          }
+          if (data.pollinated) {
+            data.pollinated = data.pollinated ? formatDate(new Date(data.pollinated.seconds * 1000)) : 'not set';
+          }
+          if (data.weighOff) {
+            data.weighOff = data.weighOff ? formatDate(new Date(data.weighOff.seconds * 1000)) : 'not set';
+          }
 
       // Define a Firestore query to retrieve the pumpkin's measurements ordered by timestamp
       const measurementsQuery = query(collection(db, 'Users', auth.currentUser.uid, 'Pumpkins', id, 'Measurements'), orderBy('timestamp'));
@@ -137,10 +132,10 @@ return (
       <div className="bg-white shadow rounded-lg p-4 flex flex-col">
         <div className="mb-auto">
           <h3 className="text-xl font-bold mb-2">Basic Info</h3>
-          <p>Name: {pumpkin?.name}</p>
-          <p>Description: {pumpkin?.description}</p>
-          <p>Maternal Lineage: {pumpkin?.maternalLineage}</p>
-          <p>Paternal Lineage: {pumpkin?.paternalLineage}</p>
+            <p><b>Name:</b> {pumpkin?.name}</p>
+          <p><b>Description:</b> {pumpkin?.description}</p>
+          <p><b>Maternal Lineage:</b> {pumpkin?.maternalLineage}</p>
+          <p><b>Paternal Lineage:</b> {pumpkin?.paternalLineage}</p>
         </div>
         <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4 self-end">Edit Info</button>
       </div>
@@ -149,10 +144,10 @@ return (
         <div className="bg-white shadow rounded-lg p-4 flex flex-col">
           <div className="mb-auto">
             <h3 className="text-xl font-bold mb-2">Key Dates</h3>
-            <p>Seed Started: {pumpkin?.seedStarted}</p>
-            <p>Transplant Out: {pumpkin?.transplantOut}</p>
-            <p>Pollinated: {pumpkin?.pollinated}</p>
-            <p>Weigh-off: {pumpkin?.weighOff}</p>
+            <p><b>Seed Started:</b> {pumpkin?.seedStarted}</p>
+              <p><b>Transplant Out:</b> {pumpkin?.transplantOut}</p>
+              <p><b>Pollinated:</b> {pumpkin?.pollinated}</p>
+              <p><b>Weigh-off:</b> {pumpkin?.weighOff}</p>
           </div>
           <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4 self-end">Edit Dates</button>
         </div>
@@ -168,14 +163,14 @@ return (
         <table className="w-full mt-4">
           <thead>
             <tr>
-              <th>Date</th>
-              <th>End to End</th>
-              <th>Side to Side</th>
-              <th>Circumference</th>
-              <th>Measurement Unit</th>
-              <th>Estimated Weight</th>
-              <th>Edit</th>
-              <th>Delete</th>
+              <th className="w-1/7">Date</th>
+              <th className="w-1/7">End to End</th>
+              <th className="w-1/7">Side to Side</th>
+              <th className="w-1/7">Circumference</th>
+              <th className="w-1/7">Measurement Unit</th>
+              <th className="w-1/7">Estimated Weight</th>
+              <th className="w-1/7">Edit</th>
+              <th className="w-1/7">Delete</th>
             </tr>
           </thead>
           <tbody>
