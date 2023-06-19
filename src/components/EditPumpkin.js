@@ -8,7 +8,6 @@ function EditPumpkin() {
   const [pumpkin, setPumpkin] = useState(null);
   const navigate = useNavigate();
 
-  // Load the existing pumpkin data from Firestore when the page mounts.
   useEffect(() => {
     const fetchPumpkin = async () => {
       const pumpkinDoc = await getDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id));
@@ -17,12 +16,10 @@ function EditPumpkin() {
     fetchPumpkin();
   }, [id]);
 
-  // Handle changes to the form inputs, updating the state variable.
   const handleChange = (e) => {
     setPumpkin({ ...pumpkin, [e.target.name]: e.target.value });
   };
 
-  // Handle the form submission, updating the pumpkin document in Firestore with the new values.
   const handleSubmit = async (e) => {
     e.preventDefault();
     await updateDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id), pumpkin);
@@ -32,42 +29,51 @@ function EditPumpkin() {
   if (!pumpkin) return 'Loading...';
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Name:
-        <input name="name" value={pumpkin.name} onChange={handleChange} required />
-      </label>
-      <label>
-        Description:
-        <textarea name="description" value={pumpkin.description} onChange={handleChange} />
-      </label>
-      <label>
-        Maternal Lineage:
-        <input name="maternalLineage" value={pumpkin.maternalLineage} onChange={handleChange} />
-      </label>
-      <label>
-        Paternal Lineage:
-        <input name="paternalLineage" value={pumpkin.paternalLineage} onChange={handleChange} />
-      </label>
-      <label>
-        Seed Started Date:
-        <input type="date" name="seedStarted" value={pumpkin.seedStarted} onChange={handleChange} />
-      </label>
-      <label>
-        Transplant Out Date:
-        <input type="date" name="transplantOut" value={pumpkin.transplantOut} onChange={handleChange} />
-      </label>
-      <label>
-        Pollinated Date:
-        <input type="date" name="pollinated" value={pumpkin.pollinated} onChange={handleChange} />
-      </label>
-      <label>
-        Weigh-Off Date:
-        <input type="date" name="weighOff" value={pumpkin.weighOff} onChange={handleChange} />
-      </label>
-      <button type="submit">Save Changes</button>
-      <button onClick={() => navigate('/dashboard')}>Back to Dashboard</button>
-    </form>
+    <div className="container mx-auto px-4 h-screen pt-10">
+      <div className="bg-white shadow overflow-hidden rounded-lg p-6 w-full md:max-w-md mx-auto">
+        <h2 className="text-2xl font-bold mb-2 text-center">Edit a Pumpkin</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <label className="block text-left">Name:</label>
+          <input name="name" value={pumpkin.name} onChange={handleChange} required className="w-full p-2 border-2 border-gray-300 rounded" />
+          
+          <label className="block text-left">Description:</label>
+          <textarea name="description" value={pumpkin.description} onChange={handleChange} className="w-full p-2 border-2 border-gray-300 rounded" />
+          
+          <label className="block text-left">Maternal Lineage:</label>
+          <input name="maternalLineage" value={pumpkin.maternalLineage} onChange={handleChange} className="w-full p-2 border-2 border-gray-300 rounded" />
+
+          <label className="block text-left">Paternal Lineage:</label>
+          <input name="paternalLineage" value={pumpkin.paternalLineage} onChange={handleChange} className="w-full p-2 border-2 border-gray-300 rounded" />
+          
+          <div className="grid grid-cols-2 gap-1">
+            <label className="text-left">Seed Started:</label>
+            <input type="date" name="seedStarted" value={pumpkin.seedStarted} onChange={handleChange} className="w-full p-2 border-2 border-gray-300 rounded" />
+          </div>
+          
+          <div className="grid grid-cols-2 gap-1">
+            <label className="text-left">Transplant Out:</label>
+            <input type="date" name="transplantOut" value={pumpkin.transplantOut} onChange={handleChange} className="w-full p-2 border-2 border-gray-300 rounded" />
+          </div>
+          
+          <div className="grid grid-cols-2 gap-1">
+            <label className="text-left">Pollinated:</label>
+            <input type="date" name="pollinated" value={pumpkin.pollinated} onChange={handleChange} className="w-full p-2 border-2 border-gray-300 rounded" />
+          </div>
+          
+          <div className="grid grid-cols-2 gap-1">
+            <label className="text-left">Weigh-Off:</label>
+            <input type="date" name="weighOff" value={pumpkin.weighOff} onChange={handleChange} className="w-full p-2 border-2 border-gray-300 rounded" />
+          </div>
+
+          <div className="flex justify-between items-center mt-4">
+            <button type="button" onClick={() => navigate('/dashboard')} className="text-blue-600 hover:underline">Back to Dashboard</button>
+            <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }
 
