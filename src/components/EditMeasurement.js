@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { auth, db, Timestamp } from '../firebase';
-import { doc, getDoc, updateDoc, collection, getDocs } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -9,8 +9,6 @@ function EditMeasurement() {
   const { pumpkinId, measurementId } = useParams();
   const navigate = useNavigate();
 
-  const [pumpkins, setPumpkins] = useState([]);
-  const [selectedPumpkin, setSelectedPumpkin] = useState(pumpkinId);
   const [endToEnd, setEndToEnd] = useState('');
   const [sideToSide, setSideToSide] = useState('');
   const [circumference, setCircumference] = useState('');
@@ -20,16 +18,6 @@ function EditMeasurement() {
   useEffect(() => {
     const fetchMeasurement = async () => {
       if (auth.currentUser) {
-        const userRef = doc(db, 'Users', auth.currentUser.uid);
-        const userDoc = await getDoc(userRef);
-        const fetchedUnit = userDoc.exists() ? userDoc.data().preferredUnit : 'cm';
-        setMeasurementUnit(fetchedUnit);
-
-        const q = collection(db, 'Users', auth.currentUser.uid, 'Pumpkins');
-        const snapshot = await getDocs(q);
-        const pumpkinsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setPumpkins(pumpkinsData);
-
         const measurementRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', pumpkinId, 'Measurements', measurementId);
         const measurementDoc = await getDoc(measurementRef);
         if (measurementDoc.exists()) {
@@ -83,7 +71,7 @@ function EditMeasurement() {
       <div className="bg-white shadow overflow-hidden rounded-lg p-4 w-full md:max-w-md mx-auto">
         <h2 className="text-2xl font-bold mb-2 text-center">Edit Measurement</h2>
         <form onSubmit={editMeasurement} className="space-y-4">
-          <input type="text" value={selectedPumpkin} disabled className="mt-1 w-full p-2 border-2 border-gray-300 bg-gray-200 rounded" />
+          <input type="text" value={pumpkinId} disabled className="mt-1 w-full p-2 border-2 border-gray-300 bg-gray-200 rounded" />
           <input type="number" placeholder="End to End" value={endToEnd} onChange={(e) => setEndToEnd(parseFloat(e.target.value))} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
           <input type="number" placeholder="Side to Side" value={sideToSide} onChange={(e) => setSideToSide(parseFloat(e.target.value))} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
           <input type="number" placeholder="Circumference" value={circumference} onChange={(e) => setCircumference(parseFloat(e.target.value))} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" />
