@@ -98,37 +98,43 @@ const exportData = async () => {
 };
 
 
- return (
-    <div className="container mx-auto px-4 h-screen pt-10">
-      <h2 className="text-2xl font-bold mb-2 text-center">Pumpkin Detail</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+return (
+  <div className="container mx-auto px-4 h-screen pt-10 min-h-screen flex flex-col">
+    <h2 className="text-2xl font-bold mb-2 text-center">Pumpkin Detail</h2>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow">
 
-          {/* Card 1: Basic Info */}
-          <div className="bg-white shadow rounded-lg p-4">
-            <h3 className="text-xl font-bold mb-2">Basic Info</h3>
-            <p>Name: {pumpkin?.name}</p>
-            <p>Description: {pumpkin?.description}</p>
-            <p>Maternal Lineage: {pumpkin?.maternalLineage}</p>
-            <p>Paternal Lineage: {pumpkin?.paternalLineage}</p>
-            <button onClick={() => navigate(`/edit-pumpkin/${id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Edit Info</button>
-          </div>
+      {/* Card 1: Basic Info */}
+      <div className="bg-white shadow rounded-lg p-4 flex flex-col">
+        <div className="mb-auto">
+          <h3 className="text-xl font-bold mb-2">Basic Info</h3>
+          <p>Name: {pumpkin?.name}</p>
+          <p>Description: {pumpkin?.description}</p>
+          <p>Maternal Lineage: {pumpkin?.maternalLineage}</p>
+          <p>Paternal Lineage: {pumpkin?.paternalLineage}</p>
+        </div>
+        <button onClick={() => navigate(`/edit-pumpkin/${id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4 self-end">Edit Info</button>
+      </div>
 
-          {/* Card 2: Key Dates */}
-          <div className="bg-white shadow rounded-lg p-4">
-            <h3 className="text-xl font-bold mb-2">Key Dates</h3>
-            <p>Seed Started: {new Date(pumpkin?.seedStarted.seconds * 1000).toLocaleDateString()}</p>
-            <p>Transplant Out: {new Date(pumpkin?.transplantOut.seconds * 1000).toLocaleDateString()}</p>
-            <p>Pollinated: {new Date(pumpkin?.pollinated.seconds * 1000).toLocaleDateString()}</p>
-            <p>Weigh-off: {new Date(pumpkin?.weighOff.seconds * 1000).toLocaleDateString()}</p>
-            <button onClick={() => navigate(`/edit-pumpkin/${id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Edit Dates</button>
-          </div>
+      {/* Card 2: Key Dates */}
+      <div className="bg-white shadow rounded-lg p-4 flex flex-col">
+        <div className="mb-auto">
+          <h3 className="text-xl font-bold mb-2">Key Dates</h3>
+          <p>Seed Started: {new Date(pumpkin?.seedStarted.seconds * 1000).toLocaleDateString()}</p>
+          <p>Transplant Out: {new Date(pumpkin?.transplantOut.seconds * 1000).toLocaleDateString()}</p>
+          <p>Pollinated: {new Date(pumpkin?.pollinated.seconds * 1000).toLocaleDateString()}</p>
+          <p>Weigh-off: {new Date(pumpkin?.weighOff.seconds * 1000).toLocaleDateString()}</p>
+        </div>
+        <button onClick={() => navigate(`/edit-pumpkin/${id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4 self-end">Edit Dates</button>
+      </div>
 
-          {/* Card 3: Measurements */}
-          <div className="bg-white shadow rounded-lg p-4 md:col-span-2 border-none">
-            <h3 className="text-xl font-bold mb-2">Measurements</h3>
-            <button onClick={() => navigate(`/add-measurement/${id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Add Measurement</button>
-            <button onClick={exportData} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export Data</button>
-            {alert && <div className="alert">{alert}</div>}
+      {/* Card 3: Measurements */}
+      <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-scroll">
+        <h3 className="text-xl font-bold mb-2">Measurements</h3>
+        <div className="flex space-x-4">
+          <button onClick={() => navigate(`/add-measurement/${id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Add Measurement</button>
+          <button onClick={exportData} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export Data</button>
+        </div>
+        {alert && <div className="alert">{alert}</div>}
             <table className="w-full mt-4 border-2 border-gray-300 rounded shadow">
           <thead>
             <tr>
@@ -157,17 +163,17 @@ const exportData = async () => {
             ))}
           </tbody>
         </table>
-          </div>
+      </div>
 
-            {/* Card 4: Graph */}
-          <div className="bg-white shadow rounded-lg p-4 md:col-span-2">
-            <h3 className="text-xl font-bold mb-2">Graph</h3>
-            <Line data={chartData} />
-          </div>
+      {/* Card 4: Graph */}
+      <div className="bg-white shadow rounded-lg p-4 md:col-span-2">
+        <h3 className="text-xl font-bold mb-2">Graph</h3>
+        <Line data={chartData} />
+      </div>
 
-      </div> {/* <- Closing div tag for grid md:grid-cols-2 gap-4 */}
-    </div>  // <-- Closing div tag for container mx-auto px-4 h-screen pt-10
-  );
+    </div> 
+  </div>
+);
 }
 
 export default PumpkinDetail; 
