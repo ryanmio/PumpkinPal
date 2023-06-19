@@ -29,17 +29,17 @@ useEffect(() => {
       if (docSnap.exists()) {
         const data = docSnap.data();
         if (data.seedStarted) {
-        data.seedStarted = data.seedStarted ? formatDate(new Date(data.seedStarted.seconds * 1000)) : 'not set';
-      }
-      if (data.transplantOut) {
-        data.transplantOut = data.transplantOut ? formatDate(new Date(data.transplantOut.seconds * 1000)) : 'not set';
-      }
-      if (data.pollinated) {
-        data.pollinated = data.pollinated ? formatDate(new Date(data.pollinated.seconds * 1000)) : 'not set';
-      }
-      if (data.weighOff) {
-        data.weighOff = data.weighOff ? formatDate(new Date(data.weighOff.seconds * 1000)) : 'not set';
-      }
+          data.seedStarted = data.seedStarted ? formatDate(new Date(data.seedStarted)) : 'not set';
+        }
+        if (data.transplantOut) {
+          data.transplantOut = data.transplantOut ? formatDate(new Date(data.transplantOut)) : 'not set';
+        }
+        if (data.pollinated) {
+          data.pollinated = data.pollinated ? formatDate(new Date(data.pollinated)) : 'not set';
+        }
+        if (data.weighOff) {
+          data.weighOff = data.weighOff ? formatDate(new Date(data.weighOff)) : 'not set';
+        }
         setPumpkin(data);
       }
 
