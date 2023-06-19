@@ -7,7 +7,7 @@ function EditPumpkin() {
   const { id } = useParams();
   const [pumpkin, setPumpkin] = useState(null);
   const navigate = useNavigate();
-  const history = useHistory();
+  const location = useLocation();
 
   useEffect(() => {
     // Add the auth state observer
