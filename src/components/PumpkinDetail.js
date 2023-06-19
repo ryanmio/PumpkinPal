@@ -142,6 +142,7 @@ return (
             ))}
           </tbody>
         </table>
+        </div>
       <Line data={chartData} />
     </div>
 </div>
