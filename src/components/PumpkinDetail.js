@@ -159,14 +159,14 @@ const exportData = async () => {
         </table>
           </div>
 
-           {/* Card 4: Graph */}
+            {/* Card 4: Graph */}
           <div className="bg-white shadow rounded-lg p-4">
             <h3 className="text-xl font-bold mb-2">Graph</h3>
             <Line data={chartData} />
           </div>
-        </div> {/* <- Add closing div tag here */}
-      </div> {/* <- Add closing div tag here */}
-    </div>
+
+      </div> {/* <- Closing div tag for grid md:grid-cols-2 gap-4 */}
+    </div>  // <-- Closing div tag for container mx-auto px-4 h-screen pt-10
   );
 }
 
