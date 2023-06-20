@@ -7,7 +7,7 @@ export default function Homepage() {
 
         {/* Hero Section */}
         <div className="flex flex-col sm:flex-row items-center justify-center w-full h-auto py-20 sm:pr-10">
-            <div className="relative mx-auto border-gray-800 bg-gray-800 border-[14px] rounded-[2.5rem] h-[60vw] w-[30vw] sm:h-[600px] sm:w-[300px] shadow-xl overflow-hidden">
+            <div className="relative mx-auto border-gray-800 bg-gray-800 border-[5%] sm:border-[14px] rounded-[2.5rem] h-[60vw] w-[30vw] sm:h-[600px] sm:w-[300px] shadow-xl overflow-hidden">
                 <div className="relative w-full h-full overflow-hidden rounded-[2rem]">
                     <img src="/images/screenmock-details-mobile.png" alt="App mockup" className="absolute w-full h-full object-cover" />
                 </div>
@@ -19,8 +19,7 @@ export default function Homepage() {
             </div>
         </div>
 
-
-          {/* Features Section */}
+        {/* Features Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-11/12 sm:w-full px-4 sm:p-8">
             {[
                 { title: "Pumpkin Dashboard", description: "View an overview of all your pumpkins and the data you've collected."},
