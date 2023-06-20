@@ -57,10 +57,10 @@ export default function Homepage() {
 
 
             {/* Footer Section */}
-            <div className="w-full py-8 bg-gray-800 text-white text-center">
-                <p className="mb-4">This project is open source. Check it out on <a href="https://github.com/ryanmio/PumpkinPal" className="text-blue-500">GitHub</a>.</p>
-                <p>© 2023 PumpkinPal. Licensed under the MIT license.</p>
-            </div>
-        </div>
-    );
+<div className="w-full py-8 px-4 md:px-8 lg:px-16 bg-gray-800 text-white text-center">
+    <p className="mb-4">This project is open source. Check it out on <a href="https://github.com/ryanmio/PumpkinPal" className="text-blue-500">GitHub</a>.</p>
+    <p>© 2023 PumpkinPal. Licensed under the MIT license.</p>
+</div>
+</div>
+);
 }
