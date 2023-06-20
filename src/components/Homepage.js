@@ -6,18 +6,19 @@ export default function Homepage() {
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-200">
 
        {/* Hero Section */}
-<div className="flex flex-col sm:flex-row items-center justify-center w-full h-auto py-10 sm:py-20 sm:pr-10">
-    <div className="relative mx-auto w-2/3 sm:w-[294px]">
-        <div style={{ paddingBottom: 'calc(1500 / 736 * 100%)' }} className="relative w-full h-0 sm:h-[588px]">
+<div className="flex flex-col md:flex-row items-center justify-center w-full h-auto py-10 md:py-20 md:pr-10">
+    <div className="relative mx-auto w-full md:w-[294px]">
+        <div style={{ paddingBottom: 'calc(1500 / 736 * 100%)' }} className="relative w-full h-0 md:h-[588px]">
             <img src="/images/screenmock-details-mobile.png" alt="App mockup" className="absolute top-0 left-0 w-full h-full object-cover" />
         </div>
     </div>
-    <div className="mt-10 sm:mt-0 sm:ml-10 text-center sm:text-left">
+    <div className="mt-10 md:mt-0 md:ml-10 text-center md:text-left">
         <h1 className="text-4xl font-bold mb-4">PumpkinPal</h1>
         <p className="text-xl mb-6">An open-source companion app for pumpkin growers</p>
-        <Link to="/signup" className="px-4 py-2 sm:px-8 sm:py-4 green-button rounded text-white text-lg sm:text-xl text-white hover:text-white focus:outline-none focus:ring-0 underline-none no-underline">Create Account</Link>
+        <Link to="/signup" className="px-4 py-2 md:px-8 md:py-4 green-button rounded text-white text-lg md:text-xl text-white hover:text-white focus:outline-none focus:ring-0 underline-none no-underline">Create Account</Link>
     </div>
 </div>
+
 
 
         {/* Features Section */}
