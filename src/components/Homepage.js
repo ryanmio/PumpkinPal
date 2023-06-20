@@ -6,11 +6,13 @@ export default function Homepage() {
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-200">
 
         {/* Hero Section */}
-        <div className="flex items-center justify-center w-full h-auto py-20 pr-10 sm:pr-0">
-            <div className="relative mx-auto border-gray-800 bg-gray-800 border-[14px] rounded-[2.5rem] w-[80%] sm:w-[300px] shadow-xl overflow-hidden">
-                <img src="/images/screenmock-details-mobile.png" alt="App mockup" className="max-w-full h-auto object-contain" />
+        <div className="flex flex-col sm:flex-row items-center justify-center w-full h-auto py-20 sm:pr-10">
+            <div className="relative mx-auto border-gray-800 bg-gray-800 border-[14px] rounded-[2.5rem] h-[60vw] w-[30vw] sm:h-[600px] sm:w-[300px] shadow-xl overflow-hidden">
+                <div className="relative w-full h-full overflow-hidden rounded-[2rem]">
+                    <img src="/images/screenmock-details-mobile.png" alt="App mockup" className="absolute w-full h-full object-cover" />
+                </div>
             </div>
-            <div className="ml-10">
+            <div className="mt-10 sm:mt-0 sm:ml-10">
                 <h1 className="text-4xl font-bold mb-4">PumpkinPal</h1>
                 <p className="text-xl mb-6">An open-source companion app for pumpkin growers</p>
                 <Link to="/signup" className="px-4 py-2 sm:px-8 sm:py-4 green-button rounded text-white text-lg sm:text-xl text-white hover:text-white focus:outline-none focus:ring-0 underline-none no-underline">Create Account</Link>
