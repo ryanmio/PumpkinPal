@@ -38,9 +38,10 @@ export default function Homepage() {
          {/* Call to Action Section */}
         <div className="w-full p-8">
             <p className="mb-6">Sign up to start tracking your pumpkins. We respect your privacy and do not share your data.</p>
-            <Link to="/signup" className="px-8 py-2 my-4 green-button rounded text-white text-xl text-white hover:text-white focus:outline-none focus:ring-0 underline-none">Sign Up</Link>
+            <Link to="/signup" className="px-8 py-2 my-6 green-button rounded text-white text-xl text-white hover:text-white focus:outline-none focus:ring-0 underline-none">Sign Up</Link>
             <p>Already signed up? <Link to="/login" className="text-blue-500">Login here</Link></p>
         </div>
+
 
 
             {/* Footer Section */}
