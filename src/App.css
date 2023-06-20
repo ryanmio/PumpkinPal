@@ -176,12 +176,6 @@ body {
   background-color: #6c755e !important;
 }
 
-.nav-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .login-button:hover {
   text-decoration: underline;
 }
