@@ -38,7 +38,7 @@ export default function Homepage() {
             <div className="w-full p-8">
                 <h2 className="text-3xl mb-4">Sign up</h2>
                 <p className="mb-6">Sign up to start tracking your pumpkins. We respect your privacy and do not share your data.</p>
-                <Link to="/signup" className="green-button inline-flex items-center justify-center px-2 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-100 mt-3">Sign Up</Link>
+                <Link to="/signup" className="px-8 py-4 green-button rounded text-white text-xl text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 underline-none">Sign Up</Link>
                 <p>Already signed up? <Link to="/login" className="text-blue-500">Login here</Link></p>
             </div>
 
