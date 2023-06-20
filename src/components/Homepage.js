@@ -15,7 +15,7 @@ export default function Homepage() {
     <div className="mt-10 md:mt-0 md:ml-10 text-center md:text-left">
         <h1 className="text-4xl font-bold mb-4">PumpkinPal</h1>
         <p className="text-xl mb-6">An open-source companion app for pumpkin growers</p>
-        <Link to="/signup" className="px-4 py-2 md:px-8 md:py-4 green-button rounded text-white text-lg md:text-xl text-white hover:text-white focus:outline-none focus:ring-0 underline-none no-underline">Create Account</Link>
+        <Link to="/register" className="px-4 py-2 md:px-8 md:py-4 green-button rounded text-white text-lg md:text-xl text-white hover:text-white focus:outline-none focus:ring-0 underline-none no-underline">Create Account</Link>
     </div>
 </div>
 
@@ -49,7 +49,7 @@ export default function Homepage() {
        {/* Call to Action Section */}
 <div className="w-full p-8">
     <p className="mb-6">Sign up to start tracking your pumpkins. We respect your privacy and do not share your data.</p>
-    <Link to="/signup" className="px-8 py-2 mb-8 green-button rounded text-white text-xl text-white hover:text-white focus:outline-none focus:ring-0 underline-none no-underline font-bold">Sign Up</Link>
+    <Link to="/register" className="px-8 py-2 mb-8 green-button rounded text-white text-xl text-white hover:text-white focus:outline-none focus:ring-0 underline-none no-underline font-bold">Sign Up</Link>
     <p className="mt-2">Already signed up? <Link to="/login" className="text-blue-500">Login here</Link></p>
 </div>
 
