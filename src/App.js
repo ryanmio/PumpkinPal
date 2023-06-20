@@ -33,15 +33,16 @@ function App() {
       <Router>
         <header className="App-header">
           <div className="nav-bar">
-            <div className="nav-row">
-              <img src="/logo192.png" alt="Logo" className="App-logo" />
+            <div className="nav-row" style={{ justifyContent: 'flex-end' }}>
               {currentUser ? (
                 <>
                   <span>User: {currentUser.email}</span>
                   <Logout className="logout-button"/>
                 </>
               ) : (
-                <Link to="/login" className="logout-button">Login</Link>
+                <Link to="/login">
+                  <button className="logout-button">Login</button>
+                </Link>
               )}
             </div>
             {currentUser && (
