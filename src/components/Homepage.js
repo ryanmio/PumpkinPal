@@ -33,7 +33,7 @@ export default function Homepage() {
         { title: "Field-Friendly Interface", description: "The app's user-friendly interface is designed with field use in mind. Large, easy-to-tap buttons and simple forms make it easy to enter data even with gloves on."},
         { title: "Instant Weight Estimation", description: "As soon as you enter a new measurement, the app calculates the estimated weight of your pumpkin. This allows you to track your pumpkin's growth in real time, right from the field."},
     ].map((feature, i) => (
-        <div className="flex flex-col items-center bg-white p-4 rounded" key={i}>
+        <div className="flex flex-col items-center bg-white px-2 py-4 sm:p-4 rounded" key={i}>
             <img src="/logo192.png" alt="Feature" className="w-6/12 h-auto sm:w-1/4 lg:w-3/8" />
             <h2 className="text-xl mt-4 mb-2">{feature.title}</h2>
             <p className="text-sm sm:text-base">{feature.description}</p>
