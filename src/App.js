@@ -41,7 +41,7 @@ function App() {
                   <Logout className="logout-button"/>
                 </>
               ) : (
-                <Link to="/login" className="login-link">Login</Link>
+                <Link to="/login" className="logout-button">Login</Link>
               )}
             </div>
             {currentUser && (
