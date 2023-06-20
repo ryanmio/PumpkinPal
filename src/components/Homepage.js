@@ -12,7 +12,7 @@ export default function Homepage() {
             <img src="/images/screenmock-details-mobile.png" alt="App mockup" className="absolute top-0 left-0 w-full h-full object-cover" />
         </div>
     </div>
-    <div className="mt-10 md:mt-0 md:ml-10 md:px-20 text-center md:text-left">
+    <div className="mt-10 md:mt-0 md:ml-10 text-center md:text-left md:w-[294px] mx-auto">
         <h1 className="text-4xl font-bold mb-4">PumpkinPal</h1>
         <p className="text-xl mb-6">An open-source companion app for pumpkin growers</p>
         <Link to="/register" className="px-4 py-2 md:px-8 md:py-4 green-button rounded text-white text-lg md:text-xl text-white hover:text-white focus:outline-none focus:ring-0 underline-none no-underline">Create Account</Link>
