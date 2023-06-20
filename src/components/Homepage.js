@@ -1,45 +1,52 @@
 import React from 'react';
-import { ParallaxProvider, useParallax } from 'react-scroll-parallax';
-
-// Define a FeatureCard component
-function FeatureCard({ title, description }) {
-    const { ref } = useParallax({ speed: 10 });
-
-    return (
-        <div className="feature-card" ref={ref}>
-            <img src="/logo192.png" alt="Feature" />
-            <h2>{title}</h2>
-            <p>{description}</p>
-        </div>
-    );
-}
+import { Link } from 'react-router-dom';
 
 export default function Homepage() {
     return (
-        <ParallaxProvider>
-            <div>
-                <div className="hero">
-                    <img src="/hero.png" alt="Hero" />
-                </div>
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-200">
 
-                <div className="features">
-                    <FeatureCard title="Feature 1" description="Description of Feature 1" />
-                    <FeatureCard title="Feature 2" description="Description of Feature 2" />
-                    <FeatureCard title="Feature 3" description="Description of Feature 3" />
-                    {/* Add more FeatureCard components as needed */}
-                </div>
-
-                <div className="about-us">
-                    <h2>About Us</h2>
-                    <p>This app is an open source work in progress to help pumpkin growers, and is a passion project.</p>
-                </div>
-
-                <div className="join-beta">
-                    <h2>Join the Beta Program</h2>
-                    <p>We need people to offer their regular feedback to improve the app.</p>
-                    <button onClick={() => {/* Add functionality to join the beta program */}}>Join the Beta</button>
-                </div>
+        {/* Hero Section */}
+        <div className="flex items-center justify-center w-full h-auto py-20">
+            <div className="relative mx-auto border-gray-800 bg-gray-800 border-[14px] rounded-[2.5rem] h-[600px] w-[300px] shadow-xl overflow-hidden">
+                <img src="/images/screenmock-details-mobile.png" alt="App mockup" className="absolute w-full h-full object-cover" />
             </div>
-        </ParallaxProvider>
+            <div className="ml-10">
+                <h1 className="text-4xl font-bold mb-4">PumpkinPal</h1>
+                <p className="text-xl mb-6">An open-source companion app for pumpkin growers</p>
+                <Link to="/signup" className="px-8 py-4 bg-green-500 rounded text-white text-xl">Create Account</Link>
+            </div>
+        </div>
+
+            {/* Features Section */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full p-8">
+                {/* Replace the paths and content with your own */}
+                {Array(4).fill().map((_, i) => (
+                    <div className="flex flex-col items-center bg-white p-4 rounded">
+                        <img src="/logo192.png" alt="Feature" />
+                        <h2 className="text-xl mt-4 mb-2">Feature {i+1}</h2>
+                        <p>Description of Feature {i+1}</p>
+                    </div>
+                ))}
+            </div>
+
+            {/* Screenshots Section */}
+            <div className="w-full px-8">
+                <img className="w-full h-auto rounded-lg" src="/images/screenmockup-details.png" alt="App screenshot" />
+            </div>
+
+            {/* Call to Action Section */}
+            <div className="w-full p-8">
+                <h2 className="text-3xl mb-4">Sign up</h2>
+                <p className="mb-6">Sign up to start tracking your pumpkins. We respect your privacy and do not share your data.</p>
+                <Link to="/signup" className="green-button inline-flex items-center justify-center px-2 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-100 mt-3">Sign Up</Link>
+                <p>Already signed up? <Link to="/login" className="text-blue-500">Login here</Link></p>
+            </div>
+
+            {/* Footer Section */}
+            <div className="w-full py-8 bg-gray-800 text-white text-center">
+                <p className="mb-4">This project is open source. Check it out on <a href="https://github.com/ryanmio/PumpkinPal" className="text-blue-500">GitHub</a>.</p>
+                <p>© 2023 PumpkinPal. Licensed under the MIT license.</p>
+            </div>
+        </div>
     );
 }
