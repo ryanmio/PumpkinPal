@@ -43,7 +43,9 @@ export default function Homepage() {
 
 {/* Screenshots Section */}
 <div className="w-full px-8">
-    <img className="w-full h-auto rounded-lg" src="/images/screenmockup-details.png" alt="App screenshot" />
+    <div className="p-6">
+        <img className="w-full h-auto rounded-lg" src="/images/screenmockup-details.png" alt="App screenshot" />
+    </div>
 </div>
 
        {/* Call to Action Section */}
