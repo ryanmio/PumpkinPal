@@ -22,24 +22,25 @@ export default function Homepage() {
 
 
         {/* Features Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-11/12 sm:w-full px-4 sm:p-8">
-            {[
-                { title: "Pumpkin Dashboard", description: "View an overview of all your pumpkins and the data you've collected."},
-                { title: "OTT Weight Calculation", description: "Calculate the OTT weight of your pumpkins and track progress over time."},
-                { title: "Pumpkin Management", description: "Add new pumpkins to your profile, edit existing ones, and delete them with ease. Keep track of each pumpkin's name, description, lineage, and key dates."},
-                { title: "Data Export", description: "Export your pumpkin's data as a CSV file for further analysis or record-keeping."},
-                { title: "Real-Time Data Entry", description: "Enter your measurements as you take them. The app updates in real time, so your data is always current and accessible from any device."},
-                { title: "Data Backup", description: "Never worry about losing your measurement data. All measurements are automatically backed up in the cloud, ensuring that your data is safe and secure."},
-                { title: "Field-Friendly Interface", description: "The app's user-friendly interface is designed with field use in mind. Large, easy-to-tap buttons and simple forms make it easy to enter data even with gloves on."},
-                { title: "Instant Weight Estimation", description: "As soon as you enter a new measurement, the app calculates the estimated weight of your pumpkin. This allows you to track your pumpkin's growth in real time, right from the field."},
-            ].map((feature, i) => (
-                <div className="flex flex-col items-center bg-white p-4 rounded" key={i}>
-                    <img src="/logo192.png" alt="Feature" className="w-3/4 h-auto sm:w-1/2 lg:w-3/4" />
-                    <h2 className="text-xl mt-4 mb-2">{feature.title}</h2>
-                    <p className="text-sm sm:text-base">{feature.description}</p>
-                </div>
-            ))}
+<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-11/12 sm:w-full px-4 sm:p-8">
+    {[
+        { title: "Pumpkin Dashboard", description: "View an overview of all your pumpkins and the data you've collected."},
+        { title: "OTT Weight Calculation", description: "Calculate the OTT weight of your pumpkins and track progress over time."},
+        { title: "Pumpkin Management", description: "Add new pumpkins to your profile, edit existing ones, and delete them with ease. Keep track of each pumpkin's name, description, lineage, and key dates."},
+        { title: "Data Export", description: "Export your pumpkin's data as a CSV file for further analysis or record-keeping."},
+        { title: "Real-Time Data Entry", description: "Enter your measurements as you take them. The app updates in real time, so your data is always current and accessible from any device."},
+        { title: "Data Backup", description: "Never worry about losing your measurement data. All measurements are automatically backed up in the cloud, ensuring that your data is safe and secure."},
+        { title: "Field-Friendly Interface", description: "The app's user-friendly interface is designed with field use in mind. Large, easy-to-tap buttons and simple forms make it easy to enter data even with gloves on."},
+        { title: "Instant Weight Estimation", description: "As soon as you enter a new measurement, the app calculates the estimated weight of your pumpkin. This allows you to track your pumpkin's growth in real time, right from the field."},
+    ].map((feature, i) => (
+        <div className="flex flex-col items-center bg-white p-4 rounded" key={i}>
+            <img src="/logo192.png" alt="Feature" className="w-6/12 h-auto sm:w-1/4 lg:w-3/8" />
+            <h2 className="text-xl mt-4 mb-2">{feature.title}</h2>
+            <p className="text-sm sm:text-base">{feature.description}</p>
         </div>
+    ))}
+</div>
+
 
             {/* Screenshots Section */}
             <div className="w-full px-8">
