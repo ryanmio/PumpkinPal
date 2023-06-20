@@ -11,10 +11,10 @@ function PumpkinForm() {
   const [description, setDescription] = useState('');
   const [maternalLineage, setMaternalLineage] = useState('');
   const [paternalLineage, setPaternalLineage] = useState('');
-  const [seedStarted, setSeedStarted] = useState(new Date());
-  const [transplantOut, setTransplantOut] = useState(new Date());
-  const [pollinated, setPollinated] = useState(new Date());
-  const [weighOff, setWeighOff] = useState(new Date());
+  const [seedStarted, setSeedStarted] = useState(null);
+  const [transplantOut, setTransplantOut] = useState(null);
+  const [pollinated, setPollinated] = useState(null);
+  const [weighOff, setWeighOff] = useState(null);
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
