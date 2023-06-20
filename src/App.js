@@ -15,7 +15,7 @@ import Homepage from './components/Homepage';
 import UserProfile from './components/UserProfile';
 import EditMeasurement from './components/EditMeasurement';
 import Dashboardv2 from './components/Dashboardv2';
-import Header from './Header';
+import Header from './components/Header';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
