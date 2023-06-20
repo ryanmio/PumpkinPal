@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'chart.js/auto';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { auth } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import Register from './components/Register';
@@ -19,6 +19,7 @@ import Dashboardv2 from './components/Dashboardv2';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
+  const location = useLocation();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -26,22 +27,25 @@ function App() {
     });
     return () => unsubscribe();
   }, []);
-    
-    
+
   return (
     <div className="App">
       <Router>
         <header className="App-header">
           <div className="nav-bar">
-            <div className="nav-row">
-              <img src="/logo192.png" alt="Logo" className="App-logo" />
+            <div className="nav-row" style={{ justifyContent: 'flex-end' }}>
               {currentUser ? (
                 <>
+                  <img src="/logo192.png" alt="Logo" className="App-logo" />
                   <span>User: {currentUser.email}</span>
                   <Logout className="logout-button"/>
                 </>
               ) : (
-                <Link to="/login" className="logout-button">Login</Link>
+                location.pathname === '/' && (
+                  <Link to="/login">
+                    <button className="logout-button">Login</button>
+                  </Link>
+                )
               )}
             </div>
             {currentUser && (
