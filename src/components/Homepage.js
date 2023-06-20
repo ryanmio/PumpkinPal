@@ -42,11 +42,10 @@ export default function Homepage() {
 </div>
 
 {/* Screenshots Section */}
-<div className="w-full px-8">
-    <div className="p-6">
-        <img className="w-full h-auto rounded-lg" src="/images/screenmockup-details.png" alt="App screenshot" />
-    </div>
+<div className="w-full px-4 sm:px-6 md:px-14">
+    <img className="w-full h-auto rounded-lg" src="/images/screenmockup-details.png" alt="App screenshot" />
 </div>
+
 
        {/* Call to Action Section */}
 <div className="w-full p-8">
