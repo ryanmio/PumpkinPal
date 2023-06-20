@@ -32,7 +32,7 @@ export default function Homepage() {
                 { title: "Instant Weight Estimation", description: "As soon as you enter a new measurement, the app calculates the estimated weight of your pumpkin. This allows you to track your pumpkin's growth in real time, right from the field."},
             ].map((feature, i) => (
                 <div className="flex flex-col items-center bg-white p-4 rounded" key={i}>
-                    <img src="/logo192.png" alt="Feature" />
+                    <img src="/logo192.png" alt="Feature" className="w-3/4 h-auto sm:w-1/2 lg:w-3/4" />
                     <h2 className="text-xl mt-4 mb-2">{feature.title}</h2>
                     <p className="text-sm sm:text-base">{feature.description}</p>
                 </div>
