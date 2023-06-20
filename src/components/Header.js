@@ -10,7 +10,9 @@ function Header({ currentUser }) {
       <div className="nav-bar">
         <div className="nav-row">
           {location.pathname === "/" && !currentUser ? (
-            <Link to="/login" className="logout-button">Login</Link>
+            <button className="logout-button">
+              <Link to="/login">Login</Link>
+            </button>
           ) : (
             <>
               <img src="/logo192.png" alt="Logo" className="App-logo" />
