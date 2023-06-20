@@ -176,6 +176,11 @@ body {
   background-color: #6c755e !important;
 }
 
+.nav-row {
+  display: flex;
+  align-items: center;
+}
+
 .login-button:hover {
   text-decoration: underline;
 }
