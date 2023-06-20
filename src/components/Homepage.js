@@ -6,16 +6,17 @@ export default function Homepage() {
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-200">
 
         {/* Hero Section */}
-        <div className="flex items-center justify-center w-full h-auto py-20">
+        <div className="flex items-center justify-center w-full h-auto py-20 pr-10">
             <div className="relative mx-auto border-gray-800 bg-gray-800 border-[14px] rounded-[2.5rem] h-[600px] w-[300px] shadow-xl overflow-hidden">
                 <img src="/images/screenmock-details-mobile.png" alt="App mockup" className="absolute w-full h-full object-cover" />
             </div>
             <div className="ml-10">
                 <h1 className="text-4xl font-bold mb-4">PumpkinPal</h1>
                 <p className="text-xl mb-6">An open-source companion app for pumpkin growers</p>
-                <Link to="/signup" className="px-8 py-4 green-button rounded text-white text-xl text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 underline-none">Create Account</Link>
+                <Link to="/signup" className="px-8 py-4 green-button rounded text-white text-xl text-white hover:text-white focus:outline-none focus:ring-0 underline-none">Create Account</Link>
             </div>
         </div>
+
 
             {/* Features Section */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full p-8">
@@ -34,13 +35,13 @@ export default function Homepage() {
                 <img className="w-full h-auto rounded-lg" src="/images/screenmockup-details.png" alt="App screenshot" />
             </div>
 
-            {/* Call to Action Section */}
-            <div className="w-full p-8">
-                <h2 className="text-3xl mb-4">Sign up</h2>
-                <p className="mb-6">Sign up to start tracking your pumpkins. We respect your privacy and do not share your data.</p>
-                <Link to="/signup" className="px-8 py-4 green-button rounded text-white text-xl text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 underline-none">Sign Up</Link>
-                <p>Already signed up? <Link to="/login" className="text-blue-500">Login here</Link></p>
-            </div>
+         {/* Call to Action Section */}
+        <div className="w-full p-8">
+            <p className="mb-6">Sign up to start tracking your pumpkins. We respect your privacy and do not share your data.</p>
+            <Link to="/signup" className="px-8 py-2 my-4 green-button rounded text-white text-xl text-white hover:text-white focus:outline-none focus:ring-0 underline-none">Sign Up</Link>
+            <p>Already signed up? <Link to="/login" className="text-blue-500">Login here</Link></p>
+        </div>
+
 
             {/* Footer Section */}
             <div className="w-full py-8 bg-gray-800 text-white text-center">
