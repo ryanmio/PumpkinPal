@@ -7,8 +7,8 @@ export default function Homepage() {
 
         {/* Hero Section */}
 <div className="flex flex-col sm:flex-row items-center justify-center w-full h-auto py-20 px-4 sm:pr-10">
-    <div className="relative mx-auto w-full max-w-md sm:max-w-none">
-        <div style={{ paddingBottom: 'calc(1500 / 736 * 100%)' }} className="relative w-full h-0">
+    <div className="relative mx-auto w-full sm:w-[294px]">
+        <div style={{ paddingBottom: 'calc(1500 / 736 * 100%)' }} className="relative w-full h-0 sm:h-[588px]">
             <img src="/images/screenmock-details-mobile.png" alt="App mockup" className="absolute top-0 left-0 w-full h-full object-cover" />
         </div>
     </div>
@@ -18,6 +18,7 @@ export default function Homepage() {
         <Link to="/signup" className="px-4 py-2 sm:px-8 sm:py-4 green-button rounded text-white text-lg sm:text-xl text-white hover:text-white focus:outline-none focus:ring-0 underline-none no-underline">Create Account</Link>
     </div>
 </div>
+
 
 
 
