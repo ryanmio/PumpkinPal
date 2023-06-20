@@ -179,7 +179,7 @@ body {
 .nav-row {
   display: flex;
   align-items: center;
-   padding: 0; /* Remove padding */
+  
 }
 
 .login-button:hover {
