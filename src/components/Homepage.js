@@ -7,8 +7,10 @@ export default function Homepage() {
 
         {/* Hero Section */}
 <div className="flex flex-col sm:flex-row items-center justify-center w-full h-auto py-20 sm:pr-10">
-    <div className="relative mx-auto h-[60vw] w-[30vw] sm:h-[600px] sm:w-[300px] overflow-hidden">
-        <img src="/images/screenmock-details-mobile.png" alt="App mockup" className="w-full h-full object-cover" />
+    <div className="relative mx-auto w-[95%] sm:w-[300px]">
+        <div style={{ paddingBottom: 'calc(1500 / 736 * 100%)' }} className="relative w-full h-0">
+            <img src="/images/screenmock-details-mobile.png" alt="App mockup" className="absolute top-0 left-0 w-full h-full object-cover" />
+        </div>
     </div>
     <div className="mt-10 sm:mt-0 sm:ml-10">
         <h1 className="text-4xl font-bold mb-4">PumpkinPal</h1>
@@ -16,6 +18,7 @@ export default function Homepage() {
         <Link to="/signup" className="px-4 py-2 sm:px-8 sm:py-4 green-button rounded text-white text-lg sm:text-xl text-white hover:text-white focus:outline-none focus:ring-0 underline-none no-underline">Create Account</Link>
     </div>
 </div>
+
 
         {/* Features Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-11/12 sm:w-full px-4 sm:p-8">
