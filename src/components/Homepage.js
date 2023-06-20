@@ -21,17 +21,17 @@ export default function Homepage() {
 
 
 
-        {/* Features Section */}
-<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full sm:w-full px-2 sm:px-4 sm:p-8">
+      {/* Features Section */}
+<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 p-4">
     {[
         { title: "Pumpkin Dashboard", description: "View an overview of all your pumpkins and the data you've collected."},
         { title: "OTT Weight Calculation", description: "Calculate the OTT weight of your pumpkins and track progress over time."},
-        { title: "Pumpkin Management", description: "Add new pumpkins to your profile, edit existing ones, and delete them."},
+        { title: "Pumpkin Management", description: "Add new pumpkins to your profile, edit existing ones."},
         { title: "Data Export", description: "Export your pumpkin's data as a CSV file for further analysis or record-keeping."},
         { title: "Real-Time Data Entry", description: "Enter your measurements as you take them. Your data is instantly accessible from any device."},
         { title: "Data Backup", description: "All measurements are automatically backed up in the cloud."},
         { title: "Field-Friendly Interface", description: "Large, easy-to-tap buttons and simple forms make it easy to enter data even with gloves on."},
-        { title: "Instant Weight Estimation", description: "As soon as you enter a new measurement, you can see your pumpkin's weight, right from the field."},
+        { title: "Instant Weight Estimation", description: "As soon as you enter a measurement you will know your pumpkin's weight, right from the field."},
     ].map((feature, i) => (
         <div className="flex flex-col items-center bg-white px-3 py-4 sm:p-4 rounded" key={i}>
             <img src="/logo192.png" alt="Feature" className="w-6/12 h-auto sm:w-1/4 lg:w-3/8" />
@@ -40,8 +40,6 @@ export default function Homepage() {
         </div>
     ))}
 </div>
-
-
             {/* Screenshots Section */}
             <div className="w-full px-8">
                 <img className="w-full h-auto rounded-lg" src="/images/screenmockup-details.png" alt="App screenshot" />
