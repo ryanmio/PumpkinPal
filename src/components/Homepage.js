@@ -21,8 +21,8 @@ export default function Homepage() {
 
 
 
-      {/* Features Section */}
-<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full px-4 sm:px-8 -mx-4 sm:-mx-8">
+    {/* Features Section */}
+<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full px-4 sm:px-8 -mx-4 sm:-mx-8 mb-8">
     {[
         { title: "Pumpkin Dashboard", description: "View an overview of all your pumpkins and the data you've collected."},
         { title: "OTT Weight Calculation", description: "Calculate the OTT weight of your pumpkins and track progress over time."},
@@ -41,10 +41,10 @@ export default function Homepage() {
     ))}
 </div>
 
-            {/* Screenshots Section */}
-            <div className="w-full px-8">
-                <img className="w-full h-auto rounded-lg" src="/images/screenmockup-details.png" alt="App screenshot" />
-            </div>
+{/* Screenshots Section */}
+<div className="w-full px-8">
+    <img className="w-full h-auto rounded-lg" src="/images/screenmockup-details.png" alt="App screenshot" />
+</div>
 
        {/* Call to Action Section */}
 <div className="w-full p-8">
