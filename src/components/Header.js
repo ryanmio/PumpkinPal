@@ -11,9 +11,11 @@ function Header({ currentUser }) {
       <div className="nav-bar">
         <div className="nav-row">
           {location.pathname === "/" && !currentUser ? (
-            <button className="logout-button login-button" onClick={() => navigate('/login')}>
-              Login
-            </button>
+            <div style={{ marginLeft: 'auto' }}>
+              <button className="logout-button login-button" onClick={() => navigate('/login')}>
+                Login
+              </button>
+            </div>
           ) : (
             <>
               <img src="/logo192.png" alt="Logo" className="App-logo" />
