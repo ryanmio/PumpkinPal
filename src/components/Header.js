@@ -11,7 +11,7 @@ function Header({ currentUser }) {
       <div className="nav-bar">
         <div className="nav-row">
           {location.pathname === "/" && !currentUser ? (
-             <div style={{ marginLeft: 'auto', paddingRight: '20px', marginTop: '5px', marginBottom: '5px' }}>
+             <div style={{ marginLeft: 'auto', paddingRight: '20px', marginTop: '0px', marginBottom: '0px' }}>
               <button className="logout-button login-button" onClick={() => navigate('/login')}>
                 Login
               </button>
