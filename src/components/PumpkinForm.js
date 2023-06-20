@@ -61,24 +61,24 @@ function PumpkinForm() {
           <input type="text" placeholder="1676 New" value={paternalLineage} onChange={(e) => setPaternalLineage(e.target.value)} className="w-full p-2 border-2 border-gray-300 rounded" />
           
           <div className="grid grid-cols-2 gap-1">
-            <label className="text-left">Seed Started:</label>
-            <DatePicker selected={seedStarted} onChange={(date) => setSeedStarted(date)} className="w-full p-2 border-2 border-gray-300 rounded" />
-          </div>
-          
-          <div className="grid grid-cols-2 gap-1">
-            <label className="text-left">Transplant Out:</label>
-            <DatePicker selected={transplantOut} onChange={(date) => setTransplantOut(date)} className="w-full p-2 border-2 border-gray-300 rounded" />
-          </div>
-          
-          <div className="grid grid-cols-2 gap-1">
-            <label className="text-left">Pollinated:</label>
-            <DatePicker selected={pollinated} onChange={(date) => setPollinated(date)} className="w-full p-2 border-2 border-gray-300 rounded" />
-          </div>
-          
-          <div className="grid grid-cols-2 gap-1">
-            <label className="text-left">Weigh-Off:</label>
-            <DatePicker selected={weighOff} onChange={(date) => setWeighOff(date)} className="w-full p-2 border-2 border-gray-300 rounded" />
-          </div>
+          <label className="text-left">Seed Started:</label>
+          <DatePicker selected={seedStarted} onChange={(date) => setSeedStarted(date)} isClearable placeholderText="Select Date" className="w-full p-2 border-2 border-gray-300 rounded" />
+        </div>
+        
+        <div className="grid grid-cols-2 gap-1">
+          <label className="text-left">Transplant Out:</label>
+          <DatePicker selected={transplantOut} onChange={(date) => setTransplantOut(date)} isClearable placeholderText="Select Date" className="w-full p-2 border-2 border-gray-300 rounded" />
+        </div>
+        
+        <div className="grid grid-cols-2 gap-1">
+          <label className="text-left">Pollinated:</label>
+          <DatePicker selected={pollinated} onChange={(date) => setPollinated(date)} isClearable placeholderText="Select Date" className="w-full p-2 border-2 border-gray-300 rounded" />
+        </div>
+        
+        <div className="grid grid-cols-2 gap-1">
+          <label className="text-left">Weigh-Off:</label>
+          <DatePicker selected={weighOff} onChange={(date) => setWeighOff(date)} isClearable placeholderText="Select Date" className="w-full p-2 border-2 border-gray-300 rounded" />
+        </div>
 
           <div className="flex justify-between items-center mt-4">
             <button type="button" onClick={() => navigate('/dashboard')} className="text-blue-600 hover:underline">Cancel</button>
