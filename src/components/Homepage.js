@@ -7,8 +7,8 @@ export default function Homepage() {
 
         {/* Hero Section */}
         <div className="flex items-center justify-center w-full h-auto py-20 pr-10 sm:pr-0">
-            <div className="relative mx-auto border-gray-800 bg-gray-800 border-[14px] rounded-[2.5rem] w-[80%] sm:w-[300px] shadow-xl overflow-hidden" style={{ paddingTop: "200%" }}>
-                <img src="/images/screenmock-details-mobile.png" alt="App mockup" className="absolute top-0 left-0 w-full h-full object-cover" />
+            <div className="relative mx-auto border-gray-800 bg-gray-800 border-[14px] rounded-[2.5rem] w-[80%] sm:w-[300px] shadow-xl overflow-hidden">
+                <img src="/images/screenmock-details-mobile.png" alt="App mockup" className="max-w-full h-auto object-contain" />
             </div>
             <div className="ml-10">
                 <h1 className="text-4xl font-bold mb-4">PumpkinPal</h1>
