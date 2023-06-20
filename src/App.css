@@ -175,3 +175,14 @@ body {
 .green-button:hover {
   background-color: #6c755e !important;
 }
+
+.nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.login-button:hover {
+  background-color: #eee; /* you can adjust the color as needed */
+}
+
