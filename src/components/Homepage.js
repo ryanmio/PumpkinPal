@@ -7,7 +7,7 @@ export default function Homepage() {
 
        {/* Hero Section */}
 <div className="flex flex-col md:flex-row items-center justify-center w-full h-auto py-10 md:py-20 md:pr-10">
-    <div className="relative mx-auto w-2/3 md:w-[294px] md:h-[588px]">
+    <div className="relative mx-auto w-1/2 md:w-[294px] md:h-[588px]">
         <div style={{ paddingBottom: 'calc(1500 / 736 * 100%)' }} className="relative w-full h-0 md:h-full">
             <img src="/images/screenmock-details-mobile.png" alt="App mockup" className="absolute top-0 left-0 w-full h-full object-cover" />
         </div>
