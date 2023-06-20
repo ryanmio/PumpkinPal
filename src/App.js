@@ -26,24 +26,31 @@ function App() {
     });
     return () => unsubscribe();
   }, []);
-
+    
+    
   return (
     <div className="App">
       <Router>
         <header className="App-header">
-          {currentUser && (
-            <div className="nav-bar">
-              <div className="nav-row">
-                <img src="/logo192.png" alt="Logo" className="App-logo" />
-                <span>User: {currentUser.email}</span>
-                <Logout className="logout-button"/>
-              </div>
+          <div className="nav-bar">
+            <div className="nav-row">
+              <img src="/logo192.png" alt="Logo" className="App-logo" />
+              {currentUser ? (
+                <>
+                  <span>User: {currentUser.email}</span>
+                  <Logout className="logout-button"/>
+                </>
+              ) : (
+                <Link to="/login" className="login-link">Login</Link>
+              )}
+            </div>
+            {currentUser && (
               <div className="nav-row">
                 <Link className="nav-link" to="/dashboard">Dashboard</Link>
                 <Link className="nav-link" to="/user-profile">User Profile</Link>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </header>
        <Routes>
           <Route path="/register" element={<Register />} />
