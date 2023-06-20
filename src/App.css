@@ -183,6 +183,5 @@ body {
 }
 
 .login-button:hover {
-  background-color: #eee; /* you can adjust the color as needed */
+  text-decoration: underline;
 }
-
