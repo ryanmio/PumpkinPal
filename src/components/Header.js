@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Logout from './Logout';
-import Login from './Login';
 
 function Header({ currentUser }) {
   const location = useLocation();
