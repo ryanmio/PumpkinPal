@@ -13,7 +13,7 @@ export default function Homepage() {
             <div className="ml-10">
                 <h1 className="text-4xl font-bold mb-4">PumpkinPal</h1>
                 <p className="text-xl mb-6">An open-source companion app for pumpkin growers</p>
-                <Link to="/signup" className="px-8 py-4 bg-green-500 rounded text-white text-xl">Create Account</Link>
+                <Link to="/signup" className="px-8 py-4 green-button rounded text-white text-xl">Create Account</Link>
             </div>
         </div>
 
