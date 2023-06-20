@@ -11,7 +11,7 @@ function Header({ currentUser }) {
       <div className="nav-bar">
         <div className="nav-row">
           {location.pathname === "/" && !currentUser ? (
-            <button className="logout-button" onClick={() => navigate('/login')}>
+            <button className="logout-button login-button" onClick={() => navigate('/login')}>
               Login
             </button>
           ) : (
