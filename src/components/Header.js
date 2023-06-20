@@ -1,17 +1,18 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Logout from './Logout';
 
 function Header({ currentUser }) {
   const location = useLocation();
-  
+  const navigate = useNavigate();
+
   return (
     <header className="App-header">
       <div className="nav-bar">
         <div className="nav-row">
           {location.pathname === "/" && !currentUser ? (
-            <button className="logout-button">
-              <Link to="/login">Login</Link>
+            <button className="logout-button" onClick={() => navigate('/login')}>
+              Login
             </button>
           ) : (
             <>
