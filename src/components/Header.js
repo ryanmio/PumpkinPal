@@ -21,7 +21,7 @@ function Header({ currentUser }) {
             </div>
           ) : (
             <>
-              <span>{currentUser ? `${currentUser.email}` : ''}</span>
+              // <span>{currentUser ? `${currentUser.email}` : ''}</span>
               {currentUser && <Logout className="logout-button"/>}
             </>
           )}
