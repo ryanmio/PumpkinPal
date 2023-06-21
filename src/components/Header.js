@@ -18,7 +18,7 @@ function Header({ currentUser }) {
             </div>
           ) : (
             <>
-              <img src="/logo192.png" alt="Logo" className="App-logo" />
+              <img src="/logowide.png" alt="Logo" className="App-logo" />
               <span>{currentUser ? `User: ${currentUser.email}` : ''}</span>
               {currentUser && <Logout className="logout-button"/>}
             </>
