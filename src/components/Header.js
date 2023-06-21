@@ -10,7 +10,7 @@ function Header({ currentUser }) {
     <header className="App-header">
       <div className="nav-bar">
         <div className="nav-row">
-          <img src="/logowide.png" alt="Logo" className="App-logo" style={{marginLeft: '10px'}} />
+          <img src="/logowide.png" alt="Logo" className="App-logo" style={{marginLeft: '20px'}} />
           {location.pathname === "/" && !currentUser ? (
              <div style={{ marginLeft: 'auto', paddingRight: '20px', marginTop: '0px', marginBottom: '0px' }}>
               <button className="logout-button login-button" onClick={() => navigate('/login')}>
