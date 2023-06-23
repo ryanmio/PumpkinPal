@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { auth, db, Timestamp, onAuthStateChanged } from '../firebase';
 import { doc, getDoc, setDoc, collection, getDocs, orderBy, limit, query } from 'firebase/firestore';
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import MeasurementInput from './MeasurementInput';
 import DateInput from './DateInput';
