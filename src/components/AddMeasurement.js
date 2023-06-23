@@ -117,25 +117,11 @@ console.log("Data saved to database"); // add this line
     }
   };
 
-    
-    const AddMeasurement = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-        
   return (
     <div className="container mx-auto px-4 h-screen pt-10">
       <div className="bg-white shadow overflow-hidden rounded-lg p-4 w-full md:max-w-md mx-auto text-center">
         <h2 className="text-2xl font-bold mb-2 text-center">Add a Measurement</h2>
-        <div><button onClick={openModal}>?</button>
-      <InstructionsModal isOpen={isModalOpen} closeModal={closeModal} /></div>
         <form onSubmit={addMeasurement} className="space-y-4">
           <div className="flex justify-between items-center">
             <select value={selectedPumpkin} onChange={(e) => setSelectedPumpkin(e.target.value)} className="mt-1 p-2 border-2 border-gray-300 rounded text-center flex-grow mr-2">
