@@ -207,7 +207,14 @@ button[type="submit"] {
 }
 
 .date-input .label-float {
-  font-size: 0.8rem;
+    color: #9e9e9e;
+    left: 15px;
+    position: absolute;
+    top: 20px !important;
+    transition: .2s;
+    padding: 0 5px;
+    pointer-events: none;
+    font-size: 0.8rem;
 }
 
 .date-input .input.filled + .label-float {
