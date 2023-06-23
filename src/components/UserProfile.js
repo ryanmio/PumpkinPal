@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { auth, db } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
+import { signOut, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
 
 function UserProfile() {
   const [loading, setLoading] = useState(true);
