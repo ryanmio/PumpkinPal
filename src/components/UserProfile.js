@@ -145,15 +145,18 @@ function UserProfile() {
             <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Change Password</button>
           </div>
         </form>
-        <button onClick={exportAllData} className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export All Data</button>
-      {alert && <div className="alert">{alert}</div>}
+      </div>
+
+ <div className="bg-white shadow overflow-hidden rounded-lg p-4">
+        <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 text-left">Account Actions</h3>
+        <div className="space-y-4 text-left">
+          <button onClick={exportAllData} className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export All Data</button>
+          {alert && <div className="alert mt-2">{alert}</div>}
+        </div>
       </div>
     </div>
   </div>
 );
-
-
-
 
 }
 
