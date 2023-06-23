@@ -5,7 +5,6 @@ import { doc, getDoc, setDoc, collection, getDocs, orderBy, limit, query } from 
 import "react-datepicker/dist/react-datepicker.css";
 import MeasurementInput from './MeasurementInput';
 import DateInput from './DateInput';
-import InstructionsModal from './InstructionsModal';
 
 
 function AddMeasurement() {
