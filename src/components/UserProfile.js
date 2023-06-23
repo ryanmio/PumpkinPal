@@ -10,6 +10,7 @@ function UserProfile() {
   const [currentPassword, setCurrentPassword] = useState('');
   const [preferredUnit, setPreferredUnit] = useState(null);
   const [alert, setAlert] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     const fetchPreferences = async () => {
@@ -101,6 +102,19 @@ function UserProfile() {
     });
   };
 
+    const handleLogout = () => {
+    signOut(auth);
+  };
+
+  const handleDeleteAccount = () => {
+    setShowDeleteModal(true);
+  };
+
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+  };
+
+    
   return (
   <div className="container mx-auto px-4 h-screen">
     <h2 className="text-2xl font-bold mb-2 text-center">User Profile</h2>
@@ -147,17 +161,27 @@ function UserProfile() {
         </form>
       </div>
 
- <div className="bg-white shadow overflow-hidden rounded-lg p-4">
+  <div className="bg-white shadow overflow-hidden rounded-lg p-4">
         <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 text-left">Account Actions</h3>
         <div className="space-y-4 text-left">
           <button onClick={exportAllData} className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export All Data</button>
+          <button onClick={handleLogout} className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Logout</button>
+          <button onClick={handleDeleteAccount} className="red-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Delete Account</button>
           {alert && <div className="alert mt-2">{alert}</div>}
         </div>
+        {showDeleteModal && (
+          <div className="modal">
+            <div className="modal-content">
+              <h2>Confirm Delete Account</h2>
+              <p>Your account will be closed in 30 days if you don't login again.</p>
+              <button onClick={closeDeleteModal} className="green-button">Cancel</button>
+              <button className="red-button">Confirm</button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
-  </div>
-);
-
+  );
 }
 
 export default UserProfile;
