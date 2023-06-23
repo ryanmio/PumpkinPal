@@ -150,6 +150,7 @@ const calculateOTT = () => {
             max={1000}
             value={circumference} 
           />
+         <label htmlFor="measurementDate" className="block">Date {isToday ? "(Today)" : null}</label>
           <DatePicker 
           selected={measurementDate} 
           onChange={(date) => {
