@@ -11,6 +11,17 @@ function UserProfile() {
   const [preferredUnit, setPreferredUnit] = useState(null);
   const [alert, setAlert] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+    
+    const confirmDeleteAccount = async () => {
+        if (auth.currentUser) {
+          const userRef = doc(db, 'Users', auth.currentUser.uid);
+          await updateDoc(userRef, { accountDeletionRequested: true });
+          await signOut(auth);
+        } else {
+          alert("User not logged in");
+        }
+      };
+
 
   useEffect(() => {
     const fetchPreferences = async () => {
@@ -174,7 +185,7 @@ function UserProfile() {
                 <h2>Confirm Delete Account</h2>
                 <p>Your account will be closed in 30 days if you don't login again.</p>
                 <button onClick={closeDeleteModal} className="green-button">Cancel</button>
-                <button className="red-button">Confirm</button>
+                <button onClick={confirmDeleteAccount} className="red-button">Confirm</button>
               </div>
             </div>
           )}
