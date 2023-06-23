@@ -5,6 +5,8 @@ import { doc, getDoc, setDoc, collection, getDocs, orderBy, limit, query } from 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import MeasurementInput from './MeasurementInput';
+import DateInput from './DateInput';
+
 
 function AddMeasurement() {
   const { id } = useParams();
@@ -150,9 +152,9 @@ const calculateOTT = () => {
             max={1000}
             value={circumference} 
           />
-         <label htmlFor="measurementDate" className="block">Date {isToday ? "(Today)" : null}</label>
-          <DatePicker 
-          selected={measurementDate} 
+         <DateInput 
+          id="measurementDate"
+          selected={measurementDate}
           onChange={(date) => {
             setMeasurementDate(date);
             setIsToday(
@@ -161,7 +163,7 @@ const calculateOTT = () => {
               date.getFullYear() === new Date().getFullYear()
             );
           }} 
-          className="mt-1 w-full p-2 border-2 border-gray-300 rounded text-center" 
+          isToday={isToday}
         />
           <div className="flex justify-between items-center mt-4">
             <button type="button" onClick={() => navigate('/dashboard')} className="text-blue-600 hover:underline">Cancel</button>

@@ -205,3 +205,7 @@ body {
     -webkit-transform: translateY(-140%);
     transform: translateY(-140%);
 }
+
+.input:-webkit-autofill {
+  background-color: #FFF !important;
+}
