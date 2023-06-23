@@ -84,7 +84,43 @@ const calculateEstimatedWeight = (endToEnd, sideToSide, circumference, measureme
         <h2 className="text-2xl font-bold mb-2 text-center">Edit Measurement</h2>
         <form onSubmit={editMeasurement} className="space-y-4">
           <input type="text" value={pumpkinName} readOnly className="mt-1 w-full p-2 border-2 border-gray-300 bg-gray-200 rounded" />
-          {/* Rest of the form inputs here */}
+          <MeasurementInput 
+            id="endToEnd"
+            placeholder="End to End"
+            onChange={handleEndToEndChange}
+            min={0} 
+            max={500}
+            value={endToEnd} 
+          />
+          <MeasurementInput 
+            id="sideToSide"
+            placeholder="Side to Side"
+            onChange={handleSideToSideChange}
+            min={0} 
+            max={500}
+            value={sideToSide} 
+          />
+          <MeasurementInput 
+            id="circumference"
+            placeholder="Circumference"
+            onChange={handleCircumferenceChange}
+            min={0} 
+            max={1000}
+            value={circumference} 
+          />
+          <DateInput 
+            id="measurementDate"
+            selected={measurementDate}
+            onChange={(date) => {
+              setMeasurementDate(date);
+              setIsToday(
+                date.getDate() === new Date().getDate() && 
+                date.getMonth() === new Date().getMonth() && 
+                date.getFullYear() === new Date().getFullYear()
+              );
+            }} 
+            isToday={isToday}
+          />
           <div className="flex justify-between items-center mt-4">
             <button type="button" onClick={() => navigate(`/pumpkin/${pumpkinId}`)} className="text-blue-600 hover:underline">Cancel</button>
             <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
