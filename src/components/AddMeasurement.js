@@ -118,10 +118,10 @@ function AddMeasurement() {
                 <option key={pumpkin.id} value={pumpkin.id}>{pumpkin.name}</option>
               ))}
             </select>
-            <select value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)} className="mt-1 w-1/2 p-2 border-2 border-gray-300 rounded text-center">
-              <option value="in">in</option>
-              <option value="cm">cm</option>
-            </select>
+            <select value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)} className="mt-1 w-auto p-2 border-2 border-gray-300 rounded text-center">
+          <option value="in">in</option>
+          <option value="cm">cm</option>
+        </select>
           </div>
           <MeasurementInput 
             id="endToEnd"

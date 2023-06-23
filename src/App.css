@@ -186,21 +186,20 @@ body {
   text-decoration: underline;
 }
 
-
-.input {
-  padding-top: 20px;
+.input + .label-float {
+    color: #9e9e9e;
+    left: 15px;
+    position: absolute;
+    top: 10px;
+    transition: .2s;
+    padding: 0 5px;
+    background: #fff;
+    pointer-events: none;
 }
 
-.input + label {
-  position: absolute;
-  left: 15px;
-  top: 10px;
-  transition: 0.2s;
-  color: #9e9e9e;
-}
-
-.input.filled + label {
-  transform: translate(0, -140%);
-  font-size: 1.4rem;
-  color: #2196f3;
+.input.filled + .label-float {
+    color: #2196f3;
+    font-size: 1.4rem;
+    -webkit-transform: translateY(-140%);
+    transform: translateY(-140%);
 }
