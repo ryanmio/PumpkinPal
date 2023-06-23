@@ -9,6 +9,7 @@ function UserProfile() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [preferredUnit, setPreferredUnit] = useState(null);
+  const [alert, setAlert] = useState(null);
 
   useEffect(() => {
     const fetchPreferences = async () => {
@@ -69,6 +70,36 @@ function UserProfile() {
   if (loading) {
     return <div>Loading...</div>;
   }
+    
+    
+    const exportAllData = async () => {
+    setAlert('Exporting...');
+    const idToken = await auth.currentUser.getIdToken();
+
+    fetch(`https://us-central1-pumpkinpal-b60be.cloudfunctions.net/exportAllData?timeZone=${Intl.DateTimeFormat().resolvedOptions().timeZone}`, {
+      headers: {
+        'Authorization': 'Bearer ' + idToken
+      }
+    })
+    .then(response => response.blob())
+    .then(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      // Format the current date as YYYY-MM-DD
+      const date = new Date().toISOString().slice(0, 10);
+      a.download = `PumpkinPal_AllData_${date}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      setAlert(null);  // Clear the alert after the export is complete
+    })
+    .catch(e => {
+      console.error(e);
+      setAlert('An error occurred during export.');  // Set an error alert if the export fails
+    });
+  };
 
   return (
   <div className="container mx-auto px-4 h-screen">
@@ -114,6 +145,8 @@ function UserProfile() {
             <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Change Password</button>
           </div>
         </form>
+        <button onClick={exportAllData} className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export All Data</button>
+      {alert && <div className="alert">{alert}</div>}
       </div>
     </div>
   </div>
