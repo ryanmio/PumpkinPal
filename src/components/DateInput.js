@@ -9,7 +9,7 @@ function CustomInput({ value, onClick, className }) {
     <div className={`relative date-input ${value ? "filled" : ""}`}>
       <input 
         id={id}
-        className={`input text-center text-4xl w-full p-2 border-2 border-gray-300 rounded ${value ? "filled" : ""}`}
+        className={`input text-center text-2xl w-full p-2 border-2 border-gray-300 rounded ${value ? "filled" : ""}`}
         onClick={onClick}
         value={value}
       />
