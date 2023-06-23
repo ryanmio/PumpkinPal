@@ -26,7 +26,7 @@ function EditMeasurement() {
     const fetchMeasurementAndPumpkin = async () => {
       if (auth.currentUser) {
         const measurementRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', pumpkinId, 'Measurements', measurementId);
-        const measurementDoc = await getDoc(measurementRef); 
+        const measurementDoc = await getDocs(measurementRef); 
         if (measurementDoc.exists()) {
           const data = measurementDoc.data();
           setEndToEnd(parseFloat(data.endToEnd));
@@ -36,7 +36,7 @@ function EditMeasurement() {
           setMeasurementDate(new Date());
 
           const pumpkinRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', pumpkinId);
-          const pumpkinDoc = await getDoc(pumpkinRef); 
+          const pumpkinDoc = await getDocs(pumpkinRef); 
           if (pumpkinDoc.exists()) {
             setPumpkinName(pumpkinDoc.data().name);
           }
