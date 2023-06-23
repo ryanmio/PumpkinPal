@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { auth, db, Timestamp, onAuthStateChanged } from '../firebase';
-import { doc, getDoc, setDoc, collection, getDocs } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, getDocs, orderBy, limit, query } from 'firebase/firestore';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import MeasurementInput from './MeasurementInput';
-
 
 function AddMeasurement() {
   const { id } = useParams();
@@ -18,6 +17,7 @@ function AddMeasurement() {
   const [circumference, setCircumference] = useState('');
   const [measurementUnit, setMeasurementUnit] = useState('cm'); 
   const [measurementDate, setMeasurementDate] = useState(new Date());
+  
   const handleEndToEndChange = (e) => setEndToEnd(parseFloat(e.target.value));
   const handleSideToSideChange = (e) => setSideToSide(parseFloat(e.target.value));
   const handleCircumferenceChange = (e) => setCircumference(parseFloat(e.target.value));
@@ -42,8 +42,31 @@ function AddMeasurement() {
         }
       }
     });
+
     return () => unsubscribe();
   }, [id]);
+
+  useEffect(() => {
+    const fetchLatestMeasurement = async () => {
+      if (selectedPumpkin) {
+        const user = auth.currentUser;
+        const measurementsRef = collection(db, 'Users', user.uid, 'Pumpkins', selectedPumpkin, 'Measurements');
+        const qm = query(measurementsRef, orderBy('timestamp', 'desc'), limit(1));
+        const snapshotMeasurement = await getDocs(qm);
+        
+        if (!snapshotMeasurement.empty) {
+          const latestMeasurement = snapshotMeasurement.docs[0].data();
+          setEndToEnd(latestMeasurement.endToEnd);
+          setSideToSide(latestMeasurement.sideToSide);
+          setCircumference(latestMeasurement.circumference);
+          setMeasurementUnit(latestMeasurement.measurementUnit);
+          setMeasurementDate(latestMeasurement.timestamp.toDate()); // Assumes 'timestamp' is a Firestore timestamp
+        }
+      }
+    }
+
+    fetchLatestMeasurement();
+  }, [selectedPumpkin]);
 
   const calculateEstimatedWeight = (endToEnd, sideToSide, circumference) => {
     let ott = endToEnd + sideToSide + circumference;
@@ -82,7 +105,7 @@ function AddMeasurement() {
     }
   };
 
- return (
+  return (
     <div className="container mx-auto px-4 h-screen pt-10">
       <div className="bg-white shadow overflow-hidden rounded-lg p-4 w-full md:max-w-md mx-auto">
         <h2 className="text-2xl font-bold mb-2 text-center">Add a Measurement</h2>
