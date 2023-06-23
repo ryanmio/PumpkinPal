@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { auth, db, Timestamp } from '../firebase';
-import { doc, getDocs, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import "react-datepicker/dist/react-datepicker.css";
 import MeasurementInput from './MeasurementInput';
 import DateInput from './DateInput';
@@ -23,28 +23,28 @@ function EditMeasurement() {
   const handleCircumferenceChange = (e) => setCircumference(e.target.value);
 
     useEffect(() => {
-    const fetchMeasurementAndPumpkin = async () => {
-      if (auth.currentUser) {
-        const measurementRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', pumpkinId, 'Measurements', measurementId);
-        const measurementDoc = await getDocs(measurementRef); 
-        if (measurementDoc.exists()) {
-          const data = measurementDoc.data();
-          setEndToEnd(parseFloat(data.endToEnd));
-          setSideToSide(parseFloat(data.sideToSide));
-          setCircumference(parseFloat(data.circumference));
-          setMeasurementUnit(data.measurementUnit);
-          setMeasurementDate(new Date());
+  const fetchMeasurementAndPumpkin = async () => {
+    if (auth.currentUser) {
+      const measurementRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', pumpkinId, 'Measurements', measurementId);
+      const measurementDoc = await getDoc(measurementRef); 
+      if (measurementDoc.exists()) {
+        const data = measurementDoc.data();
+        setEndToEnd(parseFloat(data.endToEnd));
+        setSideToSide(parseFloat(data.sideToSide));
+        setCircumference(parseFloat(data.circumference));
+        setMeasurementUnit(data.measurementUnit);
+        setMeasurementDate(new Date(data.timestamp.seconds * 1000)); // convert Firestore timestamp to JS Date
 
-          const pumpkinRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', pumpkinId);
-          const pumpkinDoc = await getDocs(pumpkinRef); 
-          if (pumpkinDoc.exists()) {
-            setPumpkinName(pumpkinDoc.data().name);
-          }
+        const pumpkinRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', pumpkinId);
+        const pumpkinDoc = await getDoc(pumpkinRef); 
+        if (pumpkinDoc.exists()) {
+          setPumpkinName(pumpkinDoc.data().name);
         }
       }
-    };
-    fetchMeasurementAndPumpkin();
-  }, [pumpkinId, measurementId]);
+    }
+  };
+  fetchMeasurementAndPumpkin();
+}, [pumpkinId, measurementId]);
 
 const calculateEstimatedWeight = (endToEnd, sideToSide, circumference, measurementUnit) => {
     let ott = parseFloat(endToEnd) + parseFloat(sideToSide) + parseFloat(circumference);
