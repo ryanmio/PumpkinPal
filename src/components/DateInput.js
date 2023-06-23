@@ -11,10 +11,9 @@ function DateInput({ id, selected, onChange, isToday }) {
         required
         className={`input text-center text-4xl w-full p-2 border-2 border-gray-300 rounded ${selected ? "filled" : ""}`}
       />
-      <label htmlFor={id} className="absolute left-0 top-0 label-float">{isToday ? "Date (Today)" : "Date"}</label>
+      <label htmlFor={id} className={`absolute left-0 top-0 label-float ${selected ? "filled" : ""}`}>{isToday ? "Date (Today)" : "Date"}</label>
     </div>
   );
 }
-
 
 export default DateInput;

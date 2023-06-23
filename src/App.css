@@ -195,13 +195,10 @@ body {
     padding: 0 5px;
     pointer-events: none;
     font-size: 0.8rem;
-    transform: translateY(-140%);
 }
 
 .input.filled + .label-float {
     color: #80876E !important;
-    -webkit-transform: translateY(-140%);
-    transform: translateY(-140%);
 }
 
 button[type="submit"] {
@@ -215,8 +212,6 @@ button[type="submit"] {
 
 .date-input .input.filled + .label-float {
   color: #80876E !important;
-  -webkit-transform: translateY(-140%);
-  transform: translateY(-140%);
 }
 
 .date-input .input {
