@@ -161,8 +161,9 @@ function UserProfile() {
         </form>
       </div>
 
-  <div className="bg-white shadow overflow-hidden rounded-lg p-4">
-        <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 text-left">Account Actions</h3>
+          <div className="bg-white shadow overflow-hidden rounded-lg p-4">
+                <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 text-left">Account Actions</h3>
+                // ...
         <div className="space-y-4 text-left">
           <button onClick={exportAllData} className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export All Data</button>
           <button onClick={handleLogout} className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Logout</button>
@@ -179,8 +180,10 @@ function UserProfile() {
             </div>
           </div>
         )}
-      </div>
-    </div>
+        </div>  // <-- this div is closing the "bg-white shadow overflow-hidden rounded-lg p-4" div
+        </div>  // <-- this div is closing the "grid gap-8 md:grid-cols-2" div
+        </div>  // <-- this div is closing the "container mx-auto px-4 h-screen" div
+
   );
 }
 
