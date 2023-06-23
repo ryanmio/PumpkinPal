@@ -190,7 +190,7 @@ body {
     color: #9e9e9e;
     left: 15px;
     position: absolute;
-    top: 20px !important;
+    top: 15px !important;
     transition: .2s;
     padding: 0 5px;
     pointer-events: none;
@@ -216,7 +216,7 @@ button[type="submit"] {
     color: #9e9e9e;
     left: 15px;
     position: absolute;
-    top: 20px !important;
+    top: 15px !important;
     transition: .2s;
     padding: 0 5px;
     pointer-events: none;
