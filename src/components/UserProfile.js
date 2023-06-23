@@ -38,7 +38,7 @@ function UserProfile() {
     });
 
     return () => unsubscribe();
-  }, []);
+  });
 
   const updatePreferences = async (e) => {
     e.preventDefault();
@@ -165,7 +165,7 @@ function UserProfile() {
           <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 text-left">Account Actions</h3>
           <div className="space-y-4 text-left">
             <button onClick={exportAllData} className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export All Data</button>
-            <button onClick={openDeleteModal} className="red-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Delete Account</button>
+            <button onClick={handleDeleteAccount} className="red-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Delete Account</button>
           </div>
 
           {showDeleteModal && (
@@ -182,5 +182,6 @@ function UserProfile() {
       </div>
     </div>
   );
+}
 
 export default UserProfile;
