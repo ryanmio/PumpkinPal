@@ -73,14 +73,14 @@ function AddMeasurement() {
     fetchLastMeasurement();
   }, [selectedPumpkin]);
 
-  const calculateEstimatedWeight = (endToEnd, sideToSide, circumference) => {
+  const calculateEstimatedWeight = (endToEnd, sideToSide, circumference, measurementUnit) => {
     let ott = endToEnd + sideToSide + circumference;
     if (measurementUnit === 'cm') {
       ott /= 2.54;  // Convert cm to inches
     }
     const weight = (((14.2 / (1 + 7.3 * Math.pow(2, -(ott) / 96))) ** 3 + (ott / 51) ** 2.91) - 8) * 0.993;
     return weight.toFixed(2);  // round to 2 decimal places
-  };
+};
 
 const calculateOTT = () => {
     if(endToEnd && sideToSide && circumference) {
@@ -92,7 +92,7 @@ const calculateOTT = () => {
 
   const addMeasurement = async (e) => {
     e.preventDefault();
-    const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumference);
+    const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumference, measurementUnit);
 
     const measurementId = Date.now().toString();
     const user = auth.currentUser;
