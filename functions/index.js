@@ -63,3 +63,46 @@ exports.exportData = functions.https.onRequest((req, res) => {
       });
   });
 });
+
+exports.exportAllData = functions.https.onRequest((req, res) => {
+  cors(req, res, async () => {
+    // Check if the user is authenticated
+    if (!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) {
+      res.status(403).send('Unauthorized');
+      return;
+    }
+
+    // Get the user ID from the token
+    const idToken = req.headers.authorization.split('Bearer ')[1];
+
+    const decodedIdToken = await admin.auth().verifyIdToken(idToken);
+    const uid = decodedIdToken.uid;
+
+    const db = admin.firestore();
+    const pumpkinsRef = db.collection(`Users/${uid}/Pumpkins`);
+
+    let allPumpkinData = [];
+
+    const pumpkinsSnapshot = await pumpkinsRef.get();
+    const pumpkinsDocs = pumpkinsSnapshot.docs;
+
+    for (const pumpkinDoc of pumpkinsDocs) {
+      const measurementsRef = pumpkinsRef.doc(pumpkinDoc.id).collection('Measurements');
+      const measurementsSnapshot = await measurementsRef.get();
+      const measurementsData = measurementsSnapshot.docs.map(measurementDoc => {
+        const data = measurementDoc.data();
+        data.date = new Date(data.timestamp.seconds * 1000).toLocaleDateString('en-US', { timeZone: req.query.timeZone });
+        return data;
+      });
+      allPumpkinData.push(...measurementsData);
+    }
+
+    const json2csv = new Parser({
+      fields: ['date', 'estimatedWeight', 'circumference', 'endToEnd', 'sideToSide', 'measurementUnit'],
+    });
+    const csv = json2csv.parse(allPumpkinData);
+
+    res.set('Content-Type', 'text/csv');
+    res.status(200).send(csv);
+  });
+});
