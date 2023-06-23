@@ -206,6 +206,12 @@ button[type="submit"] {
   color: white !important;
 }
 
+.button-disabled {
+  background-color: #ccc !important;  /* A light grey */
+  color: #999 !important;  /* A darker grey */
+  cursor: not-allowed !important;
+}
+
 .date-input .label-float {
     color: #9e9e9e;
     left: 15px;
