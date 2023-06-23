@@ -193,7 +193,6 @@ body {
     top: 38px !important;
     transition: .2s;
     padding: 0 5px;
-    background: #fff;
     pointer-events: none;
     font-size: 0.8rem;
     transform: translateY(-140%);
@@ -204,8 +203,4 @@ body {
     color: #80876E;
     -webkit-transform: translateY(-140%);
     transform: translateY(-140%);
-}
-
-.input:-webkit-autofill {
-  background-color: #FFF !important;
 }
