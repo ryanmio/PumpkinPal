@@ -66,20 +66,16 @@ exports.exportData = functions.https.onRequest((req, res) => {
 
 exports.exportAllData = functions.https.onRequest((req, res) => {
   cors(req, res, () => {
-    // Check if the user is authenticated
     if (!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) {
       res.status(403).send('Unauthorized');
       return;
     }
 
-    // Get the user ID from the token
     const idToken = req.headers.authorization.split('Bearer ')[1];
 
     admin.auth().verifyIdToken(idToken)
       .then((decodedIdToken) => {
         const uid = decodedIdToken.uid;
-
-        // Fetch data from Firestore
         const db = admin.firestore();
         const pumpkinCollection = db.collection(`Users/${uid}/Pumpkins`);
 
@@ -88,16 +84,17 @@ exports.exportAllData = functions.https.onRequest((req, res) => {
             const promises = [];
             pumpkinSnapshot.docs.forEach((pumpkinDoc) => {
               const pumpkinId = pumpkinDoc.id;
+              const pumpkinName = pumpkinDoc.data().name;
               const measurementCollection = db.collection(`Users/${uid}/Pumpkins/${pumpkinId}/Measurements`);
 
               const promise = measurementCollection.get()
                 .then((measurementSnapshot) => {
                   return measurementSnapshot.docs.map((doc) => {
                     const docData = doc.data();
-                    // Convert the timestamp to a date string
                     const date = new Date(docData.timestamp.seconds * 1000);
                     docData.date = date.toLocaleDateString('en-US', { timeZone: req.query.timeZone });
-                    docData.pumpkinId = pumpkinId;
+                    docData.pumpkinId = pumpkinName;  // Replaced with pumpkin name
+                    docData.userId = uid;  // User ID added
                     return docData;
                   });
                 });
@@ -109,6 +106,7 @@ exports.exportAllData = functions.https.onRequest((req, res) => {
                 const flattenedData = [].concat(...allData);
                 const json2csv = new Parser({
                   fields: [
+                    'userId',
                     'date',
                     'estimatedWeight',
                     'circumference',
@@ -139,5 +137,3 @@ exports.exportAllData = functions.https.onRequest((req, res) => {
       });
   });
 });
-
-
