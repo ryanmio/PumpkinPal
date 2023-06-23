@@ -17,7 +17,6 @@ function AddMeasurement() {
   const [circumference, setCircumference] = useState('');
   const [measurementUnit, setMeasurementUnit] = useState('cm'); 
   const [measurementDate, setMeasurementDate] = useState(new Date());
-  
   const handleEndToEndChange = (e) => setEndToEnd(parseFloat(e.target.value));
   const handleSideToSideChange = (e) => setSideToSide(parseFloat(e.target.value));
   const handleCircumferenceChange = (e) => setCircumference(parseFloat(e.target.value));
@@ -42,30 +41,33 @@ function AddMeasurement() {
         }
       }
     });
-
     return () => unsubscribe();
   }, [id]);
 
   useEffect(() => {
-    const fetchLatestMeasurement = async () => {
-      if (selectedPumpkin) {
+    const fetchLastMeasurement = async () => {
+      if(selectedPumpkin) {
         const user = auth.currentUser;
-        const measurementsRef = collection(db, 'Users', user.uid, 'Pumpkins', selectedPumpkin, 'Measurements');
-        const qm = query(measurementsRef, orderBy('timestamp', 'desc'), limit(1));
-        const snapshotMeasurement = await getDocs(qm);
-        
-        if (!snapshotMeasurement.empty) {
-          const latestMeasurement = snapshotMeasurement.docs[0].data();
-          setEndToEnd(latestMeasurement.endToEnd);
-          setSideToSide(latestMeasurement.sideToSide);
-          setCircumference(latestMeasurement.circumference);
-          setMeasurementUnit(latestMeasurement.measurementUnit);
-          setMeasurementDate(latestMeasurement.timestamp.toDate()); // Assumes 'timestamp' is a Firestore timestamp
+        if(user) {
+          const q = query(collection(db, 'Users', user.uid, 'Pumpkins', selectedPumpkin, 'Measurements'), orderBy('timestamp', 'desc'), limit(1));
+          const snapshot = await getDocs(q);
+          if(!snapshot.empty) {
+            const measurement = snapshot.docs[0].data();
+            setEndToEnd(measurement.endToEnd);
+            setSideToSide(measurement.sideToSide);
+            setCircumference(measurement.circumference);
+            setMeasurementDate(measurement.timestamp.toDate());
+          } else {
+            setEndToEnd('');
+            setSideToSide('');
+            setCircumference('');
+            setMeasurementDate(new Date());
+          }
         }
       }
-    }
+    };
 
-    fetchLatestMeasurement();
+    fetchLastMeasurement();
   }, [selectedPumpkin]);
 
   const calculateEstimatedWeight = (endToEnd, sideToSide, circumference) => {
