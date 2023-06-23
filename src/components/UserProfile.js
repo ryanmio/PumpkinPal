@@ -177,7 +177,7 @@ function UserProfile() {
           <div className="space-y-4 text-left">
           <button onClick={exportAllData} className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export All Data</button>
           <button onClick={handleLogout} className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Logout</button>
-          <button onClick={handleDeleteAccount} className="red-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Delete Account</button>
+          <button onClick={handleDeleteAccount} className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Delete Account</button>
         </div>
 
 
@@ -187,7 +187,7 @@ function UserProfile() {
                 <h2>Confirm Delete Account</h2>
                 <p>Your account will be closed in 30 days if you don't login again.</p>
                 <button onClick={closeDeleteModal} className="green-button">Cancel</button>
-                <button onClick={confirmDeleteAccount} className="red-button">Confirm</button>
+                <button onClick={confirmDeleteAccount} className="green-button">Confirm</button>
               </div>
             </div>
           )}
