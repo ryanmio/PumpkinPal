@@ -63,8 +63,7 @@ const calculateEstimatedWeight = (endToEnd, sideToSide, circumference, measureme
 
   const editMeasurement = async (e) => {
     e.preventDefault();
-    const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumference);
-
+    const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumference, measurementUnit);
     const measurementRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', pumpkinId, 'Measurements', measurementId);
     await updateDoc(measurementRef, {
       endToEnd,
