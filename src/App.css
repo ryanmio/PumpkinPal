@@ -200,7 +200,23 @@ body {
 
 
 .input.filled + .label-float {
-    color: #80876E;
+    color: #80876E !important;
     -webkit-transform: translateY(-140%);
     transform: translateY(-140%);
+}
+
+button[type="submit"]:not([disabled]) {
+  background-color: #80876E !important;
+  color: white !important;
+}
+
+
+.date-input .label-float {
+  font-size: 0.8rem;
+}
+
+.date-input .input.filled + .label-float {
+  color: #80876E !important;
+  -webkit-transform: translateY(-140%);
+  transform: translateY(-140%);
 }
