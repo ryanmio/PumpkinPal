@@ -47,40 +47,42 @@ function AddMeasurement() {
   }, [id]);
 
   useEffect(() => {
-    const fetchLastMeasurement = async () => {
-      if(selectedPumpkin) {
-        const user = auth.currentUser;
-        if(user) {
-          const q = query(collection(db, 'Users', user.uid, 'Pumpkins', selectedPumpkin, 'Measurements'), orderBy('timestamp', 'desc'), limit(1));
-          const snapshot = await getDocs(q);
-          if(!snapshot.empty) {
-            const measurement = snapshot.docs[0].data();
-            setEndToEnd(measurement.endToEnd);
-            setSideToSide(measurement.sideToSide);
-            setCircumference(measurement.circumference);
-            setMeasurementDate(new Date());
-          } else {
-            setEndToEnd('');
-            setSideToSide('');
-            setCircumference('');
-            setMeasurementDate(new Date());
-            setIsToday(true);
-          }
+  const fetchLastMeasurement = async () => {
+    if(selectedPumpkin) {
+      const user = auth.currentUser;
+      if(user) {
+        const q = query(collection(db, 'Users', user.uid, 'Pumpkins', selectedPumpkin, 'Measurements'), orderBy('timestamp', 'desc'), limit(1));
+        const snapshot = await getDocs(q);
+        if(!snapshot.empty) {
+          const measurement = snapshot.docs[0].data();
+          setEndToEnd(parseFloat(measurement.endToEnd));
+          setSideToSide(parseFloat(measurement.sideToSide));
+          setCircumference(parseFloat(measurement.circumference));
+          setMeasurementDate(new Date());
+        } else {
+          setEndToEnd('');
+          setSideToSide('');
+          setCircumference('');
+          setMeasurementDate(new Date());
+          setIsToday(true);
         }
       }
-    };
+    }
+  };
 
-    fetchLastMeasurement();
-  }, [selectedPumpkin]);
+  fetchLastMeasurement();
+}, [selectedPumpkin]);
+
 
   const calculateEstimatedWeight = (endToEnd, sideToSide, circumference, measurementUnit) => {
-    let ott = endToEnd + sideToSide + circumference;
-    if (measurementUnit === 'cm') {
-      ott /= 2.54;  // Convert cm to inches
-    }
-    const weight = (((14.2 / (1 + 7.3 * Math.pow(2, -(ott) / 96))) ** 3 + (ott / 51) ** 2.91) - 8) * 0.993;
-    return weight.toFixed(2);  // round to 2 decimal places
+  let ott = parseFloat(endToEnd) + parseFloat(sideToSide) + parseFloat(circumference);
+  if (measurementUnit === 'cm') {
+    ott /= 2.54;  // Convert cm to inches
+  }
+  const weight = (((14.2 / (1 + 7.3 * Math.pow(2, -(ott) / 96))) ** 3 + (ott / 51) ** 2.91) - 8) * 0.993;
+  return weight.toFixed(2);  // round to 2 decimal places
 };
+
 
 const calculateOTT = () => {
     if(endToEnd && sideToSide && circumference) {
