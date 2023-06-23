@@ -13,7 +13,7 @@ function MeasurementInput({ id, value, onChange, placeholder, min, max }) {
         max={max}
         required
         pattern="\d+(\.5)?"
-        className={`input text-center text-4xl w-full p-2 border-2 border-gray-300 rounded ${value ? "filled" : ""}`}
+        className={`input text-center text-2xl w-full p-2 border-2 border-gray-300 rounded ${value ? "filled" : ""}`}
       />
       <label htmlFor={id} className="label-float absolute left-0 top-0">{placeholder}</label>
     </div>
