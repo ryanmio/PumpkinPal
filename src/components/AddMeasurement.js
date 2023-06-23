@@ -20,7 +20,8 @@ function AddMeasurement() {
   const handleEndToEndChange = (e) => setEndToEnd(e.target.value);
   const handleSideToSideChange = (e) => setSideToSide(e.target.value);
   const handleCircumferenceChange = (e) => setCircumference(e.target.value);
-
+  const [isToday, setIsToday] = useState(true);
+    
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async user => {
       if (user) {
@@ -62,6 +63,7 @@ function AddMeasurement() {
             setSideToSide('');
             setCircumference('');
             setMeasurementDate(new Date());
+            setIsToday(true);
           }
         }
       }
@@ -148,7 +150,18 @@ const calculateOTT = () => {
             max={1000}
             value={circumference} 
           />
-          <DatePicker selected={measurementDate} onChange={(date) => setMeasurementDate(date)} className="mt-1 w-full p-2 border-2 border-gray-300 rounded text-center" />
+          <DatePicker 
+          selected={measurementDate} 
+          onChange={(date) => {
+            setMeasurementDate(date);
+            setIsToday(
+              date.getDate() === new Date().getDate() && 
+              date.getMonth() === new Date().getMonth() && 
+              date.getFullYear() === new Date().getFullYear()
+            );
+          }} 
+          className="mt-1 w-full p-2 border-2 border-gray-300 rounded text-center" 
+        />
           <div className="flex justify-between items-center mt-4">
             <button type="button" onClick={() => navigate('/dashboard')} className="text-blue-600 hover:underline">Cancel</button>
             <button 
