@@ -22,11 +22,11 @@ function EditMeasurement() {
   const handleSideToSideChange = (e) => setSideToSide(e.target.value);
   const handleCircumferenceChange = (e) => setCircumference(e.target.value);
 
-  useEffect(() => {
+    useEffect(() => {
     const fetchMeasurementAndPumpkin = async () => {
       if (auth.currentUser) {
         const measurementRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', pumpkinId, 'Measurements', measurementId);
-        const measurementDoc = await getDocs(measurementRef);
+        const measurementDoc = await getDoc(measurementRef); 
         if (measurementDoc.exists()) {
           const data = measurementDoc.data();
           setEndToEnd(parseFloat(data.endToEnd));
@@ -36,7 +36,7 @@ function EditMeasurement() {
           setMeasurementDate(new Date());
 
           const pumpkinRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', pumpkinId);
-          const pumpkinDoc = await getDocs(pumpkinRef);
+          const pumpkinDoc = await getDoc(pumpkinRef); 
           if (pumpkinDoc.exists()) {
             setPumpkinName(pumpkinDoc.data().name);
           }
