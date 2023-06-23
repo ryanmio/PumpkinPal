@@ -185,3 +185,22 @@ body {
 .login-button:hover {
   text-decoration: underline;
 }
+
+
+.input {
+  padding-top: 20px;
+}
+
+.input + label {
+  position: absolute;
+  left: 15px;
+  top: 10px;
+  transition: 0.2s;
+  color: #9e9e9e;
+}
+
+.input.filled + label {
+  transform: translate(0, -140%);
+  font-size: 1.4rem;
+  color: #2196f3;
+}
