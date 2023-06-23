@@ -190,7 +190,7 @@ body {
     color: #9e9e9e;
     left: 15px;
     position: absolute;
-    top: 38px !important;
+    top: 20px !important;
     transition: .2s;
     padding: 0 5px;
     pointer-events: none;
@@ -198,18 +198,16 @@ body {
     transform: translateY(-140%);
 }
 
-
 .input.filled + .label-float {
     color: #80876E !important;
     -webkit-transform: translateY(-140%);
     transform: translateY(-140%);
 }
 
-button[type="submit"]:not([disabled]) {
+button[type="submit"] {
   background-color: #80876E !important;
   color: white !important;
 }
-
 
 .date-input .label-float {
   font-size: 0.8rem;
@@ -222,8 +220,7 @@ button[type="submit"]:not([disabled]) {
 }
 
 .date-input .input {
-  font-size: 2rem;  /* Adjust as needed */
+  font-size: 1rem;  /* Adjust as needed */
   padding: 0.5rem;  /* Adjust as needed */
   height: auto;  /* Adjust as needed */
 }
-
