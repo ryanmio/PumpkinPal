@@ -114,7 +114,7 @@ const calculateOTT = () => {
         <h2 className="text-2xl font-bold mb-2 text-center">Add a Measurement</h2>
         <form onSubmit={addMeasurement} className="space-y-4">
           <div className="flex justify-between items-center">
-            <select value={selectedPumpkin} onChange={(e) => setSelectedPumpkin(e.target.value)} className="mt-1 p-2 border-2 border-gray-300 rounded text-center flex-grow">
+            <select value={selectedPumpkin} onChange={(e) => setSelectedPumpkin(e.target.value)} className="mt-1 p-2 border-2 border-gray-300 rounded text-center flex-grow mr-2">
               {pumpkins.map(pumpkin => (
                 <option key={pumpkin.id} value={pumpkin.id}>{pumpkin.name}</option>
               ))}

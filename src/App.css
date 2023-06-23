@@ -196,10 +196,12 @@ body {
     background: #fff;
     pointer-events: none;
     font-size: 0.8rem;
+    transform: translateY(-140%);
 }
 
+
 .input.filled + .label-float {
-    color: #2196f3;
+    color: #80876E;
     -webkit-transform: translateY(-140%);
     transform: translateY(-140%);
 }
