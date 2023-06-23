@@ -5,7 +5,7 @@ function MeasurementInput({ id, value, onChange, placeholder, min, max }) {
     <div className="relative">
       <input 
         id={id}
-        type="text"
+        type="number"
         value={value}
         placeholder=" "
         onChange={onChange}
