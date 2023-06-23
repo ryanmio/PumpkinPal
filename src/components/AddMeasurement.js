@@ -112,12 +112,19 @@ function AddMeasurement() {
       <div className="bg-white shadow overflow-hidden rounded-lg p-4 w-full md:max-w-md mx-auto text-center">
         <h2 className="text-2xl font-bold mb-2 text-center">Add a Measurement</h2>
         <form onSubmit={addMeasurement} className="space-y-4">
-          <select value={selectedPumpkin} onChange={(e) => setSelectedPumpkin(e.target.value)} className="mt-1 w-full p-2 border-2 border-gray-300 rounded text-center">
-            {pumpkins.map(pumpkin => (
-              <option key={pumpkin.id} value={pumpkin.id}>{pumpkin.name}</option>
-            ))}
-          </select>
+          <div className="flex justify-between items-center">
+            <select value={selectedPumpkin} onChange={(e) => setSelectedPumpkin(e.target.value)} className="mt-1 w-1/2 p-2 border-2 border-gray-300 rounded text-center">
+              {pumpkins.map(pumpkin => (
+                <option key={pumpkin.id} value={pumpkin.id}>{pumpkin.name}</option>
+              ))}
+            </select>
+            <select value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)} className="mt-1 w-1/2 p-2 border-2 border-gray-300 rounded text-center">
+              <option value="in">in</option>
+              <option value="cm">cm</option>
+            </select>
+          </div>
           <MeasurementInput 
+            id="endToEnd"
             placeholder="End to End"
             onChange={handleEndToEndChange}
             min={0} 
@@ -125,6 +132,7 @@ function AddMeasurement() {
             value={endToEnd} 
           />
           <MeasurementInput 
+            id="sideToSide"
             placeholder="Side to Side"
             onChange={handleSideToSideChange}
             min={0} 
@@ -132,19 +140,14 @@ function AddMeasurement() {
             value={sideToSide} 
           />
           <MeasurementInput 
+            id="circumference"
             placeholder="Circumference"
             onChange={handleCircumferenceChange}
             min={0} 
             max={1000}
             value={circumference} 
           />
-          <div className="flex justify-between items-center">
-            <select value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)} className="mt-1 w-1/2 p-2 border-2 border-gray-300 rounded text-center">
-              <option value="in">in</option>
-              <option value="cm">cm</option>
-            </select>
-            <DatePicker selected={measurementDate} onChange={(date) => setMeasurementDate(date)} className="mt-1 w-1/2 p-2 border-2 border-gray-300 rounded text-center" />
-          </div>
+          <DatePicker selected={measurementDate} onChange={(date) => setMeasurementDate(date)} className="mt-1 w-full p-2 border-2 border-gray-300 rounded text-center" />
           <div className="flex justify-between items-center mt-4">
             <button type="button" onClick={() => navigate('/dashboard')} className="text-blue-600 hover:underline">Cancel</button>
             <button 
