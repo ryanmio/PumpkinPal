@@ -116,75 +116,71 @@ function UserProfile() {
 
     
   return (
-  <div className="container mx-auto px-4 h-screen">
-    <h2 className="text-2xl font-bold mb-2 text-center">User Profile</h2>
-    <div className="grid gap-8 md:grid-cols-2">
-      <div className="bg-white shadow overflow-hidden rounded-lg p-4">
-        <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 text-left">Account Information</h3>
-        <form onSubmit={updatePreferences} className="space-y-4 text-left">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input type="email" value={auth.currentUser.email} readOnly className="mt-1 w-full p-2 border-2 border-gray-300 bg-gray-100 rounded" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Preferred Measurement Unit
-            </label>
-            <select value={preferredUnit} onChange={e => setPreferredUnit(e.target.value)} className="mt-1 w-full p-2 border-2 border-gray-300 rounded">
-              <option value="cm">cm</option>
-              <option value="in">in</option>
-            </select>
-          </div>
-          <div className="text-right">
-            <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Save</button>
-          </div>
-        </form>
-      </div>
-      
-      <div className="bg-white shadow overflow-hidden rounded-lg p-4">
-        <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 text-left">Change Password</h3>
-        <form onSubmit={handleChangePassword} className="space-y-4">
-          <div>
-            <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" placeholder="Current Password"/>
-          </div>
-          <div>
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" placeholder="New Password"/>
-          </div>
-          <div>
-            <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" placeholder="Confirm New Password"/>
-          </div>
-          <div className="text-right">
-            <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Change Password</button>
-          </div>
-        </form>
-      </div>
-
-          <div className="bg-white shadow overflow-hidden rounded-lg p-4">
-                <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 text-left">Account Actions</h3>
-                // ...
-        <div className="space-y-4 text-left">
-          <button onClick={exportAllData} className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export All Data</button>
-          <button onClick={handleLogout} className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Logout</button>
-          <button onClick={handleDeleteAccount} className="red-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Delete Account</button>
-          {alert && <div className="alert mt-2">{alert}</div>}
-        </div>
-        {showDeleteModal && (
-          <div className="modal">
-            <div className="modal-content">
-              <h2>Confirm Delete Account</h2>
-              <p>Your account will be closed in 30 days if you don't login again.</p>
-              <button onClick={closeDeleteModal} className="green-button">Cancel</button>
-              <button className="red-button">Confirm</button>
+    <div className="container mx-auto px-4 h-screen">
+      <h2 className="text-2xl font-bold mb-2 text-center">User Profile</h2>
+      <div className="grid gap-8 md:grid-cols-2">
+        <div className="bg-white shadow overflow-hidden rounded-lg p-4">
+          <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 text-left">Account Information</h3>
+          <form onSubmit={updatePreferences} className="space-y-4 text-left">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Email
+              </label>
+              <input type="email" value={auth.currentUser.email} readOnly className="mt-1 w-full p-2 border-2 border-gray-300 bg-gray-100 rounded" />
             </div>
-          </div>
-        )}
-        </div>  // <-- this div is closing the "bg-white shadow overflow-hidden rounded-lg p-4" div
-        </div>  // <-- this div is closing the "grid gap-8 md:grid-cols-2" div
-        </div>  // <-- this div is closing the "container mx-auto px-4 h-screen" div
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Preferred Measurement Unit
+              </label>
+              <select value={preferredUnit} onChange={e => setPreferredUnit(e.target.value)} className="mt-1 w-full p-2 border-2 border-gray-300 rounded">
+                <option value="cm">cm</option>
+                <option value="in">in</option>
+              </select>
+            </div>
+            <div className="text-right">
+              <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Save</button>
+            </div>
+          </form>
+        </div>
+        
+        <div className="bg-white shadow overflow-hidden rounded-lg p-4">
+          <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 text-left">Change Password</h3>
+          <form onSubmit={handleChangePassword} className="space-y-4">
+            <div>
+              <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" placeholder="Current Password"/>
+            </div>
+            <div>
+              <input type="password" value={password} onChange={e => setPassword(e.target.value)} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" placeholder="New Password"/>
+            </div>
+            <div>
+              <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required className="mt-1 w-full p-2 border-2 border-gray-300 rounded" placeholder="Confirm New Password"/>
+            </div>
+            <div className="text-right">
+              <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Change Password</button>
+            </div>
+          </form>
+        </div>
 
+        <div className="bg-white shadow overflow-hidden rounded-lg p-4">
+          <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 text-left">Account Actions</h3>
+          <div className="space-y-4 text-left">
+            <button onClick={exportAllData} className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export All Data</button>
+            <button onClick={openDeleteModal} className="red-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Delete Account</button>
+          </div>
+
+          {showDeleteModal && (
+            <div className="modal">
+              <div className="modal-content">
+                <h2>Confirm Delete Account</h2>
+                <p>Your account will be closed in 30 days if you don't login again.</p>
+                <button onClick={closeDeleteModal} className="green-button">Cancel</button>
+                <button className="red-button">Confirm</button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
-}
 
 export default UserProfile;
