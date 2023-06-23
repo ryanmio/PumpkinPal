@@ -220,3 +220,10 @@ button[type="submit"]:not([disabled]) {
   -webkit-transform: translateY(-140%);
   transform: translateY(-140%);
 }
+
+.date-input .input {
+  font-size: 2rem;  /* Adjust as needed */
+  padding: 0.5rem;  /* Adjust as needed */
+  height: auto;  /* Adjust as needed */
+}
+
