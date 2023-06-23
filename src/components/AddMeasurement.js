@@ -4,6 +4,8 @@ import { auth, db, Timestamp, onAuthStateChanged } from '../firebase';
 import { doc, getDoc, setDoc, collection, getDocs } from 'firebase/firestore';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import MeasurementInput from './MeasurementInput';
+
 
 function AddMeasurement() {
   const { id } = useParams();
