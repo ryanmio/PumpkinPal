@@ -198,7 +198,7 @@ const handleLogout = () => {
           <h2>Confirm Delete Account</h2>
           <p>Your account will be closed in 30 days if you don't login again.</p>
          <button onClick={closeDeleteModal} className="modal-button">Cancel</button>
-        <button onClick={confirmDeleteAccount} className="modal-button">Confirm</button>
+        <button onClick={confirmDeleteAccount} className="delete-button">Confirm</button>
         </div>
       </div>
     )}

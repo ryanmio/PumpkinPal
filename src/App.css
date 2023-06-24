@@ -122,18 +122,6 @@ body {
   margin-top: 20px;
 }
 
-.delete-button {
-  color: white;
-  background-color: #df6139; /* Warning color for delete button */
-  border: none;
-  border-radius: 3px;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-.delete-button:hover {
-  background-color: darkred;
-}
 
 /* For larger screens (tablets and desktops) */
 @media (min-width: 768px) {
@@ -250,5 +238,25 @@ button.button-disabled {
 
 .modal-button:hover {
   background-color: #6c755e;
+  color: white;
+}
+
+.delete-button {
+  background-color: #DF6139;
+  color: white;
+  border: none;
+  text-align: center;
+  display: inline-block;
+  font-size: 16px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  padding: 12px 24px;
+  margin: 5px 2px;
+  border-radius: 12px;
+  text-decoration: none;
+}
+
+.delete-button:hover {
+  background-color: #c05532;
   color: white;
 }
