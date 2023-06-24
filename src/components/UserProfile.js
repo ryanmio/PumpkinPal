@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { auth, db } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { signOut, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
+import { useHistory } from 'react-router-dom';
+
 
 function UserProfile() {
   const [loading, setLoading] = useState(true);
@@ -11,6 +13,7 @@ function UserProfile() {
   const [preferredUnit, setPreferredUnit] = useState(null);
   const [alert, setAlert] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const history = useHistory();
     
     const confirmDeleteAccount = async () => {
         if (auth.currentUser) {
@@ -113,8 +116,16 @@ function UserProfile() {
     });
   };
 
-    const handleLogout = () => {
-    signOut(auth);
+const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        // Redirect to homepage after logging out
+        history.push('/');
+      })
+      .catch((error) => {
+        // Handle any errors
+        console.log(error.message);
+      });
   };
 
   const handleDeleteAccount = () => {
@@ -182,15 +193,16 @@ function UserProfile() {
 
 
           {showDeleteModal && (
-            <div className="modal">
-              <div className="modal-content">
-                <h2>Confirm Delete Account</h2>
-                <p>Your account will be closed in 30 days if you don't login again.</p>
-                <button onClick={closeDeleteModal} className="green-button">Cancel</button>
-                <button onClick={confirmDeleteAccount} className="green-button">Confirm</button>
-              </div>
-            </div>
-          )}
+      <div className="modal" style={{display: 'block', position: 'fixed', zIndex: 1, left: 0, top: 0, width: '100%', height: '100%', overflow: 'auto', backgroundColor: 'rgba(0,0,0,0.4)'}}>
+        <div className="modal-content" style={{backgroundColor: '#fefefe', margin: '15% auto', padding: '20px', border: '1px solid #888', width: '80%'}}>
+          <h2>Confirm Delete Account</h2>
+          <p>Your account will be closed in 30 days if you don't login again.</p>
+          <button onClick={closeDeleteModal} className="green-button">Cancel</button>
+          <button onClick={confirmDeleteAccount} className="green-button">Confirm</button>
+        </div>
+      </div>
+    )}
+
         </div>
       </div>
     </div>
