@@ -10,16 +10,17 @@ function Header({ currentUser }) {
     <header className="App-header">
       <div className="nav-bar">
         <div className="nav-row">
+          <Link to={currentUser ? "/dashboard" : "/"}>
+            <img src="/logowide.png" alt="Logo" className="App-logo" />
+          </Link>
           {location.pathname === "/" && !currentUser ? (
-             <div style={{ marginLeft: 'auto', paddingRight: '20px', marginTop: '0px', marginBottom: '0px' }}>
+            <div style={{ marginLeft: 'auto', paddingRight: '20px', marginTop: '0px', marginBottom: '0px' }}>
               <button className="logout-button login-button" onClick={() => navigate('/login')}>
                 Login
               </button>
             </div>
           ) : (
             <>
-              <img src="/logo192.png" alt="Logo" className="App-logo" />
-              <span>{currentUser ? `User: ${currentUser.email}` : ''}</span>
               {currentUser && <Logout className="logout-button"/>}
             </>
           )}

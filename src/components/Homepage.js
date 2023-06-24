@@ -14,7 +14,7 @@ export default function Homepage() {
     </div>
     <div className="mt-10 md:mt-0 md:ml-10 text-center md:text-left md:w-[294px] mx-auto">
         <h1 className="text-4xl font-bold mb-4">PumpkinPal</h1>
-        <p className="text-xl mb-6">An open-source companion app for pumpkin growers</p>
+        <p className="text-xl mb-6 px-2">An open-source companion app for pumpkin growers</p>
         <Link to="/register" className="px-4 py-2 md:px-8 md:py-4 green-button rounded text-white text-lg md:text-xl text-white hover:text-white focus:outline-none focus:ring-0 underline-none no-underline">Create Account</Link>
     </div>
 </div>
@@ -43,8 +43,11 @@ export default function Homepage() {
 
 {/* Screenshots Section */}
 <div className="w-full px-8">
-    <img className="w-full h-auto rounded-lg" src="/images/screenmockup-details.png" alt="App screenshot" />
+    <div className="px-4 sm:px-6 lg:px-32">
+        <img className="w-full h-auto rounded-lg" src="/images/screenmockup-details.png" alt="App screenshot" />
+    </div>
 </div>
+
 
        {/* Call to Action Section */}
 <div className="w-full p-8">

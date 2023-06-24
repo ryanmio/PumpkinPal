@@ -63,3 +63,77 @@ exports.exportData = functions.https.onRequest((req, res) => {
       });
   });
 });
+
+exports.exportAllData = functions.https.onRequest((req, res) => {
+  cors(req, res, () => {
+    if (!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) {
+      res.status(403).send('Unauthorized');
+      return;
+    }
+
+    const idToken = req.headers.authorization.split('Bearer ')[1];
+
+    admin.auth().verifyIdToken(idToken)
+      .then((decodedIdToken) => {
+        const uid = decodedIdToken.uid;
+        const db = admin.firestore();
+        const pumpkinCollection = db.collection(`Users/${uid}/Pumpkins`);
+
+        pumpkinCollection.get()
+          .then((pumpkinSnapshot) => {
+            const promises = [];
+            pumpkinSnapshot.docs.forEach((pumpkinDoc) => {
+              const pumpkinId = pumpkinDoc.id;
+              const pumpkinName = pumpkinDoc.data().name;
+              const measurementCollection = db.collection(`Users/${uid}/Pumpkins/${pumpkinId}/Measurements`);
+
+              const promise = measurementCollection.get()
+                .then((measurementSnapshot) => {
+                  return measurementSnapshot.docs.map((doc) => {
+                    const docData = doc.data();
+                    const date = new Date(docData.timestamp.seconds * 1000);
+                    docData.date = date.toLocaleDateString('en-US', { timeZone: req.query.timeZone });
+                    docData.pumpkinId = pumpkinName;  // Replaced with pumpkin name
+                    docData.userId = uid;  // User ID added
+                    return docData;
+                  });
+                });
+              promises.push(promise);
+            });
+
+            Promise.all(promises)
+              .then((allData) => {
+                const flattenedData = [].concat(...allData);
+                const json2csv = new Parser({
+                  fields: [
+                    'userId',
+                    'date',
+                    'estimatedWeight',
+                    'circumference',
+                    'endToEnd',
+                    'sideToSide',
+                    'measurementUnit',
+                    'pumpkinId',
+                  ],
+                });
+                const csv = json2csv.parse(flattenedData);
+
+                res.set('Content-Type', 'text/csv');
+                res.status(200).send(csv);
+              })
+              .catch((err) => {
+                console.error(err);
+                res.status(500).send(err);
+              });
+          })
+          .catch((err) => {
+            console.error(err);
+            res.status(500).send(err);
+          });
+      })
+      .catch((error) => {
+        console.error('Error verifying Firebase ID token:', error);
+        res.status(403).send('Unauthorized');
+      });
+  });
+});
