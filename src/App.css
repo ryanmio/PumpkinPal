@@ -156,14 +156,14 @@ body {
 }
 
 .add-pumpkin-button:hover {
-  background-color: #da8329; /* Darker shade for hover */
+  background-color: #da8329; 
 }
 
 
 .section-break {
-  width: 100%; /* Full width */
-  border-bottom: 1px solid #ccc; /* Border at the bottom */
-  margin: 20px 0; /* Some margin at the top and bottom */
+  width: 100%;
+  border-bottom: 1px solid #ccc; 
+  margin: 20px 0; 
 }
 
 
@@ -228,7 +228,27 @@ button.button-disabled {
 }
 
 .date-input .input {
-  font-size: 1rem;  /* Adjust as needed */
-  padding: 0.5rem;  /* Adjust as needed */
-  height: auto;  /* Adjust as needed */
+  font-size: 1rem; 
+  padding: 0.5rem;  
+  height: auto;  
+}
+
+.modal-button {
+  background-color: #80876E;
+  color: white;
+  border: none;
+  text-align: center;
+  display: inline-block;
+  font-size: 16px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  padding: 12px 24px;
+  margin: 5px 2px;
+  border-radius: 12px;
+  text-decoration: none;
+}
+
+.modal-button:hover {
+  background-color: #6c755e;
+  color: white;
 }
