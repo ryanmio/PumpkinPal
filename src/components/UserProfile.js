@@ -138,10 +138,10 @@ const handleLogout = () => {
 
     
   return (
-    <div className="container mx-auto px-4 min-h-screen">
+    <div className="container mx-auto px-4 min-h-screen pb-10">
       <h2 className="text-2xl font-bold mb-2 text-center">User Profile</h2>
       <div className="grid gap-8 md:grid-cols-2">
-        <div className="bg-white shadow overflow-hidden rounded-lg py-8 px-4">
+        <div className="bg-white shadow overflow-hidden rounded-lg p-4">
           <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 text-left">Account Information</h3>
           <form onSubmit={updatePreferences} className="space-y-4 text-left">
             <div>
@@ -165,7 +165,7 @@ const handleLogout = () => {
           </form>
         </div>
         
-        <div className="bg-white shadow overflow-hidden rounded-lg py-8 px-4">
+        <div className="bg-white shadow overflow-hidden rounded-lg p-4">
           <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 text-left">Change Password</h3>
           <form onSubmit={handleChangePassword} className="space-y-4">
             <div>
@@ -183,7 +183,7 @@ const handleLogout = () => {
           </form>
         </div>
 
-<div className="bg-white shadow overflow-hidden rounded-lg py-8 px-4">
+<div className="bg-white shadow overflow-hidden rounded-lg p-4">
   <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 text-left">Account Actions</h3>
   <div className="flex flex-col items-center space-y-4">
     <button onClick={exportAllData} className="green-button text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 px-4 py-2 w-2/3">Export All Data</button>
