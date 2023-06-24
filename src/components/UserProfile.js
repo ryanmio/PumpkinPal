@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { auth, db } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { signOut, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 function UserProfile() {
@@ -13,7 +13,7 @@ function UserProfile() {
   const [preferredUnit, setPreferredUnit] = useState(null);
   const [alert, setAlert] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
     
     const confirmDeleteAccount = async () => {
         if (auth.currentUser) {
@@ -120,7 +120,7 @@ const handleLogout = () => {
     signOut(auth)
       .then(() => {
         // Redirect to homepage after logging out
-        history.push('/');
+        navigate('/');
       })
       .catch((error) => {
         // Handle any errors
