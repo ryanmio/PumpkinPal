@@ -82,10 +82,10 @@ return (
             pumpkins.length === 0 ? (
               <div className="flex justify-center md:col-span-2">
                 <div className="bg-gray-100 shadow overflow-hidden rounded-lg p-6 mb-4 flex flex-col items-center justify-center text-center">
-                  <img src="empty_icon_url" alt="No pumpkin" className="mb-4" />
-                  <h3 className="text-lg leading-6 font-medium text-gray-900 mb-2">No Pumpkins Yet!</h3>
-                  <p className="max-w-md text-sm text-gray-500 mb-4">You don't have any pumpkins in your dashboard. Click the button below to add your first pumpkin!</p>
-                  <button onClick={() => navigate('/add-pumpkin')} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-full">Create Your First Pumpkin</button>
+                  <img src="/images/addpumpkinicon.png" alt="No pumpkin" className="mb-4" />
+                  <h3 className="text-lg leading-6 font-medium text-gray-900 mb-2">Add your first pumpkin</h3>
+                  <p className="max-w-md text-sm text-gray-500 mb-4">You don't have any pumpkins in your dashboard. Click the button below to add your first pumpkin.</p>
+                  <button onClick={() => navigate('/add-pumpkin')} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-full">Add Your First Pumpkin</button>
                 </div>
               </div>
             ) : (
