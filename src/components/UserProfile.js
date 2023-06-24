@@ -183,13 +183,14 @@ const handleLogout = () => {
           </form>
         </div>
 
-       <div className="bg-white shadow overflow-hidden rounded-lg p-4">
-      <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 text-left">Account Actions</h3>
-      <div className="flex flex-col space-y-4">
-        <button onClick={exportAllData} className="green-button text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 px-4 py-2">Export All Data</button>
-        <button onClick={handleLogout} className="green-button text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 px-4 py-2">Logout</button>
-        <button onClick={handleDeleteAccount} className="green-button text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 px-4 py-2">Delete Account</button>
-      </div>
+<div className="bg-white shadow overflow-hidden rounded-lg p-4">
+  <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 text-left">Account Actions</h3>
+  <div className="flex flex-col items-center space-y-4">
+    <button onClick={exportAllData} className="green-button text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 px-4 py-2 w-2/3">Export All Data</button>
+    <button onClick={handleLogout} className="green-button text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 px-4 py-2 w-2/3">Logout</button>
+    <button onClick={handleDeleteAccount} className="green-button text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 px-4 py-2 w-2/3">Delete Account</button>
+  </div>
+
 
           {showDeleteModal && (
       <div className="modal" style={{display: 'block', position: 'fixed', zIndex: 1, left: 0, top: 0, width: '100%', height: '100%', overflow: 'auto', backgroundColor: 'rgba(0,0,0,0.4)'}}>
