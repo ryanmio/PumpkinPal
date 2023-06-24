@@ -234,6 +234,7 @@ button.button-disabled {
   margin: 5px 2px;
   border-radius: 12px;
   text-decoration: none;
+  max-width: 200px;
 }
 
 .modal-button:hover {
@@ -254,9 +255,11 @@ button.button-disabled {
   margin: 5px 2px;
   border-radius: 12px;
   text-decoration: none;
+  max-width: 200px;
 }
 
 .delete-button:hover {
   background-color: #c05532;
   color: white;
 }
+

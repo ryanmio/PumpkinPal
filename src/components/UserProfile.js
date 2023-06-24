@@ -197,8 +197,11 @@ const handleLogout = () => {
         <div className="modal-content" style={{backgroundColor: '#fefefe', margin: '15% auto', padding: '20px', border: '1px solid #888', width: '80%'}}>
           <h2>Confirm Delete Account</h2>
           <p>Your account will be closed in 30 days if you don't login again.</p>
-         <button onClick={closeDeleteModal} className="modal-button">Cancel</button>
-        <button onClick={confirmDeleteAccount} className="delete-button">Confirm</button>
+         <div className="text-center">
+          <button onClick={closeDeleteModal} className="modal-button">Cancel</button>
+          <button onClick={confirmDeleteAccount} className="delete-button">Confirm</button>
+        </div>
+
         </div>
       </div>
     )}
