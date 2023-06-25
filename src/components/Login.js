@@ -15,6 +15,7 @@ function Login() {
   const location = useLocation();
 
   useEffect(() => {
+  console.log(location);  // Add this line
   const queryParams = new URLSearchParams(location.search);
   
   if (queryParams.get('demo') === 'true') {
