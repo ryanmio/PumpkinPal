@@ -14,7 +14,6 @@ import PumpkinDetail from './components/PumpkinDetail';
 import Homepage from './components/Homepage';
 import UserProfile from './components/UserProfile';
 import EditMeasurement from './components/EditMeasurement';
-import Dashboardv2 from './components/Dashboardv2';
 import Header from './components/Header';
 
 function App() {
@@ -42,7 +41,6 @@ function App() {
           <Route path="/" element={<Homepage />} />
           <Route path="/user-profile" element={<UserProfile />} />
           <Route path="/edit-measurement/:pumpkinId/:measurementId" element={<EditMeasurement />} />
-          <Route path="/dashboardv2" element={<Dashboardv2 />} />
         </Routes>
       </Router>
     </div>
