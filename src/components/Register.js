@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { auth, db, googleAuthProvider } from '../firebase'; // Make sure you've exported googleAuthProvider from your firebase.js file
-import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { auth, db } from '../firebase';
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faUnlockAlt, faGoogle } from "@fortawesome/free-solid-svg-icons"; // Add FontAwesome Google icon
-import { Col, Row, Form, Card, Container, InputGroup, Button } from '@themesberg/react-bootstrap';
+import { faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
+import { Col, Row, Form, Card, Container, InputGroup } from '@themesberg/react-bootstrap';
 
 function Register() {
     const [email, setEmail] = useState('');
@@ -35,22 +35,6 @@ function Register() {
                 navigate('/login');
             })
             .catch((error) => {
-                var errorMessage = error.message;
-                setError(errorMessage);
-            });
-    }
-
-    const signInWithGoogle = () => {
-        signInWithPopup(auth, googleAuthProvider)
-            .then((result) => {
-                // User signed in with Google, you can get the Google user info with result.user
-                setDoc(doc(db, 'Users', result.user.uid), {
-                    email: result.user.email,
-                });
-                navigate('/dashboard');
-            })
-            .catch((error) => {
-                // Handle Errors here.
                 var errorMessage = error.message;
                 setError(errorMessage);
             });
@@ -95,12 +79,6 @@ function Register() {
                     <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-100 mt-3">
                   Sign Up
                 </button>
-    
-                <Button onClick={signInWithGoogle} className="mt-3 w-100"> {/* Google Sign-In Button */}
-                      <FontAwesomeIcon icon={faGoogle} className="me-2" /> Sign Up with Google
-                    </Button>
-    
-    
                   </Form>
                   <div className="d-flex justify-content-center align-items-center mt-4">
                     <span className="fw-normal">
