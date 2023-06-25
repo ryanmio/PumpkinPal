@@ -38,8 +38,22 @@ function Register() {
                 var errorMessage = error.message;
                 setError(errorMessage);
             });
-    
-            
+    }
+
+    const signInWithGoogle = () => {
+        signInWithPopup(auth, googleAuthProvider)
+            .then((result) => {
+                // User signed in with Google, you can get the Google user info with result.user
+                setDoc(doc(db, 'Users', result.user.uid), {
+                    email: result.user.email,
+                });
+                navigate('/dashboard');
+            })
+            .catch((error) => {
+                // Handle Errors here.
+                var errorMessage = error.message;
+                setError(errorMessage);
+            });
     }
 
     return (
