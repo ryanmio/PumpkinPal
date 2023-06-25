@@ -12,76 +12,76 @@ function Login() {
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-  const queryParams = new URLSearchParams(location.search);
+    const queryParams = new URLSearchParams(location.search);
   
-  if (queryParams.get('demo') === 'true') {
-    setEmail('demo@account.com');
-    setPassword('password');
-  }
-}, [location.search]);
-
+    if (queryParams.get('demo') === 'true') {
+      setEmail('demo@account.com');
+      setPassword('password');
+    }
+  }, [location.search]);
 
   const login = e => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if(email.trim() === '' || password.trim() === ''){
-    setError('All fields are required');
-    return;
+    if(email.trim() === '' || password.trim() === ''){
+      setError('All fields are required');
+      return;
+    }
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        navigate('/dashboard');
+      })
+      .catch((error) => {
+        let errorMessage = '';
+        switch (error.code) {
+            case 'auth/invalid-email':
+                errorMessage = 'Invalid email format';
+                break;
+            case 'auth/user-disabled':
+                errorMessage = 'This user has been disabled';
+                break;
+            case 'auth/user-not-found':
+                errorMessage = 'User not found';
+                break;
+            case 'auth/wrong-password':
+                errorMessage = 'Incorrect password';
+                break;
+            default:
+                errorMessage = 'An error occurred during login';
+        }
+        setError(errorMessage);
+      });
+  };
+
+  const handleForgotPassword = (e) => {
+    e.preventDefault();
+    if(email.trim() === ''){
+      setError('Please input your email');
+      return;
+    }
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        alert('Password reset email sent to ' + email);
+      })
+      .catch((error) => {
+        let errorMessage = '';
+        switch (error.code) {
+            case 'auth/invalid-email':
+                errorMessage = 'Invalid email format';
+                break;
+            case 'auth/user-not-found':
+                errorMessage = 'Email does not exist';
+                break;
+            default:
+                errorMessage = 'An error occurred when resetting password';
+        }
+        setError(errorMessage);
+      });
   }
-
-  signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      navigate('/dashboard');
-    })
-    .catch((error) => {
-      let errorMessage = '';
-      switch (error.code) {
-          case 'auth/invalid-email':
-              errorMessage = 'Invalid email format';
-              break;
-          case 'auth/user-disabled':
-              errorMessage = 'This user has been disabled';
-              break;
-          case 'auth/user-not-found':
-              errorMessage = 'User not found';
-              break;
-          case 'auth/wrong-password':
-              errorMessage = 'Incorrect password';
-              break;
-          default:
-              errorMessage = 'An error occurred during login';
-      }
-      setError(errorMessage);
-    });
-};
-
-const handleForgotPassword = (e) => {
-  e.preventDefault();
-  if(email.trim() === ''){
-    setError('Please input your email');
-    return;
-  }
-  sendPasswordResetEmail(auth, email)
-    .then(() => {
-      alert('Password reset email sent to ' + email);
-    })
-    .catch((error) => {
-      let errorMessage = '';
-      switch (error.code) {
-          case 'auth/invalid-email':
-              errorMessage = 'Invalid email format';
-              break;
-          case 'auth/user-not-found':
-              errorMessage = 'Email does not exist';
-              break;
-          default:
-              errorMessage = 'An error occurred when resetting password';
-      }
-      setError(errorMessage);
-    });
-}
 
 
   return (
