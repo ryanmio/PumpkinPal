@@ -8,6 +8,17 @@ import { faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
 import { Col, Row, Form, Card, Container, InputGroup } from '@themesberg/react-bootstrap';
 import { FaGoogle } from 'react-icons/fa';
 
+const authErrorMap = {
+  "auth/invalid-email": "Invalid email format.",
+  "auth/user-disabled": "This account has been disabled.",
+  "auth/user-not-found": "No account found with this email.",
+  "auth/wrong-password": "Incorrect password.",
+  "auth/email-already-in-use": "An account with this email already exists.",
+  "auth/operation-not-allowed": "Operation not allowed. Please contact support.",
+  "auth/weak-password": "Please choose a stronger password.",
+  // Add other error codes as needed
+};
+
 function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -36,8 +47,8 @@ function Register() {
                 navigate('/login');
             })
             .catch((error) => {
-                var errorMessage = error.message;
-                setError(errorMessage);
+                const friendlyErrorMsg = authErrorMap[error.code] || "An unknown error occurred.";
+                setError(friendlyErrorMsg);
             });
     }
 
@@ -50,8 +61,8 @@ function Register() {
                 navigate('/dashboard');
             })
             .catch((error) => {
-                var errorMessage = error.message;
-                setError(errorMessage);
+                const friendlyErrorMsg = authErrorMap[error.code] || "An unknown error occurred.";
+                setError(friendlyErrorMsg);
             });
     }
 
