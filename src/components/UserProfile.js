@@ -187,6 +187,11 @@ const handleLogout = () => {
   <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 text-left">Account Actions</h3>
   <div className="flex flex-col items-center space-y-4">
     <button onClick={exportAllData} className="green-button text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 px-4 py-2 w-2/3">Export All Data</button>
+    {alert && (
+            <div className="alert">
+              {alert}
+            </div>
+          )}
     <button onClick={handleLogout} className="green-button text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 px-4 py-2 w-2/3">Logout</button>
     <button onClick={handleDeleteAccount} className="green-button text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 px-4 py-2 w-2/3">Delete Account</button>
   </div>
