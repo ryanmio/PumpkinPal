@@ -186,12 +186,17 @@ const handleLogout = () => {
 <div className="bg-white shadow overflow-hidden rounded-lg p-4">
   <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 text-left">Account Actions</h3>
   <div className="flex flex-col items-center space-y-4">
-    <button onClick={exportAllData} className="green-button text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 px-4 py-2 w-2/3">Export All Data</button>
+    <button onClick={exportAllData} className="green-button text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 px-4 py-2 w-2/3 flex items-center justify-center space-x-2">
+      <img src="/path-to-your-google-icon.svg" alt="Google logo" className="w-6 h-6" /> {/* please replace "/path-to-your-google-icon.svg" with actual path of your Google logo icon */}
+      <span className="px-2">Export All Data</span>
+    </button>
     {alert && (
-            <div className="alert">
-              {alert}
-            </div>
-          )}
+      <div className="alert">
+        {alert}
+      </div>
+    )}
+  </div>
+</div>
     <button onClick={handleLogout} className="green-button text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 px-4 py-2 w-2/3">Logout</button>
     <button onClick={handleDeleteAccount} className="green-button text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 px-4 py-2 w-2/3">Delete Account</button>
   </div>
