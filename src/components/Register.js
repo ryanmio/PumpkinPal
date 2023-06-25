@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
 import { Col, Row, Form, Card, Container, InputGroup } from '@themesberg/react-bootstrap';
+import { FaGoogle } from 'react-icons/fa';
 
 function Register() {
     const [email, setEmail] = useState('');
@@ -94,7 +95,7 @@ function Register() {
                       Sign Up
                     </button>
                     <button onClick={signInWithGoogle} className="green-button inline-flex items-center justify-center px-2 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-100 mt-3">
-                      Sign Up with Google
+                     <FaGoogle className="google-logo" /> Sign Up with Google
                     </button>
                   </Form>
                   <div className="d-flex justify-content-center align-items-center mt-4">
