@@ -38,21 +38,7 @@ function Register() {
                 var errorMessage = error.message;
                 setError(errorMessage);
             });
-        
-        
-        const signInWithGoogle = () => {
-        signInWithPopup(auth, googleAuthProvider)
-            .then((result) => {
-                const user = result.user;
-                setDoc(doc(db, 'Users', user.uid), {
-                    email: user.email,
-                });
-                navigate('/dashboard'); // Redirect to dashboard after successful sign in
-            })
-            .catch((error) => {
-                var errorMessage = error.message;
-                setError(errorMessage);
-            });
+    
             
     }
 
