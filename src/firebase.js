@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore, Timestamp, query as firestoreQuery, orderBy as orderByFirestore, limit as limitFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
@@ -21,8 +21,11 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
+// Initialize Google Auth Provider
+const googleAuthProvider = new GoogleAuthProvider();
+
 export const query = firestoreQuery;
 export const orderBy = orderByFirestore;
 export const limit = limitFirestore;
 
-export { auth, db, storage, Timestamp, onAuthStateChanged };
+export { auth, db, storage, Timestamp, onAuthStateChanged, googleAuthProvider };
