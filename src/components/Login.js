@@ -14,7 +14,7 @@ function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
+useEffect(() => {
   console.log(location);  // Add this line
   const queryParams = new URLSearchParams(location.search);
   
@@ -25,7 +25,7 @@ function Login() {
     setEmail(demoEmail);
     setPassword(demoPassword);
   }
-}, [location.search]);
+}, [location]); // replace location.search with location
 
 
   const login = e => {
