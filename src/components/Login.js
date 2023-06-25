@@ -15,13 +15,17 @@ function Login() {
   const location = useLocation();
 
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
+  const queryParams = new URLSearchParams(location.search);
   
-    if (queryParams.get('demo') === 'true') {
-      setEmail('demo@account.com');
-      setPassword('password');
-    }
-  }, [location.search]);
+  if (queryParams.get('demo') === 'true') {
+    const demoEmail = 'demo@account.com';
+    const demoPassword = 'password';
+
+    setEmail(demoEmail);
+    setPassword(demoPassword);
+  }
+}, [location.search]);
+
 
   const login = e => {
     e.preventDefault();
