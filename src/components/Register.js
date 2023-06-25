@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { auth, db } from '../firebase';
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db, googleAuthProvider } from '../firebase';
+import { signInWithPopup, createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -33,6 +33,20 @@ function Register() {
                     email: userCredential.user.email,
                 });
                 navigate('/login');
+            })
+            .catch((error) => {
+                var errorMessage = error.message;
+                setError(errorMessage);
+            });
+    }
+
+    const signInWithGoogle = () => {
+        signInWithPopup(auth, googleAuthProvider)
+            .then((result) => {
+                setDoc(doc(db, 'Users', result.user.uid), {
+                    email: result.user.email,
+                });
+                navigate('/dashboard');
             })
             .catch((error) => {
                 var errorMessage = error.message;
@@ -77,8 +91,11 @@ function Register() {
                       </InputGroup>
                     </Form.Group>
                     <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-100 mt-3">
-                  Sign Up
-                </button>
+                      Sign Up
+                    </button>
+                    <button onClick={signInWithGoogle} className="green-button inline-flex items-center justify-center px-2 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-100 mt-3">
+                      Sign Up with Google
+                    </button>
                   </Form>
                   <div className="d-flex justify-content-center align-items-center mt-4">
                     <span className="fw-normal">
