@@ -2,7 +2,7 @@
 
 ## 🚧 Project Status: Early Development
 
-Welcome to my Pumpkin OTT Weight Calculator App repository! This app is in its early stages of development. Feel free to visit the live app at pumpkinpal.app/dashboard.
+Welcome to my Pumpkin OTT Weight Calculator App repository! This app is in its early stages of development. Feel free to visit the live app at pumpkinpal.app.
 
 ## 🎯 Project Overview
 
