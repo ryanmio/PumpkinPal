@@ -6,7 +6,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import MeasurementInput from './MeasurementInput';
 import DateInput from './DateInput';
 
-
 function AddMeasurement() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -18,11 +17,7 @@ function AddMeasurement() {
   const [circumference, setCircumference] = useState('');
   const [measurementUnit, setMeasurementUnit] = useState('cm'); 
   const [measurementDate, setMeasurementDate] = useState(new Date());
-  const handleEndToEndChange = (e) => setEndToEnd(e.target.value);
-  const handleSideToSideChange = (e) => setSideToSide(e.target.value);
-  const handleCircumferenceChange = (e) => setCircumference(e.target.value);
-  const [isToday, setIsToday] = useState(true);
-    
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async user => {
       if (user) {
@@ -43,66 +38,58 @@ function AddMeasurement() {
         }
       }
     });
+
     return () => unsubscribe();
   }, [id]);
 
   useEffect(() => {
-  const fetchLastMeasurement = async () => {
-    if(selectedPumpkin) {
-      const user = auth.currentUser;
-      if(user) {
-        const q = query(collection(db, 'Users', user.uid, 'Pumpkins', selectedPumpkin, 'Measurements'), orderBy('timestamp', 'desc'), limit(1));
-        const snapshot = await getDocs(q);
-        if(!snapshot.empty) {
-          const measurement = snapshot.docs[0].data();
-          setEndToEnd(parseFloat(measurement.endToEnd));
-          setSideToSide(parseFloat(measurement.sideToSide));
-          setCircumference(parseFloat(measurement.circumference));
-          setMeasurementDate(new Date());
-        } else {
-          setEndToEnd('');
-          setSideToSide('');
-          setCircumference('');
-          setMeasurementDate(new Date());
-          setIsToday(true);
+    const fetchLastMeasurement = async () => {
+      if(selectedPumpkin) {
+        const user = auth.currentUser;
+        if(user) {
+          const q = query(collection(db, 'Users', user.uid, 'Pumpkins', selectedPumpkin, 'Measurements'), orderBy('timestamp', 'desc'), limit(1));
+          const snapshot = await getDocs(q);
+          if(!snapshot.empty) {
+            const measurement = snapshot.docs[0].data();
+            setEndToEnd(parseFloat(measurement.endToEnd));
+            setSideToSide(parseFloat(measurement.sideToSide));
+            setCircumference(parseFloat(measurement.circumference));
+            setMeasurementDate(new Date());
+          } else {
+            setEndToEnd('');
+            setSideToSide('');
+            setCircumference('');
+            setMeasurementDate(new Date());
+          }
         }
       }
-    }
-  };
+    };
 
-  fetchLastMeasurement();
-}, [selectedPumpkin]);
-
+    fetchLastMeasurement();
+  }, [selectedPumpkin]);
 
   const calculateEstimatedWeight = (endToEnd, sideToSide, circumference, measurementUnit) => {
-  let ott = parseFloat(endToEnd) + parseFloat(sideToSide) + parseFloat(circumference);
-console.log(ott); // add this line
-  if (measurementUnit === 'cm') {
-    ott /= 2.54;  // Convert cm to inches
-  }
-  const weight = (((14.2 / (1 + 7.3 * Math.pow(2, -(ott) / 96))) ** 3 + (ott / 51) ** 2.91) - 8) * 0.993;
-console.log(weight); // add this line
-  return weight.toFixed(2);  // round to 2 decimal places
-};
+    let ott = parseFloat(endToEnd) + parseFloat(sideToSide) + parseFloat(circumference);
+    if (measurementUnit === 'cm') {
+      ott /= 2.54;  // Convert cm to inches
+    }
+    const weight = (((14.2 / (1 + 7.3 * Math.pow(2, -(ott) / 96))) ** 3 + (ott / 51) ** 2.91) - 8) * 0.993;
+    return weight.toFixed(2);  // round to 2 decimal places
+  };
 
-
-const calculateOTT = () => {
+  const calculateOTT = () => {
     if(endToEnd && sideToSide && circumference) {
       return parseFloat(endToEnd) + parseFloat(sideToSide) + parseFloat(circumference);
     }
     return 0;
-};
-
+  };
 
   const addMeasurement = async (e) => {
     e.preventDefault();
-    console.log(endToEnd, sideToSide, circumference, measurementUnit); // add this line
-const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumference, measurementUnit);
-
+    const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumference, measurementUnit);
     const measurementId = Date.now().toString();
     const user = auth.currentUser;
-
-    if(user) {
+    if(user && selectedPumpkin) {
       await setDoc(doc(db, 'Users', user.uid, 'Pumpkins', selectedPumpkin, 'Measurements', measurementId), {
         endToEnd,
         sideToSide,
@@ -111,11 +98,9 @@ const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumfer
         estimatedWeight,
         timestamp: Timestamp.fromDate(measurementDate),
       });
-console.log("Data saved to database"); // add this line
       navigate(`/pumpkin/${selectedPumpkin}`);
     }
   };
-
 
   return (
     <div className="container mx-auto px-4 h-screen pt-10">
@@ -129,14 +114,14 @@ console.log("Data saved to database"); // add this line
               ))}
             </select>
             <select value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)} className="mt-1 w-auto p-2 border-2 border-gray-300 rounded text-center">
-          <option value="in">in</option>
-          <option value="cm">cm</option>
-        </select>
+              <option value="in">in</option>
+              <option value="cm">cm</option>
+            </select>
           </div>
           <MeasurementInput 
             id="endToEnd"
             placeholder="End to End"
-            onChange={handleEndToEndChange}
+            onChange={(e) => setEndToEnd(e.target.value)}
             min={0} 
             max={500}
             value={endToEnd} 
@@ -144,7 +129,7 @@ console.log("Data saved to database"); // add this line
           <MeasurementInput 
             id="sideToSide"
             placeholder="Side to Side"
-            onChange={handleSideToSideChange}
+            onChange={(e) => setSideToSide(e.target.value)}
             min={0} 
             max={500}
             value={sideToSide} 
@@ -152,35 +137,26 @@ console.log("Data saved to database"); // add this line
           <MeasurementInput 
             id="circumference"
             placeholder="Circumference"
-            onChange={handleCircumferenceChange}
+            onChange={(e) => setCircumference(e.target.value)}
             min={0} 
             max={1000}
             value={circumference} 
           />
-         <DateInput 
-          id="measurementDate"
-          selected={measurementDate}
-          onChange={(date) => {
-            setMeasurementDate(date);
-            setIsToday(
-              date.getDate() === new Date().getDate() && 
-              date.getMonth() === new Date().getMonth() && 
-              date.getFullYear() === new Date().getFullYear()
-            );
-          }} 
-          isToday={isToday}
-        />
-
-         <div className="flex justify-between items-center mt-4">
-          <button type="button" onClick={() => navigate('/dashboard')} className="text-blue-600 hover:underline">Cancel</button>
-          <button 
-          type="submit" 
-          className={`inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 ${endToEnd && sideToSide && circumference ? 'bg-green-500 text-white hover:bg-green-600 focus:ring-green-500' : 'button-disabled'}`}
-        >
-          {calculateOTT() !== 0 ? `Save (OTT = ${calculateOTT()})` : 'Save Measurement'}
-        </button>
-
-        </div>
+          <DateInput 
+            id="measurementDate"
+            selected={measurementDate}
+            onChange={(date) => setMeasurementDate(date)} 
+          />
+          <div className="flex justify-between items-center mt-4">
+            <button type="button" onClick={() => navigate('/dashboard')} className="text-blue-600 hover:underline">Cancel</button>
+            <button 
+              type="submit" 
+              className={`inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 ${endToEnd && sideToSide && circumference ? 'bg-green-500 text-white hover:bg-green-600 focus:ring-green-500' : 'button-disabled'}`}
+              disabled={!(endToEnd && sideToSide && circumference)}
+            >
+              Save
+            </button>
+          </div>
         </form>
       </div>
     </div>
