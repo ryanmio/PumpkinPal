@@ -99,15 +99,15 @@ const calculateOTT = () => {
 };
 
 
-  const addMeasurement = async (e) => {
+    const addMeasurement = async (e) => {
     e.preventDefault();
     console.log(endToEnd, sideToSide, circumference, measurementUnit); // add this line
-const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumference, measurementUnit);
+    const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumference, measurementUnit);
 
     const measurementId = Date.now().toString();
     const user = auth.currentUser;
 
-    if(user) {
+    if(user && measurementUnit) {
       await setDoc(doc(db, 'Users', user.uid, 'Pumpkins', selectedPumpkin, 'Measurements', measurementId), {
         endToEnd,
         sideToSide,
@@ -116,7 +116,7 @@ const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumfer
         estimatedWeight,
         timestamp: Timestamp.fromDate(measurementDate),
       });
-console.log("Data saved to database"); // add this line
+      console.log("Data saved to database"); // add this line
       navigate(`/pumpkin/${selectedPumpkin}`);
     }
   };
