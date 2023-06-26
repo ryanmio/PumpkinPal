@@ -24,7 +24,7 @@ function AddMeasurement() {
         const userRef = doc(db, 'Users', user.uid);
         const userDoc = await getDoc(userRef);
         
-        let fetchedUnit = 'cm'; // default to cm
+        let fetchedUnit = 'in'; // default to in
         if (userDoc.exists() && userDoc.data().preferredUnit) {
           fetchedUnit = userDoc.data().preferredUnit;
         }
