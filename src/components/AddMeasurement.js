@@ -41,14 +41,18 @@ function AddMeasurement() {
         } else if (pumpkinsData.length > 0) {
           setSelectedPumpkin(pumpkinsData[0].id);
         }
+      } else {
+        // user is not logged in, we should set a default value for measurementUnit
+        setMeasurementUnit('cm');
       }
     });
     return () => unsubscribe();
   }, [id]);
 
+
   useEffect(() => {
   const fetchLastMeasurement = async () => {
-    if(selectedPumpkin) {
+    if(selectedPumpkin && measurementUnit !== 'cm') {
       const user = auth.currentUser;
       if(user) {
         const q = query(collection(db, 'Users', user.uid, 'Pumpkins', selectedPumpkin, 'Measurements'), orderBy('timestamp', 'desc'), limit(1));
@@ -71,7 +75,8 @@ function AddMeasurement() {
   };
 
   fetchLastMeasurement();
-}, [selectedPumpkin]);
+}, [selectedPumpkin, measurementUnit]);
+
 
 
   const calculateEstimatedWeight = (endToEnd, sideToSide, circumference, measurementUnit) => {
@@ -95,16 +100,14 @@ const calculateOTT = () => {
 
 
   const addMeasurement = async (e) => {
-  e.preventDefault();
-  console.log(endToEnd, sideToSide, circumference, measurementUnit); 
-  const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumference, measurementUnit);
+    e.preventDefault();
+    console.log(endToEnd, sideToSide, circumference, measurementUnit); // add this line
+const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumference, measurementUnit);
 
-  const measurementId = Date.now().toString();
-  const user = auth.currentUser;
+    const measurementId = Date.now().toString();
+    const user = auth.currentUser;
 
-  if(user) {
-    console.log("measurementUnit before setting document:", measurementUnit); // added this line
-    if (endToEnd && sideToSide && circumference && measurementUnit && estimatedWeight && measurementDate) {
+    if(user) {
       await setDoc(doc(db, 'Users', user.uid, 'Pumpkins', selectedPumpkin, 'Measurements', measurementId), {
         endToEnd,
         sideToSide,
@@ -113,14 +116,10 @@ const calculateOTT = () => {
         estimatedWeight,
         timestamp: Timestamp.fromDate(measurementDate),
       });
-      console.log("Data saved to database"); // add this line
+console.log("Data saved to database"); // add this line
       navigate(`/pumpkin/${selectedPumpkin}`);
-    } else {
-      console.log("Missing field value");
     }
-  }
-};
-
+  };
 
 
   return (
