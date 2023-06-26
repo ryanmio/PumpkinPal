@@ -95,14 +95,16 @@ const calculateOTT = () => {
 
 
   const addMeasurement = async (e) => {
-    e.preventDefault();
-    console.log(endToEnd, sideToSide, circumference, measurementUnit); // add this line
-const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumference, measurementUnit);
+  e.preventDefault();
+  console.log(endToEnd, sideToSide, circumference, measurementUnit); 
+  const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumference, measurementUnit);
 
-    const measurementId = Date.now().toString();
-    const user = auth.currentUser;
+  const measurementId = Date.now().toString();
+  const user = auth.currentUser;
 
-    if(user) {
+  if(user) {
+    console.log("measurementUnit before setting document:", measurementUnit); // added this line
+    if (endToEnd && sideToSide && circumference && measurementUnit && estimatedWeight && measurementDate) {
       await setDoc(doc(db, 'Users', user.uid, 'Pumpkins', selectedPumpkin, 'Measurements', measurementId), {
         endToEnd,
         sideToSide,
@@ -111,10 +113,14 @@ const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumfer
         estimatedWeight,
         timestamp: Timestamp.fromDate(measurementDate),
       });
-console.log("Data saved to database"); // add this line
+      console.log("Data saved to database"); // add this line
       navigate(`/pumpkin/${selectedPumpkin}`);
+    } else {
+      console.log("Missing field value");
     }
-  };
+  }
+};
+
 
 
   return (
