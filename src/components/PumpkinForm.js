@@ -3,18 +3,16 @@ import { db, auth } from '../firebase';
 import { addDoc, collection } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 
 function PumpkinForm() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [maternalLineage, setMaternalLineage] = useState('');
   const [paternalLineage, setPaternalLineage] = useState('');
-  const [seedStarted, setSeedStarted] = useState(null);
-  const [transplantOut, setTransplantOut] = useState(null);
-  const [pollinated, setPollinated] = useState(null);
-  const [weighOff, setWeighOff] = useState(null);
+    const [seedStarted, setSeedStarted] = useState('');
+    const [transplantOut, setTransplantOut] = useState('');
+    const [pollinated, setPollinated] = useState('');
+    const [weighOff, setWeighOff] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
@@ -69,24 +67,25 @@ function PumpkinForm() {
           </div>
           
           <div className="grid grid-cols-2 gap-1 field space-y-1">
-            <label className="text-left">Seed Started:</label>
-            <DatePicker selected={seedStarted} onChange={(date) => setSeedStarted(date)} isClearable placeholderText="Select Date" className="w-full p-2 border-2 border-gray-300 rounded" />
-          </div>
-        
-          <div className="grid grid-cols-2 gap-1 field space-y-1">
-            <label className="text-left">Transplant Out:</label>
-            <DatePicker selected={transplantOut} onChange={(date) => setTransplantOut(date)} isClearable placeholderText="Select Date" className="w-full p-2 border-2 border-gray-300 rounded" />
-          </div>
-        
-          <div className="grid grid-cols-2 gap-1 field space-y-1">
-            <label className="text-left">Pollinated:</label>
-            <DatePicker selected={pollinated} onChange={(date) => setPollinated(date)} isClearable placeholderText="Select Date" className="w-full p-2 border-2 border-gray-300 rounded" />
-          </div>
-        
-          <div className="grid grid-cols-2 gap-1 field space-y-1">
-            <label className="text-left">Weigh-Off:</label>
-            <DatePicker selected={weighOff} onChange={(date) => setWeighOff(date)} isClearable placeholderText="Select Date" className="w-full p-2 border-2 border-gray-300 rounded" />
-          </div>
+          <label className="text-left">Seed Started:</label>
+          <input type="date" value={seedStarted} onChange={(e) => setSeedStarted(e.target.value)} className="w-full p-2 border-2 border-gray-300 rounded" />
+        </div>
+
+        <div className="grid grid-cols-2 gap-1 field space-y-1">
+          <label className="text-left">Transplant Out:</label>
+          <input type="date" value={transplantOut} onChange={(e) => setTransplantOut(e.target.value)} className="w-full p-2 border-2 border-gray-300 rounded" />
+        </div>
+
+        <div className="grid grid-cols-2 gap-1 field space-y-1">
+          <label className="text-left">Pollinated:</label>
+          <input type="date" value={pollinated} onChange={(e) => setPollinated(e.target.value)} className="w-full p-2 border-2 border-gray-300 rounded" />
+        </div>
+
+        <div className="grid grid-cols-2 gap-1 field space-y-1">
+          <label className="text-left">Weigh-Off:</label>
+          <input type="date" value={weighOff} onChange={(e) => setWeighOff(e.target.value)} className="w-full p-2 border-2 border-gray-300 rounded" />
+        </div>
+
 
           <div className="flex justify-between items-center mt-4">
             <button type="button" onClick={() => navigate('/dashboard')} className="text-blue-600 hover:underline">Cancel</button>
