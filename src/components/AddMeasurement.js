@@ -23,7 +23,11 @@ function AddMeasurement() {
       if (user) {
         const userRef = doc(db, 'Users', user.uid);
         const userDoc = await getDoc(userRef);
-        const fetchedUnit = userDoc.exists() ? userDoc.data().preferredUnit : 'cm';
+        
+        let fetchedUnit = 'cm'; // default to cm
+        if (userDoc.exists() && userDoc.data().preferredUnit) {
+          fetchedUnit = userDoc.data().preferredUnit;
+        }
         setMeasurementUnit(fetchedUnit);
 
         const q = collection(db, 'Users', user.uid, 'Pumpkins');
@@ -41,6 +45,7 @@ function AddMeasurement() {
 
     return () => unsubscribe();
   }, [id]);
+
 
   useEffect(() => {
     const fetchLastMeasurement = async () => {
