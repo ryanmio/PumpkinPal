@@ -93,30 +93,39 @@ function Login() {
                 </div>
                 <Form className="mt-4" onSubmit={login}>
                   <Form.Group id="email" className="mb-4">
-                    <Form.Label>Your Email</Form.Label>
                     <InputGroup>
                       <InputGroup.Text>
                         <FontAwesomeIcon icon={faEnvelope} />
                       </InputGroup.Text>
-                      <Form.Control autoFocus required type="email" placeholder="example@company.com" value={email} onChange={e => setEmail(e.target.value)} />
+                      <Form.Control autoFocus required type="email" placeholder="Enter Email" onChange={(e) => setEmail(e.target.value)} />
                     </InputGroup>
                   </Form.Group>
-                  <Form.Group>
-                    <Form.Group id="password" className="mb-4">
-                      <Form.Label>Your Password</Form.Label>
-                      <InputGroup>
-                        <InputGroup.Text>
-                          <FontAwesomeIcon icon={faUnlockAlt} />
-                        </InputGroup.Text>
-                        <Form.Control required type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
-                      </InputGroup>
-                    </Form.Group>
-                    <div className="d-flex justify-content-between align-items-center mb-4">
-                      <FormCheck type="checkbox" id="defaultCheck5" label={"Remember me"} checked={remember} onChange={e => setRemember(e.target.checked)} />
-                      <Card.Link className="small text-end" onClick={handleForgotPassword}>Forgot password?</Card.Link>
-                    </div>
+                  <Form.Group id="password" className="mb-4">
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <FontAwesomeIcon icon={faUnlockAlt} />
+                      </InputGroup.Text>
+                      <Form.Control required type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+                    </InputGroup>
                   </Form.Group>
-                  <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-100">
+                  <Row className="align-items-center">
+                    <Col xs={6} style={{ display: 'flex', alignItems: 'center' }}>
+                      <FormCheck 
+                        type="checkbox" 
+                        id="rememberMeCheck" 
+                        checked={remember} 
+                        onChange={e => setRemember(e.target.checked)}
+                        style={{ marginRight: '0.5rem' }}
+                      />
+                      <FormCheck.Label htmlFor="rememberMeCheck">Remember me</FormCheck.Label>
+                    </Col>
+                    <Col xs={6} className="text-right">
+                      <Card.Link onClick={handleForgotPassword} className="fw-bold">
+                        Forgot Password?
+                      </Card.Link>
+                    </Col>
+                  </Row>
+                  <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-100 mt-3">
                     Sign in
                   </button>
                   <button onClick={signInWithGoogle} className="green-button inline-flex items-center justify-center px-2 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-100 mt-3">
@@ -125,17 +134,18 @@ function Login() {
                   </button>
                   <div className="d-flex justify-content-center align-items-center mt-4">
                     <span className="fw-normal">
-                      Not registered?
-                      <Card.Link className="fw-bold" href="/register">Create account</Card.Link>
+                      Not registered?&nbsp;
+                      <Card.Link onClick={() => navigate('/register')} className="fw-bold">
+                        {`Create account `}
+                      </Card.Link>
                     </span>
                   </div>
-                </Form>
-              </div>
-            </Col>
-          </Row>
-        </Container>
-      </section>
-    </main>
+                </div>
+              </Col>
+            </Row>
+          </Container>
+        </section>
+      </main>
   );
 }
 
