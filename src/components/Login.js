@@ -98,7 +98,7 @@ function Login() {
                       <InputGroup.Text>
                         <FontAwesomeIcon icon={faEnvelope} />
                       </InputGroup.Text>
-                      <Form.Control autoFocus required type="email" placeholder="example@company.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                      <Form.Control autoFocus required type="email" placeholder="example@company.com" value={email} onChange={e => setEmail(e.target.value)} />
                     </InputGroup>
                   </Form.Group>
                   <Form.Group>
@@ -108,28 +108,25 @@ function Login() {
                         <InputGroup.Text>
                           <FontAwesomeIcon icon={faUnlockAlt} />
                         </InputGroup.Text>
-                        <Form.Control required type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                        <Form.Control required type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
                       </InputGroup>
                     </Form.Group>
                     <div className="d-flex justify-content-between align-items-center mb-4">
-                      <FormCheck type="checkbox" className="d-flex align-items-center">
-                        <FormCheck.Input id="defaultCheck5" className="me-2" type="checkbox" defaultChecked={remember} onChange={(e) => setRemember(e.target.checked)} />
-                        <FormCheck.Label htmlFor="defaultCheck5" className="mb-0">Remember me</FormCheck.Label>
-                      </FormCheck>
+                      <FormCheck type="checkbox" id="defaultCheck5" label={"Remember me"} checked={remember} onChange={e => setRemember(e.target.checked)} />
                       <Card.Link className="small text-end" onClick={handleForgotPassword}>Lost password?</Card.Link>
                     </div>
                   </Form.Group>
-                  <button type="submit" className="btn btn-dark w-100">Sign in</button>
-                  <button onClick={signInWithGoogle} className="btn btn-light border w-100 mt-3">
+                  <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-100">
+                    Sign in
+                  </button>
+                  <button onClick={signInWithGoogle} className="green-button inline-flex items-center justify-center px-2 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-100 mt-3">
                     <FaGoogle className="google-logo" />
                     <span className="px-2">Sign In with Google</span>
                   </button>
                   <div className="d-flex justify-content-center align-items-center mt-4">
                     <span className="fw-normal">
-                      Not registered?&nbsp;
-                      <Card.Link onClick={() => navigate('/register')} className="fw-bold">
-                        {`Create account `}
-                      </Card.Link>
+                      Not registered?
+                      <Card.Link className="fw-bold" href="/signup">Create account</Card.Link>
                     </span>
                   </div>
                 </Form>
