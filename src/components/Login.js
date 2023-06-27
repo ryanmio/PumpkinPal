@@ -132,21 +132,23 @@ function Login() {
                     <FaGoogle className="google-logo" />
                     <span className="px-2">Sign In with Google</span>
                   </button>
-                  <div className="d-flex justify-content-center align-items-center mt-4">
-                    <span className="fw-normal">
-                      Not registered?&nbsp;
-                      <Card.Link onClick={() => navigate('/register')} className="fw-bold">
-                        {`Create account `}
-                      </Card.Link>
-                    </span>
-                  </div>
+                </Form>
+                <div className="d-flex justify-content-center align-items-center mt-4">
+                  <span className="fw-normal">
+                    Not registered?&nbsp;
+                    <Card.Link onClick={() => navigate('/register')} className="fw-bold">
+                      {`Create account `}
+                    </Card.Link>
+                  </span>
                 </div>
-              </Col>
-            </Row>
-          </Container>
-        </section>
-      </main>
+              </div>
+            </Col>
+          </Row>
+        </Container>
+      </section>
+    </main>
   );
+
 }
 
 export default Login;
