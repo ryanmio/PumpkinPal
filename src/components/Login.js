@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { auth } from '../firebase';
-import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
+import { auth, googleAuthProvider } from '../firebase';
+import { signInWithEmailAndPassword, signInWithPopup, sendPasswordResetEmail } from "firebase/auth";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
 import { Col, Row, Form, Card, Container, InputGroup, FormCheck } from '@themesberg/react-bootstrap';
+import { FaGoogle } from 'react-icons/fa';
+
+const authErrorMap = {
+  "auth/invalid-email": "Invalid email format",
+  "auth/user-disabled": "This account has been disabled",
+  "auth/user-not-found": "User not found",
+  "auth/wrong-password": "Incorrect password",
+  // Add other error codes as needed
+};
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -14,19 +23,17 @@ function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
-useEffect(() => {
-  console.log(location);  // Add this line
-  const queryParams = new URLSearchParams(location.search);
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
   
-  if (queryParams.get('demo') === 'true') {
-    const demoEmail = 'demo@account.com';
-    const demoPassword = 'password';
+    if (queryParams.get('demo') === 'true') {
+      const demoEmail = 'demo@account.com';
+      const demoPassword = 'password';
 
-    setEmail(demoEmail);
-    setPassword(demoPassword);
-  }
-}, [location]); // replace location.search with location
-
+      setEmail(demoEmail);
+      setPassword(demoPassword);
+    }
+  }, [location]);
 
   const login = e => {
     e.preventDefault();
@@ -41,26 +48,21 @@ useEffect(() => {
         navigate('/dashboard');
       })
       .catch((error) => {
-        let errorMessage = '';
-        switch (error.code) {
-            case 'auth/invalid-email':
-                errorMessage = 'Invalid email format';
-                break;
-            case 'auth/user-disabled':
-                errorMessage = 'This user has been disabled';
-                break;
-            case 'auth/user-not-found':
-                errorMessage = 'User not found';
-                break;
-            case 'auth/wrong-password':
-                errorMessage = 'Incorrect password';
-                break;
-            default:
-                errorMessage = 'An error occurred during login';
-        }
-        setError(errorMessage);
+        const friendlyErrorMsg = authErrorMap[error.code] || "An error occurred during login";
+        setError(friendlyErrorMsg);
       });
   };
+
+  const signInWithGoogle = () => {
+    signInWithPopup(auth, googleAuthProvider)
+      .then((result) => {
+        navigate('/dashboard');
+      })
+      .catch((error) => {
+        const friendlyErrorMsg = authErrorMap[error.code] || "An unknown error occurred.";
+        setError(friendlyErrorMsg);
+      });
+  }
 
   const handleForgotPassword = (e) => {
     e.preventDefault();
@@ -73,21 +75,10 @@ useEffect(() => {
         alert('Password reset email sent to ' + email);
       })
       .catch((error) => {
-        let errorMessage = '';
-        switch (error.code) {
-            case 'auth/invalid-email':
-                errorMessage = 'Invalid email format';
-                break;
-            case 'auth/user-not-found':
-                errorMessage = 'Email does not exist';
-                break;
-            default:
-                errorMessage = 'An error occurred when resetting password';
-        }
-        setError(errorMessage);
+        const friendlyErrorMsg = authErrorMap[error.code] || "An error occurred when resetting password";
+        setError(friendlyErrorMsg);
       });
   }
-
 
   return (
     <main style={{ minHeight: "100vh", paddingBottom: "1rem" }}>
@@ -102,50 +93,46 @@ useEffect(() => {
                 </div>
                 <Form className="mt-4" onSubmit={login}>
                   <Form.Group id="email" className="mb-4">
+                    <Form.Label>Your Email</Form.Label>
                     <InputGroup>
                       <InputGroup.Text>
                         <FontAwesomeIcon icon={faEnvelope} />
                       </InputGroup.Text>
-                      <Form.Control autoFocus required type="email" placeholder="Enter Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                      <Form.Control autoFocus required type="email" placeholder="example@company.com" value={email} onChange={(e) => setEmail(e.target.value)} />
                     </InputGroup>
                   </Form.Group>
-                  <Form.Group id="password" className="mb-4">
-                    <InputGroup>
-                      <InputGroup.Text>
-                        <FontAwesomeIcon icon={faUnlockAlt} />
-                      </InputGroup.Text>
-                      <Form.Control required type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                    </InputGroup>
+                  <Form.Group>
+                    <Form.Group id="password" className="mb-4">
+                      <Form.Label>Your Password</Form.Label>
+                      <InputGroup>
+                        <InputGroup.Text>
+                          <FontAwesomeIcon icon={faUnlockAlt} />
+                        </InputGroup.Text>
+                        <Form.Control required type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                      </InputGroup>
+                    </Form.Group>
+                    <div className="d-flex justify-content-between align-items-center mb-4">
+                      <FormCheck type="checkbox" className="d-flex align-items-center">
+                        <FormCheck.Input id="defaultCheck5" className="me-2" type="checkbox" defaultChecked={remember} onChange={(e) => setRemember(e.target.checked)} />
+                        <FormCheck.Label htmlFor="defaultCheck5" className="mb-0">Remember me</FormCheck.Label>
+                      </FormCheck>
+                      <Card.Link className="small text-end" onClick={handleForgotPassword}>Lost password?</Card.Link>
+                    </div>
                   </Form.Group>
-                  <Row className="align-items-center">
-                    <Col xs={6} style={{ display: 'flex', alignItems: 'center' }}>
-                      <FormCheck 
-                        type="checkbox" 
-                        id="rememberMeCheck" 
-                        checked={remember} 
-                        onChange={e => setRemember(e.target.checked)}
-                        style={{ marginRight: '0.5rem' }}
-                      />
-                      <FormCheck.Label htmlFor="rememberMeCheck">Remember me</FormCheck.Label>
-                    </Col>
-                    <Col xs={6} className="text-right">
-                      <Card.Link onClick={handleForgotPassword} className="fw-bold">
-                        Forgot Password?
-                      </Card.Link>
-                    </Col>
-                  </Row>
-                  <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-100 mt-3">
-                    Sign in
+                  <button type="submit" className="btn btn-dark w-100">Sign in</button>
+                  <button onClick={signInWithGoogle} className="btn btn-light border w-100 mt-3">
+                    <FaGoogle className="google-logo" />
+                    <span className="px-2">Sign In with Google</span>
                   </button>
+                  <div className="d-flex justify-content-center align-items-center mt-4">
+                    <span className="fw-normal">
+                      Not registered?&nbsp;
+                      <Card.Link onClick={() => navigate('/register')} className="fw-bold">
+                        {`Create account `}
+                      </Card.Link>
+                    </span>
+                  </div>
                 </Form>
-                <div className="d-flex justify-content-center align-items-center mt-4">
-                  <span className="fw-normal">
-                    Not registered?&nbsp;
-                    <Card.Link onClick={() => navigate('/register')} className="fw-bold">
-                      {`Create account `}
-                    </Card.Link>
-                  </span>
-                </div>
               </div>
             </Col>
           </Row>
