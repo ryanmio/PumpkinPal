@@ -97,7 +97,7 @@ function Login() {
                       <InputGroup.Text>
                         <FontAwesomeIcon icon={faEnvelope} />
                       </InputGroup.Text>
-                      <Form.Control autoFocus required type="email" placeholder="Enter Email" onChange={(e) => setEmail(e.target.value)} />
+                      <Form.Control autoFocus required type="email" placeholder="Enter Email" onChange={(e) => setEmail(e.target.value)} value={email} />
                     </InputGroup>
                   </Form.Group>
                   <Form.Group id="password" className="mb-4">
@@ -105,7 +105,7 @@ function Login() {
                       <InputGroup.Text>
                         <FontAwesomeIcon icon={faUnlockAlt} />
                       </InputGroup.Text>
-                      <Form.Control required type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+                      <Form.Control required type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} value={password} />
                     </InputGroup>
                   </Form.Group>
                   <Row className="align-items-center">
