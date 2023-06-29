@@ -120,7 +120,10 @@ const exportData = async () => {
 
 return (
     <div className="container mx-auto px-4 pt-10 flex flex-col">
-    <h2 className="text-2xl font-bold mb-4 text-center">{pumpkin?.name} Details</h2>
+      <div className="mb-4 text-blue-500 hover:text-blue-700">
+        <Link to="/dashboard">&lt; Back to Dashboard</Link>
+      </div>
+      <h2 className="text-2xl font-bold mb-4 text-center">{pumpkin?.name} Details</h2>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow">
 
       {/* Card 1: Basic Info */}
