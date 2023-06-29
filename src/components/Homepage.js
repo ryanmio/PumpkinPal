@@ -60,8 +60,8 @@ export default function Homepage() {
 
 
            {/* Footer Section */}
-<div className="App-footer">
-    <p className="mb-4">This project is open source. Check it out on <a href="https://github.com/ryanmio/PumpkinPal" className="underline">GitHub</a>.</p>
+<div className="App-footer py-8 px-4 md:px-8 lg:px-16">
+    <p className="mb-2">This project is open source. Check it out on <a href="https://github.com/ryanmio/PumpkinPal" style={{color: '#F2EEE3'}}>GitHub</a>.</p>
     <p>© 2023 PumpkinPal. Licensed under the MIT license.</p>
 </div>
 </div>
