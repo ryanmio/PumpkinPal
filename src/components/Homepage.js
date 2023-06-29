@@ -51,7 +51,7 @@ export default function Homepage() {
 
        {/* Call to Action Section */}
 <div className="w-full p-8">
-    <p className="mb-6">Sign up to start tracking your pumpkins. We respect your privacy and do not share your data. Pumpkin data is stored separately from user data so that your pumpkin measurements are always secure.</p>
+    <p className="mb-6">We respect your privacy and will never share your information. Pumpkin data is encrypted and stored separately from user data so that your pumpkin measurements are always secure.</p>
     <Link to="/register" className="px-8 py-2 mb-8 green-button rounded text-white text-xl text-white hover:text-white focus:outline-none focus:ring-0 underline-none no-underline font-bold">Sign Up</Link>
     <p className="mt-3">Already signed up? <Link to="/login" className="text-blue-500">Login here</Link></p>
 </div>
