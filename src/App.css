@@ -269,4 +269,7 @@ button.button-disabled {
   color: #F2EEE3; /* Light color for text and links */
 }
 
+.table-cell {
+  padding: 0 1rem; /* adjust as per your needs */
+}
 
