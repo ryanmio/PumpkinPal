@@ -119,13 +119,13 @@ const exportData = async () => {
 
 
 return (
-    <div className="container mx-auto px-4 pt-10 flex flex-col">
-      <div className="mb-4 text-sm">
+       <div className="container mx-auto px-4 pt-10 flex flex-col">
+      <div className="mb-4 text-sm text-left">
         <Link to="/dashboard" className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-flex" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          Dashboard / Pumpkin Details
+          Dashboard
         </Link>
       </div>
       <h2 className="text-2xl font-bold mb-4 text-center">{pumpkin?.name} Details</h2>
