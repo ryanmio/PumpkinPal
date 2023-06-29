@@ -53,15 +53,15 @@ export default function Homepage() {
 <div className="w-full p-8">
     <p className="mb-6">Sign up to start tracking your pumpkins. We respect your privacy and do not share your data.</p>
     <Link to="/register" className="px-8 py-2 mb-8 green-button rounded text-white text-xl text-white hover:text-white focus:outline-none focus:ring-0 underline-none no-underline font-bold">Sign Up</Link>
-    <p className="mt-2">Already signed up? <Link to="/login" className="text-blue-500">Login here</Link></p>
+    <p className="mt-3">Already signed up? <Link to="/login" className="text-blue-500">Login here</Link></p>
 </div>
 
 
 
 
-            {/* Footer Section */}
-<div className="w-full py-8 px-4 md:px-8 lg:px-16 bg-gray-800 text-white text-center">
-    <p className="mb-4">This project is open source. Check it out on <a href="https://github.com/ryanmio/PumpkinPal" className="text-blue-500">GitHub</a>.</p>
+           {/* Footer Section */}
+<div className="App-footer">
+    <p className="mb-4">This project is open source. Check it out on <a href="https://github.com/ryanmio/PumpkinPal" className="underline">GitHub</a>.</p>
     <p>© 2023 PumpkinPal. Licensed under the MIT license.</p>
 </div>
 </div>
