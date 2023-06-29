@@ -120,11 +120,16 @@ const exportData = async () => {
 
 return (
     <div className="container mx-auto px-4 pt-10 flex flex-col">
-      <div className="mb-4 text-blue-500 hover:text-blue-700">
-        <Link to="/dashboard">&lt; Back to Dashboard</Link>
+      <div className="mb-4 text-sm">
+        <Link to="/dashboard" className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-flex" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Dashboard / Pumpkin Details
+        </Link>
       </div>
       <h2 className="text-2xl font-bold mb-4 text-center">{pumpkin?.name} Details</h2>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow">
 
       {/* Card 1: Basic Info */}
       <div className="bg-white shadow rounded-lg p-4 flex flex-col">
