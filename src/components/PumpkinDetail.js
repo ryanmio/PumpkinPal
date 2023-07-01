@@ -14,7 +14,8 @@ function PumpkinDetail() {
 
 // Helper function to format a date string as Month D, YYYY
 function formatDate(dateString) {
-  const date = new Date(dateString);
+  // Add "T00:00:00Z" to the date string to ensure it's treated as UTC
+  const date = new Date(`${dateString}T00:00:00Z`);
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return date.toLocaleDateString(undefined, options);
 }
@@ -28,10 +29,10 @@ useEffect(() => {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
-        data.seedStarted = data.seedStarted && data.seedStarted !== "" ? formatDate(new Date(data.seedStarted)) : 'not set';
-        data.transplantOut = data.transplantOut && data.transplantOut !== "" ? formatDate(new Date(data.transplantOut)) : 'not set';
-        data.pollinated = data.pollinated && data.pollinated !== "" ? formatDate(new Date(data.pollinated)) : 'not set';
-        data.weighOff = data.weighOff && data.weighOff !== "" ? formatDate(new Date(data.weighOff)) : 'not set';
+        data.seedStarted = data.seedStarted && data.seedStarted !== "" ? formatDate(data.seedStarted) : 'not set';
+        data.transplantOut = data.transplantOut && data.transplantOut !== "" ? formatDate(data.transplantOut) : 'not set';
+        data.pollinated = data.pollinated && data.pollinated !== "" ? formatDate(data.pollinated) : 'not set';
+        data.weighOff = data.weighOff && data.weighOff !== "" ? formatDate(data.weighOff) : 'not set';
         setPumpkin(data);
       }
 
@@ -44,8 +45,8 @@ onSnapshot(measurementsQuery, (snapshot) => {
   snapshot.forEach((doc) => {
     const data = doc.data();
     if (data.timestamp) {
-      data.timestamp = formatDate(data.timestamp.toDate());
-    }
+  data.timestamp = formatDate(data.timestamp.toDate().toISOString().slice(0, 10));
+}
     measurementData.push({ id: doc.id, ...data });
   });
   setMeasurements(measurementData);
