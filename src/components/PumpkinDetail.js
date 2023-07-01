@@ -24,34 +24,38 @@ function formatDate(dateString) {
 useEffect(() => {
   const fetchPumpkin = async () => {
     if(auth.currentUser) {
-      const docRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        data.seedStarted = data.seedStarted && data.seedStarted !== "" ? formatDate(data.seedStarted) : 'not set';
-        data.transplantOut = data.transplantOut && data.transplantOut !== "" ? formatDate(data.transplantOut) : 'not set';
-        data.pollinated = data.pollinated && data.pollinated !== "" ? formatDate(data.pollinated) : 'not set';
-        data.weighOff = data.weighOff && data.weighOff !== "" ? formatDate(data.weighOff) : 'not set';
-        setPumpkin(data);
+      try {
+        const docRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          data.seedStarted = formatDate(data.seedStarted) ?? 'not set';
+          data.transplantOut = formatDate(data.transplantOut) ?? 'not set';
+          data.pollinated = formatDate(data.pollinated) ?? 'not set';
+          data.weighOff = formatDate(data.weighOff) ?? 'not set';
+          setPumpkin(data);
+        }
+
+        // Define a Firestore query to retrieve the pumpkin's measurements ordered by timestamp
+        const measurementsQuery = query(collection(db, 'Users', auth.currentUser.uid, 'Pumpkins', id, 'Measurements'), orderBy('timestamp'));
+
+        // Subscribe to the measurements in real time
+        const unsubscribe = onSnapshot(measurementsQuery, (snapshot) => {
+          let measurementData = [];
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+            if (data.timestamp) {
+              data.timestamp = formatDate(data.timestamp.toDate().toISOString().slice(0, 10));
+            }
+            measurementData.push({ id: doc.id, ...data });
+          });
+          setMeasurements(measurementData);
+        });
+
+        return unsubscribe;
+      } catch (err) {
+        console.error("Failed to fetch pumpkin data: ", err);
       }
-
-      // Define a Firestore query to retrieve the pumpkin's measurements ordered by timestamp
-      const measurementsQuery = query(collection(db, 'Users', auth.currentUser.uid, 'Pumpkins', id, 'Measurements'), orderBy('timestamp'));
-
-   // Subscribe to the measurements in real time
-onSnapshot(measurementsQuery, (snapshot) => {
-  let measurementData = [];
-  snapshot.forEach((doc) => {
-    const data = doc.data();
-    if (data.timestamp) {
-  data.timestamp = formatDate(data.timestamp.toDate().toISOString().slice(0, 10));
-}
-    measurementData.push({ id: doc.id, ...data });
-  });
-  setMeasurements(measurementData);
-  // console.log("Measurements: ", measurementData);  // Check what's logged
-});
-
     }
   };
   auth.onAuthStateChanged((user) => {
@@ -75,23 +79,24 @@ const chartData = {
 };
 
   const deleteMeasurement = async (measurementId) => {
-    if (window.confirm("Are you sure you want to delete this measurement?")) {
-      try {
-        if (auth.currentUser && auth.currentUser.uid && id && measurementId) {
-          const measurementPath = `Users/${auth.currentUser.uid}/Pumpkins/${id}/Measurements/${measurementId}`;
-          // console.log('Measurement path: ', measurementPath);
-          await deleteDoc(doc(db, measurementPath));
-        } else {
-          throw new Error('Missing required fields for deletion');
-        }
-      } catch (error) {
-        console.error('Error deleting measurement: ', error);
+  if (window.confirm("Are you sure you want to delete this measurement?")) {
+    try {
+      if (auth.currentUser && auth.currentUser.uid && id && measurementId) {
+        const measurementPath = `Users/${auth.currentUser.uid}/Pumpkins/${id}/Measurements/${measurementId}`;
+        await deleteDoc(doc(db, measurementPath));
+        setAlert({ type: "success", message: "Measurement deleted successfully." });
+      } else {
+        throw new Error("Missing required parameters.");
       }
+    } catch (error) {
+      console.error("Error deleting measurement: ", error);
+      setAlert({ type: "error", message: "Failed to delete measurement. Please try again." });
     }
-  };
+  }
+};
 
 const exportData = async () => {
-  setAlert('Exporting...');
+  setAlert({ type: "info", message: "Exporting..." });
   const idToken = await auth.currentUser.getIdToken();
 
   fetch(`https://us-central1-pumpkinpal-b60be.cloudfunctions.net/exportData?pumpkinId=${id}&timeZone=${Intl.DateTimeFormat().resolvedOptions().timeZone}`, {
@@ -113,7 +118,7 @@ const exportData = async () => {
       setAlert(null);  // Clear the alert after the export is complete
   }).catch(e => {
     console.error(e);
-    setAlert('An error occurred during export.');  // Set an error alert if the export fails
+    setAlert({ type: "error", message: "An error occurred during export." });
   });
 };
 
@@ -162,7 +167,7 @@ return (
         <button onClick={() => navigate(`/add-measurement/${id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Add Measurement</button>
         <button onClick={exportData} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export Data</button>
     </div>
-    {alert && <div className="alert">{alert}</div>}
+    {alert && <div className={`alert ${alert.type}`}>{alert.message}</div>}
     <div className="overflow-x-auto">
         <table className="w-full mt-4">
             <thead>
