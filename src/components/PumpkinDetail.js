@@ -12,14 +12,13 @@ function PumpkinDetail() {
   const [alert, setAlert] = useState(null);
   const location = useLocation();
 
-// Helper function to format a date string as Month D, YYYY
+/// Helper function to format a date string as Month D, YYYY
 function formatDate(dateString) {
-  // Add "T00:00:00Z" to the date string to ensure it's treated as UTC
-  const date = new Date(`${dateString}T00:00:00Z`);
+  const date = new Date(dateString);
+  const utcDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  return date.toLocaleDateString(undefined, options);
+  return utcDate.toLocaleDateString(undefined, options);
 }
-
 
 // Fetch the pumpkin data
 useEffect(() => {
