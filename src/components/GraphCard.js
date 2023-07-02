@@ -16,7 +16,7 @@ const GraphCard = ({ measurements, pumpkinName }) => {
     labels: measurements?.map(m => formatDate(m.timestamp)),
     datasets: [
       {
-        label: 'Estimated Weight over Time (lbs)',
+        label: 'OTT Weight by Date (lbs)',
         data: measurements?.map(m => m.estimatedWeight),
         fill: false,
         backgroundColor: 'rgb(75, 192, 192)',
@@ -25,13 +25,13 @@ const GraphCard = ({ measurements, pumpkinName }) => {
     ],
   };
 
-  const options = {
-  scales: {
-    y: {
-      beginAtZero: true,
+   const options = {
+    scales: {
+      y: {
+        min: 0,
+      },
     },
-  },
-};
+  };
 
 
   return (
