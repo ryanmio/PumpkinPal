@@ -10,7 +10,6 @@ function PumpkinDetail() {
   const [pumpkin, setPumpkin] = useState(null);
   const [measurements, setMeasurements] = useState([]);
   const navigate = useNavigate();
-  const [alert, setAlert] = useState(null);
   const location = useLocation();
 
 /// Helper function to format a date string as Month D, YYYY
@@ -64,21 +63,18 @@ useEffect(() => {
   });
 }, [id]);
 
-
-  
-
 return (
-       <div className="container mx-auto px-4 pt-10 flex flex-col">
-      <div className="mb-2 text-sm text-left">
-        <Link to="/dashboard" className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-flex" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Dashboard
-        </Link>
-      </div>
-      <h2 className="text-2xl font-bold mb-4 text-center">{pumpkin?.name} Details</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow">
+  <div className="container mx-auto px-4 pt-10 flex flex-col">
+    <div className="mb-2 text-sm text-left">
+      <Link to="/dashboard" className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-flex" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        Dashboard
+      </Link>
+    </div>
+    <h2 className="text-2xl font-bold mb-4 text-center">{pumpkin?.name} Details</h2>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow">
 
       {/* Card 1: Basic Info */}
       <div className="bg-white shadow rounded-lg p-4 flex flex-col">
@@ -92,39 +88,34 @@ return (
         <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4 self-end">Edit Info</button>
       </div>
 
-          {/* Card 2: Key Dates */}
-        <div className="bg-white shadow rounded-lg p-4 flex flex-col">
-          <div className="mb-auto">
-            <h3 className="text-xl font-bold mb-2">Key Dates</h3>
-            <p><b>Seed Started:</b> {pumpkin?.seedStarted}</p>
-            <p><b>Transplant Out:</b> {pumpkin?.transplantOut}</p>
-            <p><b>Pollinated:</b> {pumpkin?.pollinated}</p>
-            <p><b>Weigh-off:</b> {pumpkin?.weighOff}</p>
-          </div>
-          <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4 self-end">Edit Dates</button>
+      {/* Card 2: Key Dates */}
+      <div className="bg-white shadow rounded-lg p-4 flex flex-col">
+        <div className="mb-auto">
+          <h3 className="text-xl font-bold mb-2">Key Dates</h3>
+          <p><b>Seed Started:</b> {pumpkin?.seedStarted}</p>
+          <p><b>Transplant Out:</b> {pumpkin?.transplantOut}</p>
+          <p><b>Pollinated:</b> {pumpkin?.pollinated}</p>
+          <p><b>Weigh-off:</b> {pumpkin?.weighOff}</p>
         </div>
+        <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4 self-end">Edit Dates</button>
+      </div>
 
- {/* Card 3: Measurements */}
-    <MeasurementsCard
-      measurements={measurements}
-      alert={alert}
-      deleteMeasurement={deleteMeasurement}
-      exportData={exportData}
-      navigate={navigate}
-      pumpkinId={id}
-      setAlert={setAlert}
-    />
+      {/* Card 3: Measurements */}
+      <MeasurementsCard
+        measurements={measurements}
+        pumpkinId={id}
+        pumpkin={pumpkin}
+      />
 
-    {/* Card 4: Graph */}
-    <GraphCard
-      measurements={measurements}
-      pumpkinName={pumpkin?.name}
-    />
-
+      {/* Card 4: Graph */}
+      <GraphCard
+        measurements={measurements}
+        pumpkinName={pumpkin?.name}
+      />
 
     </div> 
   </div>
 );
 }
 
-export default PumpkinDetail; 
+export default PumpkinDetail;
