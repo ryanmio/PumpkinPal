@@ -26,12 +26,18 @@ const GraphCard = ({ measurements, pumpkinName }) => {
   };
 
    const options = {
-    scales: {
-      y: {
-        min: 0,
-      },
+  scales: {
+    x: {
+      type: 'time',
+      time: {
+        unit: 'day'
+      }
     },
-  };
+    y: {
+      min: 0,
+    },
+  },
+};
 
 
   return (
