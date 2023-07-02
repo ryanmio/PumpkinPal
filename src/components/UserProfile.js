@@ -5,15 +5,12 @@ import { signOut, reauthenticateWithCredential, EmailAuthProvider, updatePasswor
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 
-
-
 function UserProfile() {
   const [loading, setLoading] = useState(true);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [preferredUnit, setPreferredUnit] = useState(null);
-  const [alert, setAlert] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
     
