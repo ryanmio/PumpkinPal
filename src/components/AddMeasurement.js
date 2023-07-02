@@ -121,25 +121,25 @@ function AddMeasurement() {
           <MeasurementInput 
             id="endToEnd"
             placeholder="End to End"
-            onChange={(e) => setEndToEnd(e.target.value)}
+            onChange={(e) => setEndToEnd(parseFloat(e.target.value))}
             min={0} 
-            max={500}
+            max={999}
             value={endToEnd} 
           />
           <MeasurementInput 
             id="sideToSide"
             placeholder="Side to Side"
-            onChange={(e) => setSideToSide(e.target.value)}
+            onChange={(e) => setSideToSide(parseFloat(e.target.value))}
             min={0} 
-            max={500}
+            max={999}
             value={sideToSide} 
           />
           <MeasurementInput 
             id="circumference"
             placeholder="Circumference"
-            onChange={(e) => setCircumference(e.target.value)}
+            onChange={(e) => setCircumference(parseFloat(e.target.value))}
             min={0} 
-            max={1000}
+            max={999}
             value={circumference} 
           />
           <DateInput 
