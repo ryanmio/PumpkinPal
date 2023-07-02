@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useHistory } from 'react-router-dom'; // import useHistory
 import { auth, db, Timestamp, onAuthStateChanged } from '../firebase';
 import { doc, getDoc, setDoc, collection, getDocs, orderBy, limit, query } from 'firebase/firestore';
 import "react-datepicker/dist/react-datepicker.css";
@@ -9,6 +9,7 @@ import DateInput from './DateInput';
 function AddMeasurement() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const history = useHistory(); 
 
   const [pumpkins, setPumpkins] = useState([]);
   const [selectedPumpkin, setSelectedPumpkin] = useState('');
@@ -155,7 +156,7 @@ function AddMeasurement() {
             onChange={(date) => setMeasurementDate(date)} 
           />
           <div className="flex justify-between items-center mt-4">
-            <button type="button" onClick={() => navigate('/dashboard')} className="text-blue-600 hover:underline">Cancel</button>
+            <button type="button" onClick={() => history.goBack()} className="text-blue-600 hover:underline">Cancel</button>
             <button 
               type="submit" 
               className={`inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 ${endToEnd && sideToSide && circumference ? 'bg-green-500 text-white hover:bg-green-600 focus:ring-green-500' : 'button-disabled'}`}
