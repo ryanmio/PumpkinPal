@@ -173,7 +173,6 @@ return (
 
       {/* Card 4: Graph */}
       <GraphCard data={chartData} />
-      </div>
 
     </div> 
   </div>
