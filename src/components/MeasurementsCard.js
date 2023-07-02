@@ -1,53 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, db } from '../firebase';
-import { doc, deleteDoc } from 'firebase/firestore';
 
-const MeasurementsCard = ({ measurements, pumpkinId, alert, setAlert }) => {
+const MeasurementsCard = ({ measurements, pumpkinId, deleteMeasurement, exportData, alert }) => {
   const navigate = useNavigate();
-
-  const deleteMeasurement = async (measurementId) => {
-    if (window.confirm("Are you sure you want to delete this measurement?")) {
-      try {
-        if (auth.currentUser && auth.currentUser.uid && pumpkinId && measurementId) {
-          const measurementPath = `Users/${auth.currentUser.uid}/Pumpkins/${pumpkinId}/Measurements/${measurementId}`;
-          await deleteDoc(doc(db, measurementPath));
-          setAlert({ type: "success", message: "Measurement deleted successfully." });
-        } else {
-          throw new Error("Missing required parameters.");
-        }
-      } catch (error) {
-        console.error("Error deleting measurement: ", error);
-        setAlert({ type: "error", message: "Failed to delete measurement. Please try again." });
-      }
-    }
-  };
-
-  const exportData = async () => {
-    setAlert({ type: "info", message: "Exporting..." });
-    const idToken = await auth.currentUser.getIdToken();
-
-    fetch(`https://us-central1-pumpkinpal-b60be.cloudfunctions.net/exportData?pumpkinId=${pumpkinId}&timeZone=${Intl.DateTimeFormat().resolvedOptions().timeZone}`, {
-      headers: {
-        'Authorization': 'Bearer ' + idToken
-      }
-    }).then(response => response.blob())
-      .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = url;
-        const date = new Date().toISOString().slice(0, 10);
-        a.download = `PumpkinPal_${pumpkin.name}_${date}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        setAlert(null);  // Clear the alert after the export is complete
-    }).catch(e => {
-      console.error(e);
-      setAlert({ type: "error", message: "An error occurred during export." });
-    });
-  };
 
   return (
     <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto">
