@@ -2,11 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
-import { toast } from 'react-hot-toast';
 
 const MeasurementsCard = ({ measurements, pumpkin, pumpkinId, setAlert }) => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
 
 const deleteMeasurement = async (measurementId) => {
   if (window.confirm("Are you sure you want to delete this measurement?")) {
