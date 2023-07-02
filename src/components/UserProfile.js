@@ -10,7 +10,7 @@ function UserProfile() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
-  const [preferredUnit, setPreferredUnit] = useState(in);
+  const [preferredUnit, setPreferredUnit] = useState('in');
   const [alert, setAlert] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
