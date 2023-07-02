@@ -14,12 +14,16 @@ function PumpkinDetail() {
 
   // Helper function to format a date string as Month D, YYYY
   function formatDate(dateString) {
+  if(dateString) {
     const date = new Date(dateString);
     const utcDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return utcDate.toLocaleDateString(undefined, options);
+  } else {
+    return 'Not Set';
   }
-
+}
+    
   // Fetch the pumpkin data
   useEffect(() => {
     const fetchPumpkin = async () => {
