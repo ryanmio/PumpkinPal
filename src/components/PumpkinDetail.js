@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { auth, db } from '../firebase';
-import { collection, doc, getDoc, query, orderBy, deleteDoc, onSnapshot } from 'firebase/firestore';
+import { collection, doc, getDoc, orderBy, onSnapshot } from 'firebase/firestore';
 import MeasurementsCard from './MeasurementsCard';
 import GraphCard from './GraphCard';
 
@@ -10,104 +10,57 @@ function PumpkinDetail() {
   const [pumpkin, setPumpkin] = useState(null);
   const [measurements, setMeasurements] = useState([]);
   const navigate = useNavigate();
-  const [alert, setAlert] = useState(null);
-  const location = useLocation();
 
-/// Helper function to format a date string as Month D, YYYY
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  const utcDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  return utcDate.toLocaleDateString(undefined, options);
-}
-
-// Fetch the pumpkin data
-useEffect(() => {
-  const fetchPumpkin = async () => {
-    if(auth.currentUser) {
-      try {
-        const docRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          data.seedStarted = formatDate(data.seedStarted) ?? 'not set';
-          data.transplantOut = formatDate(data.transplantOut) ?? 'not set';
-          data.pollinated = formatDate(data.pollinated) ?? 'not set';
-          data.weighOff = formatDate(data.weighOff) ?? 'not set';
-          setPumpkin(data);
-        }
-
-        // Define a Firestore query to retrieve the pumpkin's measurements ordered by timestamp
-        const measurementsQuery = query(collection(db, 'Users', auth.currentUser.uid, 'Pumpkins', id, 'Measurements'), orderBy('timestamp'));
-
-        // Subscribe to the measurements in real time
-        const unsubscribe = onSnapshot(measurementsQuery, (snapshot) => {
-          let measurementData = [];
-          snapshot.forEach((doc) => {
-            const data = doc.data();
-            if (data.timestamp) {
-              data.timestamp = formatDate(data.timestamp.toDate().toISOString().slice(0, 10));
-            }
-            measurementData.push({ id: doc.id, ...data });
-          });
-          setMeasurements(measurementData);
-        });
-
-        return unsubscribe;
-      } catch (err) {
-        console.error("Failed to fetch pumpkin data: ", err);
-      }
-    }
-  };
-  auth.onAuthStateChanged((user) => {
-    if (user) fetchPumpkin();
-  });
-}, [id]);
-
-
-  const deleteMeasurement = async (measurementId) => {
-  if (window.confirm("Are you sure you want to delete this measurement?")) {
-    try {
-      if (auth.currentUser && auth.currentUser.uid && id && measurementId) {
-        const measurementPath = `Users/${auth.currentUser.uid}/Pumpkins/${id}/Measurements/${measurementId}`;
-        await deleteDoc(doc(db, measurementPath));
-        setAlert({ type: "success", message: "Measurement deleted successfully." });
-      } else {
-        throw new Error("Missing required parameters.");
-      }
-    } catch (error) {
-      console.error("Error deleting measurement: ", error);
-      setAlert({ type: "error", message: "Failed to delete measurement. Please try again." });
-    }
+  // Helper function to format a date string as Month D, YYYY
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const utcDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return utcDate.toLocaleDateString(undefined, options);
   }
-};
 
-const exportData = async () => {
-  setAlert({ type: "info", message: "Exporting..." });
-  const idToken = await auth.currentUser.getIdToken();
+  // Fetch the pumpkin data
+  useEffect(() => {
+    const fetchPumpkin = async () => {
+      if(auth.currentUser) {
+        try {
+          const docRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            data.seedStarted = formatDate(data.seedStarted) ?? 'not set';
+            data.transplantOut = formatDate(data.transplantOut) ?? 'not set';
+            data.pollinated = formatDate(data.pollinated) ?? 'not set';
+            data.weighOff = formatDate(data.weighOff) ?? 'not set';
+            setPumpkin(data);
+          }
 
-  fetch(`https://us-central1-pumpkinpal-b60be.cloudfunctions.net/exportData?pumpkinId=${id}&timeZone=${Intl.DateTimeFormat().resolvedOptions().timeZone}`, {
-    headers: {
-      'Authorization': 'Bearer ' + idToken
-    }
-  }).then(response => response.blob())
-    .then(blob => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      // Format the current date as YYYY-MM-DD
-      const date = new Date().toISOString().slice(0, 10);
-      a.download = `PumpkinPal_${pumpkin.name}_${date}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      setAlert(null);  // Clear the alert after the export is complete
-  }).catch(e => {
-    console.error(e);
-    setAlert({ type: "error", message: "An error occurred during export." });
-  });
-};
+          // Define a Firestore query to retrieve the pumpkin's measurements ordered by timestamp
+          const measurementsQuery = query(collection(db, 'Users', auth.currentUser.uid, 'Pumpkins', id, 'Measurements'), orderBy('timestamp'));
+
+          // Subscribe to the measurements in real time
+          const unsubscribe = onSnapshot(measurementsQuery, (snapshot) => {
+            let measurementData = [];
+            snapshot.forEach((doc) => {
+              const data = doc.data();
+              if (data.timestamp) {
+                data.timestamp = formatDate(data.timestamp.toDate().toISOString().slice(0, 10));
+              }
+              measurementData.push({ id: doc.id, ...data });
+            });
+            setMeasurements(measurementData);
+          });
+
+          return unsubscribe;
+        } catch (err) {
+          console.error("Failed to fetch pumpkin data: ", err);
+        }
+      }
+    };
+    auth.onAuthStateChanged((user) => {
+      if (user) fetchPumpkin();
+    });
+  }, [id]);
 
 
 return (
@@ -148,15 +101,8 @@ return (
         </div>
 
  {/* Card 3: Measurements */}
-    <MeasurementsCard
-      measurements={measurements}
-      alert={alert}
-      deleteMeasurement={deleteMeasurement}
-      exportData={exportData}
-      navigate={navigate}
-      pumpkinId={id}
-      setAlert={setAlert}
-    />
+    <MeasurementsCard measurements={measurements} navigate={navigate} pumpkinId={id} />
+
 
     {/* Card 4: Graph */}
     <GraphCard
