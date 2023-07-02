@@ -14,74 +14,94 @@ function UserProfile() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
     
-    const confirmDeleteAccount = async () => {
-        if (auth.currentUser) {
-          const userRef = doc(db, 'Users', auth.currentUser.uid);
-          await updateDoc(userRef, { accountDeletionRequested: true });
-          await signOut(auth);
-        } else {
-          alert("User not logged in");
-        }
-      };
+     const confirmDeleteAccount = async () => {
+    try {
+      if (auth.currentUser) {
+        const userRef = doc(db, 'Users', auth.currentUser.uid);
+        await updateDoc(userRef, { accountDeletionRequested: true });
+        await signOut(auth);
+      } else {
+        toast.error("User not logged in");
+      }
+    } catch (error) {
+      toast.error("An error occurred: " + error.message);
+    }
+  };
 
 
 const fetchPreferences = useCallback(async () => {
-    if (auth.currentUser) {
-      const userRef = doc(db, 'Users', auth.currentUser.uid);
-      const userDoc = await getDoc(userRef);
-      if (userDoc.exists()) {
-        const fetchedUnit = userDoc.data().preferredUnit;
-        if (fetchedUnit) {
-          setPreferredUnit(fetchedUnit);
+    try {
+      if (auth.currentUser) {
+        const userRef = doc(db, 'Users', auth.currentUser.uid);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          const fetchedUnit = userDoc.data().preferredUnit;
+          if (fetchedUnit) {
+            setPreferredUnit(fetchedUnit);
+          }
         }
+        setLoading(false);
       }
-      setLoading(false);
+    } catch (error) {
+      toast.error("An error occurred: " + error.message);
     }
   }, []);
 
     useEffect(() => {
-    fetchPreferences();
-
+    let isMounted = true;
+    
     const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
-        fetchPreferences();
+        if (isMounted) {
+          fetchPreferences();
+        }
       } else {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, [fetchPreferences]);
 
   const updatePreferences = async (e) => {
-  e.preventDefault();
-  if (auth.currentUser) {
-    const userRef = doc(db, 'Users', auth.currentUser.uid);
-    await updateDoc(userRef, { preferredUnit });
-    toast.success("Preferences updated successfully");
-  } else {
-    toast.error("User not logged in");
-  }
-};
+    e.preventDefault();
+    try {
+      if (auth.currentUser) {
+        const userRef = doc(db, 'Users', auth.currentUser.uid);
+        await updateDoc(userRef, { preferredUnit });
+        toast.success("Preferences updated successfully");
+      } else {
+        toast.error("User not logged in");
+      }
+    } catch (error) {
+      toast.error("An error occurred: " + error.message);
+    }
+  };
 
 
   const handleChangePassword = async (e) => {
-  e.preventDefault();
-  if (password !== confirmPassword) {
-    toast.error("Passwords do not match");
-    return;
-  }
-  const user = auth.currentUser;
-  const credential = EmailAuthProvider.credential(user.email, currentPassword);
-  try {
-    await reauthenticateWithCredential(user, credential);
-    await updatePassword(user, password);
-    toast.success("Password updated successfully");
-  } catch (error) {
-    toast.error("Error updating password: " + error.message);
-  }
-};
-
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+    const user = auth.currentUser;
+    const credential = EmailAuthProvider.credential(user.email, currentPassword);
+    try {
+      await reauthenticateWithCredential(user, credential);
+      await updatePassword(user, password);
+      toast.success("Password updated successfully");
+    } catch (error) {
+      toast.error("Error updating password: " + error.message);
+    }
+  };
+    
+    
   if (loading) {
     return <div>Loading...</div>;
   }
