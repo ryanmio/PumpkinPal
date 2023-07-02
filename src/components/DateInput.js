@@ -46,7 +46,7 @@ function DateInput({ selected, onChange }) {
       selected={selected}
       onChange={handleDateChange}
       required
-      customInput={<CustomInput onBlur={handleBlur} onChange={handleInputChange} />}
+      customInput={<CustomInput value={inputValue} onBlur={handleBlur} onChange={handleInputChange} />}
       dateFormat="MM/dd/yyyy"
     />
   );
