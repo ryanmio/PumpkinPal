@@ -5,6 +5,7 @@ import { doc, getDoc, setDoc, collection, getDocs, orderBy, limit, query } from 
 import "react-datepicker/dist/react-datepicker.css";
 import MeasurementInput from './MeasurementInput';
 import DateInput from './DateInput';
+import { Toaster } from 'react-hot-toast';
 
 function AddMeasurement() {
   const { id } = useParams();
@@ -92,11 +93,12 @@ function AddMeasurement() {
   };
 
   const addMeasurement = async (e) => {
-    e.preventDefault();
-    const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumference, measurementUnit);
-    const measurementId = Date.now().toString();
-    const user = auth.currentUser;
-    if(user && selectedPumpkin) {
+  e.preventDefault();
+  const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumference, measurementUnit);
+  const measurementId = Date.now().toString();
+  const user = auth.currentUser;
+  if(user && selectedPumpkin) {
+    try {
       await setDoc(doc(db, 'Users', user.uid, 'Pumpkins', selectedPumpkin, 'Measurements', measurementId), {
         endToEnd,
         sideToSide,
@@ -106,11 +108,16 @@ function AddMeasurement() {
         timestamp: Timestamp.fromDate(measurementDate),
       });
       navigate(`/pumpkin/${selectedPumpkin}`);
+    } catch (error) {
+      toast.error("Failed to add measurement. Please ensure the date is valid and try again.");
     }
-  };
+  }
+};
+
 
   return (
     <div className="container mx-auto px-4 h-screen pt-10">
+      <Toaster />
       <div className="bg-white shadow overflow-hidden rounded-lg p-4 w-full md:max-w-md mx-auto text-center">
         <h2 className="text-2xl font-bold mb-2 text-center">Add a Measurement</h2>
         <form onSubmit={addMeasurement} className="space-y-4">
