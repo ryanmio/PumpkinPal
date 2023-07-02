@@ -13,23 +13,27 @@ function PumpkinDetail() {
   const location = useLocation();
 
   // Helper function to format a date string as Month D, YYYY
-  function formatDate(dateString) {
-  if(dateString) {
-    const date = new Date(dateString);
-    const utcDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return utcDate.toLocaleDateString(undefined, options);
-  } else {
-    return 'Not Set';
-  }
-}
+  const formatDate = (dateString) => {
+    if (dateString) {
+      const date = new Date(dateString);
+      const utcDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      return utcDate.toLocaleDateString(undefined, options);
+    } else {
+      return 'Not Set';
+    }
+  };
     
   // Fetch the pumpkin data
   useEffect(() => {
     const fetchPumpkin = async () => {
-      if(auth.currentUser) {
+      const user = auth.currentUser;
+
+      if (user) {
+        const path = `Users/${user.uid}/Pumpkins/${id}`;
+
         try {
-          const docRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id);
+          const docRef = doc(db, path);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             const data = docSnap.data();
@@ -41,7 +45,7 @@ function PumpkinDetail() {
           }
 
           // Define a Firestore query to retrieve the pumpkin's measurements ordered by timestamp
-          const measurementsQuery = query(collection(db, 'Users', auth.currentUser.uid, 'Pumpkins', id, 'Measurements'), orderBy('timestamp'));
+          const measurementsQuery = query(collection(db, `${path}/Measurements`), orderBy('timestamp'));
 
           // Subscribe to the measurements in real time
           const unsubscribe = onSnapshot(measurementsQuery, (snapshot) => {
@@ -62,10 +66,9 @@ function PumpkinDetail() {
         }
       }
     };
-    auth.onAuthStateChanged((user) => {
-      if (user) fetchPumpkin();
-    });
-  }, [id]);
+
+    fetchPumpkin();
+  }, [id, formatDate]);
 
 
 return (
@@ -90,7 +93,7 @@ return (
           <p><b>Maternal Lineage:</b> {pumpkin?.maternalLineage}</p>
           <p><b>Paternal Lineage:</b> {pumpkin?.paternalLineage}</p>
         </div>
-        <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4 self-end">Edit Info</button>
+        <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 self-end">Edit Info</button>
       </div>
 
           {/* Card 2: Key Dates */}
@@ -102,7 +105,7 @@ return (
             <p><b>Pollinated:</b> {pumpkin?.pollinated}</p>
             <p><b>Weigh-off:</b> {pumpkin?.weighOff}</p>
           </div>
-          <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4 self-end">Edit Dates</button>
+          <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 self-end">Edit Dates</button>
         </div>
 
  {/* Card 3: Measurements */}
