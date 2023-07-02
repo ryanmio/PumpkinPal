@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { auth, db } from '../firebase';
-import { collection, doc, getDoc, query, orderBy, onSnapshot, deleteDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, query, orderBy, deleteDoc, onSnapshot } from 'firebase/firestore';
 import MeasurementsCard from './MeasurementsCard';
 import GraphCard from './GraphCard';
 
@@ -10,6 +10,7 @@ function PumpkinDetail() {
   const [pumpkin, setPumpkin] = useState(null);
   const [measurements, setMeasurements] = useState([]);
   const navigate = useNavigate();
+  const [alert, setAlert] = useState(null);
   const location = useLocation();
 
 /// Helper function to format a date string as Month D, YYYY
@@ -63,18 +64,64 @@ useEffect(() => {
   });
 }, [id]);
 
+
+  const deleteMeasurement = async (measurementId) => {
+  if (window.confirm("Are you sure you want to delete this measurement?")) {
+    try {
+      if (auth.currentUser && auth.currentUser.uid && id && measurementId) {
+        const measurementPath = `Users/${auth.currentUser.uid}/Pumpkins/${id}/Measurements/${measurementId}`;
+        await deleteDoc(doc(db, measurementPath));
+        setAlert({ type: "success", message: "Measurement deleted successfully." });
+      } else {
+        throw new Error("Missing required parameters.");
+      }
+    } catch (error) {
+      console.error("Error deleting measurement: ", error);
+      setAlert({ type: "error", message: "Failed to delete measurement. Please try again." });
+    }
+  }
+};
+
+const exportData = async () => {
+  setAlert({ type: "info", message: "Exporting..." });
+  const idToken = await auth.currentUser.getIdToken();
+
+  fetch(`https://us-central1-pumpkinpal-b60be.cloudfunctions.net/exportData?pumpkinId=${id}&timeZone=${Intl.DateTimeFormat().resolvedOptions().timeZone}`, {
+    headers: {
+      'Authorization': 'Bearer ' + idToken
+    }
+  }).then(response => response.blob())
+    .then(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      // Format the current date as YYYY-MM-DD
+      const date = new Date().toISOString().slice(0, 10);
+      a.download = `PumpkinPal_${pumpkin.name}_${date}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      setAlert(null);  // Clear the alert after the export is complete
+  }).catch(e => {
+    console.error(e);
+    setAlert({ type: "error", message: "An error occurred during export." });
+  });
+};
+
+
 return (
-  <div className="container mx-auto px-4 pt-10 flex flex-col">
-    <div className="mb-2 text-sm text-left">
-      <Link to="/dashboard" className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-flex" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-        Dashboard
-      </Link>
-    </div>
-    <h2 className="text-2xl font-bold mb-4 text-center">{pumpkin?.name} Details</h2>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow">
+       <div className="container mx-auto px-4 pt-10 flex flex-col">
+      <div className="mb-2 text-sm text-left">
+        <Link to="/dashboard" className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-flex" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Dashboard
+        </Link>
+      </div>
+      <h2 className="text-2xl font-bold mb-4 text-center">{pumpkin?.name} Details</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow">
 
       {/* Card 1: Basic Info */}
       <div className="bg-white shadow rounded-lg p-4 flex flex-col">
@@ -88,20 +135,20 @@ return (
         <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4 self-end">Edit Info</button>
       </div>
 
-      {/* Card 2: Key Dates */}
-      <div className="bg-white shadow rounded-lg p-4 flex flex-col">
-        <div className="mb-auto">
-          <h3 className="text-xl font-bold mb-2">Key Dates</h3>
-          <p><b>Seed Started:</b> {pumpkin?.seedStarted}</p>
-          <p><b>Transplant Out:</b> {pumpkin?.transplantOut}</p>
-          <p><b>Pollinated:</b> {pumpkin?.pollinated}</p>
-          <p><b>Weigh-off:</b> {pumpkin?.weighOff}</p>
+          {/* Card 2: Key Dates */}
+        <div className="bg-white shadow rounded-lg p-4 flex flex-col">
+          <div className="mb-auto">
+            <h3 className="text-xl font-bold mb-2">Key Dates</h3>
+            <p><b>Seed Started:</b> {pumpkin?.seedStarted}</p>
+            <p><b>Transplant Out:</b> {pumpkin?.transplantOut}</p>
+            <p><b>Pollinated:</b> {pumpkin?.pollinated}</p>
+            <p><b>Weigh-off:</b> {pumpkin?.weighOff}</p>
+          </div>
+          <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4 self-end">Edit Dates</button>
         </div>
-        <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4 self-end">Edit Dates</button>
-      </div>
 
-      {/* Card 3: Measurements */}
-      <MeasurementsCard
+ {/* Card 3: Measurements */}
+    <MeasurementsCard
       measurements={measurements}
       alert={alert}
       deleteMeasurement={deleteMeasurement}
@@ -111,16 +158,16 @@ return (
       setAlert={setAlert}
     />
 
+    {/* Card 4: Graph */}
+    <GraphCard
+      measurements={measurements}
+      pumpkinName={pumpkin?.name}
+    />
 
-      {/* Card 4: Graph */}
-      <GraphCard
-        measurements={measurements}
-        pumpkinName={pumpkin?.name}
-      />
 
     </div> 
   </div>
 );
 }
 
-export default PumpkinDetail;
+export default PumpkinDetail; 
