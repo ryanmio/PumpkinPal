@@ -21,7 +21,7 @@ function UserProfile() {
           await updateDoc(userRef, { accountDeletionRequested: true });
           await signOut(auth);
         } else {
-          alert("User not logged in");
+          setAlert("User not logged in");
         }
       };
 
@@ -59,16 +59,16 @@ function UserProfile() {
     if (auth.currentUser) {
       const userRef = doc(db, 'Users', auth.currentUser.uid);
       await updateDoc(userRef, { preferredUnit });
-      alert("Preferences updated successfully");
+      setAlert("Preferences updated successfully");
     } else {
-      alert("User not logged in");
+      setAlert("User not logged in");
     }
   };
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      setAlert("Passwords do not match");
       return;
     }
     const user = auth.currentUser;
@@ -76,9 +76,9 @@ function UserProfile() {
     try {
       await reauthenticateWithCredential(user, credential);
       await updatePassword(user, password);
-      alert("Password updated successfully");
+      setAlert("Password updated successfully");
     } catch (error) {
-      alert("Error updating password: ", error.message);
+      setAlert("Error updating password: ", error.message);
     }
   };
 
