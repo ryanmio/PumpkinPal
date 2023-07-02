@@ -55,15 +55,21 @@ function UserProfile() {
   });
 
   const updatePreferences = async (e) => {
-    e.preventDefault();
-    if (auth.currentUser) {
-      const userRef = doc(db, 'Users', auth.currentUser.uid);
+  e.preventDefault();
+  if (auth.currentUser) {
+    const userRef = doc(db, 'Users', auth.currentUser.uid);
+    try {
       await updateDoc(userRef, { preferredUnit });
       setAlert("Preferences updated successfully");
-    } else {
-      setAlert("User not logged in");
+    } catch (error) {
+      console.error("Error updating preferences: ", error);
+      setAlert("Error updating preferences");
     }
-  };
+  } else {
+    setAlert("User not logged in");
+  }
+};
+
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
