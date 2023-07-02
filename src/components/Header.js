@@ -11,7 +11,7 @@ function Header({ currentUser }) {
       <div className="nav-bar">
         <div className="nav-row">
           <Link to={currentUser ? "/dashboard" : "/"}>
-            <img src="/logowide.png" alt="Logo" className="App-logo" />
+            <img src="/logowide.png" alt="Logo" className="App-logo" style={{ paddingLeft: currentUser ? "0px" : "20px" }} />
           </Link>
           {location.pathname === "/" && !currentUser ? (
             <div style={{ marginLeft: 'auto', paddingRight: '20px', marginTop: '0px', marginBottom: '0px' }}>

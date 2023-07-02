@@ -39,39 +39,47 @@ function EditPumpkin() {
 
   if (!pumpkin) return 'Loading...';
 
-  return (
+ return (
     <div className="container mx-auto px-4 h-screen pt-10">
       <div className="bg-white shadow overflow-hidden rounded-lg p-6 w-full md:max-w-md mx-auto">
         <h2 className="text-2xl font-bold mb-2 text-center">Edit a Pumpkin</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <label className="block text-left">Name:</label>
-          <input name="name" value={pumpkin.name} onChange={handleChange} required className="w-full p-2 border-2 border-gray-300 rounded" />
+          <div className="field space-y-1">
+            <label className="block text-left">Name:</label>
+            <input name="name" value={pumpkin.name} onChange={handleChange} required className="w-full p-2 border-2 border-gray-300 rounded" />
+          </div>
           
-          <label className="block text-left">Description:</label>
-          <textarea name="description" value={pumpkin.description} onChange={handleChange} className="w-full p-2 border-2 border-gray-300 rounded" />
+          <div className="field space-y-1">
+            <label className="block text-left">Description:</label>
+            <textarea name="description" value={pumpkin.description} onChange={handleChange} className="w-full p-2 border-2 border-gray-300 rounded" />
+          </div>
           
-          <label className="block text-left">Maternal Lineage:</label>
-          <input name="maternalLineage" value={pumpkin.maternalLineage} onChange={handleChange} className="w-full p-2 border-2 border-gray-300 rounded" />
+          <div className="field space-y-1">
+            <label className="block text-left">Maternal Lineage:</label>
+            <input name="maternalLineage" value={pumpkin.maternalLineage} onChange={handleChange} className="w-full p-2 border-2 border-gray-300 rounded" />
+          </div>
 
-          <label className="block text-left">Paternal Lineage:</label>
-          <input name="paternalLineage" value={pumpkin.paternalLineage} onChange={handleChange} className="w-full p-2 border-2 border-gray-300 rounded" />
+          <div className="field space-y-1">
+            <label className="block text-left">Paternal Lineage:</label>
+            <input name="paternalLineage" value={pumpkin.paternalLineage} onChange={handleChange} className="w-full p-2 border-2 border-gray-300 rounded" />
+          </div>
           
-          <div className="grid grid-cols-2 gap-1">
+          <div className="grid grid-cols-2 gap-1 field space-y-1">
             <label className="text-left">Seed Started:</label>
             <input type="date" name="seedStarted" value={pumpkin.seedStarted} onChange={handleChange} className="w-full p-2 border-2 border-gray-300 rounded" />
           </div>
           
-          <div className="grid grid-cols-2 gap-1">
+          <div className="grid grid-cols-2 gap-1 field space-y-1">
             <label className="text-left">Transplant Out:</label>
             <input type="date" name="transplantOut" value={pumpkin.transplantOut} onChange={handleChange} className="w-full p-2 border-2 border-gray-300 rounded" />
           </div>
           
-          <div className="grid grid-cols-2 gap-1">
+          <div className="grid grid-cols-2 gap-1 field space-y-1">
             <label className="text-left">Pollinated:</label>
             <input type="date" name="pollinated" value={pumpkin.pollinated} onChange={handleChange} className="w-full p-2 border-2 border-gray-300 rounded" />
           </div>
           
-          <div className="grid grid-cols-2 gap-1">
+          <div className="grid grid-cols-2 gap-1 field space-y-1">
             <label className="text-left">Weigh-Off:</label>
             <input type="date" name="weighOff" value={pumpkin.weighOff} onChange={handleChange} className="w-full p-2 border-2 border-gray-300 rounded" />
           </div>
