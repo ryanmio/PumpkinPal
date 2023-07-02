@@ -4,6 +4,7 @@ import { auth, db } from '../firebase';
 import { collection, doc, getDoc, orderBy, onSnapshot, query } from 'firebase/firestore';
 import MeasurementsCard from './MeasurementsCard';
 import GraphCard from './GraphCard';
+import { toast } from 'react-hot-toast';
 
 function PumpkinDetail() {
   const { id } = useParams();
@@ -56,7 +57,7 @@ function PumpkinDetail() {
 
         return unsubscribe;
       } catch (err) {
-        console.error("Failed to fetch pumpkin data: ", err);
+        toast.error("Failed to fetch pumpkin data: " + err.message);
       }
     }
   }, [id, formatDate]);
