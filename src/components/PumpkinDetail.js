@@ -102,7 +102,7 @@ return (
         </div>
 
  {/* Card 3: Measurements */}
-    <MeasurementsCard measurements={measurements} navigate={navigate} pumpkinId={id} />
+   <MeasurementsCard measurements={measurements} navigate={navigate} pumpkinId={id} pumpkin={pumpkin} />
 
 
     {/* Card 4: Graph */}
