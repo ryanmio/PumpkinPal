@@ -3,17 +3,9 @@ import { Line } from 'react-chartjs-2';
 
 const GraphCard = ({ measurements, pumpkinName }) => {
 
-  // Helper function to format a date string as Month D, YYYY
-  function formatDate(dateString) {
-    const date = new Date(dateString);
-    const utcDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return utcDate.toLocaleDateString(undefined, options);
-  }
-
   // Prepare the data for the chart
   const chartData = {
-    labels: measurements?.map(m => formatDate(m.timestamp)),
+    labels: measurements?.map(m => new Date(m.timestamp)),
     datasets: [
       {
         label: 'OTT Weight by Date (lbs)',
@@ -25,14 +17,25 @@ const GraphCard = ({ measurements, pumpkinName }) => {
     ],
   };
 
-   const options = {
+  const options = {
     scales: {
+      x: {
+        type: 'time',
+        time: {
+          unit: 'day',
+          displayFormats: {
+            day: 'MMM D, YYYY'
+          }
+        },
+        ticks: {
+          source: 'data',
+        }
+      },
       y: {
         min: 0,
       },
     },
   };
-
 
   return (
     <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-12">
