@@ -92,7 +92,7 @@ function AddMeasurement() {
     return 0;
   };
 
-  const addMeasurement = async (e) => {
+const addMeasurement = async (e) => {
   e.preventDefault();
   const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumference, measurementUnit);
   const measurementId = Date.now().toString();
@@ -108,11 +108,13 @@ function AddMeasurement() {
         timestamp: Timestamp.fromDate(measurementDate),
       });
       navigate(`/pumpkin/${selectedPumpkin}`);
+      toast.success("Measurement added successfully!");  // new line here
     } catch (error) {
       toast.error("Failed to add measurement. Please ensure the date is valid and try again.");
     }
   }
 };
+
 
 
   return (
