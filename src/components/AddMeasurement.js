@@ -15,21 +15,15 @@ function AddMeasurement() {
   const [endToEnd, setEndToEnd] = useState('');
   const [sideToSide, setSideToSide] = useState('');
   const [circumference, setCircumference] = useState('');
-  const [preferredUnit, setPreferredUnit] = useState(null);
+  const [measurementUnit, setMeasurementUnit] = useState('cm'); 
   const [measurementDate, setMeasurementDate] = useState(new Date());
 
-useEffect(() => {
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async user => {
       if (user) {
         const userRef = doc(db, 'Users', user.uid);
         const userDoc = await getDoc(userRef);
-        
-        // Change default to 'cm' to match your initial state
-        let fetchedUnit = 'in'; 
-        if (userDoc.exists()) {
-          // If there's no preferredUnit, it will remain 'cm' by default
-          fetchedUnit = userDoc.data().preferredUnit || fetchedUnit;
-        }
+        const fetchedUnit = userDoc.exists() ? userDoc.data().preferredUnit : 'cm';
         setMeasurementUnit(fetchedUnit);
 
         const q = collection(db, 'Users', user.uid, 'Pumpkins');
@@ -47,7 +41,6 @@ useEffect(() => {
 
     return () => unsubscribe();
   }, [id]);
-
 
   useEffect(() => {
     const fetchLastMeasurement = async () => {
