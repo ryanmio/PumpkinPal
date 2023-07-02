@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
+import { toast } from 'react-hot-toast';
 
 const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
   const navigate = useNavigate();
-  const [alert, setAlert] = useState(null);
 
   const deleteMeasurement = async (measurementId) => {
     if (window.confirm("Are you sure you want to delete this measurement?")) {
@@ -13,19 +13,19 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
         if (auth.currentUser && auth.currentUser.uid && pumpkinId && measurementId) {
           const measurementPath = `Users/${auth.currentUser.uid}/Pumpkins/${pumpkinId}/Measurements/${measurementId}`;
           await deleteDoc(doc(db, measurementPath));
-          setAlert({ type: "success", message: "Measurement deleted successfully." });
+          toast.success("Measurement deleted successfully."); // Use toast here
         } else {
           throw new Error("Missing required parameters.");
         }
       } catch (error) {
         console.error("Error deleting measurement: ", error);
-        setAlert({ type: "error", message: "Failed to delete measurement. Please try again." });
+        toast.error("Failed to delete measurement. Please try again."); // And here
       }
     }
-  };
+};
 
   const exportData = async () => {
-    setAlert({ type: "info", message: "Exporting..." });
+    toast('Exporting...', { id: 'exporting' }); // Start with an "Exporting..." toast
     const idToken = await auth.currentUser.getIdToken();
 
     fetch(`https://us-central1-pumpkinpal-b60be.cloudfunctions.net/exportData?pumpkinId=${pumpkinId}&timeZone=${Intl.DateTimeFormat().resolvedOptions().timeZone}`, {
@@ -44,12 +44,14 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
-        setAlert(null);  // Clear the alert after the export is complete
+        toast.dismiss('exporting'); // Dismiss the "Exporting..." toast
+        toast.success("Export successful!"); // Show a success toast
     }).catch(e => {
       console.error(e);
-      setAlert({ type: "error", message: "An error occurred during export." });
+      toast.dismiss('exporting'); // Dismiss the "Exporting..." toast
+      toast.error("An error occurred during export."); // Show an error toast
     });
-  };
+};
 
   return (
     <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto">
