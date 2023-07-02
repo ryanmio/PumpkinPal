@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { auth, db } from '../firebase';
 import { collection, doc, getDoc, query, orderBy, deleteDoc, onSnapshot } from 'firebase/firestore';
-import { Line } from 'react-chartjs-2';
 import MeasurementsCard from './MeasurementsCard';
 import GraphCard from './GraphCard';
 
@@ -167,6 +166,7 @@ return (
       measurements={measurements}
       alert={alert}
       deleteMeasurement={deleteMeasurement}
+      exportData={exportData}
       navigate={navigate}
       pumpkinId={id}
       setAlert={setAlert}
@@ -174,9 +174,10 @@ return (
 
     {/* Card 4: Graph */}
     <GraphCard
-      measurements={measurements}
+      chartData={chartData}
       pumpkinName={pumpkin?.name}
     />
+
 
     </div> 
   </div>
