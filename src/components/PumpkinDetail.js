@@ -174,7 +174,7 @@ return (
 
     {/* Card 4: Graph */}
     <GraphCard
-      chartData={chartData}
+      measurements={measurements}
       pumpkinName={pumpkin?.name}
     />
 
