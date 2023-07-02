@@ -3,54 +3,9 @@ import { useNavigate } from 'react-router-dom';
 
 const MeasurementsCard = ({ measurements, pumpkinId, deleteMeasurement, exportData, alert }) => {
   const navigate = useNavigate();
-    
-const deleteMeasurement = async (measurementId) => {
-  if (window.confirm("Are you sure you want to delete this measurement?")) {
-    try {
-      if (auth.currentUser && auth.currentUser.uid && id && measurementId) {
-        const measurementPath = `Users/${auth.currentUser.uid}/Pumpkins/${id}/Measurements/${measurementId}`;
-        await deleteDoc(doc(db, measurementPath));
-        setAlert({ type: "success", message: "Measurement deleted successfully." });
-      } else {
-        throw new Error("Missing required parameters.");
-      }
-    } catch (error) {
-      console.error("Error deleting measurement: ", error);
-      setAlert({ type: "error", message: "Failed to delete measurement. Please try again." });
-    }
-  }
-};
-
-const exportData = async () => {
-  setAlert({ type: "info", message: "Exporting..." });
-  const idToken = await auth.currentUser.getIdToken();
-
-  fetch(`https://us-central1-pumpkinpal-b60be.cloudfunctions.net/exportData?pumpkinId=${id}&timeZone=${Intl.DateTimeFormat().resolvedOptions().timeZone}`, {
-    headers: {
-      'Authorization': 'Bearer ' + idToken
-    }
-  }).then(response => response.blob())
-    .then(blob => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      // Format the current date as YYYY-MM-DD
-      const date = new Date().toISOString().slice(0, 10);
-      a.download = `PumpkinPal_${pumpkin.name}_${date}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      setAlert(null);  // Clear the alert after the export is complete
-  }).catch(e => {
-    console.error(e);
-    setAlert({ type: "error", message: "An error occurred during export." });
-  });
-};
-
 
   return (
-    <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-4">
+    <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto">
       <h3 className="text-xl font-bold mb-2">Measurements</h3>
       <div className="flex space-x-4 justify-center">
         <button onClick={() => navigate(`/add-measurement/${pumpkinId}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Add Measurement</button>
