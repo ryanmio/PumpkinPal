@@ -26,22 +26,22 @@ function UserProfile() {
       };
 
 
-  useEffect(() => {
-    const fetchPreferences = async () => {
-      if (auth.currentUser) {
-        const userRef = doc(db, 'Users', auth.currentUser.uid);
-        const userDoc = await getDoc(userRef);
-        if (userDoc.exists()) {
-          const fetchedUnit = userDoc.data().preferredUnit;
-          if (fetchedUnit) {
-            setPreferredUnit(fetchedUnit);
-          } else {
-            setPreferredUnit('cm');
-          }
+const fetchPreferences = useCallback(async () => {
+    if (auth.currentUser) {
+      const userRef = doc(db, 'Users', auth.currentUser.uid);
+      const userDoc = await getDoc(userRef);
+      if (userDoc.exists()) {
+        const fetchedUnit = userDoc.data().preferredUnit;
+        if (fetchedUnit) {
+          setPreferredUnit(fetchedUnit);
         }
-        setLoading(false);
       }
-    };
+      setLoading(false);
+    }
+  }, []);
+
+    useEffect(() => {
+    fetchPreferences();
 
     const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
@@ -52,7 +52,7 @@ function UserProfile() {
     });
 
     return () => unsubscribe();
-  });
+  }, [fetchPreferences]);
 
   const updatePreferences = async (e) => {
     e.preventDefault();
@@ -64,6 +64,7 @@ function UserProfile() {
       alert("User not logged in");
     }
   };
+
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
