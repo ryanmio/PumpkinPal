@@ -24,7 +24,7 @@ function AddMeasurement() {
       if (user) {
         const userRef = doc(db, 'Users', user.uid);
         const userDoc = await getDoc(userRef);
-        const fetchedUnit = userDoc.exists() && userDoc.data().preferredUnit ? userDoc.data().preferredUnit : 'cm';
+        const fetchedUnit = userDoc.exists() && userDoc.data().preferredUnit ? userDoc.data().preferredUnit : 'in';
         setMeasurementUnit(fetchedUnit);
 
         const q = collection(db, 'Users', user.uid, 'Pumpkins');
