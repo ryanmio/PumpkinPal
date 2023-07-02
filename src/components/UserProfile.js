@@ -3,6 +3,8 @@ import { auth, db } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { signOut, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
+
 
 
 function UserProfile() {
@@ -55,49 +57,53 @@ const fetchPreferences = useCallback(async () => {
   }, [fetchPreferences]);
 
   const updatePreferences = async (e) => {
-    e.preventDefault();
-    if (auth.currentUser) {
-      const userRef = doc(db, 'Users', auth.currentUser.uid);
-      await updateDoc(userRef, { preferredUnit });
-      alert("Preferences updated successfully");
-    } else {
-      alert("User not logged in");
-    }
-  };
+  e.preventDefault();
+  if (auth.currentUser) {
+    const userRef = doc(db, 'Users', auth.currentUser.uid);
+    await updateDoc(userRef, { preferredUnit });
+    toast.success("Preferences updated successfully");
+  } else {
+    toast.error("User not logged in");
+  }
+};
 
 
   const handleChangePassword = async (e) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
-    const user = auth.currentUser;
-    const credential = EmailAuthProvider.credential(user.email, currentPassword);
-    try {
-      await reauthenticateWithCredential(user, credential);
-      await updatePassword(user, password);
-      alert("Password updated successfully");
-    } catch (error) {
-      alert("Error updating password: ", error.message);
-    }
-  };
+  e.preventDefault();
+  if (password !== confirmPassword) {
+    toast.error("Passwords do not match");
+    return;
+  }
+  const user = auth.currentUser;
+  const credential = EmailAuthProvider.credential(user.email, currentPassword);
+  try {
+    await reauthenticateWithCredential(user, credential);
+    await updatePassword(user, password);
+    toast.success("Password updated successfully");
+  } catch (error) {
+    toast.error("Error updating password: " + error.message);
+  }
+};
 
   if (loading) {
     return <div>Loading...</div>;
   }
     
     
-    const exportAllData = async () => {
-    setAlert('Exporting...');
-    const idToken = await auth.currentUser.getIdToken();
+const exportAllData = async () => {
+  const idToken = await auth.currentUser.getIdToken();
 
-    fetch(`https://us-central1-pumpkinpal-b60be.cloudfunctions.net/exportAllData?timeZone=${Intl.DateTimeFormat().resolvedOptions().timeZone}`, {
-      headers: {
-        'Authorization': 'Bearer ' + idToken
+  const exportPromise = fetch(`https://us-central1-pumpkinpal-b60be.cloudfunctions.net/exportAllData?timeZone=${Intl.DateTimeFormat().resolvedOptions().timeZone}`, {
+    headers: {
+      'Authorization': 'Bearer ' + idToken
+    }
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
+      return response.blob();
     })
-    .then(response => response.blob())
     .then(blob => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -109,13 +115,15 @@ const fetchPreferences = useCallback(async () => {
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
-      setAlert(null);  // Clear the alert after the export is complete
-    })
-    .catch(e => {
-      console.error(e);
-      setAlert('An error occurred during export.');  // Set an error alert if the export fails
     });
-  };
+
+  toast.promise(exportPromise, {
+    loading: 'Exporting...',
+    success: 'Export successful',
+    error: 'An error occurred during export'
+  });
+};
+
 
 const handleLogout = () => {
     signOut(auth)
@@ -140,6 +148,7 @@ const handleLogout = () => {
     
   return (
     <div className="container mx-auto px-4 min-h-screen pb-10">
+      <Toaster />
       <h2 className="text-2xl font-bold mb-2 text-center pt-4 pb-2">User Profile</h2>
       <div className="grid gap-8 md:grid-cols-2">
         <div className="bg-white shadow overflow-hidden rounded-lg p-4">
