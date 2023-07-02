@@ -28,7 +28,7 @@ function Login() {
   
     if (queryParams.get('demo') === 'true') {
       const demoEmail = 'demo@account.com';
-      const demoPassword = 'password';
+      const demoPassword = 'pumpkinpal';
 
       setEmail(demoEmail);
       setPassword(demoPassword);
