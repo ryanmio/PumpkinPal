@@ -16,6 +16,7 @@ function CustomInput({ value, onClick, className, onBlur, onChange }) {
         onBlur={onBlur}
         onChange={onChange}
         value={value}
+        autoComplete="off"
       />
       <label htmlFor={id} className={`absolute left-0 top-0 label-float ${value ? "filled" : ""}`}>{isToday ? "Date (Today)" : "Date"}</label>
     </div>
