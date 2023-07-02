@@ -35,7 +35,7 @@ const GraphCard = ({ measurements, pumpkinName }) => {
 
 
   return (
-    <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-4">
+    <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-12">
       <h3 className="text-xl font-bold mb-2">{pumpkinName} Weight Trend</h3>
       <Line data={chartData} options={options} />
     </div>
