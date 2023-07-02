@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { auth, db } from '../firebase';
-import { collection, doc, getDoc, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, doc, getDoc, query, orderBy, onSnapshot, deleteDoc } from 'firebase/firestore';
 import MeasurementsCard from './MeasurementsCard';
 import GraphCard from './GraphCard';
 
@@ -102,10 +102,15 @@ return (
 
       {/* Card 3: Measurements */}
       <MeasurementsCard
-        measurements={measurements}
-        pumpkinId={id}
-        pumpkin={pumpkin}
-      />
+      measurements={measurements}
+      alert={alert}
+      deleteMeasurement={deleteMeasurement}
+      exportData={exportData}
+      navigate={navigate}
+      pumpkinId={id}
+      setAlert={setAlert}
+    />
+
 
       {/* Card 4: Graph */}
       <GraphCard
