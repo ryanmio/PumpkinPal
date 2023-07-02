@@ -12,28 +12,24 @@ function PumpkinDetail() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Helper function to format a date string as Month D, YYYY
+  function formatDate(dateString) {
+  if(dateString) {
+    const date = new Date(dateString);
+    const utcDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return utcDate.toLocaleDateString(undefined, options);
+  } else {
+    return 'Not Set';
+  }
+}
+    
   // Fetch the pumpkin data
   useEffect(() => {
-    // Helper function to format a date string as Month D, YYYY
-    const formatDate = (dateString) => {
-      if (dateString) {
-        const date = new Date(dateString);
-        const utcDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return utcDate.toLocaleDateString(undefined, options);
-      } else {
-        return 'Not Set';
-      }
-    };
-
     const fetchPumpkin = async () => {
-      const user = auth.currentUser;
-
-      if (user) {
-        const path = `Users/${user.uid}/Pumpkins/${id}`;
-
+      if(auth.currentUser) {
         try {
-          const docRef = doc(db, path);
+          const docRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             const data = docSnap.data();
@@ -45,7 +41,7 @@ function PumpkinDetail() {
           }
 
           // Define a Firestore query to retrieve the pumpkin's measurements ordered by timestamp
-          const measurementsQuery = query(collection(db, `${path}/Measurements`), orderBy('timestamp'));
+          const measurementsQuery = query(collection(db, 'Users', auth.currentUser.uid, 'Pumpkins', id, 'Measurements'), orderBy('timestamp'));
 
           // Subscribe to the measurements in real time
           const unsubscribe = onSnapshot(measurementsQuery, (snapshot) => {
@@ -66,8 +62,9 @@ function PumpkinDetail() {
         }
       }
     };
-
-    fetchPumpkin();
+    auth.onAuthStateChanged((user) => {
+      if (user) fetchPumpkin();
+    });
   }, [id]);
 
 
