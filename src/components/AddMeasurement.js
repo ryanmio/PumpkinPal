@@ -15,7 +15,7 @@ function AddMeasurement() {
   const [endToEnd, setEndToEnd] = useState('');
   const [sideToSide, setSideToSide] = useState('');
   const [circumference, setCircumference] = useState('');
-  const [measurementUnit, setMeasurementUnit] = useState('cm'); 
+  const [measurementUnit, setMeasurementUnit] = useState(null);  // corrected to measurementUnit
   const [measurementDate, setMeasurementDate] = useState(new Date());
 
   useEffect(() => {
@@ -24,9 +24,10 @@ function AddMeasurement() {
         const userRef = doc(db, 'Users', user.uid);
         const userDoc = await getDoc(userRef);
         
-        let fetchedUnit = 'in'; // default to in
-        if (userDoc.exists() && userDoc.data().preferredUnit) {
-          fetchedUnit = userDoc.data().preferredUnit;
+        let fetchedUnit = 'in';  // Set default to 'in'
+        if (userDoc.exists()) {
+          // If there's no preferredUnit, it will remain 'in' by default
+          fetchedUnit = userDoc.data().preferredUnit || fetchedUnit;
         }
         setMeasurementUnit(fetchedUnit);
 
