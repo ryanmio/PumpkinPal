@@ -85,21 +85,24 @@ const fetchPreferences = useCallback(async () => {
 
 
   const handleChangePassword = async (e) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
-    const user = auth.currentUser;
-    const credential = EmailAuthProvider.credential(user.email, currentPassword);
-    try {
-      await reauthenticateWithCredential(user, credential);
-      await updatePassword(user, password);
-      toast.success("Password updated successfully");
-    } catch (error) {
-      toast.error("Error updating password: " + error.message);
-    }
-  };
+  e.preventDefault();
+  if (password !== confirmPassword) {
+    toast.error("Passwords do not match");
+    return;
+  }
+  const user = auth.currentUser;
+  const credential = EmailAuthProvider.credential(user.email, currentPassword);
+  try {
+    await reauthenticateWithCredential(user, credential);
+    await updatePassword(user, password);
+    toast.success("Password updated successfully");
+    setPassword('');
+    setConfirmPassword('');
+  } catch (error) {
+    toast.error("Error updating password: " + error.message);
+  }
+};
+
     
     
   if (loading) {
