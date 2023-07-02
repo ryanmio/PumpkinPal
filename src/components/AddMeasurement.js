@@ -5,7 +5,7 @@ import { doc, getDoc, setDoc, collection, getDocs, orderBy, limit, query } from 
 import "react-datepicker/dist/react-datepicker.css";
 import MeasurementInput from './MeasurementInput';
 import DateInput from './DateInput';
-import { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 
 function AddMeasurement() {
   const { id } = useParams();
