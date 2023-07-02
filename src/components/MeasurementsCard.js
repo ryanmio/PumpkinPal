@@ -49,7 +49,7 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
       console.error(e);
       setAlert({ type: "error", message: "An error occurred during export." });
     });
-  };/≥
+  };
 
   return (
     <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto">
