@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { doc, deleteDoc } from 'firebase/firestore';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 
 const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
       console.error(e);
       setAlert({ type: "error", message: "An error occurred during export." });
     });
-  };
+  };/≥
 
   return (
     <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto">

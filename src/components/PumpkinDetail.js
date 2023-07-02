@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { auth, db } from '../firebase';
-import { collection, doc, getDoc, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, doc, getDoc, orderBy, onSnapshot, query } from 'firebase/firestore';
 import MeasurementsCard from './MeasurementsCard';
 import GraphCard from './GraphCard';
 
@@ -10,6 +10,7 @@ function PumpkinDetail() {
   const [pumpkin, setPumpkin] = useState(null);
   const [measurements, setMeasurements] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Helper function to format a date string as Month D, YYYY
   function formatDate(dateString) {
