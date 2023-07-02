@@ -1,7 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, db } from '../firebase';
-import { doc, deleteDoc } from 'firebase/firestore';
 
 const MeasurementsCard = ({ measurements, pumpkinId, deleteMeasurement, exportData, alert }) => {
   const navigate = useNavigate();
