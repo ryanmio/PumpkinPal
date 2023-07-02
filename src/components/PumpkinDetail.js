@@ -65,20 +65,6 @@ useEffect(() => {
 }, [id]);
 
 
-  // Prepare the data for the chart
-const chartData = {
-  labels: measurements?.map(m => m.timestamp),
-  datasets: [
-    {
-      label: 'Estimated Weight over Time (lbs)',
-      data: measurements?.map(m => m.estimatedWeight),
-      fill: false,
-      backgroundColor: 'rgb(75, 192, 192)',
-      borderColor: 'rgba(75, 192, 192, 0.2)',
-    },
-  ],
-};
-
   const deleteMeasurement = async (measurementId) => {
   if (window.confirm("Are you sure you want to delete this measurement?")) {
     try {
