@@ -15,6 +15,7 @@ import Homepage from './components/Homepage';
 import UserProfile from './components/UserProfile';
 import EditMeasurement from './components/EditMeasurement';
 import Header from './components/Header';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -30,6 +31,7 @@ function App() {
     <div className="App font-lato">
       <Router>
         <Header currentUser={currentUser} />
+        <Toaster />
         <Routes>
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
