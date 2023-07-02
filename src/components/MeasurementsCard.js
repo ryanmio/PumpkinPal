@@ -58,7 +58,6 @@ const exportData = async () => {
         <button onClick={() => navigate(`/add-measurement/${pumpkinId}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Add Measurement</button>
         <button onClick={exportData} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export Data</button>
       </div>
-      {alert && <div className={`alert ${alert.type}`}>{alert.message}</div>}
       <div className="overflow-x-auto">
         <table className="w-full mt-4">
           <thead>
