@@ -5,7 +5,7 @@ const MeasurementsCard = ({ measurements, pumpkinId, deleteMeasurement, exportDa
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto">
+    <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-4">
       <h3 className="text-xl font-bold mb-2">Measurements</h3>
       <div className="flex space-x-4 justify-center">
         <button onClick={() => navigate(`/add-measurement/${pumpkinId}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Add Measurement</button>

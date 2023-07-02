@@ -26,19 +26,16 @@ const GraphCard = ({ measurements, pumpkinName }) => {
   };
 
   const options = {
-    scales: {
-      yAxes: [
-        {
-          ticks: {
-            beginAtZero: true,
-          },
-        },
-      ],
+  scales: {
+    y: {
+      beginAtZero: true,
     },
-  };
+  },
+};
+
 
   return (
-    <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto">
+    <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-4">
       <h3 className="text-xl font-bold mb-2">{pumpkinName} Weight Trend</h3>
       <Line data={chartData} options={options} />
     </div>
