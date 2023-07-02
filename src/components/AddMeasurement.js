@@ -107,16 +107,13 @@ const addMeasurement = async (e) => {
         estimatedWeight,
         timestamp: Timestamp.fromDate(measurementDate),
       });
+      navigate(`/pumpkin/${selectedPumpkin}`);
       toast.success("Measurement added successfully!");  // new line here
-      setTimeout(() => {
-        navigate(`/pumpkin/${selectedPumpkin}`);
-      }, 1000);  // wait 2 seconds before navigating
     } catch (error) {
       toast.error("Failed to add measurement. Please ensure the date is valid and try again.");
     }
   }
 };
-
 
 
 
