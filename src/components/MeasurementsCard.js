@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 
 const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
   const navigate = useNavigate();
@@ -61,7 +61,6 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
         <button onClick={() => navigate(`/add-measurement/${pumpkinId}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Add Measurement</button>
         <button onClick={exportData} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export Data</button>
       </div>
-      {alert && <div className={`alert ${alert.type}`}>{alert.message}</div>}
       <div className="overflow-x-auto">
         <table className="w-full mt-4">
           <thead>
