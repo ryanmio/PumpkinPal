@@ -10,7 +10,7 @@ function UserProfile() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
-  const [preferredUnit, setPreferredUnit] = useState('in');
+  const [preferredUnit, setPreferredUnit] = useState(null);
   const [alert, setAlert] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ function UserProfile() {
           await updateDoc(userRef, { accountDeletionRequested: true });
           await signOut(auth);
         } else {
-          setAlert("User not logged in");
+          alert("User not logged in");
         }
       };
 
@@ -36,7 +36,7 @@ function UserProfile() {
           if (fetchedUnit) {
             setPreferredUnit(fetchedUnit);
           } else {
-            setPreferredUnit('in');
+            setPreferredUnit('cm');
           }
         }
         setLoading(false);
@@ -55,26 +55,20 @@ function UserProfile() {
   });
 
   const updatePreferences = async (e) => {
-  e.preventDefault();
-  if (auth.currentUser) {
-    const userRef = doc(db, 'Users', auth.currentUser.uid);
-    try {
+    e.preventDefault();
+    if (auth.currentUser) {
+      const userRef = doc(db, 'Users', auth.currentUser.uid);
       await updateDoc(userRef, { preferredUnit });
-      setAlert("Preferences updated successfully");
-    } catch (error) {
-      console.error("Error updating preferences: ", error);
-      setAlert("Error updating preferences");
+      alert("Preferences updated successfully");
+    } else {
+      alert("User not logged in");
     }
-  } else {
-    setAlert("User not logged in");
-  }
-};
-
+  };
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      setAlert("Passwords do not match");
+      alert("Passwords do not match");
       return;
     }
     const user = auth.currentUser;
@@ -82,9 +76,9 @@ function UserProfile() {
     try {
       await reauthenticateWithCredential(user, credential);
       await updatePassword(user, password);
-      setAlert("Password updated successfully");
+      alert("Password updated successfully");
     } catch (error) {
-      setAlert("Error updating password: ", error.message);
+      alert("Error updating password: ", error.message);
     }
   };
 
