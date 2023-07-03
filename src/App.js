@@ -23,6 +23,7 @@ function TrackPageViews() {
   useEffect(() => {
     window.gtag('config', 'G-B2KQB8LKHM', {
       'page_title' : document.title,
+      'page_path': location.pathname
     });
   }, [location]);
 
