@@ -1,6 +1,7 @@
 # PumpkinPal: An Open-Source Pumpkin OTT Weight Calculator App 
-<a href="https://pumpkinpal.app" style="background-color: #80876E; color: white; padding: 8px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; border-radius: 8px;">Live Web App</a>
-<a href="https://pumpkinpal.app/login/?demo=true" style="background-color: #80876E; color: white; padding: 8px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; border-radius: 8px;">Open Demo Account</a>
+[![Live Web App](https://img.shields.io/badge/-Live%20Web%20App-80876E?style=for-the-badge&logo=Canonical&logoColor=white)](https://pumpkinpal.app)
+
+[![Demo Account](https://img.shields.io/badge/-Demo%20Account-80876E?style=for-the-badge&logo=OpenAccess&logoColor=white)](https://pumpkinpal.app/login/?demo=true)
 
 <img src="https://raw.githubusercontent.com/ryanmio/PumpkinPal/main/public/logo.png" align="right" alt="PumpkinPal Logo" width="150">
 
