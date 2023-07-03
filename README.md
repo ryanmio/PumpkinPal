@@ -29,7 +29,7 @@ The goal of this project is to develop a user-friendly, open-source application 
 - **Tailwind CSS**: A utility-first CSS framework used for styling the application.
 
 ### Backend:
-- **Firebase**: Used for user authentication and real-time database management. Firebase offers a robust, scalable, and cost-effective backend solution that enhances the app's responsiveness and user experience while keeping the development process streamlined and efficient. Its simplicity and ease of integration make it an ideal choice for AI-assisted development, aligning perfectly with the development approach of PumpkinPal.
+- **Firebase**: Used for user authentication and real-time database management.
 
 ### Libraries:
 - **React Router Dom**: A standard routing library for React, used to navigate between different components in the application.
