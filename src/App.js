@@ -17,19 +17,9 @@ import EditMeasurement from './components/EditMeasurement';
 import Header from './components/Header';
 import { Toaster } from 'react-hot-toast';
 
-
-function App() {
-  const location = useLocation();
-
-  useEffect(() => {
-    window.gtag('event', 'page_view', {
-      page_path: location.pathname,
-    });
-  }, [location]);
-
-
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
+  const location = useLocation();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -37,6 +27,12 @@ function App() {
     });
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    window.gtag('event', 'page_view', {
+      page_path: location.pathname,
+    });
+  }, [location]);
 
   return (
     <div className="App font-lato">
