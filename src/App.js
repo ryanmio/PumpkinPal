@@ -16,15 +16,16 @@ import UserProfile from './components/UserProfile';
 import EditMeasurement from './components/EditMeasurement';
 import Header from './components/Header';
 import { Toaster } from 'react-hot-toast';
+import ReactGA from "react-ga4";
+
+const TRACKING_ID = 'G-B2KQB8LKHM';
 
 function TrackPageViews() {
   const location = useLocation();
-
+  
   useEffect(() => {
-    window.gtag('config', 'G-B2KQB8LKHM', {
-      'page_title' : document.title,
-      'page_path': location.pathname
-    });
+    ReactGA.initialize(TRACKING_ID);
+    ReactGA.send({ hitType: "pageview", page: location.pathname, title: document.title });
   }, [location]);
 
   return null;
