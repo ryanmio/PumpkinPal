@@ -109,12 +109,7 @@ const calculateEstimatedWeight = (endToEnd, sideToSide, circumference, measureme
 
 This formula is the crux of the PumpkinPal app and what enables pumpkin growers to track and predict their pumpkins' weight throughout the growing season based on their measurements.
 
-<div style="display: flex; justify-content: space-between;">
-
-<div style="flex: 1;">
-
 ### Field-Friendly Features
-
 The PumpkinPal app incorporates several design principles to ensure ease of use in a field environment, especially while wearing gloves. 
 
 1. **Big inputs and touch targets:** Recognizing that our users may be interacting with the app with gloves on, we've designed our input fields and touch targets to be large enough to accommodate these circumstances. This is achieved through custom CSS rules that boost the default size attributes of the HTML input elements.
@@ -123,16 +118,10 @@ The PumpkinPal app incorporates several design principles to ensure ease of use 
 
 3. **Dynamic measurement unit selection:** The app pulls the user's preferred measurement unit from Firebase and uses it as the default unit. However, the user also has the option to override this default on-the-fly for individual measurements, providing flexibility when it's needed.
 
+Here's what it looks like in action:<br>
+<div style="text-align: center;">
+    <img src="https://raw.githubusercontent.com/ryanmio/PumpkinPal/main/public/images/entrydemo.gif" width="50%" alt="Data Entry GIF">
 </div>
-
-<div style="flex: 1;">
-
-![Data Entry GIF](https://raw.githubusercontent.com/ryanmio/PumpkinPal/main/public/images/entrydemo.gif)
-
-</div>
-
-</div>
-
 
 ### Future Development
 
