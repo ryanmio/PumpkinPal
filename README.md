@@ -119,9 +119,7 @@ The PumpkinPal app incorporates several design principles to ensure ease of use 
 3. **Dynamic measurement unit selection:** The app pulls the user's preferred measurement unit from Firebase and uses it as the default unit. However, the user also has the option to override this default on-the-fly for individual measurements, providing flexibility when it's needed.
 
 Here's what it looks like in action:<br>
-<div style="text-align: center;">
-    <img src="https://raw.githubusercontent.com/ryanmio/PumpkinPal/main/public/images/entrydemo.gif" width="50%" alt="Data Entry GIF">
-</div>
+<img src="https://raw.githubusercontent.com/ryanmio/PumpkinPal/main/public/images/entrydemo.gif" align="center" alt="Data Entry GIF" width="50%">
 
 ### Future Development
 
