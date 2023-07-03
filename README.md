@@ -36,6 +36,8 @@ The goal of this project is to develop a user-friendly, open-source application 
 - **React Hot Toast**: A lightweight notification library for React apps used to provide customizable toast notifications to the user.
 - **React Chartjs 2**: A wrapper for Chart.js, a powerful data visualization library for JavaScript.
 
+![Graph GIF](https://raw.githubusercontent.com/ryanmio/PumpkinPal/main/public/images/graphdemo.gif)
+
 ### Why React? 🔄
 
 I opted to develop this app in React because I believe React is the best framework for coding with AI assistance using tools like ChatGPT or GitHub Co-Pilot. This is because of its popularity, component-based architecture, and existing integrations.
