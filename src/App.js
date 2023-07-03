@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'chart.js/auto';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { auth } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import Register from './components/Register';
@@ -17,6 +17,18 @@ import EditMeasurement from './components/EditMeasurement';
 import Header from './components/Header';
 import { Toaster } from 'react-hot-toast';
 
+function TrackPageViews() {
+  const location = useLocation();
+
+  useEffect(() => {
+    window.gtag('event', 'page_view', {
+      page_path: location.pathname,
+    });
+  }, [location]);
+
+  return null;
+}
+
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
 
@@ -30,6 +42,7 @@ function App() {
   return (
     <div className="App font-lato">
       <Router>
+        <TrackPageViews />
         <Header currentUser={currentUser} />
         <Toaster />
         <Routes>
