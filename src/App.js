@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'chart.js/auto';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { auth } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import Register from './components/Register';
@@ -16,6 +16,17 @@ import UserProfile from './components/UserProfile';
 import EditMeasurement from './components/EditMeasurement';
 import Header from './components/Header';
 import { Toaster } from 'react-hot-toast';
+
+
+function App() {
+  const location = useLocation();
+
+  useEffect(() => {
+    window.gtag('event', 'page_view', {
+      page_path: location.pathname,
+    });
+  }, [location]);
+
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
