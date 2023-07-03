@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'chart.js/auto';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import { auth } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import Register from './components/Register';
