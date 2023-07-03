@@ -21,8 +21,8 @@ function TrackPageViews() {
   const location = useLocation();
 
   useEffect(() => {
-    window.gtag('event', 'page_view', {
-      page_path: location.pathname,
+    window.gtag('config', 'G-B2KQB8LKHM', {
+      'page_title' : document.title,
     });
   }, [location]);
 
