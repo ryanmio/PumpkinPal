@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'chart.js/auto';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import { auth } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import Register from './components/Register';
@@ -19,7 +19,6 @@ import { Toaster } from 'react-hot-toast';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
-  const location = useLocation();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -27,12 +26,6 @@ function App() {
     });
     return () => unsubscribe();
   }, []);
-
-  useEffect(() => {
-    window.gtag('event', 'page_view', {
-      page_path: location.pathname,
-    });
-  }, [location]);
 
   return (
     <div className="App font-lato">
