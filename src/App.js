@@ -16,6 +16,21 @@ import UserProfile from './components/UserProfile';
 import EditMeasurement from './components/EditMeasurement';
 import Header from './components/Header';
 import { Toaster } from 'react-hot-toast';
+import ReactGA from 'react-ga';
+
+
+ReactGA.initialize('G-B2KQB8LKHM');
+
+// This component updates Google Analytics with the new route whenever the route changes
+function TrackPageViews() {
+  const location = useLocation();
+
+  useEffect(() => {
+    ReactGA.pageview(location.pathname + location.search);
+  }, [location]);
+
+  return null;
+}
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -30,6 +45,7 @@ function App() {
   return (
     <div className="App font-lato">
       <Router>
+      <TrackPageViews />
         <Header currentUser={currentUser} />
         <Toaster />
         <Routes>
