@@ -9,7 +9,7 @@ export default function Homepage() {
 <div className="flex flex-col md:flex-row items-center justify-center w-full h-auto py-10 md:py-20 md:pr-10">
     <div className="relative mx-auto w-1/2 md:w-[294px] md:h-[588px]">
         <div style={{ paddingBottom: 'calc(1500 / 736 * 100%)' }} className="relative w-full h-0 md:h-full">
-            <img src="/images/screenmock-details-mobile.png" alt="App mockup" className="absolute top-0 left-0 w-full h-full object-cover" />
+            <img src="/images/screenmock-details-mobile.webp" alt="App mockup" className="absolute top-0 left-0 w-full h-full object-cover" />
         </div>
     </div>
     <div className="mt-10 md:mt-0 md:ml-10 text-center md:text-left md:w-[294px] mx-auto">
@@ -34,7 +34,7 @@ export default function Homepage() {
         { title: "Instant Weight Estimation", description: "As soon as you enter a measurement you will know your pumpkin's weight, right from the field."},
     ].map((feature, i) => (
         <div className="flex flex-col items-center bg-white px-3 py-4 sm:p-4 rounded" key={i}>
-            <img src="/logo192.png" alt="Feature" className="w-6/12 h-auto sm:w-1/4 lg:w-3/8" />
+            <img src="/logo192.webp" alt="Feature" className="w-6/12 h-auto sm:w-1/4 lg:w-3/8" />
             <h2 className="text-xl mt-4 mb-2">{feature.title}</h2>
             <p className="text-sm sm:text-base">{feature.description}</p>
         </div>
@@ -44,25 +44,25 @@ export default function Homepage() {
 {/* Screenshots Section */}
 <div className="w-full px-8">
     <div className="px-4 sm:px-6 lg:px-32">
-        <img className="w-full h-auto rounded-lg" src="/images/screenmockup-details.png" alt="App screenshot" />
+        <img className="w-full h-auto rounded-lg" src="/images/screenmockup-details.webp" alt="App screenshot" />
     </div>
 </div>
 
 
        {/* Call to Action Section */}
 <div className="w-full p-8">
-    <p className="mb-6">Sign up to start tracking your pumpkins. We respect your privacy and do not share your data.</p>
+    <p className="mb-6">We respect your privacy and will never share your information. Pumpkin data is encrypted and stored separately from user data so that your pumpkin measurements are always secure.</p>
     <Link to="/register" className="px-8 py-2 mb-8 green-button rounded text-white text-xl text-white hover:text-white focus:outline-none focus:ring-0 underline-none no-underline font-bold">Sign Up</Link>
-    <p className="mt-2">Already signed up? <Link to="/login" className="text-blue-500">Login here</Link></p>
+    <p className="mt-3">Already signed up? <Link to="/login" className="text-blue-500">Login here</Link></p>
 </div>
 
 
 
 
-            {/* Footer Section */}
-<div className="w-full py-8 px-4 md:px-8 lg:px-16 bg-gray-800 text-white text-center">
-    <p className="mb-4">This project is open source. Check it out on <a href="https://github.com/ryanmio/PumpkinPal" className="text-blue-500">GitHub</a>.</p>
-    <p>© 2023 PumpkinPal. Licensed under the MIT license.</p>
+           {/* Footer Section */}
+<div className="App-footer py-8 px-4 md:px-8 lg:px-16">
+    <p className="mb-2">This project is open source. Check it out on <a href="https://github.com/ryanmio/PumpkinPal" style={{color: '#F2EEE3'}}>GitHub</a>.</p>
+    <p className="mb-2">© 2023 PumpkinPal.</p>
 </div>
 </div>
 );

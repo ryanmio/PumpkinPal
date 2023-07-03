@@ -1,33 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { auth, db } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { signOut, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-
+import toast, { Toaster } from 'react-hot-toast';
 
 function UserProfile() {
   const [loading, setLoading] = useState(true);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
-  const [preferredUnit, setPreferredUnit] = useState(null);
-  const [alert, setAlert] = useState(null);
+  const [preferredUnit, setPreferredUnit] = useState('in');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
     
-    const confirmDeleteAccount = async () => {
-        if (auth.currentUser) {
-          const userRef = doc(db, 'Users', auth.currentUser.uid);
-          await updateDoc(userRef, { accountDeletionRequested: true });
-          await signOut(auth);
-        } else {
-          alert("User not logged in");
-        }
-      };
+     const confirmDeleteAccount = async () => {
+    try {
+      if (auth.currentUser) {
+        const userRef = doc(db, 'Users', auth.currentUser.uid);
+        await updateDoc(userRef, { accountDeletionRequested: true });
+        await signOut(auth);
+      } else {
+        toast.error("User not logged in");
+      }
+    } catch (error) {
+      toast.error("An error occurred: " + error.message);
+    }
+  };
 
 
-  useEffect(() => {
-    const fetchPreferences = async () => {
+const fetchPreferences = useCallback(async () => {
+    try {
       if (auth.currentUser) {
         const userRef = doc(db, 'Users', auth.currentUser.uid);
         const userDoc = await getDoc(userRef);
@@ -35,68 +38,92 @@ function UserProfile() {
           const fetchedUnit = userDoc.data().preferredUnit;
           if (fetchedUnit) {
             setPreferredUnit(fetchedUnit);
-          } else {
-            setPreferredUnit('cm');
           }
         }
         setLoading(false);
       }
-    };
+    } catch (error) {
+      toast.error("An error occurred: " + error.message);
+    }
+  }, []);
 
+    useEffect(() => {
+    let isMounted = true;
+    
     const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
-        fetchPreferences();
+        if (isMounted) {
+          fetchPreferences();
+        }
       } else {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     });
 
-    return () => unsubscribe();
-  });
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
+  }, [fetchPreferences]);
 
   const updatePreferences = async (e) => {
     e.preventDefault();
-    if (auth.currentUser) {
-      const userRef = doc(db, 'Users', auth.currentUser.uid);
-      await updateDoc(userRef, { preferredUnit });
-      alert("Preferences updated successfully");
-    } else {
-      alert("User not logged in");
+    try {
+      if (auth.currentUser) {
+        const userRef = doc(db, 'Users', auth.currentUser.uid);
+        await updateDoc(userRef, { preferredUnit });
+        toast.success("Preferences updated successfully");
+      } else {
+        toast.error("User not logged in");
+      }
+    } catch (error) {
+      toast.error("An error occurred: " + error.message);
     }
   };
+
 
   const handleChangePassword = async (e) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
-    const user = auth.currentUser;
-    const credential = EmailAuthProvider.credential(user.email, currentPassword);
-    try {
-      await reauthenticateWithCredential(user, credential);
-      await updatePassword(user, password);
-      alert("Password updated successfully");
-    } catch (error) {
-      alert("Error updating password: ", error.message);
-    }
-  };
+  e.preventDefault();
+  if (password !== confirmPassword) {
+    toast.error("Passwords do not match");
+    return;
+  }
+  const user = auth.currentUser;
+  const credential = EmailAuthProvider.credential(user.email, currentPassword);
+  try {
+    await reauthenticateWithCredential(user, credential);
+    await updatePassword(user, password);
+    toast.success("Password updated successfully");
+    setPassword('');
+    setConfirmPassword('');
+  } catch (error) {
+    toast.error("Error updating password: " + error.message);
+  }
+};
 
+    
+    
   if (loading) {
     return <div>Loading...</div>;
   }
     
     
-    const exportAllData = async () => {
-    setAlert('Exporting...');
-    const idToken = await auth.currentUser.getIdToken();
+const exportAllData = async () => {
+  const idToken = await auth.currentUser.getIdToken();
 
-    fetch(`https://us-central1-pumpkinpal-b60be.cloudfunctions.net/exportAllData?timeZone=${Intl.DateTimeFormat().resolvedOptions().timeZone}`, {
-      headers: {
-        'Authorization': 'Bearer ' + idToken
+  const exportPromise = fetch(`https://us-central1-pumpkinpal-b60be.cloudfunctions.net/exportAllData?timeZone=${Intl.DateTimeFormat().resolvedOptions().timeZone}`, {
+    headers: {
+      'Authorization': 'Bearer ' + idToken
+    }
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
+      return response.blob();
     })
-    .then(response => response.blob())
     .then(blob => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -108,13 +135,15 @@ function UserProfile() {
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
-      setAlert(null);  // Clear the alert after the export is complete
-    })
-    .catch(e => {
-      console.error(e);
-      setAlert('An error occurred during export.');  // Set an error alert if the export fails
     });
-  };
+
+  toast.promise(exportPromise, {
+    loading: 'Exporting...',
+    success: 'Export successful',
+    error: 'An error occurred during export'
+  });
+};
+
 
 const handleLogout = () => {
     signOut(auth)
@@ -139,7 +168,8 @@ const handleLogout = () => {
     
   return (
     <div className="container mx-auto px-4 min-h-screen pb-10">
-      <h2 className="text-2xl font-bold mb-2 text-center">User Profile</h2>
+      <Toaster />
+      <h2 className="text-2xl font-bold mb-2 text-center pt-4 pb-2">User Profile</h2>
       <div className="grid gap-8 md:grid-cols-2">
         <div className="bg-white shadow overflow-hidden rounded-lg p-4">
           <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 text-left">Account Information</h3>
