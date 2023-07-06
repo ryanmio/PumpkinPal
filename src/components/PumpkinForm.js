@@ -3,7 +3,7 @@ import { db, auth } from '../firebase';
 import { addDoc, collection } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { trackError, trackUserEvent } from '../error-analytics';
+import { trackError, trackUserEvent } from '../utilities/error-analytics'
 
 function PumpkinForm() {
   const [name, setName] = useState('');
