@@ -21,7 +21,7 @@ function UserProfile() {
         const userRef = doc(db, 'Users', auth.currentUser.uid);
         await updateDoc(userRef, { accountDeletionRequested: true });
         await signOut(auth);
-        trackEvent(GA_Actions.DELETE_ACCOUNT, 'UserProfile.confirmDeleteAccount');
+        trackUserEvent(GA_Actions.DELETE_ACCOUNT, 'UserProfile.confirmDeleteAccount');
       } else {
         toast.error("User not logged in");
       }
@@ -78,7 +78,7 @@ const fetchPreferences = useCallback(async () => {
         const userRef = doc(db, 'Users', auth.currentUser.uid);
         await updateDoc(userRef, { preferredUnit });
         toast.success("Preferences updated successfully");
-        trackEvent(GA_Actions.UPDATE_PREFERENCES, 'UserProfile.updatePreferences');
+        trackUserEvent(GA_Actions.UPDATE_PREFERENCES, 'UserProfile.updatePreferences');
       } else {
         toast.error("User not logged in");
       }
@@ -144,7 +144,7 @@ const exportAllData = async () => {
  toast.promise(exportPromise, {
       loading: 'Exporting...',
       success: (blob) => {
-        trackEvent(GA_Actions.EXPORT_DATA, 'UserProfile.exportAllData');
+        trackUserEvent(GA_Actions.EXPORT_DATA, 'UserProfile.exportAllData');
         return 'Export successful';
       },
       error: (err) => {
