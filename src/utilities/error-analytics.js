@@ -13,7 +13,10 @@ export const GA_ACTIONS = {
   EDIT_PUMPKIN: "Edit Pumpkin",
   ADD_MEASUREMENT: "Add Measurement",
   ERROR: "Error",
+  EMAIL_LOGIN: "Email Login", // Added this line
+  GOOGLE_LOGIN: "Google Login", // Added this line
 };
+
 
 // Function for sending error events to Google Analytics
 export function trackError(error, method, category = GA_CATEGORIES.SYSTEM, action = GA_ACTIONS.ERROR) {
