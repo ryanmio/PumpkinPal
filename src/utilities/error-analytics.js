@@ -7,10 +7,15 @@ const GA_CATEGORIES = {
 
 const GA_ACTIONS = {
   REGISTER: "Register",
+  LOGIN: "Login",
+  LOGOUT: "Logout",
+  ADD_PUMPKIN: "Add Pumpkin",
+  EDIT_PUMPKIN: "Edit Pumpkin",
+  ADD_MEASUREMENT: "Add Measurement",
   ERROR: "Error",
 };
 
-// Your function for sending error events to Google Analytics
+// Function for sending error events to Google Analytics
 export function trackError(error, method, category = GA_CATEGORIES.SYSTEM, action = GA_ACTIONS.ERROR) {
   ReactGA.event({
     category: category,
@@ -19,7 +24,7 @@ export function trackError(error, method, category = GA_CATEGORIES.SYSTEM, actio
   });
 }
 
-// Your function for sending user events to Google Analytics
+// Function for sending user events to Google Analytics
 export function trackUserEvent(action, method) {
   ReactGA.event({
     category: GA_CATEGORIES.USER,
