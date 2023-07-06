@@ -6,6 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import MeasurementInput from './MeasurementInput';
 import DateInput from './DateInput';
 import toast, { Toaster } from 'react-hot-toast';
+import { GA_ACTIONS, trackUserEvent, trackError } from '../utilities/error-analytics';
 
 function AddMeasurement() {
   const { id } = useParams();
@@ -107,15 +108,15 @@ const addMeasurement = async (e) => {
         estimatedWeight,
         timestamp: Timestamp.fromDate(measurementDate),
       });
+      trackUserEvent(GA_ACTIONS.ADD_MEASUREMENT, 'AddMeasurement - Successful');
       navigate(`/pumpkin/${selectedPumpkin}`);
-      toast.success("Measurement added successfully!");  // new line here
+      toast.success("Measurement added successfully!");
     } catch (error) {
+      trackError(error, 'AddMeasurement - Failed');  // Add this line
       toast.error("Failed to add measurement. Please ensure the date is valid and try again.");
     }
   }
 };
-
-
 
   return (
     <div className="container mx-auto px-4 h-screen pt-10">

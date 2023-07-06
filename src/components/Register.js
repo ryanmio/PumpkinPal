@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
 import { Col, Row, Form, Card, Container, InputGroup } from '@themesberg/react-bootstrap';
 import { FaGoogle } from 'react-icons/fa';
+import { GA_ACTIONS, trackUserEvent, trackError } from '../utilities/error-analytics';
 
 const authErrorMap = {
   "auth/invalid-email": "Invalid email format.",
@@ -27,44 +28,51 @@ function Register() {
     const navigate = useNavigate();
 
     const register = e => {
-        e.preventDefault();
+    e.preventDefault();
 
-        if(email.trim() === '' || password.trim() === '' || confirmPassword.trim() === ''){
-            setError('All fields are required');
-            return;
-        }
+    if(email.trim() === '' || password.trim() === '' || confirmPassword.trim() === ''){
+        setError('All fields are required');
+        return;
+    }
 
-        if(password !== confirmPassword) {
-            setError('Passwords do not match');
-            return;
-        }
+    if(password !== confirmPassword) {
+        setError('Passwords do not match');
+        return;
+    }
 
-        createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                setDoc(doc(db, 'Users', userCredential.user.uid), {
-                    email: userCredential.user.email,
-                });
-                navigate('/login');
-            })
-            .catch((error) => {
-                const friendlyErrorMsg = authErrorMap[error.code] || "An unknown error occurred.";
-                setError(friendlyErrorMsg);
+    createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            setDoc(doc(db, 'Users', userCredential.user.uid), {
+                email: userCredential.user.email,
             });
+            // Event tracking for 'register' action
+            trackUserEvent(GA_ACTIONS.REGISTER, "Email & Password");
+            navigate('/login');
+        })
+        .catch((error) => {
+            const friendlyErrorMsg = authErrorMap[error.code] || "An unknown error occurred.";
+            setError(friendlyErrorMsg);
+            trackError(GA_ACTIONS.ERROR, "Email & Password");
+        });
     }
 
     const signInWithGoogle = () => {
-        signInWithPopup(auth, googleAuthProvider)
-            .then((result) => {
-                setDoc(doc(db, 'Users', result.user.uid), {
-                    email: result.user.email,
-                });
-                navigate('/dashboard');
-            })
-            .catch((error) => {
-                const friendlyErrorMsg = authErrorMap[error.code] || "An unknown error occurred.";
-                setError(friendlyErrorMsg);
+    signInWithPopup(auth, googleAuthProvider)
+        .then((result) => {
+            setDoc(doc(db, 'Users', result.user.uid), {
+                email: result.user.email,
             });
+            // Event tracking for 'register' action with Google
+            trackUserEvent(GA_ACTIONS.REGISTER, "Google");
+            navigate('/dashboard');
+        })
+        .catch((error) => {
+            const friendlyErrorMsg = authErrorMap[error.code] || "An unknown error occurred.";
+            setError(friendlyErrorMsg);
+            trackError(GA_ACTIONS.ERROR, "Google");
+        });
     }
+
 
     return (
       <main style={{ minHeight: "100vh", paddingBottom: "1rem" }}>

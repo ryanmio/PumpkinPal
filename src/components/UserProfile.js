@@ -4,6 +4,7 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { signOut, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
+import { GA_ACTIONS, trackUserEvent, trackError } from '../utilities/error-analytics';
 
 function UserProfile() {
   const [loading, setLoading] = useState(true);
@@ -14,17 +15,19 @@ function UserProfile() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
     
-     const confirmDeleteAccount = async () => {
+    const confirmDeleteAccount = async () => {
     try {
       if (auth.currentUser) {
         const userRef = doc(db, 'Users', auth.currentUser.uid);
         await updateDoc(userRef, { accountDeletionRequested: true });
         await signOut(auth);
+        trackUserEvent(GA_ACTIONS.DELETE_ACCOUNT, 'UserProfile.confirmDeleteAccount');
       } else {
         toast.error("User not logged in");
       }
     } catch (error) {
       toast.error("An error occurred: " + error.message);
+      trackError(GA_ACTIONS.ERROR, error, 'UserProfile.confirmDeleteAccount');
     }
   };
 
@@ -75,14 +78,15 @@ const fetchPreferences = useCallback(async () => {
         const userRef = doc(db, 'Users', auth.currentUser.uid);
         await updateDoc(userRef, { preferredUnit });
         toast.success("Preferences updated successfully");
+        trackUserEvent(GA_ACTIONS.UPDATE_PREFERENCES, 'UserProfile.updatePreferences');
       } else {
         toast.error("User not logged in");
       }
     } catch (error) {
       toast.error("An error occurred: " + error.message);
+      trackError(GA_ACTIONS.ERROR, error, 'UserProfile.updatePreferences');
     }
   };
-
 
   const handleChangePassword = async (e) => {
   e.preventDefault();
@@ -137,12 +141,18 @@ const exportAllData = async () => {
       window.URL.revokeObjectURL(url);
     });
 
-  toast.promise(exportPromise, {
-    loading: 'Exporting...',
-    success: 'Export successful',
-    error: 'An error occurred during export'
-  });
-};
+ toast.promise(exportPromise, {
+      loading: 'Exporting...',
+      success: (blob) => {
+        trackUserEvent(GA_ACTIONS.EXPORT_DATA, 'UserProfile.exportAllData');
+        return 'Export successful';
+      },
+      error: (err) => {
+        trackError(GA_ACTIONS.ERROR, err, 'UserProfile.exportAllData');
+        return 'An error occurred during export';
+      },
+    });
+  };
 
 
 const handleLogout = () => {

@@ -18,13 +18,13 @@ import Header from './components/Header';
 import { Toaster } from 'react-hot-toast';
 import ReactGA from "react-ga4";
 
-const TRACKING_ID = 'G-B2KQB8LKHM';
+// Initialize GA once when the App.js module is loaded
+ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
 
 function TrackPageViews() {
   const location = useLocation();
   
   useEffect(() => {
-    ReactGA.initialize(TRACKING_ID);
     ReactGA.send({ hitType: "pageview", page: location.pathname, title: document.title });
   }, [location]);
 

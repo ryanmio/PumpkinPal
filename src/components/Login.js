@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
 import { Col, Row, Form, Card, Container, InputGroup, FormCheck } from '@themesberg/react-bootstrap';
 import { FaGoogle } from 'react-icons/fa';
+import { GA_CATEGORIES, GA_ACTIONS, trackUserEvent, trackError } from '../utilities/error-analytics';
 
 const authErrorMap = {
   "auth/invalid-email": "Invalid email format",
@@ -46,23 +47,28 @@ function Login() {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         navigate('/dashboard');
+        trackUserEvent(GA_ACTIONS.EMAIL_LOGIN, 'Login.handleEmailLogin');
       })
       .catch((error) => {
         const friendlyErrorMsg = authErrorMap[error.code] || "An error occurred during login";
         setError(friendlyErrorMsg);
+        trackError(error, 'Login.js', GA_CATEGORIES.USER, GA_ACTIONS.ERROR); // Add this line
       });
   };
-
+    
   const signInWithGoogle = () => {
     signInWithPopup(auth, googleAuthProvider)
       .then((result) => {
         navigate('/dashboard');
+        trackUserEvent(GA_ACTIONS.GOOGLE_LOGIN, 'Login.handleGoogleLogin');
       })
       .catch((error) => {
         const friendlyErrorMsg = authErrorMap[error.code] || "An unknown error occurred.";
         setError(friendlyErrorMsg);
+        trackError(error, 'Login.js', GA_CATEGORIES.USER, GA_ACTIONS.ERROR); // Add this line
       });
   }
+
 
   const handleForgotPassword = (e) => {
     e.preventDefault();

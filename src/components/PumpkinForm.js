@@ -3,6 +3,7 @@ import { db, auth } from '../firebase';
 import { addDoc, collection } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { trackError, trackUserEvent } from '../utilities/error-analytics'
 
 function PumpkinForm() {
   const [name, setName] = useState('');
@@ -34,9 +35,11 @@ function PumpkinForm() {
         pollinated,
         weighOff
       });
+      trackUserEvent('Added Pumpkin', 'PumpkinForm.addPumpkin');
       navigate('/dashboard');
     } catch (error) {
       setError(error.message);
+      trackError(error, 'PumpkinForm.addPumpkin');
     }
   };
 
