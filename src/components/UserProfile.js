@@ -21,13 +21,13 @@ function UserProfile() {
         const userRef = doc(db, 'Users', auth.currentUser.uid);
         await updateDoc(userRef, { accountDeletionRequested: true });
         await signOut(auth);
-        trackUserEvent(GA_Actions.DELETE_ACCOUNT, 'UserProfile.confirmDeleteAccount');
+        trackUserEvent(GA_ACTIONS.DELETE_ACCOUNT, 'UserProfile.confirmDeleteAccount');
       } else {
         toast.error("User not logged in");
       }
     } catch (error) {
       toast.error("An error occurred: " + error.message);
-      trackError(GA_Actions.ERROR, error, 'UserProfile.confirmDeleteAccount');
+      trackError(GA_ACTIONS.ERROR, error, 'UserProfile.confirmDeleteAccount');
     }
   };
 
@@ -78,13 +78,13 @@ const fetchPreferences = useCallback(async () => {
         const userRef = doc(db, 'Users', auth.currentUser.uid);
         await updateDoc(userRef, { preferredUnit });
         toast.success("Preferences updated successfully");
-        trackUserEvent(GA_Actions.UPDATE_PREFERENCES, 'UserProfile.updatePreferences');
+        trackUserEvent(GA_ACTIONS.UPDATE_PREFERENCES, 'UserProfile.updatePreferences');
       } else {
         toast.error("User not logged in");
       }
     } catch (error) {
       toast.error("An error occurred: " + error.message);
-      trackError(GA_Actions.ERROR, error, 'UserProfile.updatePreferences');
+      trackError(GA_ACTIONS.ERROR, error, 'UserProfile.updatePreferences');
     }
   };
 
@@ -144,11 +144,11 @@ const exportAllData = async () => {
  toast.promise(exportPromise, {
       loading: 'Exporting...',
       success: (blob) => {
-        trackUserEvent(GA_Actions.EXPORT_DATA, 'UserProfile.exportAllData');
+        trackUserEvent(GA_ACTIONS.EXPORT_DATA, 'UserProfile.exportAllData');
         return 'Export successful';
       },
       error: (err) => {
-        trackError(GA_Actions.ERROR, err, 'UserProfile.exportAllData');
+        trackError(GA_ACTIONS.ERROR, err, 'UserProfile.exportAllData');
         return 'An error occurred during export';
       },
     });
