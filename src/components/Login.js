@@ -16,12 +16,6 @@ const authErrorMap = {
   // Add other error codes as needed
 };
 
-const GA_ACTIONS = {
-  EMAIL_LOGIN: "Email Login",
-  GOOGLE_LOGIN: "Google Login",
-  ERROR: "Error",
-};
-
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
