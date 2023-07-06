@@ -6,7 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import MeasurementInput from './MeasurementInput';
 import DateInput from './DateInput';
 import toast, { Toaster } from 'react-hot-toast';
-import { GA_CATEGORIES, GA_ACTIONS, trackUserEvent, trackError } from '../utilities/error-analytics';
+import { GA_ACTIONS, trackUserEvent, trackError } from '../utilities/error-analytics';
 
 function AddMeasurement() {
   const { id } = useParams();
