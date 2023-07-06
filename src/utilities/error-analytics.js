@@ -1,11 +1,11 @@
 import ReactGA from 'react-ga4';
 
-const GA_CATEGORIES = {
+export const GA_CATEGORIES = {
   USER: "User",
   SYSTEM: "System",
 };
 
-const GA_ACTIONS = {
+export const GA_ACTIONS = {
   REGISTER: "Register",
   LOGIN: "Login",
   LOGOUT: "Logout",
