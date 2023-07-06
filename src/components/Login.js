@@ -53,7 +53,7 @@ function Login() {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         navigate('/dashboard');
-        trackUserEvent(GA_ACTIONS.EMAIL_LOGIN, 'Login.js'); // Add this line
+        trackUserEvent(GA_ACTIONS.EMAIL_LOGIN, 'Login.handleEmailLogin');
       })
       .catch((error) => {
         const friendlyErrorMsg = authErrorMap[error.code] || "An error occurred during login";
@@ -66,7 +66,7 @@ function Login() {
     signInWithPopup(auth, googleAuthProvider)
       .then((result) => {
         navigate('/dashboard');
-        trackUserEvent(GA_ACTIONS.GOOGLE_LOGIN, 'Login.js'); // Add this line
+        trackUserEvent(GA_ACTIONS.GOOGLE_LOGIN, 'Login.handleGoogleLogin');
       })
       .catch((error) => {
         const friendlyErrorMsg = authErrorMap[error.code] || "An unknown error occurred.";
