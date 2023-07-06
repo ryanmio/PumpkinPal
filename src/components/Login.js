@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
 import { Col, Row, Form, Card, Container, InputGroup, FormCheck } from '@themesberg/react-bootstrap';
 import { FaGoogle } from 'react-icons/fa';
-import { GA_CATEGORIES, GA_ACTIONS, trackUserEvent, trackError } from '../utilities/error-analytics';
+import { trackUserEvent, trackError } from '../utilities/error-analytics';
 
 const authErrorMap = {
   "auth/invalid-email": "Invalid email format",
