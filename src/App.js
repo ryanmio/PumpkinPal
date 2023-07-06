@@ -18,10 +18,8 @@ import Header from './components/Header';
 import { Toaster } from 'react-hot-toast';
 import ReactGA from "react-ga4";
 
-const TRACKING_ID = 'G-B2KQB8LKHM';
-
 // Initialize GA once when the App.js module is loaded
-ReactGA.initialize(TRACKING_ID);
+ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
 
 function TrackPageViews() {
   const location = useLocation();
