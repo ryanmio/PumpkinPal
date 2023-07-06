@@ -13,9 +13,13 @@ export const GA_ACTIONS = {
   EDIT_PUMPKIN: "Edit Pumpkin",
   ADD_MEASUREMENT: "Add Measurement",
   ERROR: "Error",
-  EMAIL_LOGIN: "Email Login", // Added this line
-  GOOGLE_LOGIN: "Google Login", // Added this line
+  EMAIL_LOGIN: "Email Login",
+  GOOGLE_LOGIN: "Google Login",
+  DELETE_ACCOUNT: "Delete Account", // Added this line
+  UPDATE_PREFERENCES: "Update Preferences", // Added this line
+  EXPORT_DATA: "Export Data", // Added this line
 };
+
 
 
 // Function for sending error events to Google Analytics
