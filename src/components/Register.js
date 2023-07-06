@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
 import { Col, Row, Form, Card, Container, InputGroup } from '@themesberg/react-bootstrap';
 import { FaGoogle } from 'react-icons/fa';
-import { trackUserEvent, trackError } from '../utilities/error-analytics';
+import { GA_ACTIONS, trackUserEvent, trackError } from '../utilities/error-analytics';
 
 const authErrorMap = {
   "auth/invalid-email": "Invalid email format.",
@@ -46,13 +46,13 @@ function Register() {
                 email: userCredential.user.email,
             });
             // Event tracking for 'register' action
-            trackUserEvent("Register", "Email & Password");
+            trackUserEvent(GA_ACTIONS.REGISTER, "Email & Password");
             navigate('/login');
         })
         .catch((error) => {
             const friendlyErrorMsg = authErrorMap[error.code] || "An unknown error occurred.";
             setError(friendlyErrorMsg);
-            trackError(error, "Email & Password");
+            trackError(GA_ACTIONS.ERROR, "Email & Password");
         });
     }
 
@@ -63,13 +63,13 @@ function Register() {
                 email: result.user.email,
             });
             // Event tracking for 'register' action with Google
-            trackUserEvent("Register", "Google");
+            trackUserEvent(GA_ACTIONS.REGISTER, "Google");
             navigate('/dashboard');
         })
         .catch((error) => {
             const friendlyErrorMsg = authErrorMap[error.code] || "An unknown error occurred.";
             setError(friendlyErrorMsg);
-            trackError(error, "Google");
+            trackError(GA_ACTIONS.ERROR, "Google");
         });
     }
 

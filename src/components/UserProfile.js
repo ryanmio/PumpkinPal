@@ -15,19 +15,19 @@ function UserProfile() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
     
-     const confirmDeleteAccount = async () => {
+    const confirmDeleteAccount = async () => {
     try {
       if (auth.currentUser) {
         const userRef = doc(db, 'Users', auth.currentUser.uid);
         await updateDoc(userRef, { accountDeletionRequested: true });
         await signOut(auth);
-        trackUserEvent('Deleted Account', 'UserProfile.confirmDeleteAccount');
+        trackEvent(GA_Actions.DELETE_ACCOUNT, 'UserProfile.confirmDeleteAccount');
       } else {
         toast.error("User not logged in");
       }
     } catch (error) {
       toast.error("An error occurred: " + error.message);
-      trackError(error, 'UserProfile.confirmDeleteAccount');
+      trackError(GA_Actions.ERROR, error, 'UserProfile.confirmDeleteAccount');
     }
   };
 
@@ -78,13 +78,13 @@ const fetchPreferences = useCallback(async () => {
         const userRef = doc(db, 'Users', auth.currentUser.uid);
         await updateDoc(userRef, { preferredUnit });
         toast.success("Preferences updated successfully");
-        trackUserEvent('Updated Preferences', 'UserProfile.updatePreferences');
+        trackEvent(GA_Actions.UPDATE_PREFERENCES, 'UserProfile.updatePreferences');
       } else {
         toast.error("User not logged in");
       }
     } catch (error) {
       toast.error("An error occurred: " + error.message);
-      trackError(error, 'UserProfile.updatePreferences');
+      trackError(GA_Actions.ERROR, error, 'UserProfile.updatePreferences');
     }
   };
 
@@ -144,11 +144,11 @@ const exportAllData = async () => {
  toast.promise(exportPromise, {
       loading: 'Exporting...',
       success: (blob) => {
-        trackUserEvent('Exported Data', 'UserProfile.exportAllData');
+        trackEvent(GA_Actions.EXPORT_DATA, 'UserProfile.exportAllData');
         return 'Export successful';
       },
       error: (err) => {
-        trackError(err, 'UserProfile.exportAllData');
+        trackError(GA_Actions.ERROR, err, 'UserProfile.exportAllData');
         return 'An error occurred during export';
       },
     });
