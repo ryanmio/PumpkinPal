@@ -137,3 +137,52 @@ exports.exportAllData = functions.https.onRequest((req, res) => {
       });
   });
 });
+
+
+// Triggered when a new user is added
+exports.countUserOnCreate = functions.firestore.document('Users/{userId}').onCreate(async (snap, context) => {
+    const counterRef = admin.firestore().doc('Stats/userStats');
+    const counterSnap = await counterRef.get();
+    const { userCount = 0 } = counterSnap.data() || {};
+    return counterRef.set({ userCount: userCount + 1 }, { merge: true });
+});
+
+// Triggered when a user is deleted
+exports.countUserOnDelete = functions.firestore.document('Users/{userId}').onDelete(async (snap, context) => {
+    const counterRef = admin.firestore().doc('Stats/userStats');
+    const counterSnap = await counterRef.get();
+    const { userCount = 0 } = counterSnap.data() || {};
+    return counterRef.set({ userCount: Math.max(userCount - 1, 0) }, { merge: true });
+});
+
+// Triggered when a new pumpkin is added
+exports.countPumpkinOnCreate = functions.firestore.document('Users/{userId}/Pumpkins/{pumpkinId}').onCreate(async (snap, context) => {
+    const counterRef = admin.firestore().doc('Stats/pumpkinStats');
+    const counterSnap = await counterRef.get();
+    const { pumpkinCount = 0 } = counterSnap.data() || {};
+    return counterRef.set({ pumpkinCount: pumpkinCount + 1 }, { merge: true });
+});
+
+// Triggered when a pumpkin is deleted
+exports.countPumpkinOnDelete = functions.firestore.document('Users/{userId}/Pumpkins/{pumpkinId}').onDelete(async (snap, context) => {
+    const counterRef = admin.firestore().doc('Stats/pumpkinStats');
+    const counterSnap = await counterRef.get();
+    const { pumpkinCount = 0 } = counterSnap.data() || {};
+    return counterRef.set({ pumpkinCount: Math.max(pumpkinCount - 1, 0) }, { merge: true });
+});
+
+// Triggered when a new measurement is added
+exports.countMeasurementOnCreate = functions.firestore.document('Users/{userId}/Pumpkins/{pumpkinId}/Measurements/{measurementId}').onCreate(async (snap, context) => {
+    const counterRef = admin.firestore().doc('Stats/measurementStats');
+    const counterSnap = await counterRef.get();
+    const { measurementCount = 0 } = counterSnap.data() || {};
+    return counterRef.set({ measurementCount: measurementCount + 1 }, { merge: true });
+});
+
+// Triggered when a measurement is deleted
+exports.countMeasurementOnDelete = functions.firestore.document('Users/{userId}/Pumpkins/{pumpkinId}/Measurements/{measurementId}').onDelete(async (snap, context) => {
+    const counterRef = admin.firestore().doc('Stats/measurementStats');
+    const counterSnap = await counterRef.get();
+    const { measurementCount = 0 } = counterSnap.data() || {};
+    return counterRef.set({ measurementCount: Math.max(measurementCount - 1, 0) }, { merge: true });
+});
