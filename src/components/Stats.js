@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { BsPeopleFill, BsClipboardData, GiPumpkin } from 'react-icons/all';
+import { BsPeopleFill, BsClipboardData } from 'react-icons/bs';
+import { GiPumpkin } from 'react-icons/gi';
 import { firestore } from '../firebase';
 
 const db = firebase.firestore();
