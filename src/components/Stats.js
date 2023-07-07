@@ -10,14 +10,13 @@ const StatCard = ({ Icon, label, count }) => (
     <div className="text-4xl text-green-600">
       <Icon />
     </div>
-    <div className="text-2xl font-bold">{count}</div>
+    <div className="text-2xl font-bold">{count !== null ? count : '--'}</div>
     <div>{label}</div>
   </div>
 );
 
 const Stats = () => {
   const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -26,26 +25,20 @@ const Stats = () => {
       const measurementSnap = await getDoc(doc(db, 'Stats', 'measurementStats'));
 
       setStats({
-        userCount: userSnap.data()?.userCount || 0,
-        pumpkinCount: pumpkinSnap.data()?.pumpkinCount || 0,
-        measurementCount: measurementSnap.data()?.measurementCount || 0,
+        userCount: userSnap.data()?.userCount,
+        pumpkinCount: pumpkinSnap.data()?.pumpkinCount,
+        measurementCount: measurementSnap.data()?.measurementCount,
       });
-
-      setLoading(false);
     };
 
     fetchStats();
   }, []);
 
-  if (loading) {
-    return <Spinner />; // Render your Spinner component while data is loading
-  }
-
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full px-4 sm:px-8 -mx-4 sm:-mx-8 my-8">
-      <StatCard Icon={BsPeopleFill} label="Users" count={stats.userCount} />
-      <StatCard Icon={GiPumpkin} label="Pumpkins" count={stats.pumpkinCount} />
-      <StatCard Icon={BsClipboardData} label="Measurements" count={stats.measurementCount} />
+      <StatCard Icon={BsPeopleFill} label="Users" count={stats?.userCount} />
+      <StatCard Icon={GiPumpkin} label="Pumpkins" count={stats?.pumpkinCount} />
+      <StatCard Icon={BsClipboardData} label="Measurements" count={stats?.measurementCount} />
     </div>
   );
 };
