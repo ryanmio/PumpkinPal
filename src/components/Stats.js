@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BsPeopleFill, BsClipboardData } from 'react-icons/bs';
 import { GiPumpkin } from 'react-icons/gi';
-import { firestore } from '../firebase';
-
-const db = firestore();
+import { db } from '../firebase';
 
 const StatCard = ({ Icon, label, count }) => (
   <div className="flex flex-col items-center justify-center space-y-2 bg-white shadow-md p-4 rounded-lg">
