@@ -3,7 +3,7 @@ import { BsPeopleFill, BsClipboardData } from 'react-icons/bs';
 import { GiPumpkin } from 'react-icons/gi';
 import { firestore } from '../firebase';
 
-const db = firebase.firestore();
+const db = firestore();
 
 const StatCard = ({ Icon, label, count }) => (
   <div className="flex flex-col items-center justify-center space-y-2 bg-white shadow-md p-4 rounded-lg">
