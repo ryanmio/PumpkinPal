@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BsPeopleFill, BsClipboardData } from 'react-icons/bs';
 import { GiPumpkin } from 'react-icons/gi';
 import { db } from '../firebase';
+import { doc, getDoc } from "firebase/firestore";
 
 const StatCard = ({ Icon, label, count }) => (
   <div className="flex flex-col items-center justify-center space-y-2 bg-white shadow-md p-4 rounded-lg">
@@ -18,9 +19,9 @@ const Stats = () => {
 
   useEffect(() => {
     const fetchStats = async () => {
-      const userSnap = await db.doc('Stats/userStats').get();
-      const pumpkinSnap = await db.doc('Stats/pumpkinStats').get();
-      const measurementSnap = await db.doc('Stats/measurementStats').get();
+      const userSnap = await getDoc(doc(db, 'Stats', 'userStats'));
+      const pumpkinSnap = await getDoc(doc(db, 'Stats', 'pumpkinStats'));
+      const measurementSnap = await getDoc(doc(db, 'Stats', 'measurementStats'));
 
       setStats({
         userCount: userSnap.data()?.userCount || 0,
