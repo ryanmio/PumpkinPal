@@ -3,6 +3,7 @@ import { BsPeopleFill, BsClipboardData } from 'react-icons/bs';
 import { GiPumpkin } from 'react-icons/gi';
 import { db } from '../firebase';
 import { doc, getDoc } from "firebase/firestore";
+import Spinner from './Spinner';
 
 const StatCard = ({ Icon, label, count }) => (
   <div className="flex flex-col items-center justify-center space-y-2 bg-white shadow-md p-4 rounded-lg">
@@ -15,7 +16,8 @@ const StatCard = ({ Icon, label, count }) => (
 );
 
 const Stats = () => {
-  const [stats, setStats] = useState({ userCount: 0, pumpkinCount: 0, measurementCount: 0 });
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -28,10 +30,16 @@ const Stats = () => {
         pumpkinCount: pumpkinSnap.data()?.pumpkinCount || 0,
         measurementCount: measurementSnap.data()?.measurementCount || 0,
       });
+
+      setLoading(false);
     };
 
     fetchStats();
   }, []);
+
+  if (loading) {
+    return <Spinner />; // Render your Spinner component while data is loading
+  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full px-4 sm:px-8 -mx-4 sm:-mx-8 my-8">
@@ -42,5 +50,4 @@ const Stats = () => {
   );
 };
 
-          
 export default Stats;
