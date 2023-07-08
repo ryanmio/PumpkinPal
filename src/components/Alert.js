@@ -2,7 +2,7 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
 // Apply the styles for SweetAlert2
-import './styles.css'; // your custom styles here
+import './app.css';
 
 const MySwal = withReactContent(Swal);
 
