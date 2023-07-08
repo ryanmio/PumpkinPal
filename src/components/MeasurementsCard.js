@@ -3,26 +3,38 @@ import { useNavigate } from 'react-router-dom';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { toast, Toaster } from 'react-hot-toast';
+import Swal from 'sweetalert2';
 
 const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
   const navigate = useNavigate();
 
   const deleteMeasurement = async (measurementId) => {
-    if (window.confirm("Are you sure you want to delete this measurement?")) {
+  Swal.fire({
+    title: 'Are you sure you want to delete this measurement?',
+    text: "You won't be able to undo this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Delete'
+  }).then(async (result) => {
+    if (result.isConfirmed) {
       try {
         if (auth.currentUser && auth.currentUser.uid && pumpkinId && measurementId) {
           const measurementPath = `Users/${auth.currentUser.uid}/Pumpkins/${pumpkinId}/Measurements/${measurementId}`;
           await deleteDoc(doc(db, measurementPath));
-          toast.success("Measurement deleted successfully."); // Use toast here
+          toast.success("Measurement deleted successfully.");
         } else {
           throw new Error("Missing required parameters.");
         }
       } catch (error) {
         console.error("Error deleting measurement: ", error);
-        toast.error("Failed to delete measurement. Please try again."); // And here
+        toast.error("Failed to delete measurement. Please try again.");
       }
     }
+  })
 };
+
 
   const exportData = async () => {
     toast('Exporting...', { id: 'exporting' }); // Start with an "Exporting..." toast
