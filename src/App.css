@@ -361,3 +361,16 @@ button.button-disabled {
   font-size: 1.25em;
   line-height: 1em;
 }
+
+.swal2-popup .flex {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Adjust this value to give space between the icon and the title */
+}
+
+.swal2-popup .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem; /* Adjust this value to control the icon size */
+}
