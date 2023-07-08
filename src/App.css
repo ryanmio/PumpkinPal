@@ -301,9 +301,6 @@ button.button-disabled {
   padding: 24px 24px !important;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23) !important;
   background-color: #F2EEE3 !important;
-  display: flex;  /* Set the display to flex */
-  flex-direction: row;  /* Set the flex direction to row */
-  align-items: center;  /* Center items vertically */
 }
 
 .swal2-icon {
@@ -311,20 +308,17 @@ button.button-disabled {
   height: 20px !important;
   border: none !important;
   font-size: 1rem !important; /* Adjusted to make the icon smaller */
-  margin-right: 20px !important;  /* Add space on the right */
-  order: 1;  /* Change the order */
+  margin-top: 10px !important; /* Space above */
+  margin-bottom: 20px !important; /* Space below */
 }
 
 .swal2-title {
   font-size: 1.2rem !important;
   color: #3f3d56 !important;
-  order: 2;  /* Change the order */
 }
 
 .swal2-actions {
   flex-direction: row-reverse !important;
-  background-color: #f0f0f0 !important;  /* Change the background color */
-  padding: 10px !important;  /* Add some padding */
 }
 
 .swal2-cancel {
@@ -333,7 +327,6 @@ button.button-disabled {
   margin-left: 0.5rem !important;
   border: 0;
   border-radius: 0.375rem;
-  padding: 0.5rem 0.5rem !important;
   font-size: 1rem !important;
   display: inline-flex;
   justify-content: center;
@@ -347,7 +340,6 @@ button.button-disabled {
   margin-left: 0.5rem !important;
   border: 0;
   border-radius: 0.375rem;
-  padding: 0.5rem 0.5rem !important;
   font-size: 1rem !important;
   display: inline-flex;
   justify-content: center;
@@ -357,7 +349,6 @@ button.button-disabled {
 
 .swal2-html-container {
   font-size: 1rem !important;
-  order: 2;  /* Change the order */
 }
 
 .swal2-content {
