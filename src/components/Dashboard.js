@@ -7,7 +7,7 @@ import Dropdown from './Dropdown';
 import Spinner from './Spinner';
 import PlusIcon from './icons/PlusIcon';
 import TableCellsIcon from './icons/TableCellsIcon';
-import { showDeleteConfirmation } from '../path-to-file/showDeleteConfirmation';
+import { showDeleteConfirmation } from './showDeleteConfirmation';
 
 function Dashboard() {
   const [email, setEmail] = useState('');
