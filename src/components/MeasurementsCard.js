@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { toast, Toaster } from 'react-hot-toast';
-import Swal from 'sweetalert2';
 import { showDeleteConfirmation } from './Alert';
 
 const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
