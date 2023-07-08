@@ -49,11 +49,9 @@ function Dashboard() {
   showDeleteConfirmation('Are you sure you want to delete this pumpkin?', "You won't be able to undo this.", async () => {
     try {
       if (auth.currentUser && auth.currentUser.uid && id) {
-        setDeletionStatus('Deleting...');
         await deleteDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id));
         setPumpkins(pumpkins.filter(pumpkin => pumpkin.id !== id));
-        setDeletionStatus('Deleted successfully!');
-        setTimeout(() => setDeletionStatus(''), 2000);
+        toast.success('Deleted successfully!');
       } else {
         throw new Error("Missing required parameters.");
       }
@@ -63,6 +61,7 @@ function Dashboard() {
     }
   });
 }
+
 
   function daysSincePollination(pollinationDateStr) {
     const pollinationDate = new Date(pollinationDateStr);
