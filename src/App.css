@@ -304,13 +304,17 @@ button.button-disabled {
 }
 
 .swal2-icon {
-  width: 20px !important;
-  height: 20px !important;
-  border: none !important;
-  font-size: 1rem !important; /* Adjusted to make the icon smaller */
-  margin-top: 10px !important; /* Space above */
-  margin-bottom: 20px !important; /* Space below */
+  display: none !important;
 }
+
+/* .swal2-icon {           */
+/*  width: 20px !important;  */
+/*  height: 20px !important;*/
+/*  border: none !important;*/
+/*  font-size: 1rem !important; */
+/*  margin-top: 10px !important;*/
+/*  margin-bottom: 20px !important;*/
+/* } */
 
 .swal2-title {
   font-size: 1.2rem !important;
