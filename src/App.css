@@ -296,30 +296,42 @@ button.button-disabled {
 
 /* Alert Modal Styles */
 .swal2-popup {
-  font-size: 1.2em !important; /* Adjust as necessary */
+  font-size: 1.6rem !important;
+  width: auto !important;
+  padding: 12px 24px !important;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23) !important;
   background-color: #F2EEE3 !important;
 }
 
 .swal2-icon {
-  width: 30px !important; /* Adjust as necessary */
-  height: 30px !important;
+  width: 20px !important;
+  height: 20px !important;
+  border: none !important;
+}
+
+.swal2-icon::before {
+  display: none !important;
 }
 
 .swal2-title {
-  font-size: 18px !important; /* Adjust as necessary */
+  font-size: 1.5rem !important;
+  color: #3f3d56 !important;
+}
+
+.swal2-actions {
+  flex-direction: row-reverse !important;
 }
 
 .swal2-cancel {
-  color: #80876E !important;
-  margin-right: 5px !important;
+  background-color: #80876E !important;
+  color: white !important;
+  padding: 5px 16px !important;
+  margin-left: 10px !important;
 }
 
 .swal2-confirm {
-  color: #DF6139 !important;
-  margin-left: 5px !important;
+  background-color: #DF6139 !important;
+  color: white !important;
+  padding: 5px 16px !important;
+  margin-left: 10px !important;
 }
-
-.swal2-styled {
-  padding: .375rem .75rem !important; /* Adjust as necessary */
-}
-
