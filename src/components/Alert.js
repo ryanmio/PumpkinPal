@@ -12,7 +12,7 @@ export const showDeleteConfirmation = (title, text, onConfirm) => {
     showCancelButton: true,
     confirmButtonColor: '#DF6139',
     cancelButtonColor: '#80876E',
-    confirmButtonText: 'Confirm Delete',
+    confirmButtonText: 'Delete',
     customClass: {
       popup: 'swal2-popup',
       title: 'swal2-title',
