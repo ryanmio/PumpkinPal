@@ -15,7 +15,6 @@ export const showDeleteConfirmation = (title, text, onConfirm) => {
     confirmButtonText: 'Yes, delete it!',
     customClass: {
       popup: 'swal2-popup',
-      icon: 'swal2-icon',
       title: 'swal2-title',
       cancelButton: 'swal2-cancel',
       confirmButton: 'swal2-confirm',
