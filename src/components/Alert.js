@@ -2,8 +2,6 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import '../App.css'; 
 
-const MySwal = withReactContent(Swal);
-
 export const showDeleteConfirmation = (title, text, onConfirm) => {
   Swal.fire({
     title: `<div class="flex items-center">
