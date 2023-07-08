@@ -9,7 +9,7 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
   const navigate = useNavigate();
 
   const deleteMeasurement = async (measurementId) => {
-  showDeleteConfirmation('Are you sure you want to delete this measurement?', "You won't be able to revert this!", async () => {
+  showDeleteConfirmation('Are you sure you want to delete this measurement?', "You won't be able to undo this.", async () => {
     try {
       if (auth.currentUser && auth.currentUser.uid && pumpkinId && measurementId) {
         const measurementPath = `Users/${auth.currentUser.uid}/Pumpkins/${pumpkinId}/Measurements/${measurementId}`;
