@@ -1,28 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { toast, Toaster } from 'react-hot-toast';
+import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "./alert-dialog";
+
 
 const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [measurementIdToDelete, setMeasurementIdToDelete] = useState(null);
 
   const deleteMeasurement = async (measurementId) => {
-    if (window.confirm("Are you sure you want to delete this measurement?")) {
-      try {
-        if (auth.currentUser && auth.currentUser.uid && pumpkinId && measurementId) {
-          const measurementPath = `Users/${auth.currentUser.uid}/Pumpkins/${pumpkinId}/Measurements/${measurementId}`;
-          await deleteDoc(doc(db, measurementPath));
-          toast.success("Measurement deleted successfully."); // Use toast here
-        } else {
-          throw new Error("Missing required parameters.");
-        }
-      } catch (error) {
-        console.error("Error deleting measurement: ", error);
-        toast.error("Failed to delete measurement. Please try again."); // And here
+    setOpen(false); // Close the AlertDialog
+    try {
+      if (auth.currentUser && auth.currentUser.uid && pumpkinId && measurementId) {
+        const measurementPath = `Users/${auth.currentUser.uid}/Pumpkins/${pumpkinId}/Measurements/${measurementId}`;
+        await deleteDoc(doc(db, measurementPath));
+        toast.success("Measurement deleted successfully."); // Use toast here
+      } else {
+        throw new Error("Missing required parameters.");
       }
+    } catch (error) {
+      console.error("Error deleting measurement: ", error);
+      toast.error("Failed to delete measurement. Please try again."); // And here
     }
-};
+  };
 
   const exportData = async () => {
     toast('Exporting...', { id: 'exporting' }); // Start with an "Exporting..." toast
@@ -85,7 +88,23 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
                 <td className="table-cell">{measurement.measurementUnit}</td>
                 <td className="table-cell">{measurement.estimatedWeight}</td>
                 <td><button onClick={() => navigate(`/edit-measurement/${pumpkinId}/${measurement.id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Edit</button></td>
-                <td><button onClick={() => deleteMeasurement(measurement.id)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Delete</button></td>
+                <td>
+                  <AlertDialog>
+                    <AlertDialogTrigger>
+                      <button className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Delete</button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>This action cannot be undone. This will permanently delete this measurement.</AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <div className="flex justify-end space-x-2">
+                        <AlertDialogCancel onClick={() => setOpen(false)}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => deleteMeasurement(measurement.id)}>Delete</AlertDialogAction>
+                      </div>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </td>
               </tr>
             ))}
           </tbody>
