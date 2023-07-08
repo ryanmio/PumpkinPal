@@ -7,7 +7,7 @@ import Dropdown from './Dropdown';
 import Spinner from './Spinner';
 import PlusIcon from './icons/PlusIcon';
 import TableCellsIcon from './icons/TableCellsIcon';
-import { toast, Toaster } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 import { showDeleteConfirmation } from './Alert';
 
 function Dashboard() {
