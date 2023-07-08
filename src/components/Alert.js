@@ -19,8 +19,6 @@ export const showDeleteConfirmation = (title, text, onConfirm) => {
       title: 'swal2-title',
       cancelButton: 'swal2-cancel',
       confirmButton: 'swal2-confirm',
-      confirmButton: 'swal2-styled',
-      cancelButton: 'swal2-styled'
     }
   }).then((result) => {
     if (result.isConfirmed) {
