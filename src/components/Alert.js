@@ -2,20 +2,23 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import '../App.css'; 
 
+const MySwal = withReactContent(Swal);
+
 export const showDeleteConfirmation = (title, text, onConfirm) => {
-  Swal.fire({
-    title: `<div class="flex items-center">
-              <div class="icon">
-                <i class="fas fa-exclamation-circle"></i>
-              </div>
-              <div>${title}</div>
-            </div>`,
-    text: text,
+  MySwal.fire({
+    title,
+    text,
     icon: 'warning',
     showCancelButton: true,
-    confirmButtonColor: '#d33',
+    confirmButtonColor: '#DF6139',
     cancelButtonColor: '#80876E',
     confirmButtonText: 'Yes, delete it!',
+    customClass: {
+      popup: 'swal2-popup',
+      title: 'swal2-title',
+      cancelButton: 'swal2-cancel',
+      confirmButton: 'swal2-confirm',
+    }
   }).then((result) => {
     if (result.isConfirmed) {
       onConfirm();
