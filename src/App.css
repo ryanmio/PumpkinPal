@@ -296,42 +296,47 @@ button.button-disabled {
 
 /* Alert Modal Styles */
 .swal2-popup {
-  font-size: 1.6rem !important;
-  width: auto !important;
-  padding: 12px 24px !important;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23) !important;
-  background-color: #F2EEE3 !important;
+  width: auto;
 }
 
-.swal2-icon {
-  width: 20px !important;
-  height: 20px !important;
-  border: none !important;
+.swal2-content {
+  text-align: left;
+  font-size: 1rem;
 }
 
-.swal2-icon::before {
-  display: none !important;
-}
-
-.swal2-title {
-  font-size: 1.5rem !important;
-  color: #3f3d56 !important;
-}
-
-.swal2-actions {
-  flex-direction: row-reverse !important;
-}
-
-.swal2-cancel {
-  background-color: #80876E !important;
-  color: white !important;
-  padding: 5px 16px !important;
-  margin-left: 10px !important;
+.swal2-confirm, .swal2-cancel {
+  border: 0;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
 
 .swal2-confirm {
-  background-color: #DF6139 !important;
-  color: white !important;
-  padding: 5px 16px !important;
-  margin-left: 10px !important;
+  background-color: #DF6139;
+  color: #fff;
+}
+
+.swal2-cancel {
+  background-color: #80876E;
+  color: #fff;
+  margin-left: 0.5rem;
+}
+
+.icon-small {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: content-box;
+  padding: .25em;
+  border: .25em solid currentColor;
+  border-radius: 50%;
+  color: #ffa500;
+  font-size: 1.25em;
+  line-height: 1em;
 }
