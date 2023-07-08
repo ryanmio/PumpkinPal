@@ -13,7 +13,6 @@ import { showDeleteConfirmation } from './Alert';
 function Dashboard() {
   const [email, setEmail] = useState('');
   const [pumpkins, setPumpkins] = useState([]);
-  const [deletionStatus, setDeletionStatus] = useState('');
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -83,7 +82,6 @@ return (
     {email && (
       <>
         <div className="my-8 md:grid md:grid-cols-2 sm:gap-4">
-          {deletionStatus && <p className="mb-4">{deletionStatus}</p>}
           {loading ? (
             <div className="flex justify-center md:col-span-2">
               <Spinner />
