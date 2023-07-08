@@ -303,13 +303,18 @@ button.button-disabled {
   background-color: #F2EEE3 !important;
 }
 
+.swal2-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
 .swal2-icon {
-  width: 20px !important;
-  height: 20px !important;
+  width: 36px !important;
+  height: 36px !important;
   border: none !important;
-  font-size: 1rem !important; /* Adjusted to make the icon smaller */
-  margin-top: 10px !important; /* Space above */
-  margin-bottom: 20px !important; /* Space below */
+  font-size: 1rem !important;
+  margin-right: 15px;
 }
 
 .swal2-title {
@@ -317,40 +322,32 @@ button.button-disabled {
   color: #3f3d56 !important;
 }
 
-.swal2-actions {
-  flex-direction: row-reverse !important;
+.swal2-content {
+  font-size: 0.9rem !important;
+  margin-top: -10px !important;
 }
 
-.swal2-cancel {
-  background-color: #80876E !important;
-  color: white !important;
-  margin-left: 0.5rem !important;
-  border: 0;
-  border-radius: 0.375rem;
-  font-size: 1rem !important;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
+.swal2-actions {
+  background-color: #f0f0f0 !important;
+  padding: 10px !important;
+  flex-direction: row-reverse !important;
 }
 
 .swal2-confirm {
   background-color: #DF6139 !important;
   color: white !important;
   margin-left: 0.5rem !important;
+}
+
+.swal2-cancel {
+  background-color: #80876E !important;
+  color: white !important;
+  margin-left: 0.5rem !important;
+}
+
+.swal2-confirm, .swal2-cancel {
   border: 0;
   border-radius: 0.375rem;
+  padding: 0.5rem 1rem !important;
   font-size: 1rem !important;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
-
-.swal2-html-container {
-  font-size: 1rem !important;
-}
-
-.swal2-content {
-  margin-top: -10px !important;  /* Adjust this value as needed */
 }
