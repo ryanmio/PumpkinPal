@@ -296,9 +296,9 @@ button.button-disabled {
 
 /* Alert Modal Styles */
 .swal2-popup {
-  font-size: 1.6rem !important;
+  font-size: 1.2rem !important;
   width: auto !important;
-  padding: 12px 24px !important;
+  padding: 24px 24px !important;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23) !important;
   background-color: #F2EEE3 !important;
 }
@@ -314,7 +314,7 @@ button.button-disabled {
 }
 
 .swal2-title {
-  font-size: 1.5rem !important;
+  font-size: 1.2rem !important;
   color: #3f3d56 !important;
 }
 
@@ -325,22 +325,20 @@ button.button-disabled {
 .swal2-cancel {
   background-color: #80876E !important;
   color: white !important;
-  padding: 4px 4px !important;
   margin-left: 0.5rem !important;
 }
 
 .swal2-confirm {
   background-color: #DF6139 !important;
   color: white !important;
-  padding: 4px 4px !important;
   margin-left: 0.5rem !important;
 }
 
 .swal2-confirm, .swal2-cancel {
   border: 0;
   border-radius: 0.375rem;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
+  padding: 0.5rem 0.5rem !important;
+  font-size: 0.5rem !important;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -348,8 +346,8 @@ button.button-disabled {
 }
 
 .icon-small {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2rem;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
