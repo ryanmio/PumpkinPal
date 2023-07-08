@@ -122,6 +122,6 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
     </div>
   </div>
 );
-
+};
 
 export default MeasurementsCard;
