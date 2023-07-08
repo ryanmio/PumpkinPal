@@ -292,3 +292,34 @@ button.button-disabled {
   background-color: darkgrey;
   outline: 1px solid slategrey;
 }
+
+
+/* Alert Modal Styles */
+.swal2-popup {
+  font-size: 1.2em !important; /* Adjust as necessary */
+  background-color: #F2EEE3 !important;
+}
+
+.swal2-icon {
+  width: 30px !important; /* Adjust as necessary */
+  height: 30px !important;
+}
+
+.swal2-title {
+  font-size: 18px !important; /* Adjust as necessary */
+}
+
+.swal2-cancel {
+  color: #80876E !important;
+  margin-right: 5px !important;
+}
+
+.swal2-confirm {
+  color: #DF6139 !important;
+  margin-left: 5px !important;
+}
+
+.swal2-styled {
+  padding: .375rem .75rem !important; /* Adjust as necessary */
+}
+
