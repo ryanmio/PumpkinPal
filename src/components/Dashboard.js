@@ -52,23 +52,23 @@ function Dashboard() {
   }, []);
 
   async function deletePumpkin(id) {
-    showDeleteConfirmation('Are you sure you want to delete this pumpkin?', "You won't be able to undo this.", async () => {
-      try {
-        if (auth.currentUser && auth.currentUser.uid && id) {
-          await deleteDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id));
-          setPumpkins(pumpkins.filter(pumpkin => pumpkin.id !== id));
-          toast.success('Deleted successfully!');
-        } else {
-          throw new Error("Missing required parameters.");
-        }
-      } catch (error) {
-        toast.error("Failed to delete pumpkin. Please try again.");
-        console.error("Error deleting pumpkin: ", error);
-        trackError(error, 'Deleting Pumpkin', GA_CATEGORIES.SYSTEM, GA_ACTIONS.ERROR);
+  showDeleteConfirmation('Are you sure you want to delete this pumpkin?', "You won't be able to undo this.", async () => {
+    try {
+      if (auth.currentUser && auth.currentUser.uid && id) {
+        await deleteDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id));
+        setPumpkins(pumpkins.filter(pumpkin => pumpkin.id !== id));
+        toast.success('Deleted successfully!');
+        trackUserEvent(GA_ACTIONS.DELETE_PUMPKIN, 'Dashboard - Successful');  // Add this line
+      } else {
+        throw new Error("Missing required parameters.");
       }
-    });
-  }
-
+    } catch (error) {
+      toast.error("Failed to delete pumpkin. Please try again.");
+      console.error("Error deleting pumpkin: ", error);
+      trackError(error, 'Dashboard - Failed', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);  // Add this line
+    }
+  });
+}
 
   function daysSincePollination(pollinationDateStr) {
     const pollinationDate = new Date(pollinationDateStr);
