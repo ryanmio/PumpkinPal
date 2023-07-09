@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { auth, db } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { trackError, GA_CATEGORIES, GA_ACTIONS } from '../utilities/error-analytics';
 
 function EditPumpkin() {
   const { id } = useParams();
@@ -30,12 +31,20 @@ function EditPumpkin() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (auth.currentUser) {
+  e.preventDefault();
+  if (auth.currentUser) {
+    try {
       await updateDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id), pumpkin);
+      toast.success('Pumpkin updated successfully!');
+      trackUserEvent(GA_ACTIONS.EDIT_PUMPKIN, 'EditPumpkin - Successful');  // Add this line
+      navigate(`/dashboard`);
+    } catch (error) {
+      toast.error("Failed to update pumpkin. Please try again.");
+      console.error("Error updating pumpkin: ", error);
+      trackError(error, 'EditPumpkin - Failed', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);  // Add this line
     }
-    navigate(`/dashboard`);
-  };
+  }
+};
 
   if (!pumpkin) return 'Loading...';
 
