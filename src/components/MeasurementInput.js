@@ -13,7 +13,6 @@ function MeasurementInput({ id, value, onChange, placeholder, min, max }) {
         max={max}
         step="0.5" // This line allows 0.5 increments
         required
-        pattern="\d*(\.\d+)?"
         inputMode="decimal"
         className={`input text-center text-2xl w-full p-2 border-2 border-gray-300 rounded ${value ? "filled" : ""}`}
       />
