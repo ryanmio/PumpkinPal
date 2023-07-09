@@ -41,6 +41,17 @@ function App() {
     return () => unsubscribe();
   }, []);
 
+  const RegisterComponent = <Register />;
+  const LoginComponent = <Login />;
+  const DashboardComponent = <Dashboard />;
+  const PumpkinFormComponent = <PumpkinForm />;
+  const EditPumpkinComponent = <EditPumpkin />;
+  const AddMeasurementComponent = <AddMeasurement />;
+  const PumpkinDetailComponent = <PumpkinDetail />;
+  const HomepageComponent = <Homepage />;
+  const UserProfileComponent = <UserProfile />;
+  const EditMeasurementComponent = <EditMeasurement />;
+
   return (
     <div className="App font-lato">
       <Router>
@@ -48,16 +59,16 @@ function App() {
         <Header currentUser={currentUser} />
         <Toaster />
         <Routes>
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/add-pumpkin" element={<PumpkinForm />} />
-          <Route path="/edit-pumpkin/:id" element={<EditPumpkin />} />
-          <Route path="/add-measurement/:id" element={<AddMeasurement />} />
-          <Route path="/pumpkin/:id" element={<PumpkinDetail />} />
-          <Route path="/" element={<Homepage />} />
-          <Route path="/user-profile" element={<UserProfile />} />
-          <Route path="/edit-measurement/:pumpkinId/:measurementId" element={<EditMeasurement />} />
+          <Route path="/register" element={RegisterComponent} />
+          <Route path="/login" element={LoginComponent} />
+          <Route path="/dashboard" element={DashboardComponent} />
+          <Route path="/add-pumpkin" element={PumpkinFormComponent} />
+          <Route path="/edit-pumpkin/:id" element={EditPumpkinComponent} />
+          <Route path="/add-measurement/:id" element={AddMeasurementComponent} />
+          <Route path="/pumpkin/:id" element={PumpkinDetailComponent} />
+          <Route path="/" element={HomepageComponent} />
+          <Route path="/user-profile" element={UserProfileComponent} />
+          <Route path="/edit-measurement/:pumpkinId/:measurementId" element={EditMeasurementComponent} />
         </Routes>
       </Router>
     </div>
