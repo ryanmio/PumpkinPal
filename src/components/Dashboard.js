@@ -9,6 +9,7 @@ import PlusIcon from './icons/PlusIcon';
 import TableCellsIcon from './icons/TableCellsIcon';
 import { toast } from 'react-hot-toast';
 import { showDeleteConfirmation } from './Alert';
+import { trackError, GA_CATEGORIES, GA_ACTIONS } from './error-analytics';
 
 function Dashboard() {
   const [email, setEmail] = useState('');
@@ -16,15 +17,16 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
+   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async user => {
       if (user) {
         setEmail(user.email);
-        const q = collection(db, 'Users', user.uid, 'Pumpkins');
-        const snapshot = await getDocs(q);
-        let pumpkinsData = [];
+        try {
+          const q = collection(db, 'Users', user.uid, 'Pumpkins');
+          const snapshot = await getDocs(q);
+          let pumpkinsData = [];
 
-        for (let pumpkinDoc of snapshot.docs) {
+          for (let pumpkinDoc of snapshot.docs) {
             let pumpkinData = pumpkinDoc.data();
 
             const measurementsCollection = collection(db, 'Users', user.uid, 'Pumpkins', pumpkinDoc.id, 'Measurements');
@@ -35,31 +37,37 @@ function Dashboard() {
 
             pumpkinData.latestMeasurement = latestMeasurement;
             pumpkinsData.push({ ...pumpkinData, id: pumpkinDoc.id });
-        }
+          }
 
-        setPumpkins(pumpkinsData);
-        setLoading(false);
+          setPumpkins(pumpkinsData);
+          setLoading(false);
+        } catch (error) {
+          toast.error("Error fetching pumpkins");
+          console.error("Error fetching pumpkins: ", error);
+          trackError(error, 'Fetching Pumpkins', GA_CATEGORIES.SYSTEM, GA_ACTIONS.ERROR);
+        }
       }
     });
     return () => unsubscribe();
   }, []);
 
   async function deletePumpkin(id) {
-  showDeleteConfirmation('Are you sure you want to delete this pumpkin?', "You won't be able to undo this.", async () => {
-    try {
-      if (auth.currentUser && auth.currentUser.uid && id) {
-        await deleteDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id));
-        setPumpkins(pumpkins.filter(pumpkin => pumpkin.id !== id));
-        toast.success('Deleted successfully!');
-      } else {
-        throw new Error("Missing required parameters.");
+    showDeleteConfirmation('Are you sure you want to delete this pumpkin?', "You won't be able to undo this.", async () => {
+      try {
+        if (auth.currentUser && auth.currentUser.uid && id) {
+          await deleteDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id));
+          setPumpkins(pumpkins.filter(pumpkin => pumpkin.id !== id));
+          toast.success('Deleted successfully!');
+        } else {
+          throw new Error("Missing required parameters.");
+        }
+      } catch (error) {
+        toast.error("Failed to delete pumpkin. Please try again.");
+        console.error("Error deleting pumpkin: ", error);
+        trackError(error, 'Deleting Pumpkin', GA_CATEGORIES.SYSTEM, GA_ACTIONS.ERROR);
       }
-    } catch (error) {
-      console.error("Error deleting pumpkin: ", error);
-      toast.error("Failed to delete pumpkin. Please try again.");
-    }
-  });
-}
+    });
+  }
 
 
   function daysSincePollination(pollinationDateStr) {
