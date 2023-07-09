@@ -12,20 +12,27 @@ function EditPumpkin() {
   const location = useLocation();
 
   useEffect(() => {
-    // Add the auth state observer
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        const fetchPumpkin = async () => {
+  // Add the auth state observer
+  const unsubscribe = auth.onAuthStateChanged((user) => {
+    if (user) {
+      const fetchPumpkin = async () => {
+        try {
           const pumpkinDoc = await getDoc(doc(db, 'Users', user.uid, 'Pumpkins', id));
           setPumpkin({ ...pumpkinDoc.data(), id: pumpkinDoc.id });
-        };
-        fetchPumpkin();
-      }
-    });
+        } catch (error) {
+          toast.error("Failed to load pumpkin. Please try again.");
+          console.error("Error loading pumpkin: ", error);
+          trackError(error, 'EditPumpkin - Failed Fetch', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);  // Add this line
+        }
+      };
+      fetchPumpkin();
+    }
+  });
 
-    // Unsubscribe from the observer when the component is unmounted
-    return () => unsubscribe();
-  }, [id]);
+  // Unsubscribe from the observer when the component is unmounted
+  return () => unsubscribe();
+}, [id]);
+
 
   const handleChange = (e) => {
     setPumpkin({ ...pumpkin, [e.target.name]: e.target.value });
