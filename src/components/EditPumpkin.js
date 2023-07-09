@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { auth, db } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { trackError, GA_CATEGORIES, GA_ACTIONS } from '../utilities/error-analytics';
+import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../utilities/error-analytics';
+import { toast } from 'react-hot-toast';
 
 function EditPumpkin() {
   const { id } = useParams();
