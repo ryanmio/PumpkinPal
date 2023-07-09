@@ -10,3 +10,5 @@ function Button({ onClick, children, disabled, type = 'button', extraClasses = '
     </button>
   );
 }
+
+export default Button;
