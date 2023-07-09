@@ -10,7 +10,6 @@ import TableCellsIcon from './icons/TableCellsIcon';
 import { toast } from 'react-hot-toast';
 import { showDeleteConfirmation } from './Alert';
 import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../utilities/error-analytics';
-import Button from '../utilities/Button';
 
 function Dashboard() {
   const [email, setEmail] = useState('');
@@ -127,20 +126,20 @@ return (
                   </div>
                   <div className="p-4">
                    <div className="w-full grid grid-cols-2 gap-2">
-                      <Button 
-                      onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}
-                      extraClasses="w-full"
-                        >
+                      <button 
+                        className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                        onClick={() => navigate(`/add-measurement/${pumpkin.id}`)}
+                      >
                         <PlusIcon className="w-4 h-4 mr-2" />
-                          Add Measurement
-                        </Button>
-                      <Button 
-                      onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}
-                      extraClasses="w-full"
-                    >
-                      <TableCellsIcon className="w-4 h-4 mr-2" />
-                      Detailed View
-                    </Button>
+                        Add Measurement
+                      </button>
+                      <button 
+                        className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                        onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}
+                      >
+                        <TableCellsIcon className="w-4 h-4 mr-2" />
+                        Detailed View
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -150,12 +149,7 @@ return (
         </div>
         {pumpkins.length !== 0 && (
           <div className="my-8">
-            <Button 
-              onClick={() => navigate('/add-pumpkin')}
-              extraClasses="w-1/2 mx-auto mb-4"
-            >
-              Add Pumpkin
-            </Button>
+            <button className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-1/2 mx-auto mb-4" onClick={() => navigate('/add-pumpkin')}>Add Pumpkin</button>
           </div>
         )}
       </>
