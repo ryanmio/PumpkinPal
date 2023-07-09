@@ -4,27 +4,29 @@ import { doc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { toast, Toaster } from 'react-hot-toast';
 import { showDeleteConfirmation } from './Alert';
+import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../utilities/error-analytics';
 
 const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
   const navigate = useNavigate();
 
   const deleteMeasurement = async (measurementId) => {
-  showDeleteConfirmation('Are you sure you want to delete this measurement?', "You won't be able to undo this.", async () => {
-    try {
-      if (auth.currentUser && auth.currentUser.uid && pumpkinId && measurementId) {
-        const measurementPath = `Users/${auth.currentUser.uid}/Pumpkins/${pumpkinId}/Measurements/${measurementId}`;
-        await deleteDoc(doc(db, measurementPath));
-        toast.success("Measurement deleted successfully.");
-      } else {
-        throw new Error("Missing required parameters.");
+    showDeleteConfirmation('Are you sure you want to delete this measurement?', "You won't be able to undo this.", async () => {
+      try {
+        if (auth.currentUser && auth.currentUser.uid && pumpkinId && measurementId) {
+          const measurementPath = `Users/${auth.currentUser.uid}/Pumpkins/${pumpkinId}/Measurements/${measurementId}`;
+          await deleteDoc(doc(db, measurementPath));
+          toast.success("Measurement deleted successfully.");
+          trackUserEvent(GA_ACTIONS.DELETE_MEASUREMENT, 'MeasurementsCard - Successful Delete');  // Add this line
+        } else {
+          throw new Error("Missing required parameters.");
+        }
+      } catch (error) {
+        console.error("Error deleting measurement: ", error);
+        toast.error("Failed to delete measurement. Please try again.");
+        trackError(error, 'MeasurementsCard - Failed Delete', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);  // Add this line
       }
-    } catch (error) {
-      console.error("Error deleting measurement: ", error);
-      toast.error("Failed to delete measurement. Please try again.");
-    }
-  });
-};
-
+    });
+  };
 
   const exportData = async () => {
     toast('Exporting...', { id: 'exporting' }); // Start with an "Exporting..." toast
@@ -48,12 +50,14 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
         window.URL.revokeObjectURL(url);
         toast.dismiss('exporting'); // Dismiss the "Exporting..." toast
         toast.success("Export successful!"); // Show a success toast
-    }).catch(e => {
-      console.error(e);
-      toast.dismiss('exporting'); // Dismiss the "Exporting..." toast
-      toast.error("An error occurred during export."); // Show an error toast
-    });
-};
+        trackUserEvent(GA_ACTIONS.EXPORT_DATA, 'MeasurementsCard - Successful Export');  // Add this line
+      }).catch(e => {
+        console.error(e);
+        toast.dismiss('exporting'); // Dismiss the "Exporting..." toast
+        toast.error("An error occurred during export."); // Show an error toast
+        trackError(e, 'MeasurementsCard - Failed Export', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);  // Add this line
+      });
+  };
 
   return (
     <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto">
