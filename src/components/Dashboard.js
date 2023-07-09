@@ -9,7 +9,7 @@ import PlusIcon from './icons/PlusIcon';
 import TableCellsIcon from './icons/TableCellsIcon';
 import { toast } from 'react-hot-toast';
 import { showDeleteConfirmation } from './Alert';
-import { trackError, GA_CATEGORIES, GA_ACTIONS } from './error-analytics';
+import { trackError, GA_CATEGORIES, GA_ACTIONS } from '../utilities/error-analytics';
 
 function Dashboard() {
   const [email, setEmail] = useState('');
