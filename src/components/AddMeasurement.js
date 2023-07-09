@@ -7,7 +7,6 @@ import MeasurementInput from './MeasurementInput';
 import DateInput from './DateInput';
 import toast, { Toaster } from 'react-hot-toast';
 import { GA_ACTIONS, trackUserEvent, trackError } from '../utilities/error-analytics';
-import Button from '../utilities/Button';
 
 function AddMeasurement() {
   const { id } = useParams();
