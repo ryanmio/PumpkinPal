@@ -5,12 +5,12 @@ import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
-  authDomain: "pumpkinpal-b60be.firebaseapp.com",
-  projectId: "pumpkinpal-b60be",
-  storageBucket: "pumpkinpal-b60be.appspot.com",
-  messagingSenderId: "1079658302722",
-  appId: "1:1079658302722:web:547319c10a2a8daba1c61b",
-  measurementId: "G-B2KQB8LKHM"
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
