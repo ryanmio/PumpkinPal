@@ -5,6 +5,10 @@ module.exports = {
       fontFamily: {
         'lato': ['Lato', 'sans-serif'],
       },
+      colors: {
+        'green-button': '#80876E',
+        'green-button-hover': '#6c755e',
+      },
     },
   },
   variants: {
