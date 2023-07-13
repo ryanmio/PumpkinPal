@@ -83,12 +83,12 @@ function Dashboard() {
 return (
   <div className="container mx-auto px-4 h-screen">
     <div className="my-8">
-  <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
-  {!currentUser && (
-    <button className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" onClick={() => navigate("/login")}>Login</button>
-  )}
-  {currentUser && <p className="mb-4">Logged in as {currentUser.email}</p>}
-</div>
+      <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
+      {!email && (
+        <button className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" onClick={() => navigate("/login")}>Login</button>
+      )}
+      {email && <p className="mb-4">Logged in as {email}</p>}
+    </div>
     {email && (
       <>
         <div className="my-8 md:grid md:grid-cols-2 sm:gap-4">
