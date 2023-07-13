@@ -20,38 +20,38 @@ function Dashboard() {
   const navigate = useNavigate();
 
    useEffect(() => {
-  const unsubscribe = onAuthStateChanged(auth, async user => {
-    if (currentUser) {
-      try {
-        const q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
-        const snapshot = await getDocs(q);
-        let pumpkinsData = [];
+    const unsubscribe = onAuthStateChanged(auth, async user => {
+      if (user) {
+        setEmail(user.email);
+        try {
+          const q = collection(db, 'Users', user.uid, 'Pumpkins');
+          const snapshot = await getDocs(q);
+          let pumpkinsData = [];
 
-        for (let pumpkinDoc of snapshot.docs) {
-          let pumpkinData = pumpkinDoc.data();
+          for (let pumpkinDoc of snapshot.docs) {
+            let pumpkinData = pumpkinDoc.data();
 
-          const measurementsCollection = collection(db, 'Users', currentUser.uid, 'Pumpkins', pumpkinDoc.id, 'Measurements');
-          const measurementsQuery = query(measurementsCollection, orderBy('timestamp', 'desc'), limit(1));
-          const measurementSnapshot = await getDocs(measurementsQuery);
+            const measurementsCollection = collection(db, 'Users', user.uid, 'Pumpkins', pumpkinDoc.id, 'Measurements');
+            const measurementsQuery = query(measurementsCollection, orderBy('timestamp', 'desc'), limit(1));
+            const measurementSnapshot = await getDocs(measurementsQuery);
 
-          const latestMeasurement = measurementSnapshot.docs[0]?.data() || null;
+            const latestMeasurement = measurementSnapshot.docs[0]?.data() || null;
 
-          pumpkinData.latestMeasurement = latestMeasurement;
-          pumpkinsData.push({ ...pumpkinData, id: pumpkinDoc.id });
+            pumpkinData.latestMeasurement = latestMeasurement;
+            pumpkinsData.push({ ...pumpkinData, id: pumpkinDoc.id });
+          }
+
+          setPumpkins(pumpkinsData);
+          setLoading(false);
+        } catch (error) {
+          toast.error("Error fetching pumpkins");
+          console.error("Error fetching pumpkins: ", error);
+          trackError(error, 'Fetching Pumpkins', GA_CATEGORIES.SYSTEM, GA_ACTIONS.ERROR);
         }
-
-        setPumpkins(pumpkinsData);
-        setLoading(false);
-      } catch (error) {
-        toast.error("Error fetching pumpkins");
-        console.error("Error fetching pumpkins: ", error);
-        trackError(error, 'Fetching Pumpkins', GA_CATEGORIES.SYSTEM, GA_ACTIONS.ERROR);
       }
-    }
-  });
-  return () => unsubscribe();
-}, [currentUser]);
-
+    });
+    return () => unsubscribe();
+  }, [currentUser]);
 
   async function deletePumpkin(id) {
   showDeleteConfirmation('Are you sure you want to delete this pumpkin?', "You won't be able to undo this.", async () => {
