@@ -14,6 +14,7 @@ import { UserContext } from '../contexts/UserContext';
 
 function Dashboard() {
   const { currentUser } = useContext(UserContext);
+  const [email, setEmail] = useState('');
   const [pumpkins, setPumpkins] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -88,7 +89,7 @@ return (
   )}
   {currentUser && <p className="mb-4">Logged in as {currentUser.email}</p>}
 </div>
-    {currentUser && (
+    {email && (
       <>
         <div className="my-8 md:grid md:grid-cols-2 sm:gap-4">
           {loading ? (
