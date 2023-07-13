@@ -14,44 +14,43 @@ import { UserContext } from '../contexts/UserContext';
 
 function Dashboard() {
   const { currentUser } = useContext(UserContext);
-  const [email, setEmail] = useState('');
   const [pumpkins, setPumpkins] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
    useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async user => {
-      if (user) {
-        setEmail(user.email);
-        try {
-          const q = collection(db, 'Users', user.uid, 'Pumpkins');
-          const snapshot = await getDocs(q);
-          let pumpkinsData = [];
+  const unsubscribe = onAuthStateChanged(auth, async user => {
+    if (currentUser) {
+      try {
+        const q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
+        const snapshot = await getDocs(q);
+        let pumpkinsData = [];
 
-          for (let pumpkinDoc of snapshot.docs) {
-            let pumpkinData = pumpkinDoc.data();
+        for (let pumpkinDoc of snapshot.docs) {
+          let pumpkinData = pumpkinDoc.data();
 
-            const measurementsCollection = collection(db, 'Users', user.uid, 'Pumpkins', pumpkinDoc.id, 'Measurements');
-            const measurementsQuery = query(measurementsCollection, orderBy('timestamp', 'desc'), limit(1));
-            const measurementSnapshot = await getDocs(measurementsQuery);
+          const measurementsCollection = collection(db, 'Users', currentUser.uid, 'Pumpkins', pumpkinDoc.id, 'Measurements');
+          const measurementsQuery = query(measurementsCollection, orderBy('timestamp', 'desc'), limit(1));
+          const measurementSnapshot = await getDocs(measurementsQuery);
 
-            const latestMeasurement = measurementSnapshot.docs[0]?.data() || null;
+          const latestMeasurement = measurementSnapshot.docs[0]?.data() || null;
 
-            pumpkinData.latestMeasurement = latestMeasurement;
-            pumpkinsData.push({ ...pumpkinData, id: pumpkinDoc.id });
-          }
-
-          setPumpkins(pumpkinsData);
-          setLoading(false);
-        } catch (error) {
-          toast.error("Error fetching pumpkins");
-          console.error("Error fetching pumpkins: ", error);
-          trackError(error, 'Fetching Pumpkins', GA_CATEGORIES.SYSTEM, GA_ACTIONS.ERROR);
+          pumpkinData.latestMeasurement = latestMeasurement;
+          pumpkinsData.push({ ...pumpkinData, id: pumpkinDoc.id });
         }
+
+        setPumpkins(pumpkinsData);
+        setLoading(false);
+      } catch (error) {
+        toast.error("Error fetching pumpkins");
+        console.error("Error fetching pumpkins: ", error);
+        trackError(error, 'Fetching Pumpkins', GA_CATEGORIES.SYSTEM, GA_ACTIONS.ERROR);
       }
-    });
-    return () => unsubscribe();
-  }, [currentUser]);
+    }
+  });
+  return () => unsubscribe();
+}, [currentUser]);
+
 
   async function deletePumpkin(id) {
   showDeleteConfirmation('Are you sure you want to delete this pumpkin?', "You won't be able to undo this.", async () => {
@@ -83,13 +82,13 @@ function Dashboard() {
 return (
   <div className="container mx-auto px-4 h-screen">
     <div className="my-8">
-      <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
-      {!email && (
-        <button className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" onClick={() => navigate("/login")}>Login</button>
-      )}
-      {email && <p className="mb-4">Logged in as {email}</p>}
-    </div>
-    {email && (
+  <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
+  {!currentUser && (
+    <button className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" onClick={() => navigate("/login")}>Login</button>
+  )}
+  {currentUser && <p className="mb-4">Logged in as {currentUser.email}</p>}
+</div>
+    {currentUser && (
       <>
         <div className="my-8 md:grid md:grid-cols-2 sm:gap-4">
           {loading ? (
