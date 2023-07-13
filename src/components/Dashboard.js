@@ -13,13 +13,14 @@ import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../utilit
 import { UserContext } from '../contexts/UserContext';
 
 function Dashboard() {
-  const { currentUser } = useContext(UserContext);
+  const { currentUser, loading } = useContext(UserContext); // Include loading state
   const [email, setEmail] = useState('');
   const [pumpkins, setPumpkins] = useState([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-   useEffect(() => {
+  useEffect(() => {
+    if (loading) return; // Add this line
+
     const unsubscribe = onAuthStateChanged(auth, async user => {
       if (user) {
         setEmail(user.email);
@@ -42,7 +43,6 @@ function Dashboard() {
           }
 
           setPumpkins(pumpkinsData);
-          setLoading(false);
         } catch (error) {
           toast.error("Error fetching pumpkins");
           console.error("Error fetching pumpkins: ", error);
@@ -51,7 +51,7 @@ function Dashboard() {
       }
     });
     return () => unsubscribe();
-  }, [currentUser]);
+  }, [currentUser, loading]);
 
   async function deletePumpkin(id) {
   showDeleteConfirmation('Are you sure you want to delete this pumpkin?', "You won't be able to undo this.", async () => {
