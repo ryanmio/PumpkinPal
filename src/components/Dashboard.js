@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { auth, db, query, orderBy, limit } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
@@ -10,8 +10,10 @@ import TableCellsIcon from './icons/TableCellsIcon';
 import { toast } from 'react-hot-toast';
 import { showDeleteConfirmation } from './Alert';
 import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../utilities/error-analytics';
+import { UserContext } from '../contexts/UserContext';
 
 function Dashboard() {
+  const { currentUser } = useContext(UserContext);
   const [email, setEmail] = useState('');
   const [pumpkins, setPumpkins] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -49,12 +51,12 @@ function Dashboard() {
       }
     });
     return () => unsubscribe();
-  }, []);
+  }, [currentUser]);
 
   async function deletePumpkin(id) {
   showDeleteConfirmation('Are you sure you want to delete this pumpkin?', "You won't be able to undo this.", async () => {
     try {
-      if (auth.currentUser && auth.currentUser.uid && id) {
+      if (currentUser && currentUser.uid && id) {
         await deleteDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id));
         setPumpkins(pumpkins.filter(pumpkin => pumpkin.id !== id));
         toast.success('Deleted successfully!');
