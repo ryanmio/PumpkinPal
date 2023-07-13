@@ -14,7 +14,6 @@ import { UserContext } from '../contexts/UserContext';
 
 function Dashboard() {
   const { currentUser } = useContext(UserContext);
-  const [email, setEmail] = useState('');
   const [pumpkins, setPumpkins] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -22,7 +21,6 @@ function Dashboard() {
    useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async user => {
       if (user) {
-        setEmail(user.email);
         try {
           const q = collection(db, 'Users', user.uid, 'Pumpkins');
           const snapshot = await getDocs(q);
@@ -51,7 +49,7 @@ function Dashboard() {
       }
     });
     return () => unsubscribe();
-  }, [currentUser]);
+  }, []);
 
   async function deletePumpkin(id) {
   showDeleteConfirmation('Are you sure you want to delete this pumpkin?', "You won't be able to undo this.", async () => {
