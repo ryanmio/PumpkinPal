@@ -17,6 +17,7 @@ import EditMeasurement from './components/EditMeasurement';
 import Header from './components/Header';
 import { Toaster } from 'react-hot-toast';
 import ReactGA from "react-ga4";
+import { UserProvider } from './contexts/UserContext';
 
 // Initialize GA once when the App.js module is loaded
 ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
@@ -55,21 +56,23 @@ function App() {
   return (
     <div className="App font-lato">
       <Router>
-        <TrackPageViews />
-        <Header currentUser={currentUser} />
-        <Toaster />
-        <Routes>
-          <Route path="/register" element={RegisterComponent} />
-          <Route path="/login" element={LoginComponent} />
-          <Route path="/dashboard" element={DashboardComponent} />
-          <Route path="/add-pumpkin" element={PumpkinFormComponent} />
-          <Route path="/edit-pumpkin/:id" element={EditPumpkinComponent} />
-          <Route path="/add-measurement/:id" element={AddMeasurementComponent} />
-          <Route path="/pumpkin/:id" element={PumpkinDetailComponent} />
-          <Route path="/" element={HomepageComponent} />
-          <Route path="/user-profile" element={UserProfileComponent} />
-          <Route path="/edit-measurement/:pumpkinId/:measurementId" element={EditMeasurementComponent} />
-        </Routes>
+        <UserProvider> {/* Wrap your components with UserProvider here */}
+          <TrackPageViews />
+          <Header />
+          <Toaster />
+          <Routes>
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/add-pumpkin" element={<PumpkinForm />} />
+            <Route path="/edit-pumpkin/:id" element={<EditPumpkin />} />
+            <Route path="/add-measurement/:id" element={<AddMeasurement />} />
+            <Route path="/pumpkin/:id" element={<PumpkinDetail />} />
+            <Route path="/" element={<Homepage />} />
+            <Route path="/user-profile" element={<UserProfile />} />
+            <Route path="/edit-measurement/:pumpkinId/:measurementId" element={<EditMeasurement />} />
+          </Routes>
+        </UserProvider>
       </Router>
     </div>
   );
