@@ -13,26 +13,25 @@ import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../utilit
 import { UserContext } from '../contexts/UserContext';
 
 function Dashboard() {
-  const { currentUser, loading } = useContext(UserContext); // Include loading state
+  const currentUser = useContext(UserContext);
   const [email, setEmail] = useState('');
   const [pumpkins, setPumpkins] = useState([]);
+  const [loading, setLoading] = useState(true); // Initialize as true
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (loading) return; // Add this line
-
-    const unsubscribe = onAuthStateChanged(auth, async user => {
-      if (user) {
-        setEmail(user.email);
+    if (currentUser) {
+      setEmail(currentUser.email);
+      const fetchData = async () => {
         try {
-          const q = collection(db, 'Users', user.uid, 'Pumpkins');
+          const q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
           const snapshot = await getDocs(q);
           let pumpkinsData = [];
 
           for (let pumpkinDoc of snapshot.docs) {
             let pumpkinData = pumpkinDoc.data();
 
-            const measurementsCollection = collection(db, 'Users', user.uid, 'Pumpkins', pumpkinDoc.id, 'Measurements');
+            const measurementsCollection = collection(db, 'Users', currentUser.uid, 'Pumpkins', pumpkinDoc.id, 'Measurements');
             const measurementsQuery = query(measurementsCollection, orderBy('timestamp', 'desc'), limit(1));
             const measurementSnapshot = await getDocs(measurementsQuery);
 
@@ -43,15 +42,16 @@ function Dashboard() {
           }
 
           setPumpkins(pumpkinsData);
+          setLoading(false); // Set to false once data is ready
         } catch (error) {
           toast.error("Error fetching pumpkins");
           console.error("Error fetching pumpkins: ", error);
           trackError(error, 'Fetching Pumpkins', GA_CATEGORIES.SYSTEM, GA_ACTIONS.ERROR);
         }
-      }
-    });
-    return () => unsubscribe();
-  }, [currentUser, loading]);
+      };
+      fetchData();
+    }
+  }, [currentUser]);
 
   async function deletePumpkin(id) {
   showDeleteConfirmation('Are you sure you want to delete this pumpkin?', "You won't be able to undo this.", async () => {
