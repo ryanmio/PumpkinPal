@@ -42,21 +42,10 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  const RegisterComponent = <Register />;
-  const LoginComponent = <Login />;
-  const DashboardComponent = <Dashboard />;
-  const PumpkinFormComponent = <PumpkinForm />;
-  const EditPumpkinComponent = <EditPumpkin />;
-  const AddMeasurementComponent = <AddMeasurement />;
-  const PumpkinDetailComponent = <PumpkinDetail />;
-  const HomepageComponent = <Homepage />;
-  const UserProfileComponent = <UserProfile />;
-  const EditMeasurementComponent = <EditMeasurement />;
-
   return (
     <div className="App font-lato">
       <Router>
-        <UserProvider> {/* Wrap your components with UserProvider here */}
+        <UserProvider value={currentUser}> {/* Pass currentUser as value to UserProvider */}
           <TrackPageViews />
           <Header />
           <Toaster />
