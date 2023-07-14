@@ -12,8 +12,9 @@ import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../utilit
 import { UserContext } from '../contexts/UserContext';
 
 function Dashboard() {
-  const { user: currentUser, loading } = useContext(UserContext);
+  const { user: currentUser, loading: userLoading } = useContext(UserContext);
   const [pumpkins, setPumpkins] = useState([]);
+  const [pumpkinsLoading, setPumpkinsLoading] = useState(true); // New loading state for pumpkins
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,6 +39,7 @@ function Dashboard() {
           }
 
           setPumpkins(pumpkinsData);
+          setPumpkinsLoading(false); // Set to false once data is ready
         } catch (error) {
           toast.error("Error fetching pumpkins");
           console.error("Error fetching pumpkins: ", error);
@@ -87,7 +89,7 @@ return (
     {currentUser && (
       <>
         <div className="my-8 md:grid md:grid-cols-2 sm:gap-4">
-          {loading ? (
+          {(userLoading || pumpkinsLoading) ? (
             <div className="flex justify-center md:col-span-2">
               <Spinner />
             </div>
