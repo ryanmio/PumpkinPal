@@ -170,13 +170,13 @@ The Firestore backups live in a secure Google Cloud Storage bucket. Leveraging t
 
 ### Data Security
 
-We've implemented access control measures through Google's Identity and Access Management (IAM) system. We orchestrate granular permissions, defining who can interact with the bucket and delineating permissible actions, denying unauthorized access.
+Access control is handled through Google's Identity and Access Management (IAM) system. IAM is used to orchestrate granular permissions, defining who can interact with the bucket and delineating permissible actions, denying unauthorized access.
 
 ## Contextual State Management with React Context API
 
 The PumpkinPal application uses React's Context API for state management, providing a way to share state and functionality across components.
 
-### Implementation Overview
+### Implementation
 
 React's Context API is used to create global state variables that can be accessed from any component. A `UserContext` is created to store the current user's data and a loading state. This context is provided at the root level of the application, making it accessible to all child components.
 
