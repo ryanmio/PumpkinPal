@@ -128,19 +128,7 @@ pumpkins_df[['Last Name', 'First Name']] = pumpkins_df['Processed Name'].apply(
 pumpkins_df['Last Name'] = pumpkins_df['Last Name'].str.strip().str.title()  # Convert to title case
 pumpkins_df['First Name'] = pumpkins_df['First Name'].str.strip().str.title()  # Convert to title case
 
-# Create a list to store the names that were changed
-changes = []
+# Save the modified dataframe to a CSV file
+pumpkins_df.to_csv('preprocessed-bigpumpkins.csv', index=False)
 
-# Iterate over the rows of the dataframe
-for _, row in pumpkins_df.iterrows():
-    # If the original name is not the same as the first name or the last name, add it to the changes list
-    if row['Grower Name'] != row['First Name'] or row['Grower Name'] != row['Last Name']:
-        changes.append({'Original Name': row['Grower Name'], 'Processed Name': row['Processed Name'], 'First Name': row['First Name'], 'Last Name': row['Last Name']})
-
-# Convert the changes list into a DataFrame
-changes_df = pd.DataFrame(changes)
-
-# Save the changes dataframe to a CSV file
-changes_df.to_csv('name_changes.csv', index=False)
-
-print("Name changes have been saved to name_changes.csv.")
+print("Preprocessed data has been saved to preprocessed-bigpumpkins.csv.")
