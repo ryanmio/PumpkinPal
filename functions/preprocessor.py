@@ -22,7 +22,15 @@ def parse_name(name):
         return name
     else:
         human_name = HumanName(name)
-        return f'{human_name.last}, {human_name.first} {human_name.middle}'.strip()
+        last = human_name.last
+        first = human_name.first
+        if "Team" in first:
+            last = f"Team {last}"
+            first = ""
+        elif "Team" in last:
+            last = f"{first} Team"
+            first = ""
+        return f'{last}, {first}'.strip()
 
 # Parse and preprocess the names, excluding team names from preprocessing
 pumpkins_df['Processed Name'] = pumpkins_df['Grower Name'].apply(lambda name: name if "team" in name.lower() else preprocess_name(name)).apply(parse_name)
