@@ -68,17 +68,17 @@ name_counter = Counter(pumpkins_df['Processed Name'])
 # Perform fuzzy matching and store results in a dictionary
 fuzzy_matched_names = {}
 
-# Get a list of unique processed names by state
-states = pumpkins_df['State'].unique().tolist()
-for state in states:
-    state_df = pumpkins_df[pumpkins_df['State'] == state]
-    processed_names = state_df['Processed Name'].unique().tolist()
+# Get a list of unique processed names by state/province
+state_provs = pumpkins_df['State/Prov'].unique().tolist()
+for state_prov in state_provs:
+    state_prov_df = pumpkins_df[pumpkins_df['State/Prov'] == state_prov]
+    processed_names = state_prov_df['Processed Name'].unique().tolist()
 
     for name in processed_names:
         # Initialize an empty list to store the matches for each name
         matches = []
 
-        # Compare each name to all other names within the same state
+        # Compare each name to all other names within the same state/province
         for other_name in processed_names:
             # If the similarity score is above 80 (lower threshold) and the names are not identical
             if fuzz.token_sort_ratio(name, other_name) > 80 and name != other_name:
@@ -91,7 +91,7 @@ for state in states:
             most_common_name = min(most_common_names) if most_common_names else name  # Choose the lexographically smallest name or use original name if no matches
             fuzzy_matched_names[most_common_name] = matches
 
-# Compare each name to all other names across different states with higher threshold
+# Compare each name to all other names across different states/provinces with higher threshold
 processed_names = pumpkins_df['Processed Name'].unique().tolist()
 for name in processed_names:
     # Initialize an empty list to store the matches for each name
