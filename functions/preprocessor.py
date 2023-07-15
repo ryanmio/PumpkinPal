@@ -38,7 +38,7 @@ def handle_team_names(name):
                     name_parts[i] = ''
             name_parts = [part.strip() for part in name_parts if part.strip() != '']
             if len(name_parts) > 1:
-                name = 'Team ' + ', '.join(name_parts)
+                name = 'Team ' + ' '.join(name_parts)  # Remove commas from team names
             else:
                 name = 'Team ' + name_parts[0]
         else:
