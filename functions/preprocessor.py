@@ -65,29 +65,46 @@ pumpkins_df['First Name'] = pumpkins_df['First Name'].str.strip()
 # Count the frequency of each name
 name_counter = Counter(pumpkins_df['Processed Name'])
 
-# Get a list of unique processed names
-processed_names = pumpkins_df['Processed Name'].unique().tolist()
-
 # Perform fuzzy matching and store results in a dictionary
 fuzzy_matched_names = {}
 
+# Get a list of unique processed names by state
+states = pumpkins_df['State'].unique().tolist()
+for state in states:
+    state_df = pumpkins_df[pumpkins_df['State'] == state]
+    processed_names = state_df['Processed Name'].unique().tolist()
+
+    for name in processed_names:
+        # Initialize an empty list to store the matches for each name
+        matches = []
+
+        # Compare each name to all other names within the same state
+        for other_name in processed_names:
+            # If the similarity score is above 80 (lower threshold) and the names are not identical
+            if fuzz.token_sort_ratio(name, other_name) > 80 and name != other_name:
+                matches.append(other_name)
+
+        # If any matches were found, add them to the dictionary
+        if matches:
+            # Determine the most common name in the list of matches (including the current name)
+            most_common_names = [name for name, count in Counter(matches + [name]).items() if count == max(name_counter.values())]
+            most_common_name = min(most_common_names) if most_common_names else name  # Choose the lexographically smallest name or use original name if no matches
+            fuzzy_matched_names[most_common_name] = matches
+
+# Compare each name to all other names across different states with higher threshold
+processed_names = pumpkins_df['Processed Name'].unique().tolist()
 for name in processed_names:
     # Initialize an empty list to store the matches for each name
     matches = []
-    
-    # Split the name into first and last name
-    first_name, last_name = name.split(",") if "," in name else (name, "")
-    
+
     # Compare each name to all other names
     for other_name in processed_names:
-        other_first_name, other_last_name = other_name.split(",") if "," in other_name else (other_name, "")
-        
-        # If the similarity score is above 90 for both first and last name, and the names are not identical
-        if fuzz.partial_ratio(first_name, other_first_name) > 90 and fuzz.partial_ratio(last_name, other_last_name) > 90 and name != other_name:
+        # If the similarity score is above 90 (higher threshold) and the names are not identical
+        if fuzz.token_sort_ratio(name, other_name) > 90 and name != other_name:
             matches.append(other_name)
-            
+
     # If any matches were found, add them to the dictionary
-    if matches:
+    if matches and name not in fuzzy_matched_names:  # Avoid overriding the matches found with lower threshold
         # Determine the most common name in the list of matches (including the current name)
         most_common_names = [name for name, count in Counter(matches + [name]).items() if count == max(name_counter.values())]
         most_common_name = min(most_common_names) if most_common_names else name  # Choose the lexographically smallest name or use original name if no matches
