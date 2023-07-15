@@ -53,14 +53,17 @@ pumpkins_df['Processed Name'] = pumpkins_df['Grower Name'].apply(preprocess_name
 # Handle team names
 pumpkins_df['Processed Name'] = pumpkins_df['Processed Name'].apply(handle_team_names)
 
+# Convert to title case
+pumpkins_df['Processed Name'] = pumpkins_df['Processed Name'].str.title()
+
 # Split processed names into first and last names
 pumpkins_df[['Last Name', 'First Name']] = pumpkins_df['Processed Name'].apply(
     lambda name: pd.Series([name, ""]) if "Team" in name else pd.Series(name.split(',', 1))
 )
 
 # Clean up the 'Last Name' and 'First Name' columns by removing extra spaces
-pumpkins_df['Last Name'] = pumpkins_df['Last Name'].str.strip()
-pumpkins_df['First Name'] = pumpkins_df['First Name'].str.strip()
+pumpkins_df['Last Name'] = pumpkins_df['Last Name'].str.strip().str.title()  # Convert to title case
+pumpkins_df['First Name'] = pumpkins_df['First Name'].str.strip().str.title()  # Convert to title case
 
 # Count the frequency of each name
 name_counter = Counter(pumpkins_df['Processed Name'])
@@ -121,8 +124,8 @@ pumpkins_df[['Last Name', 'First Name']] = pumpkins_df['Processed Name'].apply(
 )
 
 # Clean up the 'Last Name' and 'First Name' columns by removing extra spaces
-pumpkins_df['Last Name'] = pumpkins_df['Last Name'].str.strip()
-pumpkins_df['First Name'] = pumpkins_df['First Name'].str.strip()
+pumpkins_df['Last Name'] = pumpkins_df['Last Name'].str.strip().str.title()  # Convert to title case
+pumpkins_df['First Name'] = pumpkins_df['First Name'].str.strip().str.title()  # Convert to title case
 
 # Create a list to store the names that were changed
 changes = []
