@@ -11,9 +11,10 @@ pumpkins_df = pd.read_csv('bigpumpkins.csv')
 
 # Function to preprocess names
 def preprocess_name(name):
-    """Preprocesses a name by replacing "&" with "and", "/" with " ", and removing extra spaces."""
+    """Preprocesses a name by replacing "&" with "and", "/" with " ", removing extra spaces, and removing numbers."""
     name = name.replace("&", "and").replace("/", " ").replace("-", " ").strip()
     name = re.sub(r'\s+', ' ', name)  # Replace multiple spaces with a single space
+    name = re.sub(r'\d', '', name)  # Remove numbers
     return name
 
 # Function to parse names
