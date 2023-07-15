@@ -29,19 +29,20 @@ def parse_name(name):
 def handle_team_names(name):
     """Handles team names to ensure that 'Team' is always at the beginning."""
     if "team" in name.lower():
-        # Check if 'Team' comes after the comma and handle it
-        if ", team" in name.lower():
-            name = name.replace(", team", "").strip() + ", Team"
-        else:
-            name = re.sub(r'\bteam\b', '', name, flags=re.I).strip()  # Remove 'team' from the name, ignoring case
-            name = f'Team {name}'
+        name = re.sub(r'\bteam\b', '', name, flags=re.I).strip()  # Remove 'team' from the name, ignoring case
+        # Handle different formats of team names
         if ',' in name:
-            name_parts = name.split(',', 1)
-            # Handle extra details after the comma
-            if name_parts[1].strip() != "Team":
-                name = name_parts[0].strip() + ', ' + ' '.join(name_parts[1].split()).strip()
+            name_parts = name.split(',')
+            for i, part in enumerate(name_parts):
+                if "team" in part.lower():
+                    name_parts[i] = ''
+            name_parts = [part.strip() for part in name_parts if part.strip() != '']
+            if len(name_parts) > 1:
+                name = 'Team ' + ', '.join(name_parts)
             else:
-                name = name_parts[0].strip() + ','
+                name = 'Team ' + name_parts[0]
+        else:
+            name = f'Team {name}'
         return name
     else:
         return parse_name(name)
