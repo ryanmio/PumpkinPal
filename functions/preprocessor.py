@@ -15,25 +15,24 @@ def preprocess_name(name):
 
 # Function to parse names
 def parse_name(name):
-    """Parses a name into its components using the HumanName library, unless the name is a 'Team' or 'Family'."""
-    if "team" in name.lower():
-        return name
-    elif "family" in name.lower():
-        return name
-    else:
-        human_name = HumanName(name)
-        last = human_name.last
-        first = human_name.first
-        if "Team" in first:
-            last = f"Team {last}"
-            first = ""
-        elif "Team" in last:
-            last = f"{first} Team"
-            first = ""
-        return f'{last}, {first}'.strip()
+    """Parses a name into its components using the HumanName library."""
+    human_name = HumanName(name)
+    return f'{human_name.last}, {human_name.first}'.strip()
 
-# Parse and preprocess the names, excluding team names from preprocessing
-pumpkins_df['Processed Name'] = pumpkins_df['Grower Name'].apply(lambda name: name if "team" in name.lower() else preprocess_name(name)).apply(parse_name)
+# Function to handle team names
+def handle_team_names(name):
+    """Handles team names to ensure that 'Team' or 'TEAM' is always at the beginning."""
+    if "team" in name.lower():
+        team_name = name.split("team")[1].strip()
+        return f'Team {team_name}'
+    else:
+        return parse_name(name)
+
+# Preprocess the names
+pumpkins_df['Processed Name'] = pumpkins_df['Grower Name'].apply(preprocess_name)
+
+# Handle team names
+pumpkins_df['Processed Name'] = pumpkins_df['Processed Name'].apply(handle_team_names)
 
 # Split processed names into first and last names
 pumpkins_df[['Last Name', 'First Name']] = pumpkins_df['Processed Name'].apply(lambda name: pd.Series([name, ""]) if "Team" in name else pd.Series(name.split(',', 1)))
