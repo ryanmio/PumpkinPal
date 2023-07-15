@@ -115,6 +115,15 @@ for most_common_name, matches in fuzzy_matched_names.items():
     for match in matches:
         pumpkins_df.loc[pumpkins_df['Processed Name'] == match, 'Processed Name'] = most_common_name
 
+# Split updated processed names into first and last names again
+pumpkins_df[['Last Name', 'First Name']] = pumpkins_df['Processed Name'].apply(
+    lambda name: pd.Series([name, ""]) if "Team" in name else pd.Series(name.split(',', 1))
+)
+
+# Clean up the 'Last Name' and 'First Name' columns by removing extra spaces
+pumpkins_df['Last Name'] = pumpkins_df['Last Name'].str.strip()
+pumpkins_df['First Name'] = pumpkins_df['First Name'].str.strip()
+
 # Create a list to store the names that were changed
 changes = []
 
