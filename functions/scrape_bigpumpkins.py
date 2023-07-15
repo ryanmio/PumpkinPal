@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 
 # List of years to scrape
-years = list(range(2014, 2023))
+years = list(range(2005, 2023))
 
 # List to hold all the data
 all_data = []
@@ -43,4 +43,4 @@ for year in years:
 all_data = pd.concat(all_data, ignore_index=True)
 
 # Save the dataframe to a CSV file
-all_data.to_csv('bigpumpkins.csv', index=False)
+all_data.to_csv('bigpumpkins_2004_2022.csv', index=False)
