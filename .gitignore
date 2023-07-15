@@ -84,3 +84,4 @@ typings/
 .dynamodb/
 functions/bigpumpkins.csv
 functions/name_changes.csv
+functions/preprocessed-bigpumpkins.csv
