@@ -20,17 +20,23 @@ def preprocess_name(name):
 def parse_name(name):
     """Parses a name into its components using the HumanName library."""
     human_name = HumanName(name)
-    return f'{human_name.last}, {human_name.first}'.strip()
+    if human_name.last == '':
+        return name.strip()
+    else:
+        return f'{human_name.last}, {human_name.first}'.strip()
 
 # Function to handle team names
 def handle_team_names(name):
     """Handles team names to ensure that 'Team' is always at the beginning."""
     if "team" in name.lower():
         name = re.sub(r'\bteam\b', '', name, flags=re.I).strip()  # Remove 'team' from the name, ignoring case
-        return f'Team {name}'
+        name = f'Team {name}'
+        if ',' in name:
+            name_parts = name.split(',', 1)
+            name = name_parts[0].strip() + ',' + ' '.join(name_parts[1].split()).strip() if len(name_parts) > 1 else name_parts[0].strip()
+        return name
     else:
         return parse_name(name)
-
 
 # Preprocess the names
 pumpkins_df['Processed Name'] = pumpkins_df['Grower Name'].apply(preprocess_name)
@@ -39,10 +45,13 @@ pumpkins_df['Processed Name'] = pumpkins_df['Grower Name'].apply(preprocess_name
 pumpkins_df['Processed Name'] = pumpkins_df['Processed Name'].apply(handle_team_names)
 
 # Split processed names into first and last names
-pumpkins_df[['Last Name', 'First Name']] = pumpkins_df['Processed Name'].apply(lambda name: pd.Series([name, ""]) if "Team" in name else pd.Series(name.split(',', 1)))
+pumpkins_df[['Last Name', 'First Name']] = pumpkins_df['Processed Name'].apply(
+    lambda name: pd.Series([name, ""]) if "Team" in name else pd.Series(name.split(',', 1))
+)
 
-# Clean up the 'Last Name' column by removing commas
-pumpkins_df['Last Name'] = pumpkins_df['Last Name'].str.replace(',', '')
+# Clean up the 'Last Name' and 'First Name' columns by removing extra spaces
+pumpkins_df['Last Name'] = pumpkins_df['Last Name'].str.strip()
+pumpkins_df['First Name'] = pumpkins_df['First Name'].str.strip()
 
 # Count the frequency of each name
 name_counter = Counter(pumpkins_df['Processed Name'])
