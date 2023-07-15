@@ -23,8 +23,12 @@ def parse_name(name):
 def handle_team_names(name):
     """Handles team names to ensure that 'Team' or 'TEAM' is always at the beginning."""
     if "team" in name.lower():
-        team_name = name.split("team")[1].strip()
-        return f'Team {team_name}'
+        split_name = name.lower().split("team")
+        if len(split_name) > 1:
+            team_name = split_name[1].strip()
+            return f'Team {team_name}'
+        else:
+            return name  # If "team" is not in the name, return it as is
     else:
         return parse_name(name)
 
