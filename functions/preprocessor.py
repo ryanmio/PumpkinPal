@@ -78,13 +78,14 @@ for name in processed_names:
     # Compare each name to all other names
     for other_name in processed_names:
         # If the similarity score is above 90 and the names are not identical
-        if fuzz.ratio(name, other_name) > 90 and name != other_name:
+        if fuzz.token_sort_ratio(name, other_name) > 90 and name != other_name:
             matches.append(other_name)
             
     # If any matches were found, add them to the dictionary
     if matches:
         # Determine the most common name in the list of matches (including the current name)
-        most_common_name = max(matches + [name], key=name_counter.get)
+        most_common_names = [name for name, count in Counter(matches + [name]).items() if count == max(name_counter.values())]
+        most_common_name = min(most_common_names)  # Choose the lexographically smallest name
         fuzzy_matched_names[most_common_name] = matches
 
 # Now we standardize the names in the original dataframe based on the fuzzy matches
