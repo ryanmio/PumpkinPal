@@ -10,8 +10,8 @@ pumpkins_df = pd.read_csv('bigpumpkins.csv')
 
 # Function to preprocess names
 def preprocess_name(name):
-    """Preprocesses a name by replacing "&" with "and" and removing extra spaces."""
-    return name.replace("&", "and").strip()
+    """Preprocesses a name by replacing "&" with "and", "/" with " ", and removing extra spaces."""
+    return name.replace("&", "and").replace("/", " ").strip()
 
 # Function to parse names
 def parse_name(name):
