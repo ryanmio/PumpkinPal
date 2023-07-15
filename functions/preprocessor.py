@@ -30,6 +30,7 @@ def handle_team_names(name):
     """Handles team names to ensure that 'Team' is always at the beginning."""
     if "team" in name.lower():
         name = re.sub(r'\bteam\b', '', name, flags=re.I).strip()  # Remove 'team' from the name, ignoring case
+        name = re.sub(r'\bthe\b', '', name, flags=re.I).strip()  # Remove 'the' from the name, ignoring case
         # Handle different formats of team names
         if ',' in name:
             name_parts = name.split(',')
