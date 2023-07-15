@@ -75,10 +75,15 @@ for name in processed_names:
     # Initialize an empty list to store the matches for each name
     matches = []
     
+    # Split the name into first and last name
+    first_name, last_name = name.split(",") if "," in name else (name, "")
+    
     # Compare each name to all other names
     for other_name in processed_names:
-        # If the similarity score is above 90 and the names are not identical
-        if fuzz.token_sort_ratio(name, other_name) > 90 and name != other_name:
+        other_first_name, other_last_name = other_name.split(",") if "," in other_name else (other_name, "")
+        
+        # If the similarity score is above 90 for both first and last name, and the names are not identical
+        if fuzz.partial_ratio(first_name, other_first_name) > 90 and fuzz.partial_ratio(last_name, other_last_name) > 90 and name != other_name:
             matches.append(other_name)
             
     # If any matches were found, add them to the dictionary
