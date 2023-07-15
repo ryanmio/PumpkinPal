@@ -4,6 +4,7 @@ from nameparser import HumanName
 from fuzzywuzzy import process
 from fuzzywuzzy import fuzz
 from collections import Counter
+import re
 
 # Load the data
 pumpkins_df = pd.read_csv('bigpumpkins.csv')
@@ -11,7 +12,9 @@ pumpkins_df = pd.read_csv('bigpumpkins.csv')
 # Function to preprocess names
 def preprocess_name(name):
     """Preprocesses a name by replacing "&" with "and", "/" with " ", and removing extra spaces."""
-    return name.replace("&", "and").replace("/", " ").strip()
+    name = name.replace("&", "and").replace("/", " ").replace("-", " ").strip()
+    name = re.sub(r'\s+', ' ', name)  # Replace multiple spaces with a single space
+    return name
 
 # Function to parse names
 def parse_name(name):
@@ -21,16 +24,13 @@ def parse_name(name):
 
 # Function to handle team names
 def handle_team_names(name):
-    """Handles team names to ensure that 'Team' or 'TEAM' is always at the beginning."""
+    """Handles team names to ensure that 'Team' is always at the beginning."""
     if "team" in name.lower():
-        split_name = name.lower().split("team")
-        if len(split_name) > 1:
-            team_name = split_name[1].strip()
-            return f'Team {team_name}'
-        else:
-            return name  # If "team" is not in the name, return it as is
+        name = re.sub(r'\bteam\b', '', name, flags=re.I).strip()  # Remove 'team' from the name, ignoring case
+        return f'Team {name}'
     else:
         return parse_name(name)
+
 
 # Preprocess the names
 pumpkins_df['Processed Name'] = pumpkins_df['Grower Name'].apply(preprocess_name)
