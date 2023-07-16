@@ -6,12 +6,12 @@ from decouple import config
 from datetime import datetime
 
 # Set up Firestore
-cred = credentials.Certificate("path/to/your/serviceAccountKey.json")  # Replace with your service account key file path
+cred = credentials.Certificate("pumpkinpal-b60be-firebase-adminsdk-jtia5-63bbe231d8.json")  # Replace with your service account key file path
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 # Load preprocessed data
-df = pd.read_csv("path/to/your/preprocessed-bigpumpkins.csv")  # Replace with your preprocessed CSV file path
+df = pd.read_csv("preprocessed-bigpumpkins.csv")  # Replace with your preprocessed CSV file path
 
 # Initialize error flag
 error_flag = False
