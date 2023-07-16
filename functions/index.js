@@ -556,3 +556,88 @@ exports.calculateLifetimeBestRank = functions.https.onRequest(async (req, res) =
     await calculateLifetimeBestRank();
     res.send('Lifetime Best Rank calculation completed.');
 });
+
+
+// Contest Popularity Ranking (Lifetime and Yearly)
+async function calculateContestPopularityRanking() {
+    const db = admin.firestore();
+    const contestsCollection = db.collection('Stats_Contests');
+
+    try {
+        const contestsSnapshot = await contestsCollection.get();
+
+        if (contestsSnapshot.empty) {
+            console.log('No matching contests.');
+            return;
+        }
+
+        const contests = {};
+        const yearlyContests = {};
+
+        contestsSnapshot.forEach(doc => {
+            const contest = doc.data();
+            const contestId = doc.id;
+            const year = contest.year;
+
+            // Group contests by id
+            if (!contests[contestId]) {
+                contests[contestId] = { participants: 0, totalWeight: 0 };
+            }
+            contests[contestId].participants += contest.participants;
+            contests[contestId].totalWeight += contest.totalWeight;
+
+            // Group contests by id and year
+            if (!yearlyContests[contestId]) {
+                yearlyContests[contestId] = {};
+            }
+            if (!yearlyContests[contestId][year]) {
+                yearlyContests[contestId][year] = { participants: 0, totalWeight: 0 };
+            }
+            yearlyContests[contestId][year].participants += contest.participants;
+            yearlyContests[contestId][year].totalWeight += contest.totalWeight;
+        });
+
+        // Begin a Firestore batch
+        let batch = db.batch();
+        let batchCounter = 0;
+
+        // Assign rank and update each contest in Firestore
+        for (const contestId in contests) {
+            const contest = contests[contestId];
+
+            // Calculate popularity score for lifetime
+            contest.popularityScoreLifetime = contest.participants + contest.totalWeight;
+
+            // Calculate popularity score for each year
+            for (const year in yearlyContests[contestId]) {
+                const yearlyContest = yearlyContests[contestId][year];
+                yearlyContest.popularityScoreYearly = yearlyContest.participants + yearlyContest.totalWeight;
+            }
+
+            const docRef = contestsCollection.doc(contestId);
+            batch.update(docRef, { ...contest, ...yearlyContests[contestId] });
+            batchCounter++;
+
+            // If the batch has reached the maximum size (500), commit it and start a new one
+            if (batchCounter === 500) {
+                await batch.commit();
+                batch = db.batch();
+                batchCounter = 0;
+            }
+        }
+
+        // Commit any remaining operations in the batch
+        if (batchCounter > 0) {
+            await batch.commit();
+        }
+
+    } catch (err) {
+        console.error('Error calculating contest popularity ranking:', err);
+    }
+}
+
+// HTTP function to manually trigger the calculation of Contest Popularity Ranking
+exports.calculateContestPopularityRanking = functions.https.onRequest(async (req, res) => {
+    await calculateContestPopularityRanking();
+    res.send('Contest Popularity Ranking calculation completed.');
+});
