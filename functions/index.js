@@ -187,11 +187,6 @@ exports.countMeasurementOnDelete = functions.firestore.document('Users/{userId}/
     return counterRef.set({ measurementCount: Math.max(measurementCount - 1, 0) }, { merge: true });
 });
 
-/* -----------------------------------------------
- * Metric Calculation Functions
- * -----------------------------------------------
- */
-
 // Function to calculate rankings
 async function calculateRankings() {
     const db = admin.firestore();
@@ -249,9 +244,13 @@ async function calculateRankings() {
             }
 
             // Add update operation to the batch
-            const docRef = db.collection('Stats_Pumpkins').doc(pumpkin.id);
-            batch.update(docRef, pumpkin);
-            batchCounter++;
+            if (typeof pumpkin.id === 'string' && pumpkin.id !== '') {
+                const docRef = db.collection('Stats_Pumpkins').doc(pumpkin.id);
+                batch.update(docRef, pumpkin);
+                batchCounter++;
+            } else {
+                console.error('Invalid pumpkin id:', pumpkin.id);
+            }
 
             // If the batch has reached the maximum size (500), commit it and start a new one
             if (batchCounter === 500) {
@@ -271,17 +270,8 @@ async function calculateRankings() {
     }
 }
 
-// Triggered when a new pumpkin is added or updated
-exports.calculateRankingOnPumpkinChange = functions.firestore.document('Stats_Pumpkins/{pumpkinId}').onWrite(async (change, context) => {
+// HTTP function to manually trigger the calculation of rankings
+exports.calculateRankings = functions.https.onRequest(async (req, res) => {
     await calculateRankings();
-});
-
-// Triggered when a new grower is added or updated
-exports.calculateRankingOnGrowerChange = functions.firestore.document('Stats_Growers/{growerId}').onWrite(async (change, context) => {
-    await calculateRankings();
-});
-
-// Triggered when a new contest is added or updated
-exports.calculateRankingOnContestChange = functions.firestore.document('Stats_Contests/{contestId}').onWrite(async (change, context) => {
-    await calculateRankings();
+    res.send('Rankings calculation completed.');
 });
