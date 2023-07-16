@@ -206,11 +206,19 @@ async function calculateRankings() {
         }  
     
         const pumpkins = [];
+        const yearlyPumpkins = {};  // Store pumpkins grouped by year
+
         pumpkinsSnapshot.forEach(doc => {
             const pumpkin = doc.data();
             // Exclude disqualified pumpkins and check data validity
             if (pumpkin.place !== 'DMG' && typeof pumpkin.weight === 'number') {
                 pumpkins.push(pumpkin);
+
+                // Group pumpkins by year
+                if (!yearlyPumpkins[pumpkin.year]) {
+                    yearlyPumpkins[pumpkin.year] = [];
+                }
+                yearlyPumpkins[pumpkin.year].push(pumpkin);
             }
         });
         
@@ -220,7 +228,17 @@ async function calculateRankings() {
         // Assign rank and update each pumpkin in Firestore
         for (let i = 0; i < pumpkins.length; i++) {
             const pumpkin = pumpkins[i];
-            pumpkin.lifetimeRank = i + 1;  // Assign rank
+            pumpkin.lifetimeRank = i + 1;  // Assign lifetime rank
+
+            // Sort pumpkins for the year in which the current pumpkin was grown
+            yearlyPumpkins[pumpkin.year].sort((a, b) => b.weight - a.weight);
+
+            // Assign yearly rank
+            const yearlyRank = yearlyPumpkins[pumpkin.year].findIndex(p => p.id === pumpkin.id);
+            if (yearlyRank !== -1) {
+                pumpkin.yearRank = yearlyRank + 1;
+            }
+
             // Update Firestore document
             await db.collection('Stats_Pumpkins').doc(pumpkin.id).update(pumpkin);
         }
