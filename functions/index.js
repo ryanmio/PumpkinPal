@@ -485,3 +485,57 @@ exports.calculateCountryRankings = functions.https.onRequest(async (req, res) =>
     await calculateCountryRankings();
     res.send('Country rankings calculation completed.');
 });
+
+// Lifetime Best Rank
+async function calculateLifetimeBestRank() {
+    const db = admin.firestore();
+    const growersCollection = db.collection('Stats_Growers');
+
+    try {
+        const growersSnapshot = await growersCollection.get();
+
+        if (growersSnapshot.empty) {
+            console.log('No matching growers.');
+            return;
+        }
+
+        let batch = db.batch();
+        let batchCounter = 0;
+
+        for (const doc of growersSnapshot.docs) {
+            const grower = doc.data();
+            const pumpkinsSnapshot = await db.collection('Stats_Pumpkins').where('grower', '==', grower.id).get();
+            const rankings = pumpkinsSnapshot.docs.map(doc => doc.data().yearRank);
+
+            if (rankings.length > 0) {
+                const bestRank = Math.min(...rankings);
+                grower.bestRank = bestRank;
+            } else {
+                grower.bestRank = null;  // or some other value indicating no pumpkins
+            }
+
+            const docRef = growersCollection.doc(grower.id);
+            batch.update(docRef, { bestRank: grower.bestRank });
+            batchCounter++;
+
+            if (batchCounter === 500) {
+                await batch.commit();
+                batch = db.batch();
+                batchCounter = 0;
+            }
+        }
+
+        if (batchCounter > 0) {
+            await batch.commit();
+        }
+
+    } catch (err) {
+        console.error('Error calculating lifetime best rank:', err);
+    }
+}
+
+// HTTP function to manually trigger the calculation of Lifetime Best Rank
+exports.calculateLifetimeBestRank = functions.https.onRequest(async (req, res) => {
+    await calculateLifetimeBestRank();
+    res.send('Lifetime Best Rank calculation completed.');
+});
