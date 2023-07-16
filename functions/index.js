@@ -195,7 +195,7 @@ exports.countMeasurementOnDelete = functions.firestore.document('Users/{userId}/
 
 
 // Worldwide Weigh-off Ranking (Lifetime and Yearly)
-async function calculateRankings() {
+async function calculateGlobalRankings() {
     const db = admin.firestore();
     const pumpkinsCollection = db.collection('Stats_Pumpkins');
 
@@ -572,34 +572,32 @@ async function calculateContestPopularityRanking() {
             return;
         }
 
-        // Map to hold lifetime popularity of each contest
-        const lifetimePopularityMap = new Map();
-
         // Begin a Firestore batch
         let batch = db.batch();
         let batchCounter = 0;
 
-        // Iterate over each contest to calculate LifetimePopularity
+        const contestPopularity = {};
         for (const doc of contestsSnapshot.docs) {
             const contestId = doc.id;
             const contestName = doc.data().name;
 
+            // Initialize contest popularity counts
+            contestPopularity[contestId] = { yearly: 0, lifetime: 0 };
+
             // Get all pumpkins associated with this contest id for YearPopularity
             const yearlyPumpkinsSnapshot = await pumpkinsCollection.where('contest', '==', contestId).get();
+            contestPopularity[contestId].yearly = yearlyPumpkinsSnapshot.size;
 
             // Get all pumpkins associated with this contest name for LifetimePopularity
-            const lifetimePumpkinsSnapshot = await pumpkinsCollection.where('contest', '==', contestName).get();
+            const lifetimePumpkinsSnapshot = await pumpkinsCollection.where('contestName', '==', contestName).get();
+            contestPopularity[contestId].lifetime += lifetimePumpkinsSnapshot.size;
+        }
 
-            // Update the lifetime popularity count
-            lifetimePopularityMap.set(contestName, lifetimePumpkinsSnapshot.size);
-
+        // Update Firestore document
+        for (const contestId in contestPopularity) {
             const docRef = contestsCollection.doc(contestId);
-            // Calculate YearPopularity
-            const yearPopularity = yearlyPumpkinsSnapshot.size;
-            // Get LifetimePopularity from the map
-            const lifetimePopularity = lifetimePopularityMap.get(contestName);
-
-            // Update Firestore document
+            const yearPopularity = contestPopularity[contestId].yearly;
+            const lifetimePopularity = contestPopularity[contestId].lifetime;
             batch.update(docRef, { LifetimePopularity: lifetimePopularity, YearPopularity: yearPopularity });
             batchCounter++;
 
