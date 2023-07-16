@@ -196,15 +196,15 @@ exports.countMeasurementOnDelete = functions.firestore.document('Users/{userId}/
 async function calculateRankings() {
     const db = admin.firestore();
     const pumpkinsCollection = db.collection('Stats_Pumpkins');
-    
+
     try {
         const pumpkinsSnapshot = await pumpkinsCollection.get();
-        
+
         if (pumpkinsSnapshot.empty) {
             console.log('No matching pumpkins.');
             return;
-        }  
-    
+        }
+
         const pumpkins = [];
         const yearlyPumpkins = {};  // Store pumpkins grouped by year
 
@@ -221,10 +221,16 @@ async function calculateRankings() {
                 yearlyPumpkins[pumpkin.year].push(pumpkin);
             }
         });
-        
+
         // Sort pumpkins by weight in descending order
         pumpkins.sort((a, b) => b.weight - a.weight);
-        
+
+        // Begin a Firestore batch
+        let batch = db.batch();
+
+        // Counter to keep track of how many operations are in the batch
+        let batchCounter = 0;
+
         // Assign rank and update each pumpkin in Firestore
         for (let i = 0; i < pumpkins.length; i++) {
             const pumpkin = pumpkins[i];
@@ -239,8 +245,22 @@ async function calculateRankings() {
                 pumpkin.yearRank = yearlyRank + 1;
             }
 
-            // Update Firestore document
-            await db.collection('Stats_Pumpkins').doc(pumpkin.id).update(pumpkin);
+            // Add update operation to the batch
+            const docRef = db.collection('Stats_Pumpkins').doc(pumpkin.id);
+            batch.update(docRef, pumpkin);
+            batchCounter++;
+
+            // If the batch has reached the maximum size (500), commit it and start a new one
+            if (batchCounter === 500) {
+                await batch.commit();
+                batch = db.batch();
+                batchCounter = 0;
+            }
+        }
+
+        // Commit any remaining operations in the batch
+        if (batchCounter > 0) {
+            await batch.commit();
         }
 
     } catch (err) {
