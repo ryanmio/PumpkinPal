@@ -579,25 +579,23 @@ async function calculateContestPopularityRanking() {
         let batch = db.batch();
         let batchCounter = 0;
 
-        // Assign rank and update each contest in Firestore
+        // Iterate over each contest to calculate LifetimePopularity
         for (const doc of contestsSnapshot.docs) {
             const contestId = doc.id;
             const contestName = doc.data().name;
 
-            // Get all pumpkins associated with this contest name
-            const pumpkinsSnapshot = await pumpkinsCollection.where('contest', '==', contestName).get();
-            
+            // Get all pumpkins associated with this contest id for YearPopularity
+            const yearlyPumpkinsSnapshot = await pumpkinsCollection.where('contest', '==', contestId).get();
+
+            // Get all pumpkins associated with this contest name for LifetimePopularity
+            const lifetimePumpkinsSnapshot = await pumpkinsCollection.where('contest', '==', contestName).get();
+
             // Update the lifetime popularity count
-            if (!lifetimePopularityMap.has(contestName)) {
-                lifetimePopularityMap.set(contestName, 0);
-            }
-            lifetimePopularityMap.set(contestName, lifetimePopularityMap.get(contestName) + pumpkinsSnapshot.size);
+            lifetimePopularityMap.set(contestName, lifetimePumpkinsSnapshot.size);
 
             const docRef = contestsCollection.doc(contestId);
-
             // Calculate YearPopularity
-            const yearPopularity = pumpkinsSnapshot.size;
-
+            const yearPopularity = yearlyPumpkinsSnapshot.size;
             // Get LifetimePopularity from the map
             const lifetimePopularity = lifetimePopularityMap.get(contestName);
 
