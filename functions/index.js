@@ -186,3 +186,61 @@ exports.countMeasurementOnDelete = functions.firestore.document('Users/{userId}/
     const { measurementCount = 0 } = counterSnap.data() || {};
     return counterRef.set({ measurementCount: Math.max(measurementCount - 1, 0) }, { merge: true });
 });
+
+/* -----------------------------------------------
+ * Metric Calculation Functions
+ * -----------------------------------------------
+ */
+
+// Function to calculate rankings
+async function calculateRankings() {
+    const db = admin.firestore();
+    const pumpkinsCollection = db.collection('Stats_Pumpkins');
+    
+    try {
+        const pumpkinsSnapshot = await pumpkinsCollection.get();
+        
+        if (pumpkinsSnapshot.empty) {
+            console.log('No matching pumpkins.');
+            return;
+        }  
+    
+        const pumpkins = [];
+        pumpkinsSnapshot.forEach(doc => {
+            const pumpkin = doc.data();
+            // Exclude disqualified pumpkins and check data validity
+            if (pumpkin.place !== 'DMG' && typeof pumpkin.weight === 'number') {
+                pumpkins.push(pumpkin);
+            }
+        });
+        
+        // Sort pumpkins by weight in descending order
+        pumpkins.sort((a, b) => b.weight - a.weight);
+        
+        // Assign rank and update each pumpkin in Firestore
+        for (let i = 0; i < pumpkins.length; i++) {
+            const pumpkin = pumpkins[i];
+            pumpkin.lifetimeRank = i + 1;  // Assign rank
+            // Update Firestore document
+            await db.collection('Stats_Pumpkins').doc(pumpkin.id).update(pumpkin);
+        }
+
+    } catch (err) {
+        console.error('Error getting pumpkins:', err);
+    }
+}
+
+// Triggered when a new pumpkin is added or updated
+exports.calculateRankingOnPumpkinChange = functions.firestore.document('Stats_Pumpkins/{pumpkinId}').onWrite(async (change, context) => {
+    await calculateRankings();
+});
+
+// Triggered when a new grower is added or updated
+exports.calculateRankingOnGrowerChange = functions.firestore.document('Stats_Growers/{growerId}').onWrite(async (change, context) => {
+    await calculateRankings();
+});
+
+// Triggered when a new contest is added or updated
+exports.calculateRankingOnContestChange = functions.firestore.document('Stats_Contests/{contestId}').onWrite(async (change, context) => {
+    await calculateRankings();
+});
