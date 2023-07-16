@@ -239,7 +239,7 @@ async function calculateRankings() {
         // Assign rank and update each pumpkin in Firestore
         for (let i = 0; i < pumpkins.length; i++) {
             const pumpkin = pumpkins[i];
-            pumpkin.lifetimeRank = i + 1;  // Assign lifetime rank
+            pumpkin.lifetimeGlobalRank = i + 1;
 
             // Sort pumpkins for the year in which the current pumpkin was grown
             yearlyPumpkins[pumpkin.year].sort((a, b) => b.weight - a.weight);
@@ -247,7 +247,7 @@ async function calculateRankings() {
             // Assign yearly rank
             const yearlyRank = yearlyPumpkins[pumpkin.year].findIndex(p => p.id === pumpkin.id);
             if (yearlyRank !== -1) {
-                pumpkin.yearRank = yearlyRank + 1;
+                pumpkin.yearGlobalRank = yearlyRank + 1;
             }
 
             // Add update operation to the batch
@@ -278,13 +278,13 @@ async function calculateRankings() {
 }
 
 // HTTP function to manually trigger the calculation of Worldwide Weigh-off Rankings
-exports.calculateRankings = functions.https.onRequest(async (req, res) => {
-    await calculateRankings();
-    res.send('Rankings calculation completed.');
+exports.calculateGlobalRankings = functions.https.onRequest(async (req, res) => {
+    await calculateGlobalRankings();
+    res.send('Global rankings calculation completed.');
 });
 
-// State/Province Ranking (Lifetime and Yearly)
-async function calculateStateProvinceRankings() {
+// State Ranking (Lifetime and Yearly)
+async function calculateStateRankings() {
     const db = admin.firestore();
     const pumpkinsCollection = db.collection('Stats_Pumpkins');
 
@@ -296,7 +296,8 @@ async function calculateStateProvinceRankings() {
             return;
         }
 
-        const stateProvincialPumpkins = {};  // Store pumpkins grouped by state/province
+        const statePumpkins = {};  // Store pumpkins grouped by state
+        const yearlyStatePumpkins = {};  // Store pumpkins grouped by state and year
 
         for (const doc of pumpkinsSnapshot.docs) {
             const pumpkin = doc.data();
@@ -305,13 +306,22 @@ async function calculateStateProvinceRankings() {
                 // Get grower document
                 const growerSnapshot = await db.collection('Stats_Growers').doc(growerRef).get();
                 const grower = growerSnapshot.data();
-                const stateProvince = grower.state;
+                const state = grower.state;
 
-                // Group pumpkins by state/province
-                if (!stateProvincialPumpkins[stateProvince]) {
-                    stateProvincialPumpkins[stateProvince] = [];
+                // Group pumpkins by state
+                if (!statePumpkins[state]) {
+                    statePumpkins[state] = [];
                 }
-                stateProvincialPumpkins[stateProvince].push(pumpkin);
+                statePumpkins[state].push(pumpkin);
+
+                // Group pumpkins by state and year
+                if (!yearlyStatePumpkins[state]) {
+                    yearlyStatePumpkins[state] = {};
+                }
+                if (!yearlyStatePumpkins[state][pumpkin.year]) {
+                    yearlyStatePumpkins[state][pumpkin.year] = [];
+                }
+                yearlyStatePumpkins[state][pumpkin.year].push(pumpkin);
             }
         }
 
@@ -322,13 +332,23 @@ async function calculateStateProvinceRankings() {
         let batchCounter = 0;
 
         // Assign rank and update each pumpkin in Firestore
-        for (const stateProvince in stateProvincialPumpkins) {
-            // Sort pumpkins by weight in descending order
-            stateProvincialPumpkins[stateProvince].sort((a, b) => b.weight - a.weight);
+        for (const state in statePumpkins) {
+            // Sort pumpkins by weight in descending order for lifetime state rank
+            statePumpkins[state].sort((a, b) => b.weight - a.weight);
 
-            for (let i = 0; i < stateProvincialPumpkins[stateProvince].length; i++) {
-                const pumpkin = stateProvincialPumpkins[stateProvince][i];
-                pumpkin.stateProvinceRank = i + 1;  // Assign state/province rank
+            for (let i = 0; i < statePumpkins[state].length; i++) {
+                const pumpkin = statePumpkins[state][i];
+                // Assign lifetime state rank
+                pumpkin.lifetimeStateRank = i + 1;
+
+                // Sort pumpkins for the year in which the current pumpkin was grown for yearly state rank
+                yearlyStatePumpkins[state][pumpkin.year].sort((a, b) => b.weight - a.weight);
+
+                // Assign yearly state rank
+                const yearlyRank = yearlyStatePumpkins[state][pumpkin.year].findIndex(p => p.id === pumpkin.id);
+                if (yearlyRank !== -1) {
+                    pumpkin.yearlyStateRank = yearlyRank + 1;
+                }
 
                 // Add update operation to the batch
                 if (typeof pumpkin.id === 'string' && pumpkin.id !== '') {
@@ -358,8 +378,8 @@ async function calculateStateProvinceRankings() {
     }
 }
 
-// HTTP function to manually trigger the calculation of state/province rankings
-exports.calculateStateProvinceRankings = functions.https.onRequest(async (req, res) => {
-    await calculateStateProvinceRankings();
-    res.send('State/Province rankings calculation completed.');
+// HTTP function to manually trigger the calculation of state rankings
+exports.calculateStateRankings = functions.https.onRequest(async (req, res) => {
+    await calculateStateRankings();
+    res.send('State rankings calculation completed.');
 });
