@@ -301,6 +301,12 @@ async function calculateStateRankings() {
 
         for (const doc of pumpkinsSnapshot.docs) {
             const pumpkin = doc.data();
+
+            // Exclude disqualified pumpkins
+            if (pumpkin.place === 'DMG') {
+                continue;
+            }
+
             const growerRef = pumpkin.grower;
             if (growerRef) {
                 // Get grower document
@@ -403,6 +409,12 @@ async function calculateCountryRankings() {
 
         for (const doc of pumpkinsSnapshot.docs) {
             const pumpkin = doc.data();
+
+            // Exclude disqualified pumpkins
+            if (pumpkin.place === 'DMG') {
+                continue;
+            }
+
             const growerRef = pumpkin.grower;
             if (growerRef) {
                 // Get grower document
@@ -505,7 +517,12 @@ async function calculateLifetimeBestRank() {
         for (const doc of growersSnapshot.docs) {
             const grower = doc.data();
             const pumpkinsSnapshot = await db.collection('Stats_Pumpkins').where('grower', '==', grower.id).get();
-            const rankings = pumpkinsSnapshot.docs.map(doc => doc.data().yearRank);
+            
+            // Exclude disqualified pumpkins
+            const rankings = pumpkinsSnapshot.docs
+                .map(doc => doc.data())
+                .filter(pumpkin => pumpkin.place !== 'DMG')
+                .map(pumpkin => pumpkin.yearRank);
 
             if (rankings.length > 0) {
                 const bestRank = Math.min(...rankings);
