@@ -13,12 +13,20 @@ db = firestore.client()
 # Load preprocessed data
 df = pd.read_csv("path/to/your/preprocessed-bigpumpkins.csv")  # Replace with your preprocessed CSV file path
 
+# Initialize error flag
+error_flag = False
+
 # Define function to upload documents to Firestore
 def upload_to_firestore(collection, doc_id, data):
-    db.collection(collection).document(doc_id).set(data)
+    global error_flag
+    try:
+        db.collection(collection).document(doc_id).set(data)
+    except Exception as e:
+        print(f"Error uploading document {doc_id} to collection {collection}: {e}")
+        error_flag = True
 
-# Process each row in the dataframe
-for index, row in df.iterrows():
+# Process each row in the dataframe (only the first 10 rows for testing)
+for index, row in df.head(10).iterrows():  # Change this to df.iterrows() to process all rows
     # Create or update grower document
     grower_data = {
         "firstName": row["First Name"],
@@ -28,7 +36,7 @@ for index, row in df.iterrows():
         "country": row["Country"],
         "timestamp": datetime.now()
     }
-    upload_to_firestore("Stats_Growers", row["Processed Name"], grower_data)
+    upload_to_firestore("Test_Stats_Growers", row["Processed Name"], grower_data)  # Use test collection
 
     # Create or update contest document
     contest_id = f'{row["GPC Site"]}_{row["Year"]}'
@@ -37,7 +45,7 @@ for index, row in df.iterrows():
         "year": row["Year"],
         "timestamp": datetime.now()
     }
-    upload_to_firestore("Stats_Contests", contest_id, contest_data)
+    upload_to_firestore("Test_Stats_Contests", contest_id, contest_data)  # Use test collection
 
     # Create pumpkin document
     pumpkin_data = {
@@ -51,4 +59,10 @@ for index, row in df.iterrows():
         "contest": contest_id,
         "timestamp": datetime.now()
     }
-    upload_to_firestore("Stats_Pumpkins", str(index), pumpkin_data)  # Use index as document ID for simplicity
+    upload_to_firestore("Test_Stats_Pumpkins", str(index), pumpkin_data)  # Use test collection
+
+# Check if there were any errors
+if error_flag:
+    print("There were errors during the data upload. Please review the error messages above.")
+else:
+    print("Data upload completed successfully.")
