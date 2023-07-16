@@ -187,7 +187,14 @@ exports.countMeasurementOnDelete = functions.firestore.document('Users/{userId}/
     return counterRef.set({ measurementCount: Math.max(measurementCount - 1, 0) }, { merge: true });
 });
 
-// Function to calculate rankings
+
+/* -----------------------------------------------
+ * Metric Calculation Functions
+ * -----------------------------------------------
+ */
+
+
+// Worldwide Weigh-off Ranking (Lifetime and Yearly)
 async function calculateRankings() {
     const db = admin.firestore();
     const pumpkinsCollection = db.collection('Stats_Pumpkins');
@@ -270,8 +277,89 @@ async function calculateRankings() {
     }
 }
 
-// HTTP function to manually trigger the calculation of rankings
+// HTTP function to manually trigger the calculation of Worldwide Weigh-off Rankings
 exports.calculateRankings = functions.https.onRequest(async (req, res) => {
     await calculateRankings();
     res.send('Rankings calculation completed.');
+});
+
+// State/Province Ranking (Lifetime and Yearly)
+async function calculateStateProvinceRankings() {
+    const db = admin.firestore();
+    const pumpkinsCollection = db.collection('Stats_Pumpkins');
+
+    try {
+        const pumpkinsSnapshot = await pumpkinsCollection.get();
+
+        if (pumpkinsSnapshot.empty) {
+            console.log('No matching pumpkins.');
+            return;
+        }
+
+        const stateProvincialPumpkins = {};  // Store pumpkins grouped by state/province
+
+        for (const doc of pumpkinsSnapshot.docs) {
+            const pumpkin = doc.data();
+            const growerRef = pumpkin.grower;
+            if (growerRef) {
+                // Get grower document
+                const growerSnapshot = await db.collection('Stats_Growers').doc(growerRef).get();
+                const grower = growerSnapshot.data();
+                const stateProvince = grower.state;
+
+                // Group pumpkins by state/province
+                if (!stateProvincialPumpkins[stateProvince]) {
+                    stateProvincialPumpkins[stateProvince] = [];
+                }
+                stateProvincialPumpkins[stateProvince].push(pumpkin);
+            }
+        }
+
+        // Begin a Firestore batch
+        let batch = db.batch();
+
+        // Counter to keep track of how many operations are in the batch
+        let batchCounter = 0;
+
+        // Assign rank and update each pumpkin in Firestore
+        for (const stateProvince in stateProvincialPumpkins) {
+            // Sort pumpkins by weight in descending order
+            stateProvincialPumpkins[stateProvince].sort((a, b) => b.weight - a.weight);
+
+            for (let i = 0; i < stateProvincialPumpkins[stateProvince].length; i++) {
+                const pumpkin = stateProvincialPumpkins[stateProvince][i];
+                pumpkin.stateProvinceRank = i + 1;  // Assign state/province rank
+
+                // Add update operation to the batch
+                if (typeof pumpkin.id === 'string' && pumpkin.id !== '') {
+                    const docRef = db.collection('Stats_Pumpkins').doc(pumpkin.id);
+                    batch.update(docRef, pumpkin);
+                    batchCounter++;
+                } else {
+                    console.error('Invalid pumpkin id:', pumpkin.id);
+                }
+
+                // If the batch has reached the maximum size (500), commit it and start a new one
+                if (batchCounter === 500) {
+                    await batch.commit();
+                    batch = db.batch();
+                    batchCounter = 0;
+                }
+            }
+        }
+
+        // Commit any remaining operations in the batch
+        if (batchCounter > 0) {
+            await batch.commit();
+        }
+
+    } catch (err) {
+        console.error('Error getting pumpkins:', err);
+    }
+}
+
+// HTTP function to manually trigger the calculation of state/province rankings
+exports.calculateStateProvinceRankings = functions.https.onRequest(async (req, res) => {
+    await calculateStateProvinceRankings();
+    res.send('State/Province rankings calculation completed.');
 });
