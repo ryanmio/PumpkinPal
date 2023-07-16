@@ -575,53 +575,43 @@ async function calculateContestPopularityRanking() {
         // Map to hold lifetime popularity of each contest
         const lifetimePopularityMap = new Map();
 
-        // Iterate over each contest to calculate LifetimePopularity
-        contestsSnapshot.forEach(doc => {
-            const contestName = doc.data().name;
-
-            // Get all pumpkins associated with this contest name
-            pumpkinsCollection.where('contest', '==', contestName).get()
-                .then(pumpkinsSnapshot => {
-                    // Update the lifetime popularity count
-                    if (!lifetimePopularityMap.has(contestName)) {
-                        lifetimePopularityMap.set(contestName, 0);
-                    }
-                    lifetimePopularityMap.set(contestName, lifetimePopularityMap.get(contestName) + pumpkinsSnapshot.size);
-                });
-        });
-
         // Begin a Firestore batch
         let batch = db.batch();
         let batchCounter = 0;
 
         // Assign rank and update each contest in Firestore
-        contestsSnapshot.forEach(doc => {
+        for (const doc of contestsSnapshot.docs) {
             const contestId = doc.id;
             const contestName = doc.data().name;
 
-            // Get all pumpkins associated with this contest id
-            pumpkinsCollection.where('contest', '==', contestId).get()
-                .then(pumpkinsSnapshot => {
-                    const docRef = contestsCollection.doc(contestId);
+            // Get all pumpkins associated with this contest name
+            const pumpkinsSnapshot = await pumpkinsCollection.where('contest', '==', contestName).get();
+            
+            // Update the lifetime popularity count
+            if (!lifetimePopularityMap.has(contestName)) {
+                lifetimePopularityMap.set(contestName, 0);
+            }
+            lifetimePopularityMap.set(contestName, lifetimePopularityMap.get(contestName) + pumpkinsSnapshot.size);
 
-                    // Calculate YearPopularity
-                    const yearPopularity = pumpkinsSnapshot.size;
+            const docRef = contestsCollection.doc(contestId);
 
-                    // Get LifetimePopularity from the map
-                    const lifetimePopularity = lifetimePopularityMap.get(contestName);
+            // Calculate YearPopularity
+            const yearPopularity = pumpkinsSnapshot.size;
 
-                    // Update Firestore document
-                    batch.update(docRef, { LifetimePopularity: lifetimePopularity, YearPopularity: yearPopularity });
-                    batchCounter++;
+            // Get LifetimePopularity from the map
+            const lifetimePopularity = lifetimePopularityMap.get(contestName);
 
-                    // If the batch has reached the maximum size (500), commit it and start a new one
-                    if (batchCounter === 500) {
-                        batch.commit();
-                        batch = db.batch();
-                        batchCounter = 0;
-                    }
-                });
-        });
+            // Update Firestore document
+            batch.update(docRef, { LifetimePopularity: lifetimePopularity, YearPopularity: yearPopularity });
+            batchCounter++;
+
+            // If the batch has reached the maximum size (500), commit it and start a new one
+            if (batchCounter === 500) {
+                await batch.commit();
+                batch = db.batch();
+                batchCounter = 0;
+            }
+        }
 
         // Commit any remaining operations in the batch
         if (batchCounter > 0) {
