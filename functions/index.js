@@ -383,3 +383,105 @@ exports.calculateStateRankings = functions.https.onRequest(async (req, res) => {
     await calculateStateRankings();
     res.send('State rankings calculation completed.');
 });
+
+
+// Country Ranking (Lifetime and Yearly)
+async function calculateCountryRankings() {
+    const db = admin.firestore();
+    const pumpkinsCollection = db.collection('Stats_Pumpkins');
+
+    try {
+        const pumpkinsSnapshot = await pumpkinsCollection.get();
+
+        if (pumpkinsSnapshot.empty) {
+            console.log('No matching pumpkins.');
+            return;
+        }
+
+        const countryPumpkins = {};  // Store pumpkins grouped by country
+        const yearlyCountryPumpkins = {};  // Store pumpkins grouped by country and year
+
+        for (const doc of pumpkinsSnapshot.docs) {
+            const pumpkin = doc.data();
+            const growerRef = pumpkin.grower;
+            if (growerRef) {
+                // Get grower document
+                const growerSnapshot = await db.collection('Stats_Growers').doc(growerRef).get();
+                const grower = growerSnapshot.data();
+                const country = grower.country;
+
+                // Group pumpkins by country
+                if (!countryPumpkins[country]) {
+                    countryPumpkins[country] = [];
+                }
+                countryPumpkins[country].push(pumpkin);
+
+                // Group pumpkins by country and year
+                if (!yearlyCountryPumpkins[country]) {
+                    yearlyCountryPumpkins[country] = {};
+                }
+                if (!yearlyCountryPumpkins[country][pumpkin.year]) {
+                    yearlyCountryPumpkins[country][pumpkin.year] = [];
+                }
+                yearlyCountryPumpkins[country][pumpkin.year].push(pumpkin);
+            }
+        }
+
+        // Begin a Firestore batch
+        let batch = db.batch();
+
+        // Counter to keep track of how many operations are in the batch
+        let batchCounter = 0;
+
+        // Assign rank and update each pumpkin in Firestore
+        for (const country in countryPumpkins) {
+            // Sort pumpkins by weight in descending order for lifetime country rank
+            countryPumpkins[country].sort((a, b) => b.weight - a.weight);
+
+            for (let i = 0; i < countryPumpkins[country].length; i++) {
+                const pumpkin = countryPumpkins[country][i];
+                // Assign lifetime country rank
+                pumpkin.lifetimeCountryRank = i + 1;
+
+                // Sort pumpkins for the year in which the current pumpkin was grown for yearly country rank
+                yearlyCountryPumpkins[country][pumpkin.year].sort((a, b) => b.weight - a.weight);
+
+                // Assign yearly country rank
+                const yearlyRank = yearlyCountryPumpkins[country][pumpkin.year].findIndex(p => p.id === pumpkin.id);
+                if (yearlyRank !== -1) {
+                    pumpkin.yearlyCountryRank = yearlyRank + 1;
+                }
+
+                // Add update operation to the batch
+                if (typeof pumpkin.id === 'string' && pumpkin.id !== '') {
+                    const docRef = db.collection('Stats_Pumpkins').doc(pumpkin.id);
+                    batch.update(docRef, pumpkin);
+                    batchCounter++;
+                } else {
+                    console.error('Invalid pumpkin id:', pumpkin.id);
+                }
+
+                // If the batch has reached the maximum size (500), commit it and start a new one
+                if (batchCounter === 500) {
+                    await batch.commit();
+                    batch = db.batch();
+                    batchCounter = 0;
+                }
+            }
+        }
+
+        // Commit any remaining operations in the batch
+        if (batchCounter > 0) {
+            await batch.commit();
+        }
+
+    } catch (err) {
+        console.error('Error getting pumpkins:', err);
+    }
+}
+
+// HTTP function to manually trigger the calculation of country rankings
+exports.calculateCountryRankings = functions.https.onRequest(async (req, res) => {
+    await calculateCountryRankings();
+    res.send('Country rankings calculation completed.');
+});
