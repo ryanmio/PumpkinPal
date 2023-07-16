@@ -222,6 +222,9 @@ async function calculateRankings() {
             }
         });
 
+        console.log(`Total pumpkins: ${pumpkinsSnapshot.size}`);
+        console.log(`Valid pumpkins: ${pumpkins.length}`);
+
         // Sort pumpkins by weight in descending order
         pumpkins.sort((a, b) => b.weight - a.weight);
 
