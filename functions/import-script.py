@@ -74,6 +74,7 @@ for index, row in df.head(100).iterrows():  # Change this to df.iterrows() to pr
         "estimatedWeight": row["Est. Weight"],
         "grower": row["Processed Name"],
         "contest": contest_id,
+        "contestName": row["GPC Site"],
         "year": row["Year"], 
         "timestamp": datetime.now()
     }
