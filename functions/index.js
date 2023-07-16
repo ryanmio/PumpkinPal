@@ -522,7 +522,7 @@ async function calculateLifetimeBestRank() {
             const rankings = pumpkinsSnapshot.docs
                 .map(doc => doc.data())
                 .filter(pumpkin => pumpkin.place !== 'DMG')
-                .map(pumpkin => pumpkin.yearRank);
+                .map(pumpkin => pumpkin.yearGlobalRank);
 
             if (rankings.length > 0) {
                 const bestRank = Math.min(...rankings);
