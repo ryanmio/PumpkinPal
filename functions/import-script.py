@@ -26,7 +26,7 @@ def upload_to_firestore(collection, doc_id, data):
         error_flag = True
 
 # Process each row in the dataframe (only the first 10 rows for testing)
-for index, row in df.head(10).iterrows():  # Change this to df.iterrows() to process all rows
+for index, row in df.head(100).iterrows():  # Change this to df.iterrows() to process all rows
     # Create or update grower document
     grower_data = {
         "firstName": row["First Name"],
@@ -36,7 +36,7 @@ for index, row in df.head(10).iterrows():  # Change this to df.iterrows() to pro
         "country": row["Country"],
         "timestamp": datetime.now()
     }
-    upload_to_firestore("Test_Stats_Growers", row["Processed Name"], grower_data)  # Use test collection
+    upload_to_firestore("Stats_Growers", row["Processed Name"], grower_data)
 
     # Create or update contest document
     contest_id = f'{row["GPC Site"]}_{row["Year"]}'
@@ -45,9 +45,10 @@ for index, row in df.head(10).iterrows():  # Change this to df.iterrows() to pro
         "year": row["Year"],
         "timestamp": datetime.now()
     }
-    upload_to_firestore("Test_Stats_Contests", contest_id, contest_data)  # Use test collection
+    upload_to_firestore("Stats_Contests", contest_id, contest_data)
 
     # Create pumpkin document
+    pumpkin_id = f'{row["Weight (lbs)"]} {row["Last Name"] if pd.notnull(row["Last Name"]) else row["Processed Name"]}'.strip()  # Use weight and last name as document ID
     pumpkin_data = {
         "weight": row["Weight (lbs)"],
         "place": row["Place"],
@@ -57,9 +58,15 @@ for index, row in df.head(10).iterrows():  # Change this to df.iterrows() to pro
         "estimatedWeight": row["Est. Weight"],
         "grower": row["Processed Name"],
         "contest": contest_id,
+        "year": row["Year"],  # Add year to the pumpkin data
         "timestamp": datetime.now()
     }
-    upload_to_firestore("Test_Stats_Pumpkins", str(index), pumpkin_data)  # Use test collection
+    # Check that all necessary fields are present
+    if pd.notnull(pumpkin_id) and pd.notnull(pumpkin_data["weight"]) and pd.notnull(pumpkin_data["grower"]) and pd.notnull(pumpkin_data["contest"]):
+        upload_to_firestore("Stats_Pumpkins", pumpkin_id, pumpkin_data)
+    else:
+        print(f"Error: Missing or invalid data for pumpkin {pumpkin_id}.")
+        error_flag = True
 
 # Check if there were any errors
 if error_flag:
