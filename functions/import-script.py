@@ -13,6 +13,9 @@ db = firestore.client()
 # Load preprocessed data
 df = pd.read_csv("preprocessed-bigpumpkins.csv")  # Replace with your preprocessed CSV file path
 
+# Convert 'Weight (lbs)' to float
+df['Weight (lbs)'] = df['Weight (lbs)'].str.replace(',', '').astype(float)
+
 # Initialize error flag
 error_flag = False
 
@@ -28,7 +31,6 @@ def upload_to_firestore(collection, doc_id, data):
 
 # Process each row in the dataframe (only the first 10 rows for testing)
 for index, row in df.head(100).iterrows():  # Change this to df.iterrows() to process all rows
-    weight = float(row["Weight (lbs)"].replace(',', ''))
     # Create or update grower document
     grower_data = {
         "firstName": row["First Name"],
@@ -50,9 +52,9 @@ for index, row in df.head(100).iterrows():  # Change this to df.iterrows() to pr
     upload_to_firestore("Stats_Contests", contest_id, contest_data)
 
     # Create pumpkin document
-    pumpkin_id = f'{weight} {row["Last Name"] if pd.notnull(row["Last Name"]) else row["Processed Name"]}'.strip()  # Use weight and last name as document ID
+    pumpkin_id = f'{row["Weight (lbs)"]} {row["Last Name"] if pd.notnull(row["Last Name"]) else row["Processed Name"]}'.strip()  # Use weight and last name as document ID
     pumpkin_data = {
-        "weight": weight,
+        "weight": row["Weight (lbs)"],
         "place": row["Place"],
         "seed": row["Seed (Mother)"],
         "pollinator": row["Pollinator (Father)"],
