@@ -21,12 +21,14 @@ def upload_to_firestore(collection, doc_id, data):
     global error_flag
     try:
         db.collection(collection).document(doc_id).set(data)
+        print(f"Uploaded document {doc_id} to collection {collection}")
     except Exception as e:
         print(f"Error uploading document {doc_id} to collection {collection}: {e}")
         error_flag = True
 
 # Process each row in the dataframe (only the first 10 rows for testing)
 for index, row in df.head(100).iterrows():  # Change this to df.iterrows() to process all rows
+    weight = float(row["Weight (lbs)"].replace(',', ''))
     # Create or update grower document
     grower_data = {
         "firstName": row["First Name"],
@@ -48,9 +50,9 @@ for index, row in df.head(100).iterrows():  # Change this to df.iterrows() to pr
     upload_to_firestore("Stats_Contests", contest_id, contest_data)
 
     # Create pumpkin document
-    pumpkin_id = f'{row["Weight (lbs)"]} {row["Last Name"] if pd.notnull(row["Last Name"]) else row["Processed Name"]}'.strip()  # Use weight and last name as document ID
+    pumpkin_id = f'{weight} {row["Last Name"] if pd.notnull(row["Last Name"]) else row["Processed Name"]}'.strip()  # Use weight and last name as document ID
     pumpkin_data = {
-        "weight": row["Weight (lbs)"],
+        "weight": weight,
         "place": row["Place"],
         "seed": row["Seed (Mother)"],
         "pollinator": row["Pollinator (Father)"],
@@ -58,7 +60,7 @@ for index, row in df.head(100).iterrows():  # Change this to df.iterrows() to pr
         "estimatedWeight": row["Est. Weight"],
         "grower": row["Processed Name"],
         "contest": contest_id,
-        "year": row["Year"],  # Add year to the pumpkin data
+        "year": row["Year"], 
         "timestamp": datetime.now()
     }
     # Check that all necessary fields are present
