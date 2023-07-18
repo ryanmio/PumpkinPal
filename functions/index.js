@@ -624,3 +624,69 @@ exports.calculateContestPopularityRanking = functions.https.onRequest(async (req
     await calculateContestPopularityRanking();
     res.send('Contest Popularity Ranking calculation completed.');
 });
+
+
+// Site Records
+async function calculateSiteRecords() {
+    const db = admin.firestore();
+    const pumpkinsCollection = db.collection('Stats_Pumpkins');
+    const contestsCollection = db.collection('Stats_Contests');
+
+    try {
+        const contestsSnapshot = await contestsCollection.get();
+
+        if (contestsSnapshot.empty) {
+            console.log('No matching contests.');
+            return;
+        }
+
+        // Begin a Firestore batch
+        let batch = db.batch();
+        let batchCounter = 0;
+
+        for (const doc of contestsSnapshot.docs) {
+            const contestId = doc.id;
+
+            // Get all pumpkins associated with this contest
+            const pumpkinsSnapshot = await pumpkinsCollection.where('contest', '==', contestId).get();
+
+            // Exclude disqualified pumpkins and sort by weight in descending order
+            const pumpkins = pumpkinsSnapshot.docs
+                .map(doc => doc.data())
+                .filter(pumpkin => pumpkin.place !== 'DMG')
+                .sort((a, b) => b.weight - a.weight);
+
+            // The pumpkin with the highest weight is the record for this site
+            if (pumpkins.length > 0) {
+                const recordPumpkin = pumpkins[0];
+                const recordWeight = recordPumpkin.weight;
+
+                // Update the contest document with the record weight
+                const docRef = contestsCollection.doc(contestId);
+                batch.update(docRef, { recordWeight });
+                batchCounter++;
+            }
+
+            // If the batch has reached the maximum size (500), commit it and start a new one
+            if (batchCounter === 500) {
+                await batch.commit();
+                batch = db.batch();
+                batchCounter = 0;
+            }
+        }
+
+        // Commit any remaining operations in the batch
+        if (batchCounter > 0) {
+            await batch.commit();
+        }
+
+    } catch (err) {
+        console.error('Error calculating site records:', err);
+    }
+}
+
+// HTTP function to manually trigger the calculation of site records
+exports.calculateSiteRecords = functions.https.onRequest(async (req, res) => {
+    await calculateSiteRecords();
+    res.send('Site records calculation completed.');
+});
