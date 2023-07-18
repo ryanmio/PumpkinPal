@@ -68,19 +68,31 @@ Remember to test your functions thoroughly with a variety of data to ensure they
 # AI Cheat Sheet
 
 ## Firestore
-- Firestore: NoSQL, cloud.
-- Data in collections of documents. Document: unique id, fields.
-- fetch: collection().get().
-- filter: where(field, operator, value).
-- document reference: collection('collectionName').doc('docId').
-- update: docRef.update(data).
+- Firestore: NoSQL, cloud-based database.
+- Data is stored in collections of documents.
+- Document: unique id, fields (can contain complex nested data).
+- Fetch entire collection: `collection('collectionName').get()`.
+- Fetch specific document: `collection('collectionName').doc('docId').get()`.
+- Update specific document: `collection('collectionName').doc('docId').update(data)`.
+- Query documents with conditions: `collection('collectionName').where(field, operator, value).get()`.
+- Batch operations: `db.batch()`, `batch.update(docRef, data)`, `batch.commit()`.
+- Limit of 500 operations per batch.
+
+## Firestore Structure
+- `Stats_Pumpkins` collection: contains pumpkin documents with fields including `weight`, `year`, `grower` (reference to a `Stats_Growers` document), `place` (disqualified if 'DMG'), `id`, `contest`, `contestName`.
+- `Stats_Growers` collection: contains grower documents with fields including `state`, `country`, `id`.
+- `Stats_Contests` collection: contains contest documents with fields including `name`, `id`.
 
 ## Functions
-- Async functions, Promises (async/await).
-- Fetch, process, batch update, commit.
+- Async functions and Promises (async/await) used for handling asynchronous operations.
+- Fetching data, processing the fetched data, using a batch to update multiple documents in Firestore, and committing the batch are the general steps in each function.
+- Filtering disqualified pumpkins: `if (pumpkin.place !== 'DMG')`.
+- Sorting pumpkins by weight in descending order: `pumpkins.sort((a, b) => b.weight - a.weight)`.
+- Assigning rank and updating each pumpkin in Firestore: `pumpkin.lifetimeGlobalRank = i + 1`, `batch.update(docRef, pumpkin)`.
+- Error handling: `try`/`catch` blocks, checking data validity before processing.
 
 ## Rank Calculation
-- Fetch data (exclude disqualified).
+- Fetch data (exclude disqualified pumpkins).
 - Sort (desc weight).
 - Assign rank, update Firestore.
 
@@ -100,10 +112,10 @@ Remember to test your functions thoroughly with a variety of data to ensure they
 - Server-side filter with Firestore queries.
 - Use Firestore transactions for data consistency.
 
-## Write New Functions
-- Define function (inputs, outputs).
-- Fetch data from Firestore.
-- Perform calculations/transformations.
-- Write results back to Firestore.
-- Handle errors and edge cases.
-- Optimize performance (Firestore reads/writes).
+## Writing New Functions
+- Clearly define function's goal (inputs and outputs).
+- Fetch necessary data from Firestore.
+- Perform calculations/transformations on data.
+- Write results back to Firestore (batch operations).
+- Handle potential errors and edge cases.
+- Optimize performance: Fetch in smaller batches, fetch only necessary fields, server-side filter with Firestore queries, use Firestore transactions for data consistency.
