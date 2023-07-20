@@ -1,10 +1,10 @@
 import { useContext } from 'react';
 import { GrowerContext } from '.../contexts/GrowerContext';
-import Header from './GrowerStatsProfile/Header';
-import SummarySection from './GrowerStatsProfile/SummarySection';
-import TableSection from './GrowerStatsProfile/TableSection';
-import GraphSection from './GrowerStatsProfile/GraphSection';
-import ShareSection from './GrowerStatsProfile/ShareSection';
+import Header from './Header';
+import SummarySection from './SummarySection';
+import TableSection from './TableSection';
+import GraphSection from './GraphSection';
+import ShareSection from './hareSection';
 
 const GrowerStatsProfile = () => {
   const { growerData } = useContext(GrowerContext);
