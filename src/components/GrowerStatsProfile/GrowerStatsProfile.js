@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { GrowerContext } from '../contexts/GrowerContext';
+import { GrowerContext } from '.../contexts/GrowerContext';
 import Header from './GrowerStatsProfile/Header';
 import SummarySection from './GrowerStatsProfile/SummarySection';
 import TableSection from './GrowerStatsProfile/TableSection';
