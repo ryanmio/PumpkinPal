@@ -19,7 +19,7 @@ import { Toaster } from 'react-hot-toast';
 import ReactGA from "react-ga4";
 import { UserProvider } from './contexts/UserContext';
 import { GrowerProvider } from './contexts/GrowerContext';
-import GrowerStatsProfile from './GrowerStatsProfile/GrowerStatsProfile';
+import GrowerStatsProfile from './components/GrowerStatsProfile/GrowerStatsProfile';
 
 
 // Initialize GA once when the App.js module is loaded
