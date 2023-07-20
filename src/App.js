@@ -20,6 +20,7 @@ import ReactGA from "react-ga4";
 import { UserProvider } from './contexts/UserContext';
 import { GrowerProvider } from './contexts/GrowerContext';
 import GrowerStatsProfile from './components/GrowerStatsProfile/GrowerStatsProfile';
+import GrowerStatsProfile from './components/GrowerStatsProfile/GrowerSearch';
 
 
 // Initialize GA once when the App.js module is loaded
