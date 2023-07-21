@@ -18,7 +18,7 @@ import Header from './components/Header';
 import { Toaster } from 'react-hot-toast';
 import ReactGA from "react-ga4";
 import { UserProvider } from './contexts/UserContext';
-import { GrowerProvider } from './contexts/GrowerContext';
+import { GrowerContextProvider } from './contexts/GrowerContext';
 import GrowerStatsProfile from './components/GrowerStatsProfile/GrowerStatsProfile';
 import GrowerSearch from './components/GrowerStatsProfile/GrowerSearch';
 
@@ -49,8 +49,8 @@ function App() {
   return (
     <div className="App font-lato">
       <Router>
-        <UserProvider value={currentUser}> {/* Pass currentUser as value to UserProvider */}
-          <GrowerProvider> {/* Wrap the app with GrowerProvider */}
+        <UserProvider value={currentUser}>
+          <GrowerContextProvider>
             <TrackPageViews />
             <Header />
             <Toaster />
@@ -68,7 +68,7 @@ function App() {
               <Route path="/grower/:growerName" element={<GrowerStatsProfile />} />
               <Route path="/search" element={<GrowerSearch />} />
             </Routes>
-          </GrowerProvider>
+          </GrowerContextProvider>
         </UserProvider>
       </Router>
     </div>
