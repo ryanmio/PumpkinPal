@@ -25,6 +25,7 @@ export const GrowerProvider = ({ children }) => {
         setLoading(false);
         console.log('Finished fetching grower data.');
       } catch (error) {
+        console.error('Error fetching grower data:', error);
         setError(error.message);
         toast.error(error.message);
         setLoading(false);
