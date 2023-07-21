@@ -21,10 +21,10 @@ export const GrowerProvider = ({ children }) => {
         const pumpkinDocs = await db.collection('Stats_Pumpkins').where('grower', '==', growerName).get();
         const growerData = { ...growerDoc.data(), pumpkins: pumpkinDocs.docs.map(doc => doc.data()) };
         setGrowerData(growerData);
-        setLoading(false);
       } catch (error) {
         setError(error.message);
         toast.error(error.message);
+      } finally {
         setLoading(false);
       }
     };
@@ -35,7 +35,7 @@ export const GrowerProvider = ({ children }) => {
   }, [growerName]);
 
   return (
-    <GrowerContext.Provider value={{ growerName, setGrowerName, growerData, error }}>
+    <GrowerContext.Provider value={{ growerName, setGrowerName, growerData, loading, error }}>
       {children}
     </GrowerContext.Provider>
   );
