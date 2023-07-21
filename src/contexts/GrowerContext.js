@@ -17,6 +17,7 @@ export const GrowerContextProvider = ({ children }) => {
       setLoading(true);
       console.log('Fetching data for grower:', growerName); // Log the growerName
       try {
+        console.log('db instance:', db);
         const growerDoc = await db.collection('Stats_Growers').doc(growerName).get();
         console.log('Grower data from Firestore:', growerDoc.data()); // Log the growerDoc
         if (!growerDoc.exists) {
