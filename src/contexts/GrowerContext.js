@@ -14,6 +14,7 @@ export const GrowerProvider = ({ children }) => {
     const fetchGrowerData = async () => {
       setLoading(true);
       try {
+        console.log('Fetching grower data...');
         const growerDoc = await db.collection('Stats_Growers').doc(growerName).get();
         if (!growerDoc.exists) {
           throw new Error(`No grower found with the name "${growerName}".`);
@@ -21,10 +22,11 @@ export const GrowerProvider = ({ children }) => {
         const pumpkinDocs = await db.collection('Stats_Pumpkins').where('grower', '==', growerName).get();
         const growerData = { ...growerDoc.data(), pumpkins: pumpkinDocs.docs.map(doc => doc.data()) };
         setGrowerData(growerData);
+        setLoading(false);
+        console.log('Finished fetching grower data.');
       } catch (error) {
         setError(error.message);
         toast.error(error.message);
-      } finally {
         setLoading(false);
       }
     };
