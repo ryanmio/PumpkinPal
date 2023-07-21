@@ -7,6 +7,10 @@ import TableSection from './TableSection';
 const GrowerStatsProfile = () => {
   const { growerData, loading } = useContext(GrowerContext);
 
+  console.log('Rendering GrowerStatsProfile component...');
+  console.log('growerData:', growerData);
+  console.log('loading:', loading);
+
   if (loading || !growerData) {
     return <div>Loading...</div>;
   }
