@@ -66,6 +66,7 @@ function App() {
               <Route path="/user-profile" element={<UserProfile />} />
               <Route path="/edit-measurement/:pumpkinId/:measurementId" element={<EditMeasurement />} />
               <Route path="/grower/:growerName" element={<GrowerStatsProfile />} />
+              <Route path="/search" element={<GrowerSearch />} />
             </Routes>
           </GrowerProvider>
         </UserProvider>
