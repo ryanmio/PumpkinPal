@@ -14,24 +14,27 @@ export const GrowerContextProvider = ({ children }) => {
   useEffect(() => {
     console.log('Grower name in GrowerContextProvider:', growerName); // Log the growerName
 
-    const fetchGrowerData = async () => {
+        const fetchGrowerData = async () => {
       setLoading(true);
       console.log('Fetching data for grower:', growerName); // Log the growerName
       try {
         console.log('db instance:', db);
-        const growerDocRef = doc(db, 'Stats_Growers', growerName);
-        const growerDoc = await getDoc(growerDocRef);
+        const growerDoc = await db.collection('Stats_Growers').doc(growerName).get();
         console.log('Grower data from Firestore:', growerDoc.data()); // Log the growerDoc
+
+        // Throw an error if no grower data is found
         if (!growerDoc.exists) {
           throw new Error(`No grower found with the name "${growerName}".`);
         }
-        const pumpkinQuery = query(collection(db, 'Stats_Pumpkins'), where('grower', '==', growerName));
-        const pumpkinDocs = await getDocs(pumpkinQuery);
+
+        const pumpkinDocs = await db.collection('Stats_Pumpkins').where('grower', '==', growerName).get();
         console.log('Pumpkin data from Firestore:', pumpkinDocs.docs.map(doc => doc.data())); // Log the pumpkinDocs
+
         const growerData = { ...growerDoc.data(), pumpkins: pumpkinDocs.docs.map(doc => doc.data()) };
         setGrowerData(growerData);
         setLoading(false);
       } catch (error) {
+        console.log('Error fetching grower data:', error.message); // Log the error message
         setError(error.message);
         toast.error(error.message);
         setLoading(false);
