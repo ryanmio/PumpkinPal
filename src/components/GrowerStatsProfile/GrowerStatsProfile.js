@@ -7,8 +7,8 @@ import TableSection from './TableSection';
 const GrowerStatsProfile = () => {
   const { growerData, loading } = useContext(GrowerContext);
 
-  if (loading) {
-    return <p>Loading...</p>;  // replace with your loading component
+  if (loading || !growerData) {
+    return <div>Loading...</div>;
   }
 
   return (
