@@ -6,7 +6,7 @@ import SummarySection from './SummarySection';
 import TableSection from './TableSection';
 
 const GrowerStatsProfile = () => {
-  const { growerName, setGrowerName, growerData, loading } = useContext(GrowerContext);
+  const { growerName, setGrowerName, growerData, loading, error } = useContext(GrowerContext);
   const { growerName: growerNameFromUrl } = useParams(); // get growerName from the URL
 
   useEffect(() => {
@@ -15,8 +15,16 @@ const GrowerStatsProfile = () => {
     }
   }, [growerName, growerNameFromUrl, setGrowerName]);
 
-  if (loading || !growerData) {
+  if (loading) {
     return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;  // Display error message when error exists
+  }
+
+  if (!growerData) {
+    return <div>No data found for this grower</div>;  // Display a message when no data is found for the grower
   }
 
   return (
