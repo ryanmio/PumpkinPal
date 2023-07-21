@@ -5,6 +5,8 @@ import { GrowerContext } from '../../contexts/GrowerContext';
 import Header from './Header';
 import SummarySection from './SummarySection';
 import TableSection from './TableSection';
+import fetchPumpkins from '../utilities/fetchPumpkins';
+import fetchGrowerData from '../utilities/fetchGrowerData';
 
 const MyStats = () => {
   const { user } = useContext(UserContext); // get the current user from the UserContext
@@ -27,13 +29,14 @@ const MyStats = () => {
     }
   }, [user]);
 
-  useEffect(() => {
-    if (growerId) {
-      // fetch the grower data based on the grower ID
-      // replace 'fetchGrowerData' with the actual function to fetch the grower data
-      fetchGrowerData(growerId);
-    }
-  }, [growerId]);
+    useEffect(() => {
+      if (growerId) {
+        // fetch the grower data based on the grower ID
+        fetchGrowerData(growerId).then(data => {
+          // do something with the data
+        });
+      }
+    }, [growerId]);
 
   const handleEdit = () => {
     setEditing(true);
