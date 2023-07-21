@@ -4,14 +4,16 @@ import { db } from '../firebase';
 
 export const GrowerContext = createContext();
 
-export const GrowerProvider = ({ children }) => {
+export const GrowerContextProvider = ({ children }) => {
   const [growerName, setGrowerName] = useState(null);
   const [growerData, setGrowerData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-        const fetchGrowerData = async () => {
+    console.log('Grower name in GrowerContextProvider:', growerName); // Log the growerName
+
+    const fetchGrowerData = async () => {
       setLoading(true);
       console.log('Fetching data for grower:', growerName); // Log the growerName
       try {
@@ -31,7 +33,6 @@ export const GrowerProvider = ({ children }) => {
         setLoading(false);
       }
     };
-
 
     if (growerName) {
       fetchGrowerData();
