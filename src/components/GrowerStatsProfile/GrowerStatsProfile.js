@@ -5,7 +5,11 @@ import SummarySection from './SummarySection';
 import TableSection from './TableSection';
 
 const GrowerStatsProfile = () => {
-  const { growerData } = useContext(GrowerContext);
+  const { growerData, loading } = useContext(GrowerContext);
+
+  if (loading) {
+    return <p>Loading...</p>;  // replace with your loading component
+  }
 
   return (
     <div>
