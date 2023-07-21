@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { db } from '../firebase';
+import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 
 export const GrowerContext = createContext();
 
@@ -18,12 +19,14 @@ export const GrowerContextProvider = ({ children }) => {
       console.log('Fetching data for grower:', growerName); // Log the growerName
       try {
         console.log('db instance:', db);
-        const growerDoc = await db.collection('Stats_Growers').doc(growerName).get();
+        const growerDocRef = doc(db, 'Stats_Growers', growerName);
+        const growerDoc = await getDoc(growerDocRef);
         console.log('Grower data from Firestore:', growerDoc.data()); // Log the growerDoc
         if (!growerDoc.exists) {
           throw new Error(`No grower found with the name "${growerName}".`);
         }
-        const pumpkinDocs = await db.collection('Stats_Pumpkins').where('grower', '==', growerName).get();
+        const pumpkinQuery = query(collection(db, 'Stats_Pumpkins'), where('grower', '==', growerName));
+        const pumpkinDocs = await getDocs(pumpkinQuery);
         console.log('Pumpkin data from Firestore:', pumpkinDocs.docs.map(doc => doc.data())); // Log the pumpkinDocs
         const growerData = { ...growerDoc.data(), pumpkins: pumpkinDocs.docs.map(doc => doc.data()) };
         setGrowerData(growerData);
