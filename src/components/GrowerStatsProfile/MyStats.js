@@ -13,6 +13,7 @@ const MyStats = () => {
   const { growerData, loading, error } = useContext(GrowerContext);
   const [growerId, setGrowerId] = useState(null);
   const [editing, setEditing] = useState(false);
+  const [pumpkins, setPumpkins] = useState([]); // add a state variable for the pumpkins
 
   useEffect(() => {
     if (user) {
@@ -29,14 +30,19 @@ const MyStats = () => {
     }
   }, [user]);
 
-    useEffect(() => {
-      if (growerId) {
-        // fetch the grower data based on the grower ID
-        fetchGrowerData(growerId).then(data => {
-          // do something with the data
-        });
-      }
-    }, [growerId]);
+  useEffect(() => {
+    if (growerId) {
+      // fetch the grower data based on the grower ID
+      fetchGrowerData(growerId).then(data => {
+        // do something with the data
+      });
+
+      // fetch the pumpkins associated with the grower ID
+      fetchPumpkins(growerId).then(pumpkins => {
+        setPumpkins(pumpkins);
+      });
+    }
+  }, [growerId]);
 
   const handleEdit = () => {
     setEditing(true);
@@ -49,6 +55,11 @@ const MyStats = () => {
     }).then(() => {
       setGrowerId(newGrowerId);
       setEditing(false);
+
+      // fetch the pumpkins associated with the new grower ID
+      fetchPumpkins(newGrowerId).then(pumpkins => {
+        setPumpkins(pumpkins);
+      });
     }).catch(error => {
       console.error('Error updating document:', error);
     });
@@ -70,7 +81,7 @@ const MyStats = () => {
     <div>
       <Header data={growerData} />
       <SummarySection data={growerData} />
-      <TableSection data={growerData.pumpkins} />
+      <TableSection data={pumpkins} /> {/* use the pumpkins state variable here */}
       {editing ? (
         <div>
           <input type="text" defaultValue={growerId} onChange={e => setGrowerId(e.target.value)} />
