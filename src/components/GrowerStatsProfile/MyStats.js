@@ -11,6 +11,7 @@ import useGrowerData from '../../utilities/useGrowerDataHook';
 
 const MyStats = () => {
   const { user, growerId, setGrowerId } = useContext(UserContext);
+    console.log('Rendering MyStats with user:', user);
   const [editingGrowerId, setEditingGrowerId] = useState(false);
   const { growerData, pumpkins, loading } = useGrowerData(growerId);
 
