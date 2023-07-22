@@ -5,8 +5,8 @@ import { GrowerContext } from '../../contexts/GrowerContext';
 import Header from './Header';
 import SummarySection from './SummarySection';
 import TableSection from './TableSection';
-import fetchPumpkins from '../utilities/fetchPumpkins';
-import fetchGrowerData from '../utilities/fetchGrowerData';
+import fetchPumpkins from '../../utilities/fetchPumpkins';
+import fetchGrowerData from '../../utilities/fetchGrowerData';
 
 const MyStats = () => {
   const { user } = useContext(UserContext); // get the current user from the UserContext
