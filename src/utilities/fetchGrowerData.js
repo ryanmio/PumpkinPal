@@ -1,14 +1,15 @@
 import { db } from '../firebase';
+import { doc, getDoc } from 'firebase/firestore'; // import getDoc
 
 console.log('db in fetchGrowerData.js:', db);
 
 const fetchGrowerData = async (growerId) => {
   try {
-    const growerRef = db.collection('Stats_Growers').doc(growerId);
-    const doc = await growerRef.get();
+    const growerRef = doc(db, 'Stats_Growers', growerId);
+    const docSnapshot = await getDoc(growerRef);
     
-    if (doc.exists) {
-      return doc.data(); // assuming doc.data() is the grower's data
+    if (docSnapshot.exists()) {
+      return docSnapshot.data(); // assuming docSnapshot.data() is the grower's data
     } else {
       console.log('No such document!');
       return null;

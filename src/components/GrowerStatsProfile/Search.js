@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../../firebase'; // assuming you have a firebase.js file where you initialize firebase
+import { collection, getDocs } from 'firebase/firestore'; // import collection, getDocs
 import { useNavigate } from 'react-router-dom';
 
 const Search = () => {
@@ -12,10 +13,10 @@ const Search = () => {
   }, []);
 
   const getSuggestions = async () => {
-    const contests = await db.collection('Stats_Contests').get();
+    const contests = await getDocs(collection(db, 'Stats_Contests'));
     const contestNames = contests.docs.map(doc => ({ type: 'contest', name: doc.data().name }));
 
-    const pumpkins = await db.collection('Stats_Pumpkins').get();
+    const pumpkins = await getDocs(collection(db, 'Stats_Pumpkins'));
     const pumpkinIds = pumpkins.docs.map(doc => ({ type: 'pumpkin', id: doc.data().id }));
 
     setSuggestions([...contestNames, ...pumpkinIds]);

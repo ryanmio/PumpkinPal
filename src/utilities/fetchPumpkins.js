@@ -1,12 +1,14 @@
 import { db } from '../firebase';
+import { collection, query, where, getDocs } from 'firebase/firestore'; // import collection, query, where, getDocs
 
 const fetchPumpkins = async (growerId) => {
   try {
-    const pumpkinsRef = db.collection('Stats_Pumpkins');
-    const snapshot = await pumpkinsRef.where('growerId', '==', growerId).get();
+    const pumpkinsRef = collection(db, 'Stats_Pumpkins');
+    const q = query(pumpkinsRef, where('growerId', '==', growerId));
+    const querySnapshot = await getDocs(q);
     
     const pumpkins = [];
-    snapshot.forEach(doc => {
+    querySnapshot.forEach(doc => {
       pumpkins.push(doc.data()); // assuming doc.data() is the pumpkin's data
     });
 

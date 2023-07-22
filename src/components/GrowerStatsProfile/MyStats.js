@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { db } from '../../firebase';
+import { doc, getDoc } from 'firebase/firestore';
 import { UserContext } from '../../contexts/UserContext';
 import { GrowerContext } from '../../contexts/GrowerContext';
 import Header from './Header';
@@ -19,11 +20,10 @@ const MyStats = () => {
 
   useEffect(() => {
     if (user) {
-         console.log('db before calling collection:', db);
       // fetch the grower ID from the user's profile in Firestore
-      db.collection('Users').doc(user.uid).get().then(doc => {
-        if (doc.exists) {
-          setGrowerId(doc.data().growerId);
+      getDoc(doc(db, 'Users', user.uid)).then(docSnapshot => {
+        if (docSnapshot.exists()) {
+          setGrowerId(docSnapshot.data().growerId);
         } else {
           console.log('No such document!');
         }
@@ -53,7 +53,7 @@ const MyStats = () => {
 
   const handleSave = (newGrowerId) => {
     // update the grower ID in Firestore
-    db.collection('Users').doc(user.uid).update({
+   updateDoc(doc(db, 'Users', user.uid), {
       growerId: newGrowerId
     }).then(() => {
       setGrowerId(newGrowerId);

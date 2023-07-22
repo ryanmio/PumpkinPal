@@ -1,4 +1,5 @@
 import { db } from '../firebase';
+import { collection, query, where, getDocs } from 'firebase/firestore'; // import collection, query, where, getDocs
 import debounce from 'lodash.debounce';
 
 // Function to convert a string to title case
@@ -13,11 +14,12 @@ const getGrowerSuggestions = debounce(async (inputValue, callback) => {
     // Convert inputValue to title case
     const titleCaseInput = toTitleCase(inputValue);
 
-    const growerRef = db.collection('Stats_Growers');
-    const snapshot = await growerRef.where('lastName', '>=', titleCaseInput).where('lastName', '<=', titleCaseInput + '\uf8ff').get();
+    const growerRef = collection(db, 'Stats_Growers');
+    const q = query(growerRef, where('lastName', '>=', titleCaseInput), where('lastName', '<=', titleCaseInput + '\uf8ff'));
+    const querySnapshot = await getDocs(q);
     
     const growers = [];
-    snapshot.forEach(doc => {
+    querySnapshot.forEach(doc => {
       growers.push({ name: doc.id }); // assuming doc.id is the grower's name
     });
 
