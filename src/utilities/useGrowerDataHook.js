@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import fetchPumpkins from '../../utilities/fetchPumpkins';
-import fetchGrowerData from '../../utilities/fetchGrowerData';
+import fetchPumpkins from './fetchPumpkins';
+import fetchGrowerData from './fetchGrowerData';
 
 export const useGrowerData = (userId) => {
   const [loading, setLoading] = useState(true);
