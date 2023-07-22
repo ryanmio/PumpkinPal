@@ -20,7 +20,8 @@ const getGrowerSuggestions = debounce(async (inputValue, callback) => {
     
     const growers = [];
     querySnapshot.forEach(doc => {
-      growers.push({ name: doc.id }); // assuming doc.id is the grower's name
+      const data = doc.data();
+      growers.push({ id: data.id }); // only include the id in the suggestion
     });
 
     callback(growers);
@@ -29,5 +30,6 @@ const getGrowerSuggestions = debounce(async (inputValue, callback) => {
     callback([]);
   }
 }, 300);
+
 
 export default getGrowerSuggestions;
