@@ -12,7 +12,7 @@ import useGrowerData from '../../utilities/useGrowerDataHook';
 const MyStats = () => {
   const { user } = useContext(UserContext);
   const [editingGrowerId, setEditingGrowerId] = useState(false);
-  const { growerId, growerData, pumpkins, loading } = useGrowerData(growerId);
+  const { growerId, growerData, pumpkins, loading } = useGrowerData(user.uid); // Pass user.uid instead of growerId
 
   const handleEdit = () => {
     setEditingGrowerId(true);
