@@ -1,14 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { db } from '../../firebase';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 import { UserContext } from '../../contexts/UserContext';
 import Header from './Header';
 import SummarySection from './SummarySection';
 import TableSection from './TableSection';
-import fetchPumpkins from '../../utilities/fetchPumpkins';
-import fetchGrowerData from '../../utilities/fetchGrowerData';
 import GrowerSearch from './GrowerSearch';
-import Spinner from '../Spinner'; // Import your Spinner component
+import Spinner from '../Spinner';
+import useGrowerDataHook from '../../utilities/useGrowerDataHook';
 
 console.log('db in MyStats.js:', db);
 
@@ -16,9 +15,22 @@ const MyStats = () => {
   const { user } = useContext(UserContext);
   const [growerId, setGrowerId] = useState(null);
   const [editingGrowerId, setEditingGrowerId] = useState(false);
-  const [pumpkins, setPumpkins] = useState([]);
-  const [growerData, setGrowerData] = useState(null); 
-  const [loading, setLoading] = useState(true); // Add loading state variable
+  const { growerData, pumpkins, loading } = useGrowerDataHook(growerId);
+
+  const handleEdit = () => {
+    setEditingGrowerId(true);
+  };
+
+  const handleSave = (newGrowerId) => {
+    updateDoc(doc(db, 'Users', user.uid), {
+      growerId: newGrowerId
+    }).then(() => {
+      setGrowerId(newGrowerId);
+      setEditingGrowerId(false);
+    }).catch(error => {
+      console.error('Error updating document:', error);
+    });
+  };
 
   useEffect(() => {
     if (user) {
@@ -34,42 +46,8 @@ const MyStats = () => {
     }
   }, [user]);
 
-  useEffect(() => {
-    if (growerId) {
-      fetchGrowerData(growerId).then(data => {
-        setGrowerData(data);
-        setLoading(false); // Set loading to false once the data is fetched
-      });
-
-      fetchPumpkins(growerId).then(pumpkins => {
-        setPumpkins(pumpkins);
-      });
-    }
-  }, [growerId]);
-
-  const handleEdit = () => {
-    setEditingGrowerId(true);
-  };
-
-  const handleSave = (newGrowerId) => {
-    setLoading(true); // Set loading to true when saving a new growerId
-    updateDoc(doc(db, 'Users', user.uid), {
-      growerId: newGrowerId
-    }).then(() => {
-      setGrowerId(newGrowerId);
-      setEditingGrowerId(false);
-
-      fetchPumpkins(newGrowerId).then(pumpkins => {
-        setPumpkins(pumpkins);
-        setLoading(false); // Set loading to false once the pumpkins are fetched
-      });
-    }).catch(error => {
-      console.error('Error updating document:', error);
-    });
-  };
-
   if (loading) {
-    return <Spinner />; // Show the spinner when loading
+    return <Spinner />;
   }
 
   if (editingGrowerId || !growerId) {
