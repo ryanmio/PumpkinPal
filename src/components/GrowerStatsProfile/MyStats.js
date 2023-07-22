@@ -18,7 +18,7 @@ const MyStats = () => {
   useEffect(() => {
     if (user) {
       // fetch the grower ID from the user's profile in Firestore
-      firestore.collection('Users').doc(user.uid).get().then(doc => {
+      db.collection('Users').doc(user.uid).get().then(doc => {
         if (doc.exists) {
           setGrowerId(doc.data().growerId);
         } else {
@@ -50,7 +50,7 @@ const MyStats = () => {
 
   const handleSave = (newGrowerId) => {
     // update the grower ID in Firestore
-    firestore.collection('Users').doc(user.uid).update({
+    db.collection('Users').doc(user.uid).update({
       growerId: newGrowerId
     }).then(() => {
       setGrowerId(newGrowerId);
