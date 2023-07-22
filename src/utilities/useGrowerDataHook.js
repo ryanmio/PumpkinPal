@@ -5,7 +5,7 @@ import fetchPumpkins from './fetchPumpkins';
 import fetchGrowerData from './fetchGrowerData';
 
 export default function useGrowerData(userId) {
-    console.log("Calling useGrowerData with userId:", userId);
+  console.log("Calling useGrowerData with userId:", userId);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [growerId, setGrowerId] = useState(null);
@@ -13,7 +13,15 @@ export default function useGrowerData(userId) {
   const [pumpkins, setPumpkins] = useState([]);
 
   useEffect(() => {
-      console.log("Running useEffect in useGrowerData with userId:", userId);
+    console.log("Running useEffect in useGrowerData with userId:", userId);
+
+    // Immediately stop loading and return if there's no userId
+    if (!userId) {
+      console.log("No userId, stopping loading");
+      setLoading(false);
+      return;
+    }
+
     const fetchData = async () => {
       console.log('fetchData called with userId:', userId);
       try {
@@ -48,9 +56,7 @@ export default function useGrowerData(userId) {
       }
     };
 
-    if (userId) {
-      fetchData();
-    }
+    fetchData();
   }, [userId]); // We only rerun the effect when userId changes
 
   return { growerId, growerData, pumpkins, loading, error };
