@@ -1,4 +1,4 @@
-import { firestore } from '../firebase'; // replace with your Firebase import
+import { firestore } from './firebase'; // replace with your Firebase import
 
 const fetchGrowerData = async (growerId) => {
   try {

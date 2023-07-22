@@ -1,4 +1,4 @@
-import { firestore } from '../firebase';
+import { firestore } from './firebase';
 
 const fetchPumpkins = async (growerId) => {
   try {
