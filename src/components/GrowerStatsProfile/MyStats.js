@@ -19,6 +19,7 @@ const MyStats = () => {
 
   useEffect(() => {
     if (user) {
+         console.log('db before calling collection:', db);
       // fetch the grower ID from the user's profile in Firestore
       db.collection('Users').doc(user.uid).get().then(doc => {
         if (doc.exists) {
