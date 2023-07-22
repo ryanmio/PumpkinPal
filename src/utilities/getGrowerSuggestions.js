@@ -9,27 +9,29 @@ function toTitleCase(str) {
   });
 }
 
-const getGrowerSuggestions = debounce(async (inputValue) => {
-  try {
-    const titleCaseInput = toTitleCase(inputValue);
+const getGrowerSuggestions = debounce((inputValue) => {
+  return new Promise((resolve, reject) => {
+    try {
+      // Convert inputValue to title case
+      const titleCaseInput = toTitleCase(inputValue);
 
-    const growerRef = collection(db, 'Stats_Growers');
-    const q = query(growerRef, where('lastName', '>=', titleCaseInput), where('lastName', '<=', titleCaseInput + '\uf8ff'));
-    const querySnapshot = await getDocs(q);
+      const growerRef = collection(db, 'Stats_Growers');
+      const q = query(growerRef, where('lastName', '>=', titleCaseInput), where('lastName', '<=', titleCaseInput + '\uf8ff'));
+      const querySnapshot = await getDocs(q);
+      
+      const growers = [];
+      querySnapshot.forEach(doc => {
+        const data = doc.data();
+        growers.push({ id: data.id }); // only include the id in the suggestion
+      });
 
-    const growers = [];
-    querySnapshot.forEach(doc => {
-      const data = doc.data();
-      growers.push({ id: data.id });
-    });
-
-    console.log('Returning growers:', growers);  // Add this log
-    return growers;
-  } catch (error) {
-    console.error('Caught an error:', error);  // Add this log
-    console.error('Error fetching grower suggestions:', error);
-    return [];
-  }
+      resolve(growers);
+    } catch (error) {
+      console.error('Error fetching grower suggestions:', error);
+      reject(error);
+    }
+  });
 }, 300);
+
 
 export default getGrowerSuggestions;
