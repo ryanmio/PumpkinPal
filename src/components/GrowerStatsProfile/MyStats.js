@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { firestore } from '../../firebase';
+import { db } from '../../firebase';
 import { UserContext } from '../../contexts/UserContext';
 import { GrowerContext } from '../../contexts/GrowerContext';
 import Header from './Header';

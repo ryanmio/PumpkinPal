@@ -1,4 +1,4 @@
-import { firestore } from '../firebase'; // replace with your Firebase import
+import { db } from '../firebase';
 import debounce from 'lodash.debounce';
 
 // Function to convert a string to title case
