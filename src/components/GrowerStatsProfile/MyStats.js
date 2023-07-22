@@ -19,15 +19,15 @@ const MyStats = () => {
   };
 
   const handleSave = (newGrowerId) => {
-    updateDoc(doc(db, 'Users', user.uid), {
-      growerId: newGrowerId
-    }).then(() => {
-      setEditingGrowerId(false);
-      setGrowerId(newGrowerId);
-    }).catch(error => {
-      console.error('Error updating document:', error);
-    });
-  };
+  updateDoc(doc(db, 'Users', user.uid), {
+    growerId: newGrowerId
+  }).then(() => {
+    setEditingGrowerId(false);
+    setGrowerId(newGrowerId);
+  }).catch(error => {
+    console.error('Error updating document:', error);
+  });
+};
 
   if (loading) {
     return <Spinner />;
