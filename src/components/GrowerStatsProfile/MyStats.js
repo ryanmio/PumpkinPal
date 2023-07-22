@@ -72,6 +72,7 @@ const MyStats = () => {
       {growerData && (
         <>
           <Header data={growerData} />
+      console.log('growerData:', growerData);
           <SummarySection data={growerData} />
           <TableSection data={pumpkins} />
           {editing ? (
