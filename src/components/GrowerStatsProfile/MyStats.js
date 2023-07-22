@@ -23,7 +23,6 @@ const MyStats = () => {
   updateDoc(doc(db, 'Users', user.uid), {
     growerId: newGrowerId
   }).then(() => {
-    setEditingGrowerId(false);
     setGrowerId(newGrowerId);
   }).catch(error => {
     console.error('Error updating document:', error);
