@@ -23,8 +23,10 @@ const getGrowerSuggestions = debounce(async (inputValue) => {
       growers.push({ id: data.id });
     });
 
+    console.log('Returning growers:', growers);  // Add this log
     return growers;
   } catch (error) {
+    console.error('Caught an error:', error);  // Add this log
     console.error('Error fetching grower suggestions:', error);
     return [];
   }
