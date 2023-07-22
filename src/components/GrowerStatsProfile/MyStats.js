@@ -33,8 +33,8 @@ const MyStats = () => {
   }
 
   if (editingGrowerId || !growerId) {
-    return <GrowerSearch user={user} setGrowerId={handleSave} />;
-  }
+  return <GrowerSearch user={user} setGrowerId={handleSave} growerId={growerId} />;
+}
 
   return (
     <div>
