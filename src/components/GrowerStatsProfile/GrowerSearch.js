@@ -38,27 +38,27 @@ const GrowerSearch = ({ user, setGrowerId }) => {
 
   useEffect(() => {
   if (state.growerName) {
-    getGrowerSuggestions(toTitleCase(state.growerName))
-    .then((suggestions) => {
-      dispatch({ type: 'SET_SUGGESTIONS', payload: suggestions });
-    })
-    .catch((error) => {
-      console.error('Error fetching grower suggestions:', error);
+    getGrowerSuggestions(toTitleCase(state.growerName), (error, suggestions) => {
+      if (error) {
+        console.error('Error fetching grower suggestions:', error);
+      } else {
+        dispatch({ type: 'SET_SUGGESTIONS', payload: suggestions });
+      }
     });
   }
 }, [state.growerName]);
 
-useEffect(() => {
-  if (state.selectedGrower && state.selectedGrower.id) {
-    fetchPumpkins(state.selectedGrower.id)
-    .then((pumpkins) => {
-      dispatch({ type: 'SET_PUMPKIN_PREVIEW', payload: pumpkins });
-    })
-    .catch((error) => {
-      console.error('Error fetching pumpkins:', error);
-    });
-  }
-}, [state.selectedGrower]);
+    useEffect(() => {
+      if (state.selectedGrower && state.selectedGrower.id) {
+        fetchPumpkins(state.selectedGrower.id)
+        .then((pumpkins) => {
+          dispatch({ type: 'SET_PUMPKIN_PREVIEW', payload: pumpkins });
+        })
+        .catch((error) => {
+          console.error('Error fetching pumpkins:', error);
+        });
+      }
+    }, [state.selectedGrower]);
 
 
   const handleSelectGrower = (grower) => {
