@@ -21,6 +21,8 @@ import { UserProvider } from './contexts/UserContext';
 import { GrowerContextProvider } from './contexts/GrowerContext';
 import GrowerStatsProfile from './components/GrowerStatsProfile/GrowerStatsProfile';
 import GrowerSearch from './components/GrowerStatsProfile/GrowerSearch';
+import Search from './components/GrowerStatsProfile/Search';
+import MyStats from './components/GrowerStatsProfile/MyStats';
 
 
 // Initialize GA once when the App.js module is loaded
@@ -66,7 +68,9 @@ function App() {
               <Route path="/user-profile" element={<UserProfile />} />
               <Route path="/edit-measurement/:pumpkinId/:measurementId" element={<EditMeasurement />} />
               <Route path="/grower/:growerName" element={<GrowerStatsProfile />} />
-              <Route path="/search" element={<GrowerSearch />} />
+              <Route path="/growersearch" element={<GrowerSearch />} />
+              <Route path="/search" element={<Search />} />
+              <Route path="/my-stats" element={<MyStats />}
             </Routes>
           </GrowerContextProvider>
         </UserProvider>
