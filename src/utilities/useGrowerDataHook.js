@@ -4,7 +4,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import fetchPumpkins from './fetchPumpkins';
 import fetchGrowerData from './fetchGrowerData';
 
-export const useGrowerData = (userId) => {
+export default function useGrowerData(userId) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [growerId, setGrowerId] = useState(null);
