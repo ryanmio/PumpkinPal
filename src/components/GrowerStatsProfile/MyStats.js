@@ -8,7 +8,7 @@ import TableSection from './TableSection';
 import fetchPumpkins from '../../utilities/fetchPumpkins';
 import fetchGrowerData from '../../utilities/fetchGrowerData';
 import GrowerSearch from './GrowerSearch';
-import Spinner from './Spinner'; // Import your Spinner component
+import Spinner from '../Spinner'; // Import your Spinner component
 
 console.log('db in MyStats.js:', db);
 
