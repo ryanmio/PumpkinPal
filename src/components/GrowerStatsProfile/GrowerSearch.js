@@ -11,7 +11,7 @@ function toTitleCase(str) {
   });
 }
 
-const GrowerSearch = ({ user, updateGrowerId }) => {
+const GrowerSearch = ({ user, setGrowerId }) => {
   const [growerName, setGrowerName] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectedGrower, setSelectedGrower] = useState(null);
@@ -35,15 +35,15 @@ const GrowerSearch = ({ user, updateGrowerId }) => {
   };
 
   const handleConfirm = () => {
-  updateDoc(doc(db, 'Users', user.uid), {
-    growerId: selectedGrower.id
-  }).then(() => {
-    setGrowerId(selectedGrower.id); // call setGrowerId instead of updateGrowerId
-  }).catch(error => {
-    console.error('Error updating document:', error);
-  });
-};
-
+    updateDoc(doc(db, 'Users', user.uid), {
+      growerId: selectedGrower.id
+    }).then(() => {
+      setGrowerId(selectedGrower.id); // call setGrowerId
+    }).catch(error => {
+      console.error('Error updating document:', error);
+    });
+  };
+    
   return (
     <div>
       <h1>Search for a Grower</h1>
