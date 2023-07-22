@@ -15,7 +15,7 @@ const MyStats = () => {
   const { user } = useContext(UserContext);
   const [growerId, setGrowerId] = useState(null);
   const [editingGrowerId, setEditingGrowerId] = useState(false);
-  const { growerData, pumpkins, loading } = useGrowerDataHook(growerId);
+  const { growerData, pumpkins, loading } = useGrowerData(growerId);
 
   const handleEdit = () => {
     setEditingGrowerId(true);
