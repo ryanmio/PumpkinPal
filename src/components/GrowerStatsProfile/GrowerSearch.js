@@ -46,19 +46,19 @@ const GrowerSearch = ({ user, setGrowerId }) => {
         console.error('Error fetching grower suggestions:', error);
       });
     }
-}, [state.growerName]);
+  }, [state.growerName]);
 
   useEffect(() => {
-  if (state.selectedGrower && state.selectedGrower.id) {
-    fetchPumpkins(state.selectedGrower.id)
-    .then((pumpkins) => {
-      dispatch({ type: 'SET_PUMPKIN_PREVIEW', payload: pumpkins });
-    })
-    .catch((error) => {
-      console.error('Error fetching pumpkins:', error);
-    });
-  }
-}, [state.selectedGrower]);
+    if (state.selectedGrower && state.selectedGrower.id) {
+      fetchPumpkins(state.selectedGrower.id)
+      .then((pumpkins) => {
+        dispatch({ type: 'SET_PUMPKIN_PREVIEW', payload: pumpkins });
+      })
+      .catch((error) => {
+        console.error('Error fetching pumpkins:', error);
+      });
+    }
+  }, [state.selectedGrower]);
 
   const handleSelectGrower = (grower) => {
     dispatch({ type: 'SET_SELECTED_GROWER', payload: grower });
