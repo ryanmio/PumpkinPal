@@ -4,6 +4,13 @@ import fetchPumpkins from '../../utilities/fetchPumpkins';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 
+// Function to convert a string to title case
+function toTitleCase(str) {
+  return str.replace(/\w\S*/g, function(txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+}
+
 const GrowerSearch = ({ user, setGrowerId }) => { // accept user as a prop
   const [growerName, setGrowerName] = useState('');
   const [suggestions, setSuggestions] = useState([]);
@@ -12,7 +19,7 @@ const GrowerSearch = ({ user, setGrowerId }) => { // accept user as a prop
 
   useEffect(() => {
     if (growerName) {
-      getGrowerSuggestions(growerName, setSuggestions);
+      getGrowerSuggestions(toTitleCase(growerName), setSuggestions);
     }
   }, [growerName]);
 
