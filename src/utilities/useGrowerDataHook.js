@@ -5,6 +5,7 @@ import fetchPumpkins from './fetchPumpkins';
 import fetchGrowerData from './fetchGrowerData';
 
 export default function useGrowerData(userId) {
+    console.log("Calling useGrowerData with userId:", userId);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [growerId, setGrowerId] = useState(null);
@@ -12,6 +13,7 @@ export default function useGrowerData(userId) {
   const [pumpkins, setPumpkins] = useState([]);
 
   useEffect(() => {
+      console.log("Running useEffect in useGrowerData with userId:", userId);
     const fetchData = async () => {
       console.log('fetchData called with userId:', userId);
       try {
@@ -33,7 +35,7 @@ export default function useGrowerData(userId) {
           setLoading(false); // Move setLoading(false) here
         } else {
           // If the user hasn't set a growerId yet, we're not loading and there's no data.
-          console.log('No growerId found');
+          console.log("No growerId found for user:", userId);
           setLoading(false);
           setGrowerId(null);
           setGrowerData(null);
