@@ -11,17 +11,17 @@ function toTitleCase(str) {
   });
 }
 
-const GrowerSearch = ({ user, setGrowerId }) => { // accept user as a prop
-  const [growerName, setGrowerName] = useState('');
+const GrowerSearch = ({ user, setGrowerId }) => {
+  const [growerId, setGrowerId] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectedGrower, setSelectedGrower] = useState(null);
   const [pumpkinPreview, setPumpkinPreview] = useState([]);
 
   useEffect(() => {
-    if (growerName) {
-      getGrowerSuggestions(toTitleCase(growerName), setSuggestions);
+    if (growerId) {
+      getGrowerSuggestions(growerId, setSuggestions);
     }
-  }, [growerName]);
+  }, [growerId]);
 
   useEffect(() => {
     if (selectedGrower) {
@@ -48,18 +48,18 @@ const GrowerSearch = ({ user, setGrowerId }) => { // accept user as a prop
       <h1>Search for a Grower</h1>
       <input
         type="text"
-        value={growerName}
-        onChange={(e) => setGrowerName(e.target.value)}
-        placeholder="Enter grower name"
+        value={growerId}
+        onChange={(e) => setGrowerId(e.target.value)}
+        placeholder="Enter grower ID"
       />
       {suggestions.map(suggestion => (
         <div key={suggestion.id} onClick={() => handleSelectGrower(suggestion)}>
-          {suggestion.name}
+          {suggestion.id} // display the id in the suggestion list
         </div>
       ))}
       {selectedGrower && (
         <div>
-          <h2>Selected Grower: {selectedGrower.name}</h2>
+          <h2>Selected Grower: {selectedGrower.id}</h2>
           <h3>Pumpkin Preview:</h3>
           {pumpkinPreview.map(pumpkin => (
             <div key={pumpkin.id}>
