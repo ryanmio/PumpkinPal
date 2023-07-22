@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
-import { db, doc, updateDoc } from '../../firebase'; // Add this line
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase';
 import { UserContext } from '../../contexts/UserContext';
 import Header from './Header';
 import SummarySection from './SummarySection';
