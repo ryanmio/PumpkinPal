@@ -11,17 +11,17 @@ function toTitleCase(str) {
   });
 }
 
-const GrowerSearch = ({ user, updateGrowerId }) => { // renamed setGrowerId prop to updateGrowerId
-  const [growerId, setGrowerId] = useState('');
+const GrowerSearch = ({ user, updateGrowerId }) => {
+  const [growerName, setGrowerName] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectedGrower, setSelectedGrower] = useState(null);
   const [pumpkinPreview, setPumpkinPreview] = useState([]);
 
   useEffect(() => {
-    if (growerId) {
-      getGrowerSuggestions(growerId, setSuggestions);
+    if (growerName) {
+      getGrowerSuggestions(toTitleCase(growerName), setSuggestions);
     }
-  }, [growerId]);
+  }, [growerName]);
 
   useEffect(() => {
     if (selectedGrower) {
@@ -37,7 +37,7 @@ const GrowerSearch = ({ user, updateGrowerId }) => { // renamed setGrowerId prop
     updateDoc(doc(db, 'Users', user.uid), {
       growerId: selectedGrower.id
     }).then(() => {
-      updateGrowerId(selectedGrower.id); // use updateGrowerId here
+      updateGrowerId(selectedGrower.id);
     }).catch(error => {
       console.error('Error updating document:', error);
     });
@@ -48,13 +48,13 @@ const GrowerSearch = ({ user, updateGrowerId }) => { // renamed setGrowerId prop
       <h1>Search for a Grower</h1>
       <input
         type="text"
-        value={growerId}
-        onChange={(e) => setGrowerId(e.target.value)}
-        placeholder="Enter grower ID"
+        value={growerName}
+        onChange={(e) => setGrowerName(e.target.value)}
+        placeholder="Enter grower name"
       />
       {suggestions.map(suggestion => (
         <div key={suggestion.id} onClick={() => handleSelectGrower(suggestion)}>
-          {suggestion.id} // display the id in the suggestion list
+          {suggestion.id} {/* display the id in the suggestion list */}
         </div>
       ))}
       {selectedGrower && (
