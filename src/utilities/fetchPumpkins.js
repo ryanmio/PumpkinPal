@@ -5,7 +5,7 @@ const fetchPumpkins = async (growerId) => {
   console.log('fetchPumpkins called with growerId:', growerId); // log statement
   try {
     const pumpkinsRef = collection(db, 'Stats_Pumpkins');
-    const q = query(pumpkinsRef, where('growerId', '==', growerId));
+    const q = query(pumpkinsRef, where('grower', '==', growerId));
     const querySnapshot = await getDocs(q);
     
     const pumpkins = [];
