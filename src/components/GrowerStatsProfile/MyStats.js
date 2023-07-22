@@ -2,26 +2,24 @@ import React, { useContext, useEffect, useState } from 'react';
 import { db } from '../../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { UserContext } from '../../contexts/UserContext';
-import { GrowerContext } from '../../contexts/GrowerContext';
 import Header from './Header';
 import SummarySection from './SummarySection';
 import TableSection from './TableSection';
 import fetchPumpkins from '../../utilities/fetchPumpkins';
 import fetchGrowerData from '../../utilities/fetchGrowerData';
-import GrowerSearch from './GrowerSearch'; // import GrowerSearch
+import GrowerSearch from './GrowerSearch';
 
 console.log('db in MyStats.js:', db);
 
 const MyStats = () => {
-  const { user } = useContext(UserContext); // get the current user from the UserContext
-  const { growerData, loading, error } = useContext(GrowerContext);
+  const { user } = useContext(UserContext);
   const [growerId, setGrowerId] = useState(null);
   const [editing, setEditing] = useState(false);
-  const [pumpkins, setPumpkins] = useState([]); // add a state variable for the pumpkins
+  const [pumpkins, setPumpkins] = useState([]);
+  const [growerData, setGrowerData] = useState(null); // add a state variable for the grower data
 
   useEffect(() => {
     if (user) {
-      // fetch the grower ID from the user's profile in Firestore
       getDoc(doc(db, 'Users', user.uid)).then(docSnapshot => {
         if (docSnapshot.exists()) {
           setGrowerId(docSnapshot.data().growerId);
@@ -36,12 +34,10 @@ const MyStats = () => {
 
   useEffect(() => {
     if (growerId) {
-      // fetch the grower data based on the grower ID
       fetchGrowerData(growerId).then(data => {
-        // do something with the data
+        setGrowerData(data); // save the data in the state variable
       });
 
-      // fetch the pumpkins associated with the grower ID
       fetchPumpkins(growerId).then(pumpkins => {
         setPumpkins(pumpkins);
       });
@@ -53,14 +49,12 @@ const MyStats = () => {
   };
 
   const handleSave = (newGrowerId) => {
-    // update the grower ID in Firestore
-   updateDoc(doc(db, 'Users', user.uid), {
+    updateDoc(doc(db, 'Users', user.uid), {
       growerId: newGrowerId
     }).then(() => {
       setGrowerId(newGrowerId);
       setEditing(false);
 
-      // fetch the pumpkins associated with the new grower ID
       fetchPumpkins(newGrowerId).then(pumpkins => {
         setPumpkins(pumpkins);
       });
@@ -69,33 +63,29 @@ const MyStats = () => {
     });
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
   if (!growerId) {
-    return <GrowerSearch user={user} setGrowerId={setGrowerId} />; // render GrowerSearch if growerId is not set
+    return <GrowerSearch user={user} setGrowerId={setGrowerId} />;
   }
 
   return (
     <div>
-      <Header data={growerData} />
-      <SummarySection data={growerData} />
-      <TableSection data={pumpkins} /> {/* use the pumpkins state variable here */}
-      {editing ? (
-        <div>
-          <input type="text" defaultValue={growerId} onChange={e => setGrowerId(e.target.value)} />
-          <button onClick={() => handleSave(growerId)}>Save</button>
-        </div>
-      ) : (
-        <div>
-          <p>Grower ID: {growerId}</p>
-          <button onClick={handleEdit}>Edit</button>
-        </div>
+      {growerData && (
+        <>
+          <Header data={growerData} />
+          <SummarySection data={growerData} />
+          <TableSection data={pumpkins} />
+          {editing ? (
+            <div>
+              <input type="text" defaultValue={growerId} onChange={e => setGrowerId(e.target.value)} />
+              <button onClick={() => handleSave(growerId)}>Save</button>
+            </div>
+          ) : (
+            <div>
+              <p>Grower ID: {growerId}</p>
+              <button onClick={handleEdit}>Edit</button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
