@@ -9,13 +9,10 @@ import GrowerSearch from './GrowerSearch';
 import Spinner from '../Spinner';
 import useGrowerData from '../../utilities/useGrowerDataHook';
 
-console.log('db in MyStats.js:', db);
-
 const MyStats = () => {
   const { user } = useContext(UserContext);
-  const [growerId, setGrowerId] = useState(null);
   const [editingGrowerId, setEditingGrowerId] = useState(false);
-  const { growerData, pumpkins, loading } = useGrowerData(growerId);
+  const { growerId, growerData, pumpkins, loading } = useGrowerData(user?.uid); // Use the user's ID to fetch the grower data
 
   const handleEdit = () => {
     setEditingGrowerId(true);
@@ -25,26 +22,11 @@ const MyStats = () => {
     updateDoc(doc(db, 'Users', user.uid), {
       growerId: newGrowerId
     }).then(() => {
-      setGrowerId(newGrowerId);
       setEditingGrowerId(false);
     }).catch(error => {
       console.error('Error updating document:', error);
     });
   };
-
-  useEffect(() => {
-    if (user) {
-      getDoc(doc(db, 'Users', user.uid)).then(docSnapshot => {
-        if (docSnapshot.exists()) {
-          setGrowerId(docSnapshot.data().growerId);
-        } else {
-          console.log('No such document!');
-        }
-      }).catch(error => {
-        console.log('Error getting document:', error);
-      });
-    }
-  }, [user]);
 
   if (loading) {
     return <Spinner />;
