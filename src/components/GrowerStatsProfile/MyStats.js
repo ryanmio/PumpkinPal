@@ -8,6 +8,7 @@ import SummarySection from './SummarySection';
 import TableSection from './TableSection';
 import fetchPumpkins from '../../utilities/fetchPumpkins';
 import fetchGrowerData from '../../utilities/fetchGrowerData';
+import GrowerSearch from './GrowerSearch'; // import GrowerSearch
 
 console.log('db in MyStats.js:', db);
 
@@ -76,8 +77,8 @@ const MyStats = () => {
     return <div>Error: {error}</div>;
   }
 
-  if (!growerData) {
-    return <div>No data found for this grower</div>;
+  if (!growerId) {
+    return <GrowerSearch user={user} setGrowerId={setGrowerId} />; // render GrowerSearch if growerId is not set
   }
 
   return (
