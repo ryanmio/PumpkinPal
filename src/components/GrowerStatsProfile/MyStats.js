@@ -72,7 +72,6 @@ const MyStats = () => {
       {growerData && (
         <>
           <Header data={growerData} />
-      console.log('growerData:', growerData);
           <SummarySection data={growerData} pumpkins={pumpkins} />
           <TableSection data={pumpkins} />
           {editing ? (
