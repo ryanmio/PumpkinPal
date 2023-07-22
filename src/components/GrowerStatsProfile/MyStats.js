@@ -13,7 +13,7 @@ const MyStats = () => {
   const { user, growerId, setGrowerId } = useContext(UserContext);
     console.log('Rendering MyStats with user:', user);
   const [editingGrowerId, setEditingGrowerId] = useState(false);
-  const { growerData, pumpkins, loading } = user ? useGrowerData(user.uid) : { loading: true };
+  const { growerData, pumpkins, loading } = useGrowerData(user?.uid);
 
   const handleEdit = () => {
     setEditingGrowerId(true);
