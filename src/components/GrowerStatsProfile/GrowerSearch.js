@@ -93,10 +93,10 @@ const GrowerSearch = ({ user, setGrowerId }) => {
           <h2>Selected Grower: {state.selectedGrower.id}</h2>
           <h3>Pumpkin Preview:</h3>
           {state.pumpkinPreview.map(pumpkin => (
-          <div key={pumpkin.id}>
-            ID: {pumpkin.id}, Year: {pumpkin.year}
-          </div>
-        ))}
+            <div key={pumpkin.id}>
+              ID: {pumpkin.id}, Year: {pumpkin.year}
+            </div>
+          ))}
           <button onClick={handleConfirm}>Confirm</button>
         </div>
       )}
