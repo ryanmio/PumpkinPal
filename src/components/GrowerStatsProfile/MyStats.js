@@ -8,6 +8,8 @@ import TableSection from './TableSection';
 import fetchPumpkins from '../../utilities/fetchPumpkins';
 import fetchGrowerData from '../../utilities/fetchGrowerData';
 
+console.log('db in MyStats.js:', db);
+
 const MyStats = () => {
   const { user } = useContext(UserContext); // get the current user from the UserContext
   const { growerData, loading, error } = useContext(GrowerContext);

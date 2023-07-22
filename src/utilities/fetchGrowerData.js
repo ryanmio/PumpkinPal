@@ -1,4 +1,6 @@
-import { db } from '../firebase'; // replace with your Firebase import
+import { db } from '../firebase';
+
+console.log('db in fetchGrowerData.js:', db);
 
 const fetchGrowerData = async (growerId) => {
   try {
