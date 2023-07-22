@@ -28,57 +28,63 @@ function reducer(state, action) {
       return { ...state, selectedGrower: action.payload };
     case 'SET_PUMPKIN_PREVIEW':
       return { ...state, pumpkinPreview: action.payload };
+    case 'RESET':
+      return initialState;
     default:
       throw new Error();
   }
 }
 
-const GrowerSearch = ({ user, setGrowerId }) => {
+const GrowerSearch = ({ user, setGrowerId, growerId }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-  if (state.growerName) {
-    getGrowerSuggestions(toTitleCase(state.growerName), (error, suggestions) => {
-      if (error) {
-        console.error('Error fetching grower suggestions:', error);
-      } else {
-        dispatch({ type: 'SET_SUGGESTIONS', payload: suggestions });
-      }
-    });
-  }
-}, [state.growerName]);
+    if (growerId) {
+      dispatch({ type: 'RESET' });
+    }
+  }, [growerId]);
 
-    useEffect(() => {
-      if (state.selectedGrower && state.selectedGrower.id) {
-        fetchPumpkins(state.selectedGrower.id)
+  useEffect(() => {
+    if (state.growerName) {
+      getGrowerSuggestions(toTitleCase(state.growerName), (error, suggestions) => {
+        if (error) {
+          console.error('Error fetching grower suggestions:', error);
+        } else {
+          dispatch({ type: 'SET_SUGGESTIONS', payload: suggestions });
+        }
+      });
+    }
+  }, [state.growerName]);
+
+  useEffect(() => {
+    if (state.selectedGrower && state.selectedGrower.id) {
+      fetchPumpkins(state.selectedGrower.id)
         .then((pumpkins) => {
           dispatch({ type: 'SET_PUMPKIN_PREVIEW', payload: pumpkins });
         })
         .catch((error) => {
           console.error('Error fetching pumpkins:', error);
         });
-      }
-    }, [state.selectedGrower]);
-
+    }
+  }, [state.selectedGrower]);
 
   const handleSelectGrower = (grower) => {
     dispatch({ type: 'SET_SELECTED_GROWER', payload: grower });
   };
 
   const handleConfirm = () => {
-  console.log('handleConfirm called. user.uid:', user.uid, 'state.selectedGrower.id:', state.selectedGrower.id);
-  console.log('handleConfirm', user.uid, state.selectedGrower.id);
-  updateDoc(doc(db, 'Users', user.uid), {
-    growerId: state.selectedGrower.id
-  }).then(() => {
-    console.log('updateDoc successful. Setting growerId.');
-    setGrowerId(state.selectedGrower.id);
-  }).catch(error => {
-    console.error('Error updating document:', error);
-  });
-};
+    console.log('handleConfirm called. user.uid:', user.uid, 'state.selectedGrower.id:', state.selectedGrower.id);
+    console.log('handleConfirm', user.uid, state.selectedGrower.id);
+    updateDoc(doc(db, 'Users', user.uid), {
+      growerId: state.selectedGrower.id
+    }).then(() => {
+      console.log('updateDoc successful. Setting growerId.');
+      setGrowerId(state.selectedGrower.id);
+    }).catch(error => {
+      console.error('Error updating document:', error);
+    });
+  };
 
-    
   return (
     <div>
       <h1>Search for a Grower</h1>
