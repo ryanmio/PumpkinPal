@@ -1,22 +1,29 @@
 import { db } from '../firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 
-const fetchPumpkins = async (growerId) => {
-  try {
-    const pumpkinsRef = collection(db, 'Stats_Pumpkins');
-    const q = query(pumpkinsRef, where('grower', '==', growerId));
-    const querySnapshot = await getDocs(q);
+const fetchPumpkins = (growerId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!growerId) {
+        reject('No grower ID provided');
+        return;
+      }
 
-    const pumpkins = [];
-    querySnapshot.forEach(doc => {
-      pumpkins.push(doc.data());
-    });
+      const pumpkinsRef = collection(db, 'Stats_Pumpkins');
+      const q = query(pumpkinsRef, where('grower', '==', growerId));
+      const querySnapshot = await getDocs(q);
 
-    return pumpkins;
-  } catch (error) {
-    console.error('Error fetching pumpkins:', error);
-    return [];
-  }
+      const pumpkins = [];
+      querySnapshot.forEach(doc => {
+        pumpkins.push(doc.data());
+      });
+
+      resolve(pumpkins);
+    } catch (error) {
+      console.error('Error fetching pumpkins:', error);
+      reject(error);
+    }
+  });
 };
 
 export default fetchPumpkins;
