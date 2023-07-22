@@ -66,14 +66,18 @@ const GrowerSearch = ({ user, setGrowerId }) => {
   };
 
   const handleConfirm = () => {
-    updateDoc(doc(db, 'Users', user.uid), {
-      growerId: state.selectedGrower.id
-    }).then(() => {
-      setGrowerId(state.selectedGrower.id);
-    }).catch(error => {
-      console.error('Error updating document:', error);
-    });
-  };
+  console.log('handleConfirm called. user.uid:', user.uid, 'state.selectedGrower.id:', state.selectedGrower.id);
+  console.log('handleConfirm', user.uid, state.selectedGrower.id);
+  updateDoc(doc(db, 'Users', user.uid), {
+    growerId: state.selectedGrower.id
+  }).then(() => {
+    console.log('updateDoc successful. Setting growerId.');
+    setGrowerId(state.selectedGrower.id);
+  }).catch(error => {
+    console.error('Error updating document:', error);
+  });
+};
+
     
   return (
     <div>
