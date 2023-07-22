@@ -4,20 +4,28 @@ import { doc, getDoc } from 'firebase/firestore'; // import getDoc
 console.log('db in fetchGrowerData.js:', db);
 
 const fetchGrowerData = async (growerId) => {
-  try {
-    const growerRef = doc(db, 'Stats_Growers', growerId);
-    const docSnapshot = await getDoc(growerRef);
-    
-    if (docSnapshot.exists()) {
-      return docSnapshot.data(); // assuming docSnapshot.data() is the grower's data
-    } else {
-      console.log('No such document!');
-      return null;
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!growerId) {
+        reject('No grower ID provided');
+        return;
+      }
+
+      const growerRef = doc(db, 'Stats_Growers', growerId);
+      const docSnapshot = await getDoc(growerRef);
+      
+      if (docSnapshot.exists()) {
+        resolve(docSnapshot.data()); // assuming docSnapshot.data() is the grower's data
+      } else {
+        console.log('No such document!');
+        reject('No such document');
+      }
+    } catch (error) {
+      console.error('Error fetching grower data:', error);
+      reject(error);
     }
-  } catch (error) {
-    console.error('Error fetching grower data:', error);
-    return null;
-  }
+  });
 };
+
 
 export default fetchGrowerData;
