@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import getGrowerSuggestions from '../../utilities/getGrowerSuggestions';
 import fetchPumpkins from '../../utilities/fetchPumpkins';
 import { doc, updateDoc } from 'firebase/firestore';
@@ -11,34 +11,56 @@ function toTitleCase(str) {
   });
 }
 
-const GrowerSearch = ({ user, setGrowerId }) => {
-  const [growerName, setGrowerName] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
-  const [selectedGrower, setSelectedGrower] = useState(null);
-  const [pumpkinPreview, setPumpkinPreview] = useState([]);
+const initialState = {
+  growerName: '',
+  suggestions: [],
+  selectedGrower: null,
+  pumpkinPreview: [],
+};
 
-  useEffect(() => {
-    if (growerName) {
-      getGrowerSuggestions(toTitleCase(growerName), setSuggestions);
-    }
-  }, [growerName]);
-
-  useEffect(() => {
-  console.log('selectedGrower changed:', selectedGrower); // log statement
-  if (selectedGrower) {
-    fetchPumpkins(selectedGrower.id).then(setPumpkinPreview);
+function reducer(state, action) {
+  switch (action.type) {
+    case 'SET_GROWER_NAME':
+      return { ...state, growerName: action.payload };
+    case 'SET_SUGGESTIONS':
+      return { ...state, suggestions: action.payload };
+    case 'SET_SELECTED_GROWER':
+      return { ...state, selectedGrower: action.payload };
+    case 'SET_PUMPKIN_PREVIEW':
+      return { ...state, pumpkinPreview: action.payload };
+    default:
+      throw new Error();
   }
-}, [selectedGrower]);
+}
+
+const GrowerSearch = ({ user, setGrowerId }) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    if (state.growerName) {
+      getGrowerSuggestions(toTitleCase(state.growerName)).then((suggestions) =>
+        dispatch({ type: 'SET_SUGGESTIONS', payload: suggestions })
+      );
+    }
+  }, [state.growerName]);
+
+  useEffect(() => {
+    if (state.selectedGrower) {
+      fetchPumpkins(state.selectedGrower.id).then((pumpkins) =>
+        dispatch({ type: 'SET_PUMPKIN_PREVIEW', payload: pumpkins })
+      );
+    }
+  }, [state.selectedGrower]);
 
   const handleSelectGrower = (grower) => {
-    setSelectedGrower(grower);
+    dispatch({ type: 'SET_SELECTED_GROWER', payload: grower });
   };
 
   const handleConfirm = () => {
     updateDoc(doc(db, 'Users', user.uid), {
-      growerId: selectedGrower.id
+      growerId: state.selectedGrower.id
     }).then(() => {
-      setGrowerId(selectedGrower.id); // call setGrowerId
+      setGrowerId(state.selectedGrower.id);
     }).catch(error => {
       console.error('Error updating document:', error);
     });
@@ -49,20 +71,20 @@ const GrowerSearch = ({ user, setGrowerId }) => {
       <h1>Search for a Grower</h1>
       <input
         type="text"
-        value={growerName}
-        onChange={(e) => setGrowerName(e.target.value)}
+        value={state.growerName}
+        onChange={(e) => dispatch({ type: 'SET_GROWER_NAME', payload: e.target.value })}
         placeholder="Enter grower name"
       />
-      {suggestions.map(suggestion => (
+      {state.suggestions.map(suggestion => (
         <div key={suggestion.id} onClick={() => handleSelectGrower(suggestion)}>
-          {suggestion.id} {/* display the id in the suggestion list */}
+          {suggestion.id}
         </div>
       ))}
-      {selectedGrower && (
+      {state.selectedGrower && (
         <div>
-          <h2>Selected Grower: {selectedGrower.id}</h2>
+          <h2>Selected Grower: {state.selectedGrower.id}</h2>
           <h3>Pumpkin Preview:</h3>
-          {pumpkinPreview.map(pumpkin => (
+          {state.pumpkinPreview.map(pumpkin => (
           <div key={pumpkin.id}>
             ID: {pumpkin.id}, Year: {pumpkin.year}
           </div>
