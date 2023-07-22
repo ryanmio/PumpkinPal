@@ -18,7 +18,7 @@ const getGrowerSuggestions = debounce(async (inputValue, callback) => {
     
     const growers = [];
     snapshot.forEach(doc => {
-      growers.push({ name: doc.id }); // assuming doc.id is the grower's name
+      growers.push({ name: doc.id });
     });
 
     callback(growers);

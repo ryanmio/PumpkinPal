@@ -7,7 +7,7 @@ const fetchPumpkins = async (growerId) => {
     
     const pumpkins = [];
     snapshot.forEach(doc => {
-      pumpkins.push(doc.data()); // assuming doc.data() is the pumpkin's data
+      pumpkins.push(doc.data());
     });
 
     return pumpkins;
