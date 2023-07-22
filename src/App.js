@@ -70,7 +70,7 @@ function App() {
               <Route path="/grower/:growerName" element={<GrowerStatsProfile />} />
               <Route path="/growersearch" element={<GrowerSearch />} />
               <Route path="/search" element={<Search />} />
-              <Route path="/my-stats" element={<MyStats />}
+              <Route path="/my-stats" element={<MyStats />} />
             </Routes>
           </GrowerContextProvider>
         </UserProvider>
