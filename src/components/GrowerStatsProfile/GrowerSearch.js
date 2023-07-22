@@ -35,7 +35,7 @@ function reducer(state, action) {
   }
 }
 
-const GrowerSearch = ({ user, setGrowerId, growerId }) => {
+const GrowerSearch = ({ user, onGrowerIdChange, growerId }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
@@ -79,12 +79,11 @@ const GrowerSearch = ({ user, setGrowerId, growerId }) => {
     growerId: state.selectedGrower.id
   }).then(() => {
     console.log('updateDoc successful. Setting growerId.');
-    setGrowerId(state.selectedGrower.id);
+    onGrowerIdChange(state.selectedGrower.id); // Use onGrowerIdChange here
   }).catch(error => {
     console.error('Error updating document:', error);
   });
 };
-
 
   return (
     <div>
