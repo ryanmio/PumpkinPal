@@ -35,14 +35,14 @@ const GrowerSearch = ({ user, updateGrowerId }) => {
   };
 
   const handleConfirm = () => {
-    updateDoc(doc(db, 'Users', user.uid), {
-      growerId: selectedGrower.id
-    }).then(() => {
-      updateGrowerId(selectedGrower.id);
-    }).catch(error => {
-      console.error('Error updating document:', error);
-    });
-  };
+  updateDoc(doc(db, 'Users', user.uid), {
+    growerId: selectedGrower.id
+  }).then(() => {
+    setGrowerId(selectedGrower.id); // call setGrowerId instead of updateGrowerId
+  }).catch(error => {
+    console.error('Error updating document:', error);
+  });
+};
 
   return (
     <div>
