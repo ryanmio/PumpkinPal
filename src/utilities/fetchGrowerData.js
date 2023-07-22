@@ -1,8 +1,6 @@
 import { db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore'; // import getDoc
 
-console.log('db in fetchGrowerData.js:', db);
-
 const fetchGrowerData = async (growerId) => {
   return new Promise(async (resolve, reject) => {
     try {
