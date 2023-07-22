@@ -13,27 +13,34 @@ export default function useGrowerData(userId) {
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log('fetchData called with userId:', userId);
       try {
         const docSnapshot = await getDoc(doc(db, 'Users', userId));
+        console.log('Received docSnapshot:', docSnapshot.exists() ? docSnapshot.data() : 'no docSnapshot');
         if (docSnapshot.exists() && docSnapshot.data().growerId) {
           const id = docSnapshot.data().growerId;
+          console.log('Found growerId:', id);
           setGrowerId(id);
 
           const data = await fetchGrowerData(id);
+          console.log('Received growerData:', data);
           setGrowerData(data);
 
           const pumpkinsData = await fetchPumpkins(id);
+          console.log('Received pumpkinsData:', pumpkinsData);
           setPumpkins(pumpkinsData);
 
           setLoading(false); // Move setLoading(false) here
         } else {
           // If the user hasn't set a growerId yet, we're not loading and there's no data.
+          console.log('No growerId found');
           setLoading(false);
           setGrowerId(null);
           setGrowerData(null);
           setPumpkins([]);
         }
       } catch (err) {
+        console.error('Error in fetchData:', err);
         setError(err.message);
         setLoading(false); // We also want to stop loading if there's an error
       }
