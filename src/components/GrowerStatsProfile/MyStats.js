@@ -10,9 +10,9 @@ import Spinner from '../Spinner';
 import useGrowerData from '../../utilities/useGrowerDataHook';
 
 const MyStats = () => {
-  const { user } = useContext(UserContext);
+  const { user, growerId, setGrowerId } = useContext(UserContext);
   const [editingGrowerId, setEditingGrowerId] = useState(false);
-  const { growerId, growerData, pumpkins, loading } = useGrowerData(user.uid); // Pass user.uid instead of growerId
+  const { growerData, pumpkins, loading } = useGrowerData(growerId);
 
   const handleEdit = () => {
     setEditingGrowerId(true);
@@ -23,6 +23,7 @@ const MyStats = () => {
       growerId: newGrowerId
     }).then(() => {
       setEditingGrowerId(false);
+      setGrowerId(newGrowerId);
     }).catch(error => {
       console.error('Error updating document:', error);
     });
@@ -33,8 +34,8 @@ const MyStats = () => {
   }
 
   if (editingGrowerId || !growerId) {
-  return <GrowerSearch user={user} setGrowerId={handleSave} growerId={growerId} />;
-}
+    return <GrowerSearch user={user} setGrowerId={handleSave} />;
+  }
 
   return (
     <div>
