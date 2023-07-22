@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import Header from './Header';
 import SummarySection from './SummarySection';
@@ -8,11 +8,22 @@ import Spinner from '../Spinner';
 import useGrowerData from '../../utilities/useGrowerDataHook';
 
 const MyStats = () => {
-  const { user, growerId, setGrowerId } = useContext(UserContext);
+  const { user } = useContext(UserContext);
+  const [growerId, setGrowerIdInState] = useState(null);
   const { growerData, pumpkins, loading } = useGrowerData(user ? user.uid : null);
 
   const handleEdit = () => {
-    setGrowerId(null); // Clear the current growerId when starting to edit
+    setGrowerIdInState(null);
+  };
+
+  const handleSave = (newGrowerId) => {
+    updateDoc(doc(db, 'Users', user.uid), {
+      growerId: newGrowerId
+    }).then(() => {
+      setGrowerIdInState(newGrowerId);
+    }).catch(error => {
+      console.error('Error updating document:', error);
+    });
   };
 
   if (loading) {
@@ -20,7 +31,7 @@ const MyStats = () => {
   }
 
   if (!growerId) {
-    return <GrowerSearch user={user} setGrowerId={setGrowerId} />;
+    return <GrowerSearch user={user} setGrowerId={handleSave} />;
   }
 
   return (
