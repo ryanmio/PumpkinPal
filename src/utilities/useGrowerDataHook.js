@@ -15,7 +15,7 @@ export default function useGrowerData(userId) {
     const fetchData = async () => {
       try {
         const docSnapshot = await getDoc(doc(db, 'Users', userId));
-        if (docSnapshot.exists()) {
+        if (docSnapshot.exists() && docSnapshot.data().growerId) {
           const id = docSnapshot.data().growerId;
           setGrowerId(id);
 
@@ -25,12 +25,19 @@ export default function useGrowerData(userId) {
           const pumpkinsData = await fetchPumpkins(id);
           setPumpkins(pumpkinsData);
         } else {
-          setError('No such document!');
+          // If the user hasn't set a growerId yet, we're not loading and there's no data.
+          setLoading(false);
+          setGrowerId(null);
+          setGrowerData(null);
+          setPumpkins([]);
         }
       } catch (err) {
         setError(err.message);
       } finally {
-        setLoading(false);
+        // Only set loading to false if a growerId was set.
+        if (growerId) {
+          setLoading(false);
+        }
       }
     };
 
