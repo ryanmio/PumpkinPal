@@ -10,7 +10,7 @@ function toTitleCase(str) {
 }
 
 const getGrowerSuggestions = debounce((inputValue) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     try {
       // Convert inputValue to title case
       const titleCaseInput = toTitleCase(inputValue);
@@ -32,6 +32,5 @@ const getGrowerSuggestions = debounce((inputValue) => {
     }
   });
 }, 300);
-
 
 export default getGrowerSuggestions;
