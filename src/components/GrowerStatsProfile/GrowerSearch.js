@@ -24,10 +24,11 @@ const GrowerSearch = ({ user, updateGrowerId }) => {
   }, [growerName]);
 
   useEffect(() => {
-    if (selectedGrower) {
-      fetchPumpkins(selectedGrower.id).then(setPumpkinPreview);
-    }
-  }, [selectedGrower]);
+  console.log('selectedGrower changed:', selectedGrower); // log statement
+  if (selectedGrower) {
+    fetchPumpkins(selectedGrower.id).then(setPumpkinPreview);
+  }
+}, [selectedGrower]);
 
   const handleSelectGrower = (grower) => {
     setSelectedGrower(grower);
