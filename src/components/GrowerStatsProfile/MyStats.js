@@ -1,4 +1,5 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
+import { db, doc, updateDoc } from '../../firebase'; // Add this line
 import { UserContext } from '../../contexts/UserContext';
 import Header from './Header';
 import SummarySection from './SummarySection';
@@ -8,19 +9,21 @@ import Spinner from '../Spinner';
 import useGrowerData from '../../utilities/useGrowerDataHook';
 
 const MyStats = () => {
-  const { user } = useContext(UserContext);
-  const [growerId, setGrowerIdInState] = useState(null);
-  const { growerData, pumpkins, loading } = useGrowerData(user ? user.uid : null);
+  const { user, growerId, setGrowerId } = useContext(UserContext);
+    console.log('Rendering MyStats with user:', user);
+  const [editingGrowerId, setEditingGrowerId] = useState(false);
+  const { growerData, pumpkins, loading } = useGrowerData(user?.uid);
 
   const handleEdit = () => {
-    setGrowerIdInState(null);
+    setEditingGrowerId(true);
   };
 
   const handleSave = (newGrowerId) => {
     updateDoc(doc(db, 'Users', user.uid), {
       growerId: newGrowerId
     }).then(() => {
-      setGrowerIdInState(newGrowerId);
+      setEditingGrowerId(false);
+      setGrowerId(newGrowerId);
     }).catch(error => {
       console.error('Error updating document:', error);
     });
@@ -30,8 +33,8 @@ const MyStats = () => {
     return <Spinner />;
   }
 
-  if (!growerId) {
-    return <GrowerSearch user={user} setGrowerId={handleSave} />;
+  if (editingGrowerId || !growerId) {
+    return <GrowerSearch user={user} onGrowerIdChange={handleSave} />;
   }
 
   return (
