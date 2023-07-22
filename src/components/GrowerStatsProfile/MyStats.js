@@ -14,9 +14,9 @@ console.log('db in MyStats.js:', db);
 const MyStats = () => {
   const { user } = useContext(UserContext);
   const [growerId, setGrowerId] = useState(null);
-  const [editing, setEditing] = useState(false);
+  const [editingGrowerId, setEditingGrowerId] = useState(false);
   const [pumpkins, setPumpkins] = useState([]);
-  const [growerData, setGrowerData] = useState(null); // add a state variable for the grower data
+  const [growerData, setGrowerData] = useState(null); 
 
   useEffect(() => {
     if (user) {
@@ -35,7 +35,7 @@ const MyStats = () => {
   useEffect(() => {
     if (growerId) {
       fetchGrowerData(growerId).then(data => {
-        setGrowerData(data); // save the data in the state variable
+        setGrowerData(data);
       });
 
       fetchPumpkins(growerId).then(pumpkins => {
@@ -45,7 +45,7 @@ const MyStats = () => {
   }, [growerId]);
 
   const handleEdit = () => {
-    setEditing(true);
+    setEditingGrowerId(true);
   };
 
   const handleSave = (newGrowerId) => {
@@ -53,7 +53,7 @@ const MyStats = () => {
       growerId: newGrowerId
     }).then(() => {
       setGrowerId(newGrowerId);
-      setEditing(false);
+      setEditingGrowerId(false);
 
       fetchPumpkins(newGrowerId).then(pumpkins => {
         setPumpkins(pumpkins);
@@ -63,8 +63,8 @@ const MyStats = () => {
     });
   };
 
-  if (!growerId) {
-    return <GrowerSearch user={user} setGrowerId={setGrowerId} />;
+  if (editingGrowerId || !growerId) {
+    return <GrowerSearch user={user} setGrowerId={handleSave} />;
   }
 
   return (
@@ -74,17 +74,10 @@ const MyStats = () => {
           <Header data={growerData} />
           <SummarySection data={growerData} pumpkins={pumpkins} />
           <TableSection data={pumpkins} />
-          {editing ? (
-            <div>
-              <input type="text" defaultValue={growerId} onChange={e => setGrowerId(e.target.value)} />
-              <button onClick={() => handleSave(growerId)}>Save</button>
-            </div>
-          ) : (
-            <div>
-              <p>Grower ID: {growerId}</p>
-              <button onClick={handleEdit}>Edit</button>
-            </div>
-          )}
+          <div>
+            <p>Grower ID: {growerId}</p>
+            <button onClick={handleEdit}>Edit</button>
+          </div>
         </>
       )}
     </div>
