@@ -7,7 +7,7 @@ import SummarySection from './SummarySection';
 import TableSection from './TableSection';
 import GrowerSearch from './GrowerSearch';
 import Spinner from '../Spinner';
-import useGrowerDataHook from '../../utilities/useGrowerDataHook';
+import useGrowerData from '../../utilities/useGrowerDataHook';
 
 console.log('db in MyStats.js:', db);
 
