@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { db } from '../../firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { UserContext } from '../../contexts/UserContext';
 import { GrowerContext } from '../../contexts/GrowerContext';
 import Header from './Header';
