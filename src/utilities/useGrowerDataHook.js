@@ -24,6 +24,8 @@ export default function useGrowerData(userId) {
 
           const pumpkinsData = await fetchPumpkins(id);
           setPumpkins(pumpkinsData);
+
+          setLoading(false); // Move setLoading(false) here
         } else {
           // If the user hasn't set a growerId yet, we're not loading and there's no data.
           setLoading(false);
@@ -33,18 +35,14 @@ export default function useGrowerData(userId) {
         }
       } catch (err) {
         setError(err.message);
-      } finally {
-        // Only set loading to false if a growerId was set.
-        if (growerId) {
-          setLoading(false);
-        }
+        setLoading(false); // We also want to stop loading if there's an error
       }
     };
 
     if (userId) {
       fetchData();
     }
-  }, [userId]);
+  }, [userId]); // We only rerun the effect when userId changes
 
   return { growerId, growerData, pumpkins, loading, error };
 };
