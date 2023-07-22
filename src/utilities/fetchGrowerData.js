@@ -1,11 +1,12 @@
-import { db } from '../firebase';
+import { db } from '../firebase'; // replace with your Firebase import
+
 const fetchGrowerData = async (growerId) => {
   try {
-    const growerRef = firestore.collection('Stats_Growers').doc(growerId);
+    const growerRef = db.collection('Stats_Growers').doc(growerId);
     const doc = await growerRef.get();
     
     if (doc.exists) {
-      return doc.data();
+      return doc.data(); // assuming doc.data() is the grower's data
     } else {
       console.log('No such document!');
       return null;

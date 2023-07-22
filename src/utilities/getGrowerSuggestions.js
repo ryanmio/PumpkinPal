@@ -13,12 +13,12 @@ const getGrowerSuggestions = debounce(async (inputValue, callback) => {
     // Convert inputValue to title case
     const titleCaseInput = toTitleCase(inputValue);
 
-    const growerRef = firestore.collection('Stats_Growers');
+    const growerRef = db.collection('Stats_Growers');
     const snapshot = await growerRef.where('lastName', '>=', titleCaseInput).where('lastName', '<=', titleCaseInput + '\uf8ff').get();
     
     const growers = [];
     snapshot.forEach(doc => {
-      growers.push({ name: doc.id });
+      growers.push({ name: doc.id }); // assuming doc.id is the grower's name
     });
 
     callback(growers);

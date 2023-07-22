@@ -2,12 +2,12 @@ import { db } from '../firebase';
 
 const fetchPumpkins = async (growerId) => {
   try {
-    const pumpkinsRef = firestore.collection('Stats_Pumpkins');
+    const pumpkinsRef = db.collection('Stats_Pumpkins');
     const snapshot = await pumpkinsRef.where('growerId', '==', growerId).get();
     
     const pumpkins = [];
     snapshot.forEach(doc => {
-      pumpkins.push(doc.data());
+      pumpkins.push(doc.data()); // assuming doc.data() is the pumpkin's data
     });
 
     return pumpkins;
