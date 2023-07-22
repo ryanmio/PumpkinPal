@@ -15,23 +15,25 @@ const GrowerSearch = ({ user, setGrowerId }) => {
   const [growerName, setGrowerName] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectedGrower, setSelectedGrower] = useState(null);
-  const [pumpkinPreview, setPumpkinPreview] = useState([]);
 
   useEffect(() => {
-    if (growerName) {
-      getGrowerSuggestions(toTitleCase(growerName), setSuggestions);
-    }
+    const fetchSuggestions = async () => {
+      if (growerName.length > 2) {
+        const results = await getGrowerSuggestions(toTitleCase(growerName));
+        setSuggestions(results);
+      } else {
+        setSuggestions([]);
+      }
+    };
+
+    fetchSuggestions();
   }, [growerName]);
 
-  useEffect(() => {
-  console.log('selectedGrower changed:', selectedGrower); // log statement
-  if (selectedGrower) {
-    fetchPumpkins(selectedGrower.id).then(setPumpkinPreview);
-  }
-}, [selectedGrower]);
-
-  const handleSelectGrower = (grower) => {
-    setSelectedGrower(grower);
+  const handleSelectGrower = async (grower) => {
+    setSelectedGrower({
+      ...grower,
+      pumpkinPreview: await fetchPumpkins(grower.id)
+    });
   };
 
   const handleConfirm = () => {
@@ -62,7 +64,7 @@ const GrowerSearch = ({ user, setGrowerId }) => {
         <div>
           <h2>Selected Grower: {selectedGrower.id}</h2>
           <h3>Pumpkin Preview:</h3>
-          {pumpkinPreview.map(pumpkin => (
+          {selectedGrower.pumpkinPreview.map(pumpkin => (
           <div key={pumpkin.id}>
             ID: {pumpkin.id}, Year: {pumpkin.year}
           </div>
