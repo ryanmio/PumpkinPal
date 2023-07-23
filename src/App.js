@@ -23,7 +23,7 @@ import GrowerStatsProfile from './components/GrowerStatsProfile/GrowerStatsProfi
 import GrowerSearch from './components/GrowerStatsProfile/GrowerSearch';
 import Search from './components/GrowerStatsProfile/Search';
 import MyStats from './components/GrowerStatsProfile/MyStats';
-import CloudFunctionTrigger from './components/CloudFunctionTrigger';
+import CloudFunctionTrigger from './components/GrowerStatsProfile/CloudFunctionTrigger';
 
 
 // Initialize GA once when the App.js module is loaded
