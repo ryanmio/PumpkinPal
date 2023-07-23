@@ -1,8 +1,6 @@
 import React, { useReducer, useEffect } from 'react';
 import getGrowerSuggestions from '../../utilities/getGrowerSuggestions';
 import fetchPumpkins from '../../utilities/fetchPumpkins';
-import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
 
 // Function to convert a string to title case
 function toTitleCase(str) {
