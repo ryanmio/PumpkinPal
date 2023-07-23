@@ -14,21 +14,20 @@ const MyStats = () => {
   console.log('Rendering MyStats with user:', user);
   const [editingGrowerId, setEditingGrowerId] = useState(false);
   const { growerData, pumpkins, loading } = useGrowerData(user?.uid);
-  const [key, setKey] = useState(Math.random());
 
   const handleEdit = () => {
     setEditingGrowerId(true);
   };
 
   const handleSave = (newGrowerId) => {
-  updateDoc(doc(db, 'Users', user.uid), {
-    growerId: newGrowerId
-  }).then(() => {
-    setKey(Math.random()); // Force a re-render
-  }).catch(error => {
-    console.error('Error updating document:', error);
-  });
-};
+    updateDoc(doc(db, 'Users', user.uid), {
+      growerId: newGrowerId
+    }).then(() => {
+      setGrowerId(newGrowerId);
+    }).catch(error => {
+      console.error('Error updating document:', error);
+    });
+  };
 
   if (loading) {
     return <Spinner />;
