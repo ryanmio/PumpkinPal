@@ -22,11 +22,16 @@ const MyStats = () => {
   const handleSave = (newGrowerId) => {
   updateDoc(doc(db, 'Users', user.uid), {
     growerId: newGrowerId
+  }).then(() => {
+    onSnapshot(doc(db, 'Users', user.uid), (docSnap) => {
+      if (docSnap.exists) {
+        setGrowerId(docSnap.data().growerId);
+      }
+    });
   }).catch(error => {
     console.error('Error updating document:', error);
   });
 };
-
 
   if (loading) {
     return <Spinner />;
