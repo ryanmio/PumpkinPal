@@ -58,6 +58,11 @@ export default function useGrowerData(userId, growerIdFromContext) {
 
     fetchData();
   }, [userId, growerIdFromContext]); // We rerun the effect when either userId or growerIdFromContext changes
+    
+    useEffect(() => {
+  console.log('useGrowerData useEffect, growerIdFromContext changed:', growerIdFromContext);
+}, [growerIdFromContext]);
+
 
   return { growerId, growerData, pumpkins, loading, error };
 };
