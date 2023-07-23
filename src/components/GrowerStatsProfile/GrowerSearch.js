@@ -2,6 +2,7 @@ import React, { useReducer, useEffect } from 'react';
 import getGrowerSuggestions from '../../utilities/getGrowerSuggestions';
 import fetchPumpkins from '../../utilities/fetchPumpkins';
 import { toast } from 'react-hot-toast';
+import TableSection from './TableSection';
 
 // Function to convert a string to title case
 function toTitleCase(str) {
@@ -38,39 +39,45 @@ const GrowerSearch = ({ user, handleSave }) => {
   console.log('In GrowerSearch, handleSave is:', handleSave);
   const [state, dispatch] = useReducer(reducer, initialState);
 
-      useEffect(() => {
-      if (state.growerName) {
-        getGrowerSuggestions(toTitleCase(state.growerName), (error, suggestions) => {
-          if (error) {
-            toast.error('Error fetching grower suggestions: ' + error.message);
-          } else {
-            dispatch({ type: 'SET_SUGGESTIONS', payload: suggestions });
-          }
-        });
-      }
-    }, [state.growerName]);
+  useEffect(() => {
+    if (state.growerName) {
+      getGrowerSuggestions(toTitleCase(state.growerName), (error, suggestions) => {
+        if (error) {
+          toast.error('Error fetching grower suggestions: ' + error.message);
+        } else {
+          dispatch({ type: 'SET_SUGGESTIONS', payload: suggestions });
+        }
+      });
+    }
+  }, [state.growerName]);
 
-    useEffect(() => {
-      if (state.selectedGrower && state.selectedGrower.id) {
-        fetchPumpkins(state.selectedGrower.id)
-          .then((pumpkins) => {
-            dispatch({ type: 'SET_PUMPKIN_PREVIEW', payload: pumpkins });
-          })
-          .catch((error) => {
-            toast.error('Error fetching pumpkins: ' + error.message);
-          });
-      }
-    }, [state.selectedGrower]);
+  useEffect(() => {
+    if (state.selectedGrower && state.selectedGrower.id) {
+      fetchPumpkins(state.selectedGrower.id)
+        .then((pumpkins) => {
+          dispatch({ type: 'SET_PUMPKIN_PREVIEW', payload: pumpkins });
+        })
+        .catch((error) => {
+          toast.error('Error fetching pumpkins: ' + error.message);
+        });
+    }
+  }, [state.selectedGrower]);
 
   const handleSelectGrower = (grower) => {
     dispatch({ type: 'SET_SELECTED_GROWER', payload: grower });
   };
 
- const handleConfirm = () => {
+  const handleConfirm = () => {
     console.log('handleConfirm called. user.uid:', user.uid, 'state.selectedGrower.id:', state.selectedGrower.id);
     console.log('handleConfirm', user.uid, state.selectedGrower.id);
     handleSave(state.selectedGrower.id); // Call handleSave from MyStats
   };
+
+  const pumpkinColumns = [
+    { Header: 'Year', accessor: 'year' },
+    { Header: 'Contest', accessor: 'contestName' },
+    { Header: 'Weight', accessor: 'weight' },
+  ];
 
   return (
     <div>
@@ -90,11 +97,7 @@ const GrowerSearch = ({ user, handleSave }) => {
         <div>
           <h2>Selected Grower: {state.selectedGrower.id}</h2>
           <h3>Pumpkin Preview:</h3>
-          {state.pumpkinPreview.map(pumpkin => (
-            <div key={pumpkin.id}>
-              ID: {pumpkin.id}, Year: {pumpkin.year}
-            </div>
-          ))}
+          <TableSection data={state.pumpkinPreview} columns={pumpkinColumns} />
           <button onClick={handleConfirm}>Confirm</button>
         </div>
       )}

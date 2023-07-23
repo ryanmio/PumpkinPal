@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTable } from 'react-table';
 
-const TableSection = ({ data }) => {
+const TableSection = ({ data, columns }) => {
   const columns = useMemo(() => [
     { Header: 'Year', accessor: 'year' },
     { Header: 'Contest', accessor: 'contestName' },

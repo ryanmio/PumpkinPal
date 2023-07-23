@@ -40,13 +40,20 @@ const MyStats = () => {
     return <GrowerSearch user={user} handleSave={handleSave} />;
   }
 
+  const pumpkinColumns = [
+    { Header: 'Year', accessor: 'year' },
+    { Header: 'Contest', accessor: 'contestName' },
+    { Header: 'Place', accessor: 'place' },
+    { Header: 'Weight', accessor: 'weight' },
+  ];
+
   return (
     <div>
       {growerData && (
         <>
           <Header data={growerData} />
           <SummarySection data={growerData} pumpkins={pumpkins} />
-          <TableSection data={pumpkins} />
+          <TableSection data={pumpkins} columns={pumpkinColumns} />
           <div>
             <p>Grower ID: {growerId}</p>
             <button onClick={handleEdit}>Edit</button>
