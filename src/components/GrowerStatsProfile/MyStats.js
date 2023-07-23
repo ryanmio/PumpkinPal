@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, onSnapshot } from 'firebase/firestore'; // Import onSnapshot
 import { db } from '../../firebase';
 import { UserContext } from '../../contexts/UserContext';
 import Header from './Header';
@@ -10,8 +10,8 @@ import Spinner from '../Spinner';
 import useGrowerData from '../../utilities/useGrowerDataHook';
 
 const MyStats = () => {
-  const { user, growerId } = useContext(UserContext);
-    console.log('Rendering MyStats with user:', user);
+  const { user, growerId, setGrowerId } = useContext(UserContext); // Make sure setGrowerId is defined in UserContext
+  console.log('Rendering MyStats with user:', user);
   const [editingGrowerId, setEditingGrowerId] = useState(false);
   const { growerData, pumpkins, loading } = useGrowerData(user?.uid);
 
@@ -20,18 +20,18 @@ const MyStats = () => {
   };
 
   const handleSave = (newGrowerId) => {
-  updateDoc(doc(db, 'Users', user.uid), {
-    growerId: newGrowerId
-  }).then(() => {
-    onSnapshot(doc(db, 'Users', user.uid), (docSnap) => {
-      if (docSnap.exists) {
-        setGrowerId(docSnap.data().growerId);
-      }
+    updateDoc(doc(db, 'Users', user.uid), {
+      growerId: newGrowerId
+    }).then(() => {
+      onSnapshot(doc(db, 'Users', user.uid), (docSnap) => {
+        if (docSnap.exists) {
+          setGrowerId(docSnap.data().growerId);
+        }
+      });
+    }).catch(error => {
+      console.error('Error updating document:', error);
     });
-  }).catch(error => {
-    console.error('Error updating document:', error);
-  });
-};
+  };
 
   if (loading) {
     return <Spinner />;
