@@ -11,7 +11,6 @@ export default function useGrowerData(userId) {
   const [growerId, setGrowerId] = useState(null);
   const [growerData, setGrowerData] = useState(null);
   const [pumpkins, setPumpkins] = useState([]);
-  const [key, setKey] = useState(Math.random());
 
   useEffect(() => {
     console.log("Running useEffect in useGrowerData with userId:", userId);
