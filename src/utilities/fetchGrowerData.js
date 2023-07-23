@@ -1,5 +1,6 @@
 import { db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore'; // import getDoc
+import { toast } from 'react-hot-toast';
 
 const fetchGrowerData = async (growerId) => {
   return new Promise(async (resolve, reject) => {
@@ -15,15 +16,14 @@ const fetchGrowerData = async (growerId) => {
       if (docSnapshot.exists()) {
         resolve(docSnapshot.data()); // assuming docSnapshot.data() is the grower's data
       } else {
-        console.log('No such document!');
+        toast.error('No such document!');
         reject('No such document');
       }
     } catch (error) {
-      console.error('Error fetching grower data:', error);
+      toast.error('Error fetching grower data: ' + error.message);
       reject(error);
     }
   });
 };
-
 
 export default fetchGrowerData;
