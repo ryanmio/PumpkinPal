@@ -80,8 +80,8 @@ const GrowerSearch = ({ user, handleSave }) => {
   ];
 
   return (
-  <div className="h-screen bg-white flex justify-start flex-col">
-    <div className="container mx-auto px-4 pt-10 space-y-4">
+  <div className="h-screen flex justify-start flex-col items-center bg-gray-100">  {/* Added items-center and bg-gray-100 to center the card and give the page a light gray background */}
+    <div className="container mx-auto px-4 pt-10 flex flex-col space-y-4 bg-white shadow rounded-lg p-4 max-w-2xl w-full">  {/* Wrapped components in a white card */}
       <h1 className="text-2xl font-bold mb-4 text-center">Search for a Grower</h1>
       <input
         type="text"
@@ -96,11 +96,11 @@ const GrowerSearch = ({ user, handleSave }) => {
         </div>
       ))}
       {state.selectedGrower && (
-        <div className="bg-white shadow rounded-lg p-4 flex flex-col mt-4">
+        <div className="flex flex-col mt-4">
           <h2>Selected Grower: {state.selectedGrower.id}</h2>
           <h3 className="text-xl font-bold mb-2">Pumpkin Preview:</h3>
           <TableSection data={state.pumpkinPreview} columns={pumpkinColumns} />
-          <button onClick={handleConfirm} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 self-end">Confirm</button>
+          <button onClick={handleConfirm} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 self-center">Confirm</button>
         </div>
       )}
     </div>
