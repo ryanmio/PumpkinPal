@@ -80,8 +80,8 @@ const GrowerSearch = ({ user, handleSave }) => {
   ];
 
   return (
-  <div className="h-screen flex justify-start flex-col items-center bg-gray-100">  {/* Added items-center and bg-gray-100 to center the card and give the page a light gray background */}
-    <div className="container mx-auto px-4 pt-10 flex flex-col space-y-4 bg-white shadow rounded-lg p-4 max-w-2xl w-full">  {/* Wrapped components in a white card */}
+    <div className="h-screen flex justify-start flex-col items-center">  
+    <div className="container mx-auto px-4 pt-10 flex flex-col space-y-4 bg-white shadow rounded-lg p-4 max-w-2xl w-full">  
       <h1 className="text-2xl font-bold mb-4 text-center">Search for a Grower</h1>
       <input
         type="text"
