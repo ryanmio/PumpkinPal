@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { doc, updateDoc, onSnapshot } from 'firebase/firestore'; // Import onSnapshot
+import { doc, updateDoc} from 'firebase/firestore';
 import { db } from '../../firebase';
 import { UserContext } from '../../contexts/UserContext';
 import Header from './Header';
