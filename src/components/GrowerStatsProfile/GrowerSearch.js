@@ -79,7 +79,7 @@ const GrowerSearch = ({ user, onGrowerIdChange, growerId }) => {
     growerId: state.selectedGrower.id
   }).then(() => {
     console.log('updateDoc successful. Setting growerId.');
-    onGrowerIdChange(state.selectedGrower.id); // Use onGrowerIdChange here
+    onGrowerIdChange(state.selectedGrower.id, Math.random()); // Use onGrowerIdChange here with new resetKey
   }).catch(error => {
     console.error('Error updating document:', error);
   });
