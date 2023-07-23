@@ -17,7 +17,7 @@ const TableSection = ({ data, columns }) => {
           {headerGroups.map(headerGroup => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps()} className="whitespace-nowrap min-w-max w-[100px] table-cell">{column.render('Header')}</th>
+                <th {...column.getHeaderProps()} className={`whitespace-nowrap min-w-max table-cell ${column.id === 'contestName' ? 'w-[200px]' : 'w-[100px]'}`}>{column.render('Header')}</th>
               ))}
             </tr>
           ))}
@@ -28,7 +28,7 @@ const TableSection = ({ data, columns }) => {
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map(cell => (
-                  <td {...cell.getCellProps()} className="table-cell">{cell.render('Cell')}</td>
+                  <td {...cell.getCellProps()} className={`table-cell ${cell.column.id === 'contestName' ? 'w-[200px]' : 'w-[100px]'}`}>{cell.render('Cell')}</td>
                 ))}
               </tr>
             );
