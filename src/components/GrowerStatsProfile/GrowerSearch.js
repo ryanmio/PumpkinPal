@@ -35,7 +35,7 @@ function reducer(state, action) {
   }
 }
 
-const GrowerSearch = ({ user, onGrowerIdChange, growerId }) => {
+const GrowerSearch = ({ user, handleSave }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
@@ -73,16 +73,10 @@ const GrowerSearch = ({ user, onGrowerIdChange, growerId }) => {
   };
 
   const handleConfirm = () => {
-  console.log('handleConfirm called. user.uid:', user.uid, 'state.selectedGrower.id:', state.selectedGrower.id);
-  console.log('handleConfirm', user.uid, state.selectedGrower.id);
-  updateDoc(doc(db, 'Users', user.uid), {
-    growerId: state.selectedGrower.id
-  }).then(() => {
-    console.log('updateDoc successful. Setting growerId.');
-    onGrowerIdChange(state.selectedGrower.id); // Use onGrowerIdChange here
-  }).catch(error => {
-    console.error('Error updating document:', error);
-  });
+    console.log('handleConfirm called. user.uid:', user.uid, 'state.selectedGrower.id:', state.selectedGrower.id);
+    console.log('handleConfirm', user.uid, state.selectedGrower.id);
+    handleSave(state.selectedGrower.id); // Call handleSave from MyStats
+  };
 };
 
   return (
