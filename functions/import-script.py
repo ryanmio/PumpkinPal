@@ -73,7 +73,7 @@ for index, row in df.head(100).iterrows():  # Change this to df.iterrows() to pr
         "contest": contest_id,
         "contestName": row["GPC Site"],
         "year": row["Year"],
-        "city": row["City"],  # Added city, state, and country to pumpkin document
+        "city": row["City"],
         "state": row["State/Prov"],
         "country": row["Country"],
         "timestamp": datetime.now()
