@@ -23,6 +23,7 @@ import GrowerStatsProfile from './components/GrowerStatsProfile/GrowerStatsProfi
 import GrowerSearch from './components/GrowerStatsProfile/GrowerSearch';
 import Search from './components/GrowerStatsProfile/Search';
 import MyStats from './components/GrowerStatsProfile/MyStats';
+import CloudFunctionTrigger from './components/CloudFunctionTrigger';
 
 
 // Initialize GA once when the App.js module is loaded
@@ -71,6 +72,7 @@ function App() {
               <Route path="/growersearch" element={<GrowerSearch />} />
               <Route path="/search" element={<Search />} />
               <Route path="/my-stats" element={<MyStats />} />
+              <Route path="/cloudadmin" element={<CloudFunctionTrigger />} />
             </Routes>
           </GrowerContextProvider>
         </UserProvider>
