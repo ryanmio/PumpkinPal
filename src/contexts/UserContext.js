@@ -10,28 +10,35 @@ export const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((userAuth) => {
-      if (userAuth) {
-        onSnapshot(doc(db, 'Users', userAuth.uid), (docSnap) => {
-          if (docSnap.exists) {
-            setUser(userAuth);
-            setGrowerId(docSnap.data().growerId);
-          } else {
-            setUser(userAuth);
-            setGrowerId(null);
-          }
-          setLoading(false);
-        });
-      } else {
-        setUser(null);
-        setGrowerId(null);
+  const unsubscribe = auth.onAuthStateChanged((userAuth) => {
+    if (userAuth) {
+      onSnapshot(doc(db, 'Users', userAuth.uid), (docSnap) => {
+        if (docSnap.exists) {
+          console.log('onSnapshot triggered, calling setUser...');
+          setUser(userAuth);
+          console.log('calling setGrowerId...');
+          setGrowerId(docSnap.data().growerId);
+        } else {
+          console.log('onSnapshot triggered, no docSnap exists, calling setUser...');
+          setUser(userAuth);
+          console.log('calling setGrowerId with null...');
+          setGrowerId(null);
+        }
         setLoading(false);
-      }
-    });
+      });
+    } else {
+      console.log('auth.onAuthStateChanged triggered, userAuth is null, calling setUser...');
+      setUser(null);
+      console.log('calling setGrowerId with null...');
+      setGrowerId(null);
+      setLoading(false);
+    }
+  });
 
-    // Cleanup subscription on unmount
-    return () => unsubscribe();
-  }, []);
+  // Cleanup subscription on unmount
+  return () => unsubscribe();
+}, []);
+
 
   if (loading) {
     return <div>Loading...</div>; // Or a loading spinner

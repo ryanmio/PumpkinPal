@@ -34,6 +34,7 @@ function reducer(state, action) {
 }
 
 const GrowerSearch = ({ user, handleSave }) => {
+  console.log('In GrowerSearch, handleSave is:', handleSave);
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
