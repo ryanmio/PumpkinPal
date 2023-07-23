@@ -80,7 +80,8 @@ const GrowerSearch = ({ user, handleSave }) => {
   ];
 
   return (
-    <div className="container mx-auto px-4 pt-10 flex flex-col">
+  <div className="h-screen bg-white flex justify-start flex-col">
+    <div className="container mx-auto px-4 pt-10 space-y-4">
       <h1 className="text-2xl font-bold mb-4 text-center">Search for a Grower</h1>
       <input
         type="text"
@@ -103,7 +104,8 @@ const GrowerSearch = ({ user, handleSave }) => {
         </div>
       )}
     </div>
-  );
+  </div>
+);
 };
 
 export default GrowerSearch;
