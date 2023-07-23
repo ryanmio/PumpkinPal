@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { doc, updateDoc } from 'firebase/firestore'; // Remove onSnapshot
+import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { UserContext } from '../../contexts/UserContext';
 import Header from './Header';
@@ -23,7 +23,7 @@ const MyStats = () => {
     updateDoc(doc(db, 'Users', user.uid), {
       growerId: newGrowerId
     }).then(() => {
-      setGrowerId(newGrowerId);
+      setGrowerId(newGrowerId); // Update growerId in context
     }).catch(error => {
       console.error('Error updating document:', error);
     });
