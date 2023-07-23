@@ -80,25 +80,26 @@ const GrowerSearch = ({ user, handleSave }) => {
   ];
 
   return (
-    <div>
-      <h1>Search for a Grower</h1>
+    <div className="container mx-auto px-4 pt-10 flex flex-col">
+      <h1 className="text-2xl font-bold mb-4 text-center">Search for a Grower</h1>
       <input
         type="text"
         value={state.growerName}
         onChange={(e) => dispatch({ type: 'SET_GROWER_NAME', payload: e.target.value })}
         placeholder="Enter grower name"
+        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
       />
       {state.suggestions.map(suggestion => (
-        <div key={suggestion.id} onClick={() => handleSelectGrower(suggestion)}>
+        <div key={suggestion.id} onClick={() => handleSelectGrower(suggestion)} className="bg-white shadow p-2 mt-2 cursor-pointer hover:bg-gray-100">
           {suggestion.id}
         </div>
       ))}
       {state.selectedGrower && (
-        <div>
+        <div className="bg-white shadow rounded-lg p-4 flex flex-col mt-4">
           <h2>Selected Grower: {state.selectedGrower.id}</h2>
-          <h3>Pumpkin Preview:</h3>
+          <h3 className="text-xl font-bold mb-2">Pumpkin Preview:</h3>
           <TableSection data={state.pumpkinPreview} columns={pumpkinColumns} />
-          <button onClick={handleConfirm}>Confirm</button>
+          <button onClick={handleConfirm} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 self-end">Confirm</button>
         </div>
       )}
     </div>

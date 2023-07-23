@@ -62,5 +62,6 @@ const MyStats = () => {
       )}
     </div>
   );
+};
 
 export default MyStats;
