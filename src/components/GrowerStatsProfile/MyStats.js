@@ -24,6 +24,7 @@ const MyStats = () => {
       growerId: newGrowerId
     }).then(() => {
       setGrowerId(newGrowerId); // Update growerId in context
+      setEditingGrowerId(false); // Exit editing mode
     }).catch(error => {
       console.error('Error updating document:', error);
     });
@@ -34,7 +35,7 @@ const MyStats = () => {
   }
 
   if (editingGrowerId || !growerId) {
-    return <GrowerSearch user={user} onGrowerIdChange={handleSave} />;
+    return <GrowerSearch user={user} handleSave={handleSave} />;
   }
 
   return (
