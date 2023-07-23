@@ -48,17 +48,13 @@ const MyStats = () => {
   ];
 
   return (
-  <div className="h-screen my-8 flex justify-start flex-col">
+  <div className="h-screen flex justify-start flex-col">
     {growerData ? (
-      <div className="container mx-auto px-4 pt-10 flex flex-col">
+      <div className="container mx-auto px-4 pt-10 flex flex-col space-y-4">
         <Header data={growerData} />
-        <div className="mt-4">
-          <SummarySection data={growerData} />
-        </div>
-        <div className="mt-4">
-          <TableSection data={pumpkins} columns={pumpkinColumns} />
-        </div>
-        <div className="mt-4 bg-white shadow rounded-lg p-4 flex flex-col">
+        <SummarySection data={growerData} />
+        <TableSection data={pumpkins} columns={pumpkinColumns} />
+        <div className="bg-white shadow rounded-lg p-4 flex flex-col">
           <p><b>Grower ID:</b> {growerId}</p>
           <button onClick={handleEdit} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 self-end">Edit</button>
         </div>
