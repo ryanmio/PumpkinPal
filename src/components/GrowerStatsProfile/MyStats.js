@@ -48,20 +48,19 @@ const MyStats = () => {
   ];
 
   return (
-    <div>
+    <div className="container mx-auto px-4 pt-10 flex flex-col">
       {growerData && (
         <>
           <Header data={growerData} />
           <SummarySection data={growerData} />
           <TableSection data={pumpkins} columns={pumpkinColumns} />
-          <div>
-            <p>Grower ID: {growerId}</p>
-            <button onClick={handleEdit}>Edit</button>
+          <div className="bg-white shadow rounded-lg p-4 flex flex-col">
+            <p><b>Grower ID:</b> {growerId}</p>
+            <button onClick={handleEdit} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 self-end">Edit</button>
           </div>
         </>
       )}
     </div>
   );
-};
 
 export default MyStats;
