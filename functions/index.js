@@ -389,76 +389,57 @@ async function calculateCountryRankings() {
             return;
         }
 
-        const countryPumpkins = {};  // Store pumpkins grouped by country
-        const yearlyCountryPumpkins = {};  // Store pumpkins grouped by country and year
+        const countryPumpkins = {};
+        const yearlyCountryPumpkins = {};
 
         for (const doc of pumpkinsSnapshot.docs) {
             const pumpkin = doc.data();
 
-            // Exclude disqualified pumpkins
             if (pumpkin.place === 'DMG') {
                 continue;
             }
 
-            const growerRef = pumpkin.grower;
-            if (growerRef) {
-                // Get grower document
-                const growerSnapshot = await db.collection('Stats_Growers').doc(growerRef).get();
-                const grower = growerSnapshot.data();
-                const country = grower.country;
+            const country = pumpkin.country;
 
-                // Group pumpkins by country
-                if (!countryPumpkins[country]) {
-                    countryPumpkins[country] = [];
-                }
-                countryPumpkins[country].push(pumpkin);
-
-                // Group pumpkins by country and year
-                if (!yearlyCountryPumpkins[country]) {
-                    yearlyCountryPumpkins[country] = {};
-                }
-                if (!yearlyCountryPumpkins[country][pumpkin.year]) {
-                    yearlyCountryPumpkins[country][pumpkin.year] = [];
-                }
-                yearlyCountryPumpkins[country][pumpkin.year].push(pumpkin);
+            if (!countryPumpkins[country]) {
+                countryPumpkins[country] = [];
             }
+            countryPumpkins[country].push(pumpkin);
+
+            if (!yearlyCountryPumpkins[country]) {
+                yearlyCountryPumpkins[country] = {};
+            }
+            if (!yearlyCountryPumpkins[country][pumpkin.year]) {
+                yearlyCountryPumpkins[country][pumpkin.year] = [];
+            }
+            yearlyCountryPumpkins[country][pumpkin.year].push(pumpkin);
         }
 
-        // Begin a Firestore batch
         let batch = db.batch();
-
-        // Counter to keep track of how many operations are in the batch
         let batchCounter = 0;
 
-        // Assign rank and update each pumpkin in Firestore
         for (const country in countryPumpkins) {
-            // Sort pumpkins by weight in descending order for lifetime country rank
             countryPumpkins[country].sort((a, b) => b.weight - a.weight);
 
             for (let i = 0; i < countryPumpkins[country].length; i++) {
                 const pumpkin = countryPumpkins[country][i];
-                // Assign lifetime country rank
                 pumpkin.lifetimeCountryRank = i + 1;
 
-                // Sort pumpkins for the year in which the current pumpkin was grown for yearly country rank
                 yearlyCountryPumpkins[country][pumpkin.year].sort((a, b) => b.weight - a.weight);
 
-                // Assign yearly country rank
                 const yearlyRank = yearlyCountryPumpkins[country][pumpkin.year].findIndex(p => p.id === pumpkin.id);
                 if (yearlyRank !== -1) {
                     pumpkin.yearlyCountryRank = yearlyRank + 1;
                 }
 
-                // Add update operation to the batch
                 if (typeof pumpkin.id === 'string' && pumpkin.id !== '') {
-                    const docRef = db.collection('Stats_Pumpkins').doc(pumpkin.id);
-                    batch.update(docRef, pumpkin);
+                    const docRef = pumpkinsCollection.doc(pumpkin.id);
+                    batch.update(docRef, {lifetimeCountryRank: pumpkin.lifetimeCountryRank, yearlyCountryRank: pumpkin.yearlyCountryRank});
                     batchCounter++;
                 } else {
                     console.error('Invalid pumpkin id:', pumpkin.id);
                 }
 
-                // If the batch has reached the maximum size (500), commit it and start a new one
                 if (batchCounter === 500) {
                     await batch.commit();
                     batch = db.batch();
@@ -467,20 +448,24 @@ async function calculateCountryRankings() {
             }
         }
 
-        // Commit any remaining operations in the batch
         if (batchCounter > 0) {
             await batch.commit();
         }
 
     } catch (err) {
-        console.error('Error getting pumpkins:', err);
+        console.error('Error calculating country rankings:', err);
+        throw err;
     }
 }
 
 // HTTP function to manually trigger the calculation of country rankings
 exports.calculateCountryRankings = functions.https.onRequest(async (req, res) => {
-    await calculateCountryRankings();
-    res.send('Country rankings calculation completed.');
+    try {
+        await calculateCountryRankings();
+        res.send('Country rankings calculation completed.');
+    } catch (err) {
+        res.status(500).send('Error calculating country rankings: ' + err.toString());
+    }
 });
 
 // Lifetime Best Rank
@@ -747,7 +732,6 @@ async function calculateGrowerRankings() {
     const pumpkinsCollection = db.collection('Stats_Pumpkins');
 
     try {
-        console.log('Fetching growers...');
         const growersSnapshot = await growersCollection.get();
 
         if (growersSnapshot.empty) {
@@ -755,50 +739,39 @@ async function calculateGrowerRankings() {
             return;
         }
 
-        console.log('Processing growers...');
         const growers = growersSnapshot.docs.map(doc => doc.data());
 
-        // Begin a Firestore batch
         let batch = db.batch();
         let batchCounter = 0;
 
-        // Assign rankings and update each grower in Firestore
         for (let grower of growers) {
-            console.log(`Processing grower ${grower.id}...`);
-            // Fetch all pumpkins for the current grower
             const pumpkinsSnapshot = await pumpkinsCollection.where('grower', '==', grower.id).get();
             const pumpkins = pumpkinsSnapshot.docs.map(doc => doc.data());
 
-            // Determine the best (lowest) lifetime and yearly rankings for the grower
-            const minGlobalRank = Math.min(...pumpkins.map(p => p.lifetimeGlobalRank));
-            const minCountryRank = Math.min(...pumpkins.map(p => p.lifetimeCountryRank));
-            const minStateRank = Math.min(...pumpkins.map(p => p.lifetimeStateRank));
+            if(pumpkins.length > 0) {
+                const minGlobalRank = Math.min(...pumpkins.map(p => p.lifetimeGlobalRank));
+                const minCountryRank = Math.min(...pumpkins.map(p => p.lifetimeCountryRank));
+                const minStateRank = Math.min(...pumpkins.map(p => p.lifetimeStateRank));
 
-            // Prepare the ranking strings
-            const globalRanking = `Global: #${minGlobalRank}`;
-            const countryRanking = `${grower.country}: #${minCountryRank}`;
-            const stateRanking = `${grower.state}: #${minStateRank}`;
+                const globalRanking = `Global: #${minGlobalRank}`;
+                const countryRanking = `${pumpkins[0].country}: #${minCountryRank}`;
+                const stateRanking = `${pumpkins[0].state}: #${minStateRank}`;
 
-            const docRef = growersCollection.doc(grower.id);
-            batch.update(docRef, { globalRanking, countryRanking, stateRanking });
-            batchCounter++;
+                const docRef = growersCollection.doc(grower.id);
+                batch.update(docRef, { globalRanking, countryRanking, stateRanking });
+                batchCounter++;
+            }
 
-            // If the batch has reached the maximum size (500), commit it and start a new one
             if (batchCounter === 500) {
-                console.log('Committing batch...');
                 await batch.commit();
                 batch = db.batch();
                 batchCounter = 0;
             }
         }
 
-        // Commit any remaining operations in the batch
         if (batchCounter > 0) {
-            console.log('Committing final batch...');
             await batch.commit();
         }
-
-        console.log('Done calculating grower rankings.');
 
     } catch (err) {
         console.error('Error calculating grower rankings:', err);
