@@ -690,3 +690,176 @@ exports.calculateSiteRecords = functions.https.onRequest(async (req, res) => {
     await calculateSiteRecords();
     res.send('Site records calculation completed.');
 });
+
+
+// Calculate grower metrics
+async function calculateGrowerMetrics() {
+    const db = admin.firestore();
+    const growersCollection = db.collection('Stats_Growers');
+
+    try {
+        const growersSnapshot = await growersCollection.get();
+
+        if (growersSnapshot.empty) {
+            console.log('No matching growers.');
+            return;
+        }
+
+        let batch = db.batch();
+        let batchCounter = 0;
+
+        for (const doc of growersSnapshot.docs) {
+            const grower = doc.data();
+            const pumpkinsSnapshot = await db.collection('Stats_Pumpkins').where('grower', '==', grower.id).get();
+            
+            // Exclude disqualified pumpkins
+            const pumpkins = pumpkinsSnapshot.docs
+                .map(doc => doc.data())
+                .filter(pumpkin => pumpkin.place !== 'DMG');
+
+            // LifetimeMaxWeight
+            if (pumpkins.length > 0) {
+                const maxWeight = Math.max(...pumpkins.map(pumpkin => pumpkin.weight));
+                grower.LifetimeMaxWeight = maxWeight;
+            } else {
+                grower.LifetimeMaxWeight = null;  // or some other value indicating no pumpkins
+            }
+
+            // NumberOfEntries
+            grower.NumberOfEntries = pumpkins.length;
+
+            const docRef = growersCollection.doc(grower.id);
+            batch.update(docRef, { LifetimeMaxWeight: grower.LifetimeMaxWeight, NumberOfEntries: grower.NumberOfEntries });
+            batchCounter++;
+
+            if (batchCounter === 500) {
+                await batch.commit();
+                batch = db.batch();
+                batchCounter = 0;
+            }
+        }
+
+        if (batchCounter > 0) {
+            await batch.commit();
+        }
+
+    } catch (err) {
+        console.error('Error calculating grower metrics:', err);
+    }
+}
+
+// HTTP function to manually trigger the calculation of grower metrics
+exports.calculateGrowerMetrics = functions.https.onRequest(async (req, res) => {
+    await calculateGrowerMetrics();
+    res.send('Grower metrics calculation completed.');
+});
+
+
+// Calculate Grower Rankings (Global, Country, State)
+async function calculateGrowerRankings() {
+    const db = admin.firestore();
+    const growersCollection = db.collection('Stats_Growers');
+
+    try {
+        const growersSnapshot = await growersCollection.get();
+
+        if (growersSnapshot.empty) {
+            console.log('No matching growers.');
+            return;
+        }
+
+        const growers = growersSnapshot.docs.map(doc => doc.data());
+
+        // Sort growers by best rank for global ranking
+        const globalRankings = [...growers].sort((a, b) => a.bestRank - b.bestRank);
+        
+        // Group growers by country and sort by best rank for country ranking
+        const countryRankings = {};
+        growers.forEach(grower => {
+            if (!countryRankings[grower.country]) {
+                countryRankings[grower.country] = [];
+            }
+            countryRankings[grower.country].push(grower);
+            countryRankings[grower.country].sort((a, b) => a.bestRank - b.bestRank);
+        });
+
+        // Group growers by state and sort by best rank for state ranking
+        const stateRankings = {};
+        growers.forEach(grower => {
+            if (!stateRankings[grower.state]) {
+                stateRankings[grower.state] = [];
+            }
+            stateRankings[grower.state].push(grower);
+            stateRankings[grower.state].sort((a, b) => a.bestRank - b.bestRank);
+        });
+
+        // Begin a Firestore batch
+        let batch = db.batch();
+        let batchCounter = 0;
+
+        // Assign rankings and update each grower in Firestore
+        for (let i = 0; i < globalRankings.length; i++) {
+            const grower = globalRankings[i];
+            grower.globalRank = i + 1;
+
+            const docRef = growersCollection.doc(grower.id);
+            batch.update(docRef, { globalRank: grower.globalRank });
+            batchCounter++;
+
+            // If the batch has reached the maximum size (500), commit it and start a new one
+            if (batchCounter === 500) {
+                await batch.commit();
+                batch = db.batch();
+                batchCounter = 0;
+            }
+        }
+
+        for (const country in countryRankings) {
+            for (let i = 0; i < countryRankings[country].length; i++) {
+                const grower = countryRankings[country][i];
+                grower.countryRank = i + 1;
+
+                const docRef = growersCollection.doc(grower.id);
+                batch.update(docRef, { countryRank: grower.countryRank });
+                batchCounter++;
+
+                if (batchCounter === 500) {
+                    await batch.commit();
+                    batch = db.batch();
+                    batchCounter = 0;
+                }
+            }
+        }
+
+        for (const state in stateRankings) {
+            for (let i = 0; i < stateRankings[state].length; i++) {
+                const grower = stateRankings[state][i];
+                grower.stateRank = i + 1;
+
+                const docRef = growersCollection.doc(grower.id);
+                batch.update(docRef, { stateRank: grower.stateRank });
+                batchCounter++;
+
+                if (batchCounter === 500) {
+                    await batch.commit();
+                    batch = db.batch();
+                    batchCounter = 0;
+                }
+            }
+        }
+
+        // Commit any remaining operations in the batch
+        if (batchCounter > 0) {
+            await batch.commit();
+        }
+
+    } catch (err) {
+        console.error('Error calculating grower rankings:', err);
+    }
+}
+
+// HTTP function to manually trigger the calculation of Grower Rankings
+exports.calculateGrowerRankings = functions.https.onRequest(async (req, res) => {
+    await calculateGrowerRankings();
+    res.send('Grower rankings calculation completed.');
+});
