@@ -45,9 +45,6 @@ for index, row in df.head(100).iterrows():  # Change this to df.iterrows() to pr
         "id": row["Processed Name"],
         "firstName": row["First Name"],
         "lastName": row["Last Name"],
-        "city": row["City"],
-        "state": row["State/Prov"],
-        "country": row["Country"],
         "timestamp": datetime.now()
     }
     grower_documents.append((row["Processed Name"], grower_data))
@@ -75,7 +72,10 @@ for index, row in df.head(100).iterrows():  # Change this to df.iterrows() to pr
         "grower": row["Processed Name"],
         "contest": contest_id,
         "contestName": row["GPC Site"],
-        "year": row["Year"], 
+        "year": row["Year"],
+        "city": row["City"],  # Added city, state, and country to pumpkin document
+        "state": row["State/Prov"],
+        "country": row["Country"],
         "timestamp": datetime.now()
     }
     pumpkin_documents.append((pumpkin_id, pumpkin_data))
