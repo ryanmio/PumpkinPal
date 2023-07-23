@@ -15,10 +15,6 @@ const MyStats = () => {
   const [editingGrowerId, setEditingGrowerId] = useState(false);
   const { growerData, pumpkins, loading } = useGrowerData(user?.uid, growerId);
 
-  useEffect(() => {
-    console.log('MyStats useEffect with growerId:', growerId);
-  }, [growerId]);  // this useEffect will run whenever growerId changes
-
   const handleEdit = () => {
     setEditingGrowerId(true);
   };
