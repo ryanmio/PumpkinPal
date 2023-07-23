@@ -4,8 +4,8 @@ import { doc, getDoc } from 'firebase/firestore';
 import fetchPumpkins from './fetchPumpkins';
 import fetchGrowerData from './fetchGrowerData';
 
-export default function useGrowerData(userId) {
-  console.log("Calling useGrowerData with userId:", userId);
+export default function useGrowerData(userId, growerIdFromContext) {
+  console.log("Calling useGrowerData with userId:", userId, "and growerIdFromContext:", growerIdFromContext);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [growerId, setGrowerId] = useState(null);
@@ -13,7 +13,7 @@ export default function useGrowerData(userId) {
   const [pumpkins, setPumpkins] = useState([]);
 
   useEffect(() => {
-    console.log("Running useEffect in useGrowerData with userId:", userId);
+    console.log("Running useEffect in useGrowerData with userId:", userId, "and growerIdFromContext:", growerIdFromContext);
 
     // Immediately stop loading and return if there's no userId
     if (!userId) {
@@ -57,7 +57,7 @@ export default function useGrowerData(userId) {
     };
 
     fetchData();
-  }, [userId]); // We only rerun the effect when userId changes
+  }, [userId, growerIdFromContext]); // We rerun the effect when either userId or growerIdFromContext changes
 
   return { growerId, growerData, pumpkins, loading, error };
 };
