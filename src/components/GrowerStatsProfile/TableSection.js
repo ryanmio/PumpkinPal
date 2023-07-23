@@ -1,15 +1,6 @@
-import { useMemo } from 'react';
 import { useTable } from 'react-table';
 
 const TableSection = ({ data, columns }) => {
-  const columns = useMemo(() => [
-    { Header: 'Year', accessor: 'year' },
-    { Header: 'Contest', accessor: 'contestName' },
-    { Header: 'Weight', accessor: 'weight' },
-    { Header: 'Rank', accessor: 'place' },
-    // Add more columns as needed
-  ], []);
-
   const {
     getTableProps,
     getTableBodyProps,
