@@ -800,10 +800,10 @@ async function calculateGrowerRankings() {
         // Assign rankings and update each grower in Firestore
         for (let i = 0; i < globalRankings.length; i++) {
             const grower = globalRankings[i];
-            grower.globalRank = i + 1;
+            const globalRanking = `Global: #${i + 1}`;
 
             const docRef = growersCollection.doc(grower.id);
-            batch.update(docRef, { globalRank: grower.globalRank });
+            batch.update(docRef, { globalRanking });
             batchCounter++;
 
             // If the batch has reached the maximum size (500), commit it and start a new one
@@ -817,10 +817,10 @@ async function calculateGrowerRankings() {
         for (const country in countryRankings) {
             for (let i = 0; i < countryRankings[country].length; i++) {
                 const grower = countryRankings[country][i];
-                grower.countryRank = i + 1;
+                const countryRanking = `${country}: #${i + 1}`;
 
                 const docRef = growersCollection.doc(grower.id);
-                batch.update(docRef, { countryRank: grower.countryRank });
+                batch.update(docRef, { countryRanking });
                 batchCounter++;
 
                 if (batchCounter === 500) {
@@ -834,10 +834,10 @@ async function calculateGrowerRankings() {
         for (const state in stateRankings) {
             for (let i = 0; i < stateRankings[state].length; i++) {
                 const grower = stateRankings[state][i];
-                grower.stateRank = i + 1;
+                const stateRanking = `${state}: #${i + 1}`;
 
                 const docRef = growersCollection.doc(grower.id);
-                batch.update(docRef, { stateRank: grower.stateRank });
+                batch.update(docRef, { stateRanking });
                 batchCounter++;
 
                 if (batchCounter === 500) {
