@@ -46,7 +46,12 @@ const CloudFunctionTrigger = () => {
   return (
     <div>
       {functionsList.map((func, index) => (
-        <button key={index} onClick={() => handleTrigger(func.url)}>Run {func.name}</button>
+        <button 
+          className="w-full max-w-xs mx-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 mb-4"
+          key={index} 
+          onClick={() => handleTrigger(func.url)}>
+          Run {func.name}
+        </button>
       ))}
       
       <h2>Logs:</h2>
