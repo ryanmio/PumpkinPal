@@ -10,14 +10,14 @@ const TableSection = ({ data, columns }) => {
   } = useTable({ columns, data });
 
   return (
-    <div>
-      <h2>Pumpkins</h2>
-      <table {...getTableProps()}>
+    <div className="bg-white shadow rounded-lg p-4 flex flex-col overflow-x-auto">
+      <h2 className="text-xl font-bold mb-2">Pumpkins</h2>
+      <table {...getTableProps()} className="w-full">
         <thead>
           {headerGroups.map(headerGroup => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                <th {...column.getHeaderProps()} className="whitespace-nowrap min-w-max w-[100px] table-cell">{column.render('Header')}</th>
               ))}
             </tr>
           ))}
@@ -28,7 +28,7 @@ const TableSection = ({ data, columns }) => {
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map(cell => (
-                  <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                  <td {...cell.getCellProps()} className="table-cell">{cell.render('Cell')}</td>
                 ))}
               </tr>
             );
