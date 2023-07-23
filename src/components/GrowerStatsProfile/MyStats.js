@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { UserContext } from '../../contexts/UserContext';
@@ -13,25 +13,28 @@ const MyStats = () => {
   const { user, growerId, setGrowerId } = useContext(UserContext);
   console.log('Rendering MyStats with user:', user);
   const [editingGrowerId, setEditingGrowerId] = useState(false);
-  const { growerData, pumpkins, loading } = useGrowerData(user?.uid);
+  const { growerData, pumpkins, loading } = useGrowerData(user?.uid, growerId);
+
+  useEffect(() => {
+    console.log('MyStats useEffect with growerId:', growerId);
+  }, [growerId]);  // this useEffect will run whenever growerId changes
 
   const handleEdit = () => {
     setEditingGrowerId(true);
   };
 
   const handleSave = (newGrowerId) => {
-  console.log('handleSave called with newGrowerId:', newGrowerId);
-  updateDoc(doc(db, 'Users', user.uid), {
-    growerId: newGrowerId
-  }).then(() => {
-    console.log('updateDoc success, calling setGrowerId...');
-    setGrowerId(newGrowerId); // Update growerId in context
-    setEditingGrowerId(false); // Exit editing mode
-  }).catch(error => {
-    console.error('Error updating document:', error);
-  });
-};
-
+    console.log('handleSave called with newGrowerId:', newGrowerId);
+    updateDoc(doc(db, 'Users', user.uid), {
+      growerId: newGrowerId
+    }).then(() => {
+      console.log('updateDoc success, calling setGrowerId...');
+      setGrowerId(newGrowerId); // Update growerId in context
+      setEditingGrowerId(false); // Exit editing mode
+    }).catch(error => {
+      console.error('Error updating document:', error);
+    });
+  };
 
   if (loading) {
     return <Spinner />;
