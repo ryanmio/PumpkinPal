@@ -11,3 +11,5 @@ const SummarySection = ({ data }) => (
     <p>Best Rank: {data.bestRank}</p>
   </div>
 );
+
+export default SummarySection;
