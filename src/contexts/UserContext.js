@@ -2,6 +2,8 @@ import React, { createContext, useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 
+export const UserContext = createContext();
+
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [growerId, setGrowerId] = useState(null);
