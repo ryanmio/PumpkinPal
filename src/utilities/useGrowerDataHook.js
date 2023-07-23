@@ -13,42 +13,29 @@ export default function useGrowerData(userId) {
   const [pumpkins, setPumpkins] = useState([]);
 
   useEffect(() => {
-    console.log("Running useEffect in useGrowerData with userId:", userId);
+    console.log("Running useEffect in useGrowerData with userId:", userId, "and growerId:", growerId);
 
-    // Immediately stop loading and return if there's no userId
-    if (!userId) {
-      console.log("No userId, stopping loading");
+    // If we don't have a userId or a growerId, we're not loading and there's no data.
+    if (!userId || !growerId) {
+      console.log("No userId or growerId, stopping loading");
       setLoading(false);
+      setGrowerData(null);
+      setPumpkins([]);
       return;
     }
 
     const fetchData = async () => {
-      console.log('fetchData called with userId:', userId);
+      console.log('fetchData called with userId:', userId, 'and growerId:', growerId);
       try {
-        const docSnapshot = await getDoc(doc(db, 'Users', userId));
-        console.log('Received docSnapshot:', docSnapshot.exists() ? docSnapshot.data() : 'no docSnapshot');
-        if (docSnapshot.exists() && docSnapshot.data().growerId) {
-          const id = docSnapshot.data().growerId;
-          console.log('Found growerId:', id);
-          setGrowerId(id);
+        const data = await fetchGrowerData(growerId);
+        console.log('Received growerData:', data);
+        setGrowerData(data);
 
-          const data = await fetchGrowerData(id);
-          console.log('Received growerData:', data);
-          setGrowerData(data);
+        const pumpkinsData = await fetchPumpkins(growerId);
+        console.log('Received pumpkinsData:', pumpkinsData);
+        setPumpkins(pumpkinsData);
 
-          const pumpkinsData = await fetchPumpkins(id);
-          console.log('Received pumpkinsData:', pumpkinsData);
-          setPumpkins(pumpkinsData);
-
-          setLoading(false); // Move setLoading(false) here
-        } else {
-          // If the user hasn't set a growerId yet, we're not loading and there's no data.
-          console.log("No growerId found for user:", userId);
-          setLoading(false);
-          setGrowerId(null);
-          setGrowerData(null);
-          setPumpkins([]);
-        }
+        setLoading(false); // Move setLoading(false) here
       } catch (err) {
         console.error('Error in fetchData:', err);
         setError(err.message);
@@ -57,7 +44,32 @@ export default function useGrowerData(userId) {
     };
 
     fetchData();
-  }, [userId]); // We only rerun the effect when userId changes
+  }, [userId, growerId]); // We rerun the effect when either userId or growerId changes
+
+  // We separate out the effect that fetches the growerId from Firestore
+  // This effect only depends on userId, so it will only run again when userId changes
+  useEffect(() => {
+    console.log("Running growerId fetching useEffect with userId:", userId);
+    const fetchGrowerId = async () => {
+      if (!userId) return;
+      try {
+        const docSnapshot = await getDoc(doc(db, 'Users', userId));
+        console.log('Received docSnapshot:', docSnapshot.exists() ? docSnapshot.data() : 'no docSnapshot');
+        if (docSnapshot.exists() && docSnapshot.data().growerId) {
+          const id = docSnapshot.data().growerId;
+          console.log('Found growerId:', id);
+          setGrowerId(id);
+        } else {
+          console.log("No growerId found for user:", userId);
+          setGrowerId(null);
+        }
+      } catch (err) {
+        console.error('Error in fetchGrowerId:', err);
+        setError(err.message);
+      }
+    };
+    fetchGrowerId();
+  }, [userId]);
 
   return { growerId, growerData, pumpkins, loading, error };
 };
