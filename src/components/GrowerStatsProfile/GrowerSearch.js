@@ -39,12 +39,6 @@ const GrowerSearch = ({ user, handleSave }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    if (growerId) {
-      dispatch({ type: 'RESET' });
-    }
-  }, [growerId]);
-
-  useEffect(() => {
     if (state.growerName) {
       getGrowerSuggestions(toTitleCase(state.growerName), (error, suggestions) => {
         if (error) {
@@ -72,12 +66,11 @@ const GrowerSearch = ({ user, handleSave }) => {
     dispatch({ type: 'SET_SELECTED_GROWER', payload: grower });
   };
 
-  const handleConfirm = () => {
+ const handleConfirm = () => {
     console.log('handleConfirm called. user.uid:', user.uid, 'state.selectedGrower.id:', state.selectedGrower.id);
     console.log('handleConfirm', user.uid, state.selectedGrower.id);
     handleSave(state.selectedGrower.id); // Call handleSave from MyStats
   };
-};
 
   return (
     <div>
