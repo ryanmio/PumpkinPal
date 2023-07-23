@@ -48,23 +48,18 @@ const MyStats = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 h-screen">
-      <div className="my-8">
-        <h2 className="text-2xl font-bold mb-2">Your Statistics</h2>
-        <p className="mb-4">Grower ID: {growerId}</p>
-      </div>
-      <div className="bg-white shadow overflow-hidden rounded-lg mb-4 flex flex-col">
-        {growerData && (
-          <>
-            <Header data={growerData} />
-            <SummarySection data={growerData} />
-            <TableSection data={pumpkins} columns={pumpkinColumns} />
-            <div className="p-4">
-              <button onClick={handleEdit} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 self-end">Edit</button>
-            </div>
-          </>
-        )}
-      </div>
+    <div className="container mx-auto px-4 pt-10 flex flex-col">
+      {growerData && (
+        <>
+          <Header data={growerData} />
+          <SummarySection data={growerData} />
+          <TableSection data={pumpkins} columns={pumpkinColumns} />
+          <div className="bg-white shadow rounded-lg p-4 flex flex-col">
+            <p><b>Grower ID:</b> {growerId}</p>
+            <button onClick={handleEdit} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 self-end">Edit</button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
