@@ -48,7 +48,6 @@ const MyStats = () => {
   ];
 
   return (
-  return (
   <div className="h-screen my-8 flex justify-start flex-col">
     {growerData ? (
       <div className="container mx-auto px-4 pt-10 flex flex-col">
