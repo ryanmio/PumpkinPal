@@ -12,7 +12,6 @@ import { toast } from 'react-hot-toast';
 
 const MyStats = () => {
   const { user, growerId, setGrowerId } = useContext(UserContext);
-  console.log('Rendering MyStats with user:', user);
   const [editingGrowerId, setEditingGrowerId] = useState(false);
   const { growerData, pumpkins, loading } = useGrowerData(user?.uid, growerId);
 
@@ -21,19 +20,17 @@ const MyStats = () => {
   };
 
   const handleSave = (newGrowerId) => {
-  console.log('handleSave called with newGrowerId:', newGrowerId);
-  updateDoc(doc(db, 'Users', user.uid), {
-    growerId: newGrowerId
-  }).then(() => {
-    console.log('updateDoc success, calling setGrowerId...');
-    setGrowerId(newGrowerId); // Update growerId in context
-    setEditingGrowerId(false); // Exit editing mode
-    toast.success('Grower ID confirmed!'); // Add this line to show a success toast
-  }).catch(error => {
-    console.error('Error updating document:', error);
-    toast.error('Error confirming Grower ID.'); // Add this line to show an error toast
-  });
-};
+    updateDoc(doc(db, 'Users', user.uid), {
+      growerId: newGrowerId
+    }).then(() => {
+      setGrowerId(newGrowerId); // Update growerId in context
+      setEditingGrowerId(false); // Exit editing mode
+      toast.success('Grower ID confirmed!'); // Add this line to show a success toast
+    }).catch(error => {
+      console.error('Error updating document:', error); // Keep this log to record potential errors
+      toast.error('Error confirming Grower ID.'); // Add this line to show an error toast
+    });
+  };
 
   if (loading) {
     return <Spinner />;
