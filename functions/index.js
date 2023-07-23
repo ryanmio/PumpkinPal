@@ -759,8 +759,10 @@ exports.calculateGrowerMetrics = functions.https.onRequest(async (req, res) => {
 async function calculateGrowerRankings() {
     const db = admin.firestore();
     const growersCollection = db.collection('Stats_Growers');
+    const pumpkinsCollection = db.collection('Stats_Pumpkins');
 
     try {
+        console.log('Fetching growers...');
         const growersSnapshot = await growersCollection.get();
 
         if (growersSnapshot.empty) {
@@ -768,90 +770,50 @@ async function calculateGrowerRankings() {
             return;
         }
 
+        console.log('Processing growers...');
         const growers = growersSnapshot.docs.map(doc => doc.data());
-
-        // Sort growers by best rank for global ranking
-        const globalRankings = [...growers].sort((a, b) => a.bestRank - b.bestRank);
-        
-        // Group growers by country and sort by best rank for country ranking
-        const countryRankings = {};
-        growers.forEach(grower => {
-            if (!countryRankings[grower.country]) {
-                countryRankings[grower.country] = [];
-            }
-            countryRankings[grower.country].push(grower);
-            countryRankings[grower.country].sort((a, b) => a.bestRank - b.bestRank);
-        });
-
-        // Group growers by state and sort by best rank for state ranking
-        const stateRankings = {};
-        growers.forEach(grower => {
-            if (!stateRankings[grower.state]) {
-                stateRankings[grower.state] = [];
-            }
-            stateRankings[grower.state].push(grower);
-            stateRankings[grower.state].sort((a, b) => a.bestRank - b.bestRank);
-        });
 
         // Begin a Firestore batch
         let batch = db.batch();
         let batchCounter = 0;
 
         // Assign rankings and update each grower in Firestore
-        for (let i = 0; i < globalRankings.length; i++) {
-            const grower = globalRankings[i];
-            const globalRanking = `Global: #${i + 1}`;
+        for (let grower of growers) {
+            console.log(`Processing grower ${grower.id}...`);
+            // Fetch all pumpkins for the current grower
+            const pumpkinsSnapshot = await pumpkinsCollection.where('grower', '==', grower.id).get();
+            const pumpkins = pumpkinsSnapshot.docs.map(doc => doc.data());
+
+            // Determine the best (lowest) lifetime and yearly rankings for the grower
+            const minGlobalRank = Math.min(...pumpkins.map(p => p.lifetimeGlobalRank));
+            const minCountryRank = Math.min(...pumpkins.map(p => p.lifetimeCountryRank));
+            const minStateRank = Math.min(...pumpkins.map(p => p.lifetimeStateRank));
+
+            // Prepare the ranking strings
+            const globalRanking = `Global: #${minGlobalRank}`;
+            const countryRanking = `${grower.country}: #${minCountryRank}`;
+            const stateRanking = `${grower.state}: #${minStateRank}`;
 
             const docRef = growersCollection.doc(grower.id);
-            batch.update(docRef, { globalRanking });
+            batch.update(docRef, { globalRanking, countryRanking, stateRanking });
             batchCounter++;
 
             // If the batch has reached the maximum size (500), commit it and start a new one
             if (batchCounter === 500) {
+                console.log('Committing batch...');
                 await batch.commit();
                 batch = db.batch();
                 batchCounter = 0;
             }
         }
 
-        for (const country in countryRankings) {
-            for (let i = 0; i < countryRankings[country].length; i++) {
-                const grower = countryRankings[country][i];
-                const countryRanking = `${country}: #${i + 1}`;
-
-                const docRef = growersCollection.doc(grower.id);
-                batch.update(docRef, { countryRanking });
-                batchCounter++;
-
-                if (batchCounter === 500) {
-                    await batch.commit();
-                    batch = db.batch();
-                    batchCounter = 0;
-                }
-            }
-        }
-
-        for (const state in stateRankings) {
-            for (let i = 0; i < stateRankings[state].length; i++) {
-                const grower = stateRankings[state][i];
-                const stateRanking = `${state}: #${i + 1}`;
-
-                const docRef = growersCollection.doc(grower.id);
-                batch.update(docRef, { stateRanking });
-                batchCounter++;
-
-                if (batchCounter === 500) {
-                    await batch.commit();
-                    batch = db.batch();
-                    batchCounter = 0;
-                }
-            }
-        }
-
         // Commit any remaining operations in the batch
         if (batchCounter > 0) {
+            console.log('Committing final batch...');
             await batch.commit();
         }
+
+        console.log('Done calculating grower rankings.');
 
     } catch (err) {
         console.error('Error calculating grower rankings:', err);
