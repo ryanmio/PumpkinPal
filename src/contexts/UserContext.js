@@ -57,6 +57,11 @@ export const UserProvider = ({ children }) => {
   if (loading) {
     return <div>Loading...</div>; // Or a loading spinner
   }
+    
+    useEffect(() => {
+  console.log('UserContext useEffect, growerId changed:', growerId);
+}, [growerId]);
+
 
   return (
     <UserContext.Provider value={{user, growerId, setGrowerId, loading}}>
