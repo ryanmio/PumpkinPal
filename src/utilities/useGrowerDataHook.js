@@ -15,58 +15,40 @@ export default function useGrowerData(userId) {
   useEffect(() => {
     console.log("Running useEffect in useGrowerData with userId:", userId);
 
-    const fetchGrowerId = async () => {
-      if (!userId) {
-        console.log("No userId, stopping loading");
-        setLoading(false);
-        setGrowerId(null);
-        setGrowerData(null);
-        setPumpkins([]);
-        return;
-      }
+    // Immediately stop loading and return if there's no userId
+    if (!userId) {
+      console.log("No userId, stopping loading");
+      setLoading(false);
+      return;
+    }
 
+    const fetchData = async () => {
+      console.log('fetchData called with userId:', userId);
       try {
         const docSnapshot = await getDoc(doc(db, 'Users', userId));
         console.log('Received docSnapshot:', docSnapshot.exists() ? docSnapshot.data() : 'no docSnapshot');
-
         if (docSnapshot.exists() && docSnapshot.data().growerId) {
           const id = docSnapshot.data().growerId;
           console.log('Found growerId:', id);
           setGrowerId(id);
+
+          const data = await fetchGrowerData(id);
+          console.log('Received growerData:', data);
+          setGrowerData(data);
+
+          const pumpkinsData = await fetchPumpkins(id);
+          console.log('Received pumpkinsData:', pumpkinsData);
+          setPumpkins(pumpkinsData);
+
+          setLoading(false); // Move setLoading(false) here
         } else {
+          // If the user hasn't set a growerId yet, we're not loading and there's no data.
           console.log("No growerId found for user:", userId);
+          setLoading(false);
           setGrowerId(null);
           setGrowerData(null);
           setPumpkins([]);
-          setLoading(false);
         }
-      } catch (err) {
-        console.error('Error in fetchGrowerId:', err);
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    fetchGrowerId();
-  }, [userId]); // This effect only depends on userId, it will run whenever userId changes
-
-  useEffect(() => {
-    console.log("Running useEffect in useGrowerData with growerId:", growerId);
-
-    if (!growerId) return; // If there's no growerId, there's nothing to do
-
-    const fetchData = async () => {
-      console.log('fetchData called with growerId:', growerId);
-      try {
-        const data = await fetchGrowerData(growerId);
-        console.log('Received growerData:', data);
-        setGrowerData(data);
-
-        const pumpkinsData = await fetchPumpkins(growerId);
-        console.log('Received pumpkinsData:', pumpkinsData);
-        setPumpkins(pumpkinsData);
-
-        setLoading(false);
       } catch (err) {
         console.error('Error in fetchData:', err);
         setError(err.message);
@@ -75,7 +57,7 @@ export default function useGrowerData(userId) {
     };
 
     fetchData();
-  }, [growerId]); // This effect only depends on growerId, it will run whenever growerId changes
+  }, [userId]); // We only rerun the effect when userId changes
 
   return { growerId, growerData, pumpkins, loading, error };
 };
