@@ -296,76 +296,57 @@ async function calculateStateRankings() {
             return;
         }
 
-        const statePumpkins = {};  // Store pumpkins grouped by state
-        const yearlyStatePumpkins = {};  // Store pumpkins grouped by state and year
+        const statePumpkins = {};  
+        const yearlyStatePumpkins = {};  
 
         for (const doc of pumpkinsSnapshot.docs) {
             const pumpkin = doc.data();
 
-            // Exclude disqualified pumpkins
             if (pumpkin.place === 'DMG') {
                 continue;
             }
 
-            const growerRef = pumpkin.grower;
-            if (growerRef) {
-                // Get grower document
-                const growerSnapshot = await db.collection('Stats_Growers').doc(growerRef).get();
-                const grower = growerSnapshot.data();
-                const state = grower.state;
+            const state = pumpkin.state;
 
-                // Group pumpkins by state
-                if (!statePumpkins[state]) {
-                    statePumpkins[state] = [];
-                }
-                statePumpkins[state].push(pumpkin);
-
-                // Group pumpkins by state and year
-                if (!yearlyStatePumpkins[state]) {
-                    yearlyStatePumpkins[state] = {};
-                }
-                if (!yearlyStatePumpkins[state][pumpkin.year]) {
-                    yearlyStatePumpkins[state][pumpkin.year] = [];
-                }
-                yearlyStatePumpkins[state][pumpkin.year].push(pumpkin);
+            if (!statePumpkins[state]) {
+                statePumpkins[state] = [];
             }
+            statePumpkins[state].push(pumpkin);
+
+            if (!yearlyStatePumpkins[state]) {
+                yearlyStatePumpkins[state] = {};
+            }
+            if (!yearlyStatePumpkins[state][pumpkin.year]) {
+                yearlyStatePumpkins[state][pumpkin.year] = [];
+            }
+            yearlyStatePumpkins[state][pumpkin.year].push(pumpkin);
         }
 
-        // Begin a Firestore batch
         let batch = db.batch();
-
-        // Counter to keep track of how many operations are in the batch
         let batchCounter = 0;
 
-        // Assign rank and update each pumpkin in Firestore
         for (const state in statePumpkins) {
-            // Sort pumpkins by weight in descending order for lifetime state rank
             statePumpkins[state].sort((a, b) => b.weight - a.weight);
 
             for (let i = 0; i < statePumpkins[state].length; i++) {
                 const pumpkin = statePumpkins[state][i];
-                // Assign lifetime state rank
                 pumpkin.lifetimeStateRank = i + 1;
 
-                // Sort pumpkins for the year in which the current pumpkin was grown for yearly state rank
                 yearlyStatePumpkins[state][pumpkin.year].sort((a, b) => b.weight - a.weight);
 
-                // Assign yearly state rank
                 const yearlyRank = yearlyStatePumpkins[state][pumpkin.year].findIndex(p => p.id === pumpkin.id);
                 if (yearlyRank !== -1) {
                     pumpkin.yearlyStateRank = yearlyRank + 1;
                 }
 
-                // Add update operation to the batch
                 if (typeof pumpkin.id === 'string' && pumpkin.id !== '') {
-                    const docRef = db.collection('Stats_Pumpkins').doc(pumpkin.id);
-                    batch.update(docRef, pumpkin);
+                    const docRef = pumpkinsCollection.doc(pumpkin.id);
+                    batch.update(docRef, {lifetimeStateRank: pumpkin.lifetimeStateRank, yearlyStateRank: pumpkin.yearlyStateRank});
                     batchCounter++;
                 } else {
                     console.error('Invalid pumpkin id:', pumpkin.id);
                 }
 
-                // If the batch has reached the maximum size (500), commit it and start a new one
                 if (batchCounter === 500) {
                     await batch.commit();
                     batch = db.batch();
@@ -374,20 +355,24 @@ async function calculateStateRankings() {
             }
         }
 
-        // Commit any remaining operations in the batch
         if (batchCounter > 0) {
             await batch.commit();
         }
 
     } catch (err) {
-        console.error('Error getting pumpkins:', err);
+        console.error('Error calculating state rankings:', err);
+        throw err;
     }
 }
 
 // HTTP function to manually trigger the calculation of state rankings
 exports.calculateStateRankings = functions.https.onRequest(async (req, res) => {
-    await calculateStateRankings();
-    res.send('State rankings calculation completed.');
+    try {
+        await calculateStateRankings();
+        res.send('State rankings calculation completed.');
+    } catch (err) {
+        res.status(500).send('Error calculating state rankings: ' + err.toString());
+    }
 });
 
 
