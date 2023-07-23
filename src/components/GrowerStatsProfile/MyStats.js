@@ -52,7 +52,7 @@ const MyStats = () => {
       {growerData && (
         <>
           <Header data={growerData} />
-          <SummarySection data={growerData} pumpkins={pumpkins} />
+          <SummarySection data={growerData} />
           <TableSection data={pumpkins} columns={pumpkinColumns} />
           <div>
             <p>Grower ID: {growerId}</p>
