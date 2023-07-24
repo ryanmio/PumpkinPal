@@ -7,7 +7,7 @@ const TableSection = ({ data, columns }) => {
     headerGroups,
     rows,
     prepareRow,
-  } = useTable({ columns, data }, useSortBy);  // useSortBy hook added here
+  } = useTable({ columns, data }, useSortBy);
 
   return (
     <div className="bg-white shadow rounded-lg p-4 flex flex-col overflow-x-auto">
