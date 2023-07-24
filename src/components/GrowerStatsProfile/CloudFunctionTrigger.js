@@ -6,6 +6,7 @@ import { toast } from 'react-hot-toast';
 const CloudFunctionTrigger = () => {
   const { user } = useContext(UserContext);
   const [logs, setLogs] = useState([]);
+  const [triggeredFunctions, setTriggeredFunctions] = useState({});
   
   const functionsList = [
     { name: 'calculateGlobalRankings', url: 'https://us-central1-pumpkinpal-b60be.cloudfunctions.net/calculateGlobalRankings' },
@@ -20,6 +21,7 @@ const CloudFunctionTrigger = () => {
   
   const handleTrigger = async (functionUrl, functionName) => {
     toast(`Running ${functionName}`);
+    setTriggeredFunctions({ ...triggeredFunctions, [functionName]: true });
     
     try {
       const result = await axios.get(functionUrl);
@@ -41,7 +43,7 @@ const CloudFunctionTrigger = () => {
         <div>
           {functionsList.map((func, index) => (
             <button 
-              className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 mb-4"
+              className={`w-full font-bold py-2 px-4 rounded mt-4 mb-4 ${triggeredFunctions[func.name] ? "bg-green-500 hover:bg-green-700" : "bg-blue-500 hover:bg-blue-700"} text-white`}
               key={index} 
               onClick={() => handleTrigger(func.url, func.name)}>
               Run {func.name}
