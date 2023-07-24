@@ -15,7 +15,7 @@ const TableSection = ({ data, columns }) => {
 
   return (
     <div className="bg-white shadow rounded-lg p-4 flex flex-col overflow-x-auto">
-      <h2 className="text-xl font-bold mb-2">Pumpkins</h2>
+      <h2 className="text-xl font-bold mb-2">Weigh-Off History</h2>
       <table {...getTableProps()} className="w-full">
         <thead>
           {headerGroups.map(headerGroup => (
