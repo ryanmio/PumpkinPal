@@ -44,7 +44,6 @@ const MyStats = () => {
     { Header: 'Year', accessor: 'year' },
     { Header: 'Contest', accessor: 'contestName' },
     { Header: 'Weight', accessor: 'weight' },
-    { Header: 'Grower Name', accessor: 'growerName' },
     { 
       Header: 'Details', 
       id: 'details',  // we use 'id' because we are not using an accessor
