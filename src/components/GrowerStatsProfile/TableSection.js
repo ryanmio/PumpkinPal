@@ -24,7 +24,7 @@ const TableSection = ({ data, columns }) => {
                 <th {...column.getHeaderProps(column.getSortByToggleProps())} className={`whitespace-nowrap min-w-max table-cell ${column.id === 'contestName' ? 'w-[300px]' : column.id === 'year' ? 'w-[75px]' : 'w-[100px]'}`}>
                   {column.render('Header')}
                   <span>
-                    {column.isSorted ? (column.isSortedDesc ? ' 🔽' : ' 🔼') : ''}
+                    {column.isSorted ? (column.isSortedDesc ? ' ▼' : ' ▲') : ''}
                   </span>
                 </th>
               ))}
