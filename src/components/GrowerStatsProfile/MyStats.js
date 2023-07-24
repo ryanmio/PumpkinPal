@@ -48,7 +48,7 @@ const MyStats = () => {
   ];
 
  return (
-  <div className="h-screen flex justify-start flex-col">
+  <div className="min-h-screen flex justify-start flex-col">
     {growerData ? (
       <div className="container mx-auto px-4 pt-10 flex flex-col space-y-4">
         <Header data={growerData} />
