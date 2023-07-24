@@ -44,22 +44,27 @@ const CloudFunctionTrigger = () => {
   }
 
   return (
-    <div>
-      {functionsList.map((func, index) => (
-        <button 
-          className="w-full max-w-xs mx-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 mb-4"
-          key={index} 
-          onClick={() => handleTrigger(func.url)}>
-          Run {func.name}
-        </button>
-      ))}
-      
-      <h2>Logs:</h2>
-      <ul>
-        {logs.map((log, index) => (
-          <li key={index}>{log}</li>
-        ))}
-      </ul>
+    <div className="h-screen flex justify-start flex-col items-center">
+      <div className="container mx-auto px-4 pt-10 flex flex-col space-y-4 bg-white shadow rounded-lg p-4 max-w-5xl w-full grid grid-cols-3 gap-4">
+        <div>
+          {functionsList.map((func, index) => (
+            <button 
+              className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 mb-4"
+              key={index} 
+              onClick={() => handleTrigger(func.url)}>
+              Run {func.name}
+            </button>
+          ))}
+        </div>
+        <div className="col-span-2">
+          <h2 className="text-xl font-bold mb-2">Logs:</h2>
+          <ul className="border border-gray-300 rounded-md p-4 bg-gray-100 overflow-y-auto h-80">
+            {logs.map((log, index) => (
+              <li key={index} className="mb-2">{log}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 };
