@@ -25,10 +25,11 @@ const CloudFunctionTrigger = () => {
     
     try {
       const result = await axios.get(functionUrl);
-      setLogs(logs => [...logs, result.data]);
+      setLogs(logs => [...logs, `Success: ${functionName} completed with data: ${result.data}`]);
       toast.success('Function execution completed.');
     } catch (error) {
       console.error('Error triggering function:', error);
+      setLogs(logs => [...logs, `Error: ${functionName} failed with message: ${error.message}`]);
       toast.error('Error triggering function.');
     }
   };
