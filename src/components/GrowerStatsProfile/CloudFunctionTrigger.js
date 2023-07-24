@@ -1,12 +1,10 @@
 import React, { useContext, useState } from 'react';
 import axios from 'axios';
 import { UserContext } from '../../contexts/UserContext';
-import Spinner from '../Spinner';
 import { toast } from 'react-hot-toast';
 
 const CloudFunctionTrigger = () => {
   const { user } = useContext(UserContext);
-  const [loading, setLoading] = useState(false);
   const [logs, setLogs] = useState([]);
   
   const functionsList = [
@@ -20,8 +18,8 @@ const CloudFunctionTrigger = () => {
     { name: 'calculateContestPopularityRanking', url: 'https://us-central1-pumpkinpal-b60be.cloudfunctions.net/calculateContestPopularityRanking' },
   ];
   
-  const handleTrigger = async (functionUrl) => {
-    setLoading(true);
+  const handleTrigger = async (functionUrl, functionName) => {
+    toast(`Running ${functionName}`);
     
     try {
       const result = await axios.get(functionUrl);
@@ -31,13 +29,7 @@ const CloudFunctionTrigger = () => {
       console.error('Error triggering function:', error);
       toast.error('Error triggering function.');
     }
-    
-    setLoading(false);
   };
-
-  if (loading) {
-    return <Spinner />;
-  }
 
   if (user?.email !== 'ryan@mioduski.us') {
     return <p>Only the owner can access this page.</p>;
@@ -51,7 +43,7 @@ const CloudFunctionTrigger = () => {
             <button 
               className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 mb-4"
               key={index} 
-              onClick={() => handleTrigger(func.url)}>
+              onClick={() => handleTrigger(func.url, func.name)}>
               Run {func.name}
             </button>
           ))}
