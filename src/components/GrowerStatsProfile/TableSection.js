@@ -21,7 +21,7 @@ const TableSection = ({ data, columns }) => {
           {headerGroups.map(headerGroup => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())} className={`whitespace-nowrap min-w-max table-cell ${column.id === 'contestName' ? 'w-[200px]' : column.id === 'year' || column.id === 'place' ? 'w-[75px]' : 'w-[100px]'}`}>
+                <th {...column.getHeaderProps(column.getSortByToggleProps())} className={`whitespace-nowrap min-w-max table-cell ${column.id === 'contestName' ? 'w-[200px]' : column.id === 'year' ? 'w-[75px]' : 'w-[100px]'}`}>
                   {column.render('Header')}
                   <span>
                     {column.isSorted ? (column.isSortedDesc ? ' 🔽' : ' 🔼') : ''}
@@ -37,7 +37,7 @@ const TableSection = ({ data, columns }) => {
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map(cell => (
-                  <td {...cell.getCellProps()} className={`table-cell ${cell.column.id === 'contestName' ? 'w-[200px]' : cell.column.id === 'year' || cell.column.id === 'place' ? 'w-[75px]' : 'w-[100px]'}`}>{cell.render('Cell')}</td>
+                  <td {...cell.getCellProps()} className={`table-cell ${cell.column.id === 'contestName' ? 'w-[200px]' : cell.column.id === 'year' ? 'w-[75px]' : 'w-[100px]'}`}>{cell.render('Cell')}</td>
                 ))}
               </tr>
             );
