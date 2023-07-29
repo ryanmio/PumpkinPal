@@ -18,25 +18,17 @@ const PumpkinDetailsCard = ({ data }) => (
   </div>
 );
 
-const PumpkinRankingsCard = ({ data }) => (
-  <div className="bg-white shadow rounded-lg p-4 mb-4 flex justify-center">
-    <div className="max-w-lg w-full mb-4"> {/* This div sets a max width and wraps the card content */}
-      <div className="grid grid-cols-3 gap-4 text-center">
-        <div className="col-span-3 text-lg font-bold mb-2">Ranking Matrix</div> {/* Heading */}
-        <div></div> {/* Empty cell */}
-        <div><b>{data.year}</b></div> {/* Year data */}
-        <div><b>All Time</b></div> {/* All Time data */}
-        <div><b>Global</b></div>
-        <div>#{data.yearGlobalRank}</div> {/* '#' added to ranking */}
-        <div>#{data.lifetimeGlobalRank}</div> {/* '#' added to ranking */}
-        <div><b>{data.country}</b></div> {/* Replaced "Country" with actual country data */}
-        <div>#{data.yearlyCountryRank}</div> {/* '#' added to ranking */}
-        <div>#{data.lifetimeCountryRank}</div> {/* '#' added to ranking */}
-        <div><b>{data.state}</b></div> {/* Replaced "State" with actual state data */}
-        <div>#{data.yearlyStateRank}</div> {/* '#' added to ranking */}
-        <div>#{data.lifetimeStateRank}</div> {/* '#' added to ranking */}
-      </div>
-    </div>
+const PumpkinDetailsCard = ({ data }) => (
+  <div className="bg-white shadow rounded-lg p-4 mb-4">
+    <h1>{data.id} {data.name}</h1>
+    {data.grower && !isNaN(data.grower) && <p><b>Grower:</b> {data.grower}</p>}
+    {data.ott && !isNaN(data.ott) && <p><b>OTT:</b> {data.ott}</p>}
+    {data.weight && !isNaN(data.weight) && <p><b>Weight:</b> {data.weight}</p>}
+    {data.seed && !isNaN(data.seed) && <p><b>Seed:</b> {data.seed}</p>}
+    {data.pollinator && !isNaN(data.pollinator) && <p><b>Pollinator:</b> {data.pollinator}</p>}
+    {data.year && !isNaN(data.year) && <p><b>Year:</b> {data.year}</p>}
+    {data.state && !isNaN(data.state) && <p><b>State:</b> {data.state}</p>}
+    {data.contestName && !isNaN(data.contestName) && <p><b>Contest Name:</b> {data.contestName}</p>}
   </div>
 );
 
