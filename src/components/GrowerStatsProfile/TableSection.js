@@ -21,7 +21,7 @@ const TableSection = ({ data, columns }) => {
         {headerGroups.map(headerGroup => (
           <tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map(column => (
-              <th {...column.getHeaderProps(column.getSortByToggleProps())} className={`whitespace-nowrap min-w-max table-cell ${column.id === 'contestName' ? 'w-[300px]' : column.id === 'year' ? 'w-[75px]' : 'w-[100px]'}`}>
+              <th {...column.getHeaderProps(column.getSortByToggleProps())} className={`text-left px-2 whitespace-nowrap ${column.id === 'contestName' ? 'w-[200px]' : column.id === 'year' ? 'w-[75px]' : 'w-[100px]'}`}>
                 {column.render('Header')}
                 <span>
                   {column.isSorted ? (column.isSortedDesc ? ' ▾' : ' ▴') : ''}
@@ -37,7 +37,7 @@ const TableSection = ({ data, columns }) => {
           return (
             <tr {...row.getRowProps()}>
               {row.cells.map(cell => (
-                <td {...cell.getCellProps()} className={`table-cell overflow-hidden whitespace-nowrap text-overflow-ellipsis ${cell.column.id === 'contestName' ? 'w-[200px]' : cell.column.id === 'year' ? 'w-[75px]' : 'w-[100px]'}`}>
+                <td {...cell.getCellProps()} className={`text-left px-2 whitespace-nowrap overflow-ellipsis overflow-hidden ${cell.column.id === 'contestName' ? 'w-[200px]' : cell.column.id === 'year' ? 'w-[75px]' : 'w-[100px]'}`}>
                   {cell.render('Cell')}
                 </td>
               ))}
