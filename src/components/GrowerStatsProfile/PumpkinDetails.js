@@ -68,7 +68,7 @@ const PumpkinDetails = () => {
   return (
     <div className="min-h-screen flex justify-start flex-col">
       <div className="container mx-auto px-4 pt-10 flex flex-col space-y-4">
-        <Link to="#" onClick={() => navigate(-1)}>Back</Link>
+        <Link to="#" onClick={() => navigate(-1)} className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">Back</Link>
         <PumpkinDetailsCard data={pumpkinData} />
         <PumpkinRankingsCard data={pumpkinData} />
       </div>
