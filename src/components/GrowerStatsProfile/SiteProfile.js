@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase';
 import Spinner from '../Spinner';
 
 // Component for displaying contest details
 const ContestDetailsCard = ({ data }) => (
   <div className="bg-white shadow rounded-lg p-4 mb-4">
-    <h1>{data.id} {data.name}</h1>
+    <h1>{data.name}</h1> {/* changed from data.id to data.name */}
     <p><b>Year:</b> {data.year}</p>
     <p><b>Record Weight:</b> {data.recordWeight}</p>
     <p><b>Year Popularity:</b> {data.YearPopularity}</p>
@@ -17,6 +17,7 @@ const ContestDetailsCard = ({ data }) => (
 
 const SiteProfile = () => {
   const { id } = useParams();
+  const siteName = id.replace(/_/g, ' ');
   const [contestData, setContestData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,22 +27,28 @@ const SiteProfile = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const docRef = doc(db, 'Stats_Contests', id);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setContestData(docSnap.data());
+        setLoading(true);
+        setError(null);
+        const contestsQuery = query(collection(db, 'Stats_Contests'), where('name', '==', siteName));
+        const querySnapshot = await getDocs(contestsQuery);
+        if (!querySnapshot.empty) {
+          let data = {};
+          querySnapshot.forEach((doc) => {
+            data = {...data, ...doc.data()};
+          });
+          setContestData(data);
         } else {
-          setError("No such contest!");
+          setError(`No contests found for site: ${siteName}`);
         }
-      } catch (error) {
-        setError(error.message);
+      } catch (err) {
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [id]); // Depend on 'id' so the effect runs whenever it changes
+  }, [id, siteName]);
 
   // Loading state
   if (loading) {
