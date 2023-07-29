@@ -817,7 +817,7 @@ async function calculateSiteStats() {
             }
 
             siteStats[siteName]['Site Record'] = Math.max(siteStats[siteName]['Site Record'], contestData.recordWeight);
-            siteStats[siteName]['Total Entries'] += contestData.LifetimePopularity;
+            siteStats[siteName]['Total Entries'] = Math.max(siteStats[siteName]['Total Entries'], contestData.LifetimePopularity);
             siteStats[siteName]['Popularity by Year'][year] = contestData.YearPopularity;
             siteStats[siteName]['Max Weight by Year'][year] = contestData.recordWeight;
         }
