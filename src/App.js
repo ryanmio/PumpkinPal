@@ -25,6 +25,8 @@ import Search from './components/GrowerStatsProfile/Search';
 import MyStats from './components/GrowerStatsProfile/MyStats';
 import CloudFunctionTrigger from './components/GrowerStatsProfile/CloudFunctionTrigger';
 import PumpkinDetails from './components/GrowerStatsProfile/PumpkinDetails';
+import SiteProfile from './components/SiteProfile';
+
 
 
 // Initialize GA once when the App.js module is loaded
@@ -75,6 +77,7 @@ function App() {
               <Route path="/my-stats" element={<MyStats />} />
               <Route path="/cloudadmin" element={<CloudFunctionTrigger />} />
               <Route path="/pumpkin-details/:id" element={<PumpkinDetails />} />
+              <Route path="/site-profile/:id" element={<SiteProfile />} />
             </Routes>
           </GrowerContextProvider>
         </UserProvider>
