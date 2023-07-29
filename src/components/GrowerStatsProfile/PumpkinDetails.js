@@ -7,14 +7,14 @@ import Spinner from '../Spinner';
 const PumpkinDetailsCard = ({ data }) => (
   <div className="bg-white shadow rounded-lg p-4 mb-4">
     <h1>{data.id} {data.name}</h1>
-    {data.grower && <p><b>Grower:</b> {data.grower}</p>}
-    {data.ott && <p><b>OTT:</b> {data.ott}</p>}
-    {data.weight && <p><b>Weight:</b> {data.weight}</p>}
-    {data.seed && <p><b>Seed:</b> {data.seed}</p>}
-    {data.pollinator && <p><b>Pollinator:</b> {data.pollinator}</p>}
-    {data.year && <p><b>Year:</b> {data.year}</p>}
-    {data.state && <p><b>State:</b> {data.state}</p>}
-    {data.contestName && <p><b>Contest Name:</b> {data.contestName}</p>}
+    {data.grower !== null && data.grower !== undefined && data.grower !== 0 && <p><b>Grower:</b> {data.grower}</p>}
+    {data.ott !== null && data.ott !== undefined && data.ott !== 0 && <p><b>OTT:</b> {data.ott}</p>}
+    {data.weight !== null && data.weight !== undefined && data.weight !== 0 && <p><b>Weight:</b> {data.weight}</p>}
+    {data.seed !== null && data.seed !== undefined && data.seed !== 0 && <p><b>Seed:</b> {data.seed}</p>}
+    {data.pollinator !== null && data.pollinator !== undefined && data.pollinator !== 0 && <p><b>Pollinator:</b> {data.pollinator}</p>}
+    {data.year !== null && data.year !== undefined && data.year !== 0 && <p><b>Year:</b> {data.year}</p>}
+    {data.state !== null && data.state !== undefined && data.state !== 0 && <p><b>State:</b> {data.state}</p>}
+    {data.contestName !== null && data.contestName !== undefined && data.contestName !== 0 && <p><b>Contest Name:</b> {data.contestName}</p>}
   </div>
 );
 
