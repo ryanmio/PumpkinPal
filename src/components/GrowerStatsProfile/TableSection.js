@@ -16,7 +16,7 @@ const TableSection = ({ data, columns }) => {
   return (
     <div className="bg-white shadow rounded-lg p-4 flex flex-col overflow-x-auto">
       <h2 className="text-xl font-bold mb-2">Weigh-Off History</h2>
-      <table {...getTableProps()} className="w-full">
+      <table {...getTableProps()} className="w-full table-fixed">
         <thead>
           {headerGroups.map(headerGroup => (
             <tr {...headerGroup.getHeaderGroupProps()}>
@@ -37,8 +37,8 @@ const TableSection = ({ data, columns }) => {
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map(cell => (
-                  <td {...cell.getCellProps()} className={`table-cell ${cell.column.id === 'contestName' ? 'w-[200px]' : cell.column.id === 'year' ? 'w-[75px]' : 'w-[100px]'}`}>
-                    <div className={`${cell.column.id === 'contestName' ? 'truncate' : ''} w-full`} title={cell.value}>
+                  <td {...cell.getCellProps()} className={`table-cell truncate overflow-hidden ${cell.column.id === 'contestName' ? 'w-[200px]' : cell.column.id === 'year' ? 'w-[75px]' : 'w-[100px]'}`}>
+                    <div className={`w-full`} title={cell.value}>
                       {cell.render('Cell')}
                     </div>
                   </td>
