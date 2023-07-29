@@ -7,14 +7,14 @@ import Spinner from '../Spinner';
 const PumpkinDetailsCard = ({ data }) => (
   <div className="bg-white shadow rounded-lg p-4 mb-4">
     <h1>{data.id} {data.name}</h1>
-    {data.grower && !isNaN(data.grower) && <p><b>Grower:</b> {data.grower}</p>}
-    {data.ott && !isNaN(data.ott) && <p><b>OTT:</b> {data.ott}</p>}
-    {data.weight && !isNaN(data.weight) && <p><b>Weight:</b> {data.weight}</p>}
-    {data.seed && !isNaN(data.seed) && <p><b>Seed:</b> {data.seed}</p>}
-    {data.pollinator && !isNaN(data.pollinator) && <p><b>Pollinator:</b> {data.pollinator}</p>}
-    {data.year && !isNaN(data.year) && <p><b>Year:</b> {data.year}</p>}
-    {data.state && !isNaN(data.state) && <p><b>State:</b> {data.state}</p>}
-    {data.contestName && !isNaN(data.contestName) && <p><b>Contest Name:</b> {data.contestName}</p>}
+    {(data.grower !== null && data.grower !== "0" && data.grower !== "NaN" && data.grower !== "") && <p><b>Grower:</b> {data.grower}</p>}
+    {(data.ott !== 0 && data.ott !== null && data.ott !== "NaN") && <p><b>OTT:</b> {data.ott}</p>}
+    {(data.weight !== 0 && data.weight !== null && data.weight !== "NaN") && <p><b>Weight:</b> {data.weight}</p>}
+    {(data.seed !== null && data.seed !== "0" && data.seed !== "NaN" && data.seed !== "") && <p><b>Seed:</b> {data.seed}</p>}
+    {(data.pollinator !== null && data.pollinator !== "0" && data.pollinator !== "NaN" && data.pollinator !== "") && <p><b>Pollinator:</b> {data.pollinator}</p>}
+    {(data.year !== 0 && data.year !== null && data.year !== "NaN") && <p><b>Year:</b> {data.year}</p>}
+    {(data.state !== null && data.state !== "0" && data.state !== "NaN" && data.state !== "") && <p><b>State:</b> {data.state}</p>}
+    {(data.contestName !== null && data.contestName !== "0" && data.contestName !== "NaN" && data.contestName !== "") && <p><b>Contest Name:</b> {data.contestName}</p>}
   </div>
 );
 
