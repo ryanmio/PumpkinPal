@@ -42,8 +42,8 @@ const MyStats = () => {
 
   const pumpkinColumns = [
     { Header: 'Year', accessor: 'year' },
-    { Header: 'Contest', accessor: 'contestName' },
     { Header: 'Weight', accessor: 'weight' },
+    { Header: 'Contest', accessor: 'contestName' },
     { 
       Header: 'Details', 
       id: 'details',  // we use 'id' because we are not using an accessor
