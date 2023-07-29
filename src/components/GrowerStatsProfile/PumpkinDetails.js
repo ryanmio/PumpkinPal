@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link, useHistory } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import Spinner from '../Spinner';
-import { Link } from 'react-router-dom';
 
-// Structure for the detailed Pumpkin data
 const PumpkinDetailsCard = ({ data }) => (
   <div className="bg-white shadow rounded-lg p-4 mb-4">
-    <p><b>Pumpkin ID:</b> {data.id}</p>
+    <h1>{data.id} {data.name}</h1> {/* ID and Name on the top line */}
     <p><b>Grower:</b> {data.grower}</p>
     <p><b>OTT:</b> {data.ott}</p>
     <p><b>Weight:</b> {data.weight}</p>
@@ -20,7 +18,6 @@ const PumpkinDetailsCard = ({ data }) => (
   </div>
 );
 
-// Structure for the ranking data of the pumpkin
 const PumpkinRankingsCard = ({ data }) => (
   <div className="bg-white shadow rounded-lg p-4 mb-4">
     <p><b>Lifetime Global Rank:</b> {data.lifetimeGlobalRank}</p>
@@ -37,6 +34,7 @@ const PumpkinDetails = () => {
   const [pumpkinData, setPumpkinData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const history = useHistory(); // Used for back navigation
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,11 +68,9 @@ const PumpkinDetails = () => {
   return (
     <div className="min-h-screen flex justify-start flex-col">
       <div className="container mx-auto px-4 pt-10 flex flex-col space-y-4">
+        <Link to="#" onClick={history.goBack}>Back</Link> {/* Breadcrumb back link */}
         <PumpkinDetailsCard data={pumpkinData} />
         <PumpkinRankingsCard data={pumpkinData} />
-        <div className="bg-white shadow rounded-lg p-4 mb-4 flex flex-col">
-          <Link to="/mystats" className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 self-center">Back to My Stats</Link>
-        </div>
       </div>
     </div>
   );
