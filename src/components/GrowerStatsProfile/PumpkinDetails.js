@@ -19,13 +19,19 @@ const PumpkinDetailsCard = ({ data }) => (
 );
 
 const PumpkinRankingsCard = ({ data }) => (
-  <div className="bg-white shadow rounded-lg p-4 mb-4">
-    <p><b>Lifetime Global Rank:</b> {data.lifetimeGlobalRank}</p>
-    <p><b>Lifetime Country Rank:</b> {data.lifetimeCountryRank}</p>
-    <p><b>Lifetime State Rank:</b> {data.lifetimeStateRank}</p>
-    <p><b>Year Global Rank:</b> {data.yearGlobalRank}</p>
-    <p><b>Yearly Country Rank:</b> {data.yearlyCountryRank}</p>
-    <p><b>Yearly State Rank:</b> {data.yearlyStateRank}</p>
+  <div className="bg-white shadow rounded-lg p-4 mb-4 grid grid-cols-3 gap-4 text-center">
+    <div></div> {/* Empty cell */}
+    <div><b>Global</b></div>
+    <div><b>Country</b></div>
+    <div><b>State</b></div>
+    <div>{data.year}</div> {/* Column for Year data */}
+    <div>{data.yearGlobalRank}</div>
+    <div>{data.yearlyCountryRank}</div>
+    <div>{data.yearlyStateRank}</div>
+    <div>All Time</div> {/* Column for All Time data */}
+    <div>{data.lifetimeGlobalRank}</div>
+    <div>{data.lifetimeCountryRank}</div>
+    <div>{data.lifetimeStateRank}</div>
   </div>
 );
 
