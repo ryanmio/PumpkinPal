@@ -783,3 +783,71 @@ exports.calculateGrowerRankings = functions.https.onRequest(async (req, res) => 
     await calculateGrowerRankings();
     res.send('Grower rankings calculation completed.');
 });
+
+
+
+// Calculate Site Stats
+async function calculateSiteStats() {
+    const db = admin.firestore();
+    const contestsCollection = db.collection('Stats_Contests');
+    const sitesCollection = db.collection('Stats_Sites');
+
+    try {
+        const contestsSnapshot = await contestsCollection.get();
+
+        if (contestsSnapshot.empty) {
+            console.log('No matching contests.');
+            return;
+        }
+
+        let siteStats = {};
+
+        for (const doc of contestsSnapshot.docs) {
+            const contestData = doc.data();
+            const siteName = contestData.name;
+            const year = contestData.year;
+
+            if (!(siteName in siteStats)) {
+                siteStats[siteName] = {
+                    'Site Record': 0,
+                    'Total Entries': 0,
+                    'Popularity by Year': {},
+                    'Max Weight by Year': {}
+                };
+            }
+
+            siteStats[siteName]['Site Record'] = Math.max(siteStats[siteName]['Site Record'], contestData.recordWeight);
+            siteStats[siteName]['Total Entries'] += contestData.LifetimePopularity;
+            siteStats[siteName]['Popularity by Year'][year] = contestData.YearPopularity;
+            siteStats[siteName]['Max Weight by Year'][year] = contestData.recordWeight;
+        }
+
+        let batch = db.batch();
+        let batchCounter = 0;
+
+        for (const siteName in siteStats) {
+            const docRef = sitesCollection.doc(siteName);
+            batch.set(docRef, siteStats[siteName]);
+            batchCounter++;
+
+            if (batchCounter === 500) {
+                await batch.commit();
+                batch = db.batch();
+                batchCounter = 0;
+            }
+        }
+
+        if (batchCounter > 0) {
+            await batch.commit();
+        }
+
+    } catch (err) {
+        console.error('Error calculating site stats:', err);
+    }
+}
+
+// HTTP function to manually trigger the calculation of site stats
+exports.calculateSiteStats = functions.https.onRequest(async (req, res) => {
+    await calculateSiteStats();
+    res.send('Site stats calculation completed.');
+});
