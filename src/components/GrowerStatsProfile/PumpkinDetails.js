@@ -67,7 +67,7 @@ const PumpkinDetails = () => {
 
   return (
     <div className="min-h-screen flex justify-start flex-col">
-      <div className="container mx-auto px-4 pt-10 flex flex-col space-y-4">
+      <div className="container mx-auto px-4 pt-10 flex flex-col space-y-4 items-start"> {/* Added "items-start" to align items to the left */}
         <Link to="#" onClick={() => navigate(-1)} className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">Back</Link>
         <PumpkinDetailsCard data={pumpkinData} />
         <PumpkinRankingsCard data={pumpkinData} />
