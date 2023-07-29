@@ -20,7 +20,7 @@ const PumpkinDetailsCard = ({ data }) => (
 
 const PumpkinRankingsCard = ({ data }) => (
   <div className="bg-white shadow rounded-lg p-4 mb-4 flex justify-center">
-    <div className="max-w-lg w-full"> {/* This div sets a max width and wraps the card content */}
+    <div className="max-w-lg w-full mb-4"> {/* This div sets a max width and wraps the card content */}
       <div className="grid grid-cols-3 gap-4 text-center">
         <div className="col-span-3 text-lg font-bold mb-2">Ranking Matrix</div> {/* Heading */}
         <div></div> {/* Empty cell */}
