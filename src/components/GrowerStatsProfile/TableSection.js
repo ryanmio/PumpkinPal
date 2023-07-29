@@ -38,7 +38,7 @@ const TableSection = ({ data, columns }) => {
               <tr {...row.getRowProps()}>
                 {row.cells.map(cell => (
                   <td {...cell.getCellProps()} className={`table-cell ${cell.column.id === 'contestName' ? 'w-[200px]' : cell.column.id === 'year' ? 'w-[75px]' : 'w-[100px]'}`}>
-                    <div className={`truncate w-full`} title={cell.value}>
+                    <div className={`${cell.column.id === 'contestName' ? 'truncate' : ''} w-full`} title={cell.value}>
                       {cell.render('Cell')}
                     </div>
                   </td>
