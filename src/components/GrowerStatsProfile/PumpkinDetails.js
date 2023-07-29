@@ -1,0 +1,83 @@
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../firebase';
+import Spinner from '../Spinner';
+import { Link } from 'react-router-dom';
+
+// Structure for the detailed Pumpkin data
+const PumpkinDetailsCard = ({ data }) => (
+  <div className="bg-white shadow rounded-lg p-4 mb-4">
+    <p><b>Pumpkin ID:</b> {data.id}</p>
+    <p><b>Grower:</b> {data.grower}</p>
+    <p><b>OTT:</b> {data.ott}</p>
+    <p><b>Weight:</b> {data.weight}</p>
+    <p><b>Seed:</b> {data.seed}</p>
+    <p><b>Pollinator:</b> {data.pollinator}</p>
+    <p><b>Year:</b> {data.year}</p>
+    <p><b>State:</b> {data.state}</p>
+    <p><b>Contest Name:</b> {data.contestName}</p>
+  </div>
+);
+
+// Structure for the ranking data of the pumpkin
+const PumpkinRankingsCard = ({ data }) => (
+  <div className="bg-white shadow rounded-lg p-4 mb-4">
+    <p><b>Lifetime Global Rank:</b> {data.lifetimeGlobalRank}</p>
+    <p><b>Lifetime Country Rank:</b> {data.lifetimeCountryRank}</p>
+    <p><b>Lifetime State Rank:</b> {data.lifetimeStateRank}</p>
+    <p><b>Year Global Rank:</b> {data.yearGlobalRank}</p>
+    <p><b>Yearly Country Rank:</b> {data.yearlyCountryRank}</p>
+    <p><b>Yearly State Rank:</b> {data.yearlyStateRank}</p>
+  </div>
+);
+
+const PumpkinDetails = () => {
+  const { id } = useParams();
+  const [pumpkinData, setPumpkinData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const docRef = doc(db, 'Stats_Pumpkins', id);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setPumpkinData(docSnap.data());
+        } else {
+          setError("No such pumpkin!");
+        }
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
+  if (loading) {
+    return <Spinner />;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  return (
+    <div className="min-h-screen flex justify-start flex-col">
+      <div className="container mx-auto px-4 pt-10 flex flex-col space-y-4">
+        <PumpkinDetailsCard data={pumpkinData} />
+        <PumpkinRankingsCard data={pumpkinData} />
+        <div className="bg-white shadow rounded-lg p-4 mb-4 flex flex-col">
+          <Link to="/mystats" className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 self-center">Back to My Stats</Link>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PumpkinDetails;
