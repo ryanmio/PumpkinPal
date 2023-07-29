@@ -7,14 +7,14 @@ import Spinner from '../Spinner';
 const PumpkinDetailsCard = ({ data }) => (
   <div className="bg-white shadow rounded-lg p-4 mb-4">
     <h1>{data.id} {data.name}</h1>
-    <p><b>Grower:</b> {data.grower}</p>
-    <p><b>OTT:</b> {data.ott}</p>
-    <p><b>Weight:</b> {data.weight}</p>
-    <p><b>Seed:</b> {data.seed}</p>
-    <p><b>Pollinator:</b> {data.pollinator}</p>
-    <p><b>Year:</b> {data.year}</p>
-    <p><b>State:</b> {data.state}</p>
-    <p><b>Contest Name:</b> {data.contestName}</p>
+    {data.grower && <p><b>Grower:</b> {data.grower}</p>}
+    {data.ott && <p><b>OTT:</b> {data.ott}</p>}
+    {data.weight && <p><b>Weight:</b> {data.weight}</p>}
+    {data.seed && <p><b>Seed:</b> {data.seed}</p>}
+    {data.pollinator && <p><b>Pollinator:</b> {data.pollinator}</p>}
+    {data.year && <p><b>Year:</b> {data.year}</p>}
+    {data.state && <p><b>State:</b> {data.state}</p>}
+    {data.contestName && <p><b>Contest Name:</b> {data.contestName}</p>}
   </div>
 );
 
