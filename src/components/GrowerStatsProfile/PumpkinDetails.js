@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useHistory } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import Spinner from '../Spinner';
 
 const PumpkinDetailsCard = ({ data }) => (
   <div className="bg-white shadow rounded-lg p-4 mb-4">
-    <h1>{data.id} {data.name}</h1> {/* ID and Name on the top line */}
+    <h1>{data.id} {data.name}</h1>
     <p><b>Grower:</b> {data.grower}</p>
     <p><b>OTT:</b> {data.ott}</p>
     <p><b>Weight:</b> {data.weight}</p>
@@ -34,7 +34,7 @@ const PumpkinDetails = () => {
   const [pumpkinData, setPumpkinData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const history = useHistory(); // Used for back navigation
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -68,7 +68,7 @@ const PumpkinDetails = () => {
   return (
     <div className="min-h-screen flex justify-start flex-col">
       <div className="container mx-auto px-4 pt-10 flex flex-col space-y-4">
-        <Link to="#" onClick={history.goBack}>Back</Link> {/* Breadcrumb back link */}
+        <Link to="#" onClick={() => navigate(-1)}>Back</Link>
         <PumpkinDetailsCard data={pumpkinData} />
         <PumpkinRankingsCard data={pumpkinData} />
       </div>
