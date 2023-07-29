@@ -20,18 +20,19 @@ const PumpkinDetailsCard = ({ data }) => (
 
 const PumpkinRankingsCard = ({ data }) => (
   <div className="bg-white shadow rounded-lg p-4 mb-4 grid grid-cols-3 gap-4 text-center">
+    <div className="col-span-3 text-lg font-bold mb-2">Ranking Matrix</div> {/* Heading */}
     <div></div> {/* Empty cell */}
     <div><b>{data.year}</b></div> {/* Year data */}
     <div><b>All Time</b></div> {/* All Time data */}
     <div><b>Global</b></div>
-    <div>{data.yearGlobalRank}</div>
-    <div>{data.lifetimeGlobalRank}</div>
+    <div>#{data.yearGlobalRank}</div> {/* '#' added to ranking */}
+    <div>#{data.lifetimeGlobalRank}</div> {/* '#' added to ranking */}
     <div><b>Country</b></div>
-    <div>{data.yearlyCountryRank}</div>
-    <div>{data.lifetimeCountryRank}</div>
+    <div>#{data.yearlyCountryRank}</div> {/* '#' added to ranking */}
+    <div>#{data.lifetimeCountryRank}</div> {/* '#' added to ranking */}
     <div><b>State</b></div>
-    <div>{data.yearlyStateRank}</div>
-    <div>{data.lifetimeStateRank}</div>
+    <div>#{data.yearlyStateRank}</div> {/* '#' added to ranking */}
+    <div>#{data.lifetimeStateRank}</div> {/* '#' added to ranking */}
   </div>
 );
 
