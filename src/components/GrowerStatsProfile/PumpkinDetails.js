@@ -27,10 +27,10 @@ const PumpkinRankingsCard = ({ data }) => (
     <div><b>Global</b></div>
     <div>#{data.yearGlobalRank}</div> {/* '#' added to ranking */}
     <div>#{data.lifetimeGlobalRank}</div> {/* '#' added to ranking */}
-    <div><b>Country</b></div>
+    <div><b>{data.country}</b></div> {/* Replaced "Country" with actual country data */}
     <div>#{data.yearlyCountryRank}</div> {/* '#' added to ranking */}
     <div>#{data.lifetimeCountryRank}</div> {/* '#' added to ranking */}
-    <div><b>State</b></div>
+    <div><b>{data.state}</b></div> {/* Replaced "State" with actual state data */}
     <div>#{data.yearlyStateRank}</div> {/* '#' added to ranking */}
     <div>#{data.lifetimeStateRank}</div> {/* '#' added to ranking */}
   </div>
