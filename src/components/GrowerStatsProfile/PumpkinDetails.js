@@ -1,9 +1,12 @@
+// Import necessary modules and components
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import Spinner from '../Spinner';
 
+// Component for displaying pumpkin details
+// Conditionally renders fields based on their values
 const PumpkinDetailsCard = ({ data }) => (
   <div className="bg-white shadow rounded-lg p-4 mb-4">
     <h1>{data.id} {data.name}</h1>
@@ -18,28 +21,30 @@ const PumpkinDetailsCard = ({ data }) => (
   </div>
 );
 
+// Component for displaying pumpkin rankings
 const PumpkinRankingsCard = ({ data }) => (
   <div className="bg-white shadow rounded-lg p-4 mb-4 flex justify-center">
-    <div className="max-w-lg w-full mb-4"> {/* This div sets a max width and wraps the card content */}
+    <div className="max-w-lg w-full mb-4">
       <div className="grid grid-cols-3 gap-4 text-center">
         <div className="col-span-3 text-lg font-bold mb-2">Ranking Matrix</div> {/* Heading */}
         <div></div> {/* Empty cell */}
-        <div><b>{data.year}</b></div> {/* Year data */}
-        <div><b>All Time</b></div> {/* All Time data */}
+        <div><b>{data.year}</b></div>
+        <div><b>All Time</b></div>
         <div><b>Global</b></div>
-        <div>#{data.yearGlobalRank}</div> {/* '#' added to ranking */}
-        <div>#{data.lifetimeGlobalRank}</div> {/* '#' added to ranking */}
-        <div><b>{data.country}</b></div> {/* Replaced "Country" with actual country data */}
-        <div>#{data.yearlyCountryRank}</div> {/* '#' added to ranking */}
-        <div>#{data.lifetimeCountryRank}</div> {/* '#' added to ranking */}
-        <div><b>{data.state}</b></div> {/* Replaced "State" with actual state data */}
-        <div>#{data.yearlyStateRank}</div> {/* '#' added to ranking */}
-        <div>#{data.lifetimeStateRank}</div> {/* '#' added to ranking */}
+        <div>#{data.yearGlobalRank}</div> 
+        <div>#{data.lifetimeGlobalRank}</div>
+        <div><b>{data.country}</b></div>
+        <div>#{data.yearlyCountryRank}</div> 
+        <div>#{data.lifetimeCountryRank}</div>
+        <div><b>{data.state}</b></div>
+        <div>#{data.yearlyStateRank}</div>
+        <div>#{data.lifetimeStateRank}</div>
       </div>
     </div>
   </div>
 );
 
+// Component for fetching and displaying pumpkin details and rankings
 const PumpkinDetails = () => {
   const { id } = useParams();
   const [pumpkinData, setPumpkinData] = useState(null);
@@ -47,12 +52,12 @@ const PumpkinDetails = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  // Fetch data on component mount
   useEffect(() => {
     const fetchData = async () => {
       try {
         const docRef = doc(db, 'Stats_Pumpkins', id);
         const docSnap = await getDoc(docRef);
-
         if (docSnap.exists()) {
           setPumpkinData(docSnap.data());
         } else {
@@ -66,20 +71,23 @@ const PumpkinDetails = () => {
     };
 
     fetchData();
-  }, [id]);
+  }, [id]); // Depend on 'id' so the effect runs whenever it changes
 
+  // Loading state
   if (loading) {
     return <Spinner />;
   }
 
+  // Error state
   if (error) {
     return <div>Error: {error}</div>;
   }
 
+  // Render fetched data
   return (
     <div className="min-h-screen flex justify-start flex-col">
       <div className="container mx-auto px-4 pt-10 flex flex-col space-y-4">
-        <div className="text-left"> {/* Enclosed the "Back" link in its own div */}
+        <div className="text-left">
           <Link to="#" onClick={() => navigate(-1)} className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">Back</Link>
         </div>
         <PumpkinDetailsCard data={pumpkinData} />
