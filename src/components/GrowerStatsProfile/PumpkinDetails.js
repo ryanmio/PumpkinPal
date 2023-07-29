@@ -17,7 +17,7 @@ const PumpkinDetailsCard = ({ data }) => (
     {(typeof data.pollinator !== 'undefined' && !isNaN(data.pollinator)) && <p><b>Pollinator:</b> {data.pollinator}</p>}
     <p><b>Year:</b> {data.year}</p>
     {data.state && <p><b>State:</b> {data.state}</p>}
-    {data.contestName && <p><b>Site:</b> {data.contestName}</p>}
+    {data.contestName && <p><b>Site:</b> <Link to={`/site-profile/${data.contestName.replace(/ /g, '_')}_${data.year}`}>{data.contestName}</Link></p>}
   </div>
 );
 
