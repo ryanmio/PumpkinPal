@@ -9,6 +9,7 @@ import GrowerSearch from './GrowerSearch';
 import Spinner from '../Spinner';
 import useGrowerData from '../../utilities/useGrowerDataHook';
 import { toast } from 'react-hot-toast';
+import { Link } from 'react-router-dom';
 
 const MyStats = () => {
   const { user, growerId, setGrowerId } = useContext(UserContext);
@@ -41,19 +42,21 @@ const MyStats = () => {
   }
 
   const pumpkinColumns = [
-    { Header: 'Year', accessor: 'year' },
-    { Header: 'Weight', accessor: 'weight' },
-    { Header: 'Contest', accessor: 'contestName' },
-    { 
-      Header: 'Details', 
-      id: 'details',  // we use 'id' because we are not using an accessor
-      Cell: ({ row: { original } }) => (  // use the row's original data
-        <button className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-          Details
-        </button>
-      ),
-    },
-  ];
+      { Header: 'Year', accessor: 'year' },
+      { Header: 'Weight', accessor: 'weight' },
+      { Header: 'Contest', accessor: 'contestName' },
+      { 
+        Header: 'Details', 
+        id: 'details',  // we use 'id' because we are not using an accessor
+        Cell: ({ row: { original } }) => (  // use the row's original data
+          <Link to={`/pumpkin-details/${original.id}`}>
+            <button className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+              Details
+            </button>
+          </Link>
+        ),
+      },
+    ];
 
  return (
   <div className="min-h-screen flex justify-start flex-col">
