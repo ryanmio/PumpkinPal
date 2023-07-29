@@ -358,3 +358,11 @@ button.button-disabled {
 .swal2-content {
   margin-top: -10px !important;  /* Adjust this value as needed */
 }
+
+.table-cell-contest-name {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
