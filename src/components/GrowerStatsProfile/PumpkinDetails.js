@@ -21,16 +21,16 @@ const PumpkinDetailsCard = ({ data }) => (
 const PumpkinRankingsCard = ({ data }) => (
   <div className="bg-white shadow rounded-lg p-4 mb-4 grid grid-cols-3 gap-4 text-center">
     <div></div> {/* Empty cell */}
+    <div><b>{data.year}</b></div> {/* Year data */}
+    <div><b>All Time</b></div> {/* All Time data */}
     <div><b>Global</b></div>
-    <div><b>Country</b></div>
-    <div><b>State</b></div>
-    <div>{data.year}</div> {/* Column for Year data */}
     <div>{data.yearGlobalRank}</div>
-    <div>{data.yearlyCountryRank}</div>
-    <div>{data.yearlyStateRank}</div>
-    <div>All Time</div> {/* Column for All Time data */}
     <div>{data.lifetimeGlobalRank}</div>
+    <div><b>Country</b></div>
+    <div>{data.yearlyCountryRank}</div>
     <div>{data.lifetimeCountryRank}</div>
+    <div><b>State</b></div>
+    <div>{data.yearlyStateRank}</div>
     <div>{data.lifetimeStateRank}</div>
   </div>
 );
