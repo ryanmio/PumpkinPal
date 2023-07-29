@@ -6,17 +6,29 @@ import Spinner from '../Spinner';
 import { Line } from 'react-chartjs-2';
 
 // Component for displaying site details
-const SiteDetailsCard = ({ data, popularityData, weightData }) => (
-  <div className="bg-white shadow rounded-lg p-4 mb-4">
-    <h1>{data.id}</h1> 
-    <p><b>Site Record:</b> {data['Site Record']}</p>
-    <p><b>Total Entries:</b> {data['Total Entries']}</p>
-    <p><b>Popularity by Year:</b></p>
-    <Line data={popularityData} />
-    <p><b>Max Weight by Year:</b></p>
-    <Line data={weightData} />
-  </div>
-);
+const SiteDetailsCard = ({ data, popularityData, weightData }) => {
+  const popularityListItems = Object.entries(data['Popularity by Year'] || {}).map(([year, popularity]) => (
+    <li key={year}>{year}: {popularity}</li>
+  ));
+
+  const weightListItems = Object.entries(data['Max Weight by Year'] || {}).map(([year, weight]) => (
+    <li key={year}>{year}: {weight}</li>
+  ));
+
+  return (
+    <div className="bg-white shadow rounded-lg p-4 mb-4">
+      <h1>{data.id}</h1>
+      <p><b>Site Record:</b> {data['Site Record']}</p>
+      <p><b>Total Entries:</b> {data['Total Entries']}</p>
+      <p><b>Popularity by Year:</b></p>
+      <ul>{popularityListItems}</ul>
+      <Line data={popularityData} />
+      <p><b>Max Weight by Year:</b></p>
+      <ul>{weightListItems}</ul>
+      <Line data={weightData} />
+    </div>
+  );
+};
 
 const SiteProfile = () => {
   const { id } = useParams();
@@ -55,7 +67,7 @@ const SiteProfile = () => {
               borderColor: 'rgba(255, 99, 132, 0.2)',
             }],
           };
-          setSiteData({ id: siteName, data, popularityData, weightData });
+          setSiteData({ id: siteName, ...data, popularityData, weightData });
         } else {
           setError(`No site found with name: ${siteName}`);
         }
@@ -85,7 +97,7 @@ const SiteProfile = () => {
         <div className="text-left">
           <Link to="#" onClick={() => navigate(-1)} className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">Back</Link>
         </div>
-        <SiteDetailsCard data={siteData.data} popularityData={siteData.popularityData} weightData={siteData.weightData} />
+        <SiteDetailsCard data={siteData} popularityData={siteData.popularityData} weightData={siteData.weightData} />
       </div>
     </div>
   );
