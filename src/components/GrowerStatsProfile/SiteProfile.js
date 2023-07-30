@@ -12,15 +12,15 @@ const SiteDetailsCard = ({ data, popularityData, weightData }) => {
   return (
     <div className="bg-white shadow rounded-lg p-4 mb-4">
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-blue-100 p-6 rounded text-center">
+        <div style={{backgroundColor: '#FFD699'}} className="p-6 rounded text-center">
           <h2 className="text-lg font-bold mb-2">Site Record (lbs)</h2>
           <p className="text-2xl">{data['Site Record']}</p>
         </div>
-        <div className="bg-green-100 p-6 rounded text-center">
+        <div style={{backgroundColor: '#FFD699'}} className="p-6 rounded text-center">
           <h2 className="text-lg font-bold mb-2">Total Entries</h2>
           <p className="text-2xl">{data['Total Entries']}</p>
         </div>
-        <div className="bg-yellow-100 p-6 rounded text-center">
+        <div style={{backgroundColor: '#FFD699'}} className="p-6 rounded text-center">
           <h2 className="text-lg font-bold mb-2">Unique Years</h2>
           <p className="text-2xl">{uniqueYears}</p>
         </div>
