@@ -15,6 +15,24 @@ const SiteDetailsCard = ({ data, popularityData, weightData }) => (
     <Line data={popularityData} />
     <p><b>Max Weight by Year:</b></p>
     <Line data={weightData} />
+    <table className="mt-4">
+      <thead>
+        <tr>
+          <th>Year</th>
+          <th>Entries</th>
+          <th>Max Weight</th>
+        </tr>
+      </thead>
+      <tbody>
+        {popularityData.labels.map((year, i) => (
+          <tr key={year}>
+            <td>{year}</td>
+            <td>{popularityData.datasets[0].data[i]}</td>
+            <td>{weightData.datasets[0].data[i]}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   </div>
 );
 
@@ -85,16 +103,16 @@ const SiteProfile = () => {
   }
 
   // Render fetched data
-  return (
-    <div className="min-h-screen flex justify-start flex-col">
-      <div className="container mx-auto px-4 pt-10 flex flex-col space-y-4">
-        <div className="text-left">
-          <Link to="#" onClick={() => navigate(-1)} className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">Back</Link>
-        </div>
-        <SiteDetailsCard data={siteData} popularityData={siteData.popularityData} weightData={siteData.weightData} />
+return (
+  <div className="min-h-screen flex justify-start flex-col">
+    <div className="container mx-auto px-4 pt-10 flex flex-col space-y-4">
+      <div className="text-left">
+        <Link to="#" onClick={() => navigate(-1)} className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">Back</Link>
       </div>
+      <SiteDetailsCard data={siteData} popularityData={siteData.popularityData} weightData={siteData.weightData} />
     </div>
-  );
+  </div>
+);
 };
 
 export default SiteProfile;
