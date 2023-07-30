@@ -11,8 +11,8 @@ const SiteDetailsCard = ({ data, popularityData, weightData }) => {
 
   return (
   <div className="bg-white shadow rounded-lg p-4 mb-4">
-    <h1 className="mb-2">{data.id}</h1>
-<div className="flex justify-center sm:justify-between mb-4 sm:flex-wrap">
+    <h1 className="mb-3">{data.id}</h1>
+<div className="flex justify-center sm:justify-between sm:flex-wrap">
   <div className="text-center sm:text-center mb-2 sm:mb-4">
     <h2 className="text-sm sm:text-lg mb-1">Site Record (lbs)</h2>
     <p className="text-xl sm:text-2xl font-light">{data['Site Record']}</p>
