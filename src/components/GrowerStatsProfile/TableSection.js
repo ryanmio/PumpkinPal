@@ -14,8 +14,6 @@ const TableSection = ({ data, columns }) => {
     initialState: { sortBy: [{ id: 'weight', desc: true }] }
   }, useSortBy);
 
-  const navigate = useNavigate();
-
   return (
     <div className="bg-white shadow rounded-lg p-4 flex flex-col overflow-x-auto">
       <h2 className="text-xl font-bold mb-2">Weigh-Off History</h2>
