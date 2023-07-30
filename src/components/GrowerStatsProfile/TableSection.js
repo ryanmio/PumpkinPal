@@ -1,5 +1,5 @@
 import { useTable, useSortBy } from 'react-table';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const TableSection = ({ data, columns }) => {
   const {
@@ -40,16 +40,17 @@ const TableSection = ({ data, columns }) => {
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map(cell => {
-                  // 3. Use navigate function in the Cell
-                  if (cell.column.id === 'contestName') {
-                    return (
-                      <td {...cell.getCellProps()} className={`table-cell truncate overflow-hidden w-[200px]`}>
-                        <div className={`w-full`} title={cell.value}>
-                          <a onClick={() => navigate(`/site-profile/${row.original.siteId}`)} className="cursor-pointer text-current hover:text-current no-underline hover:underline">{cell.render('Cell')}</a>
-                        </div>
-                      </td>
-                    );
-                  }
+  if (cell.column.id === 'contestName') {
+    return (
+      <td {...cell.getCellProps()} className={`table-cell truncate overflow-hidden w-[200px]`}>
+        <div className={`w-full`} title={cell.value}>
+          <Link to={`/site-profile/${row.original.siteId}`} className="text-current hover:text-current no-underline hover:underline">
+            {cell.render('Cell')}
+          </Link>
+        </div>
+      </td>
+    );
+  }
 
                   return (
                     <td {...cell.getCellProps()} className={`table-cell truncate overflow-hidden ${cell.column.id === 'year' ? 'w-[75px]' : 'w-[100px]'}`}>
