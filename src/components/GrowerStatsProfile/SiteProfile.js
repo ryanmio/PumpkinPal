@@ -102,9 +102,13 @@ const SiteProfile = () => {
   }, [id, siteName]);
 
   // Loading state
-  if (loading) {
-    return <Spinner />;
-  }
+if (loading) {
+  return (
+    <div className="min-h-screen flex justify-center items-center bg-opacity-50 bg-gray-100">
+      <Spinner />
+    </div>
+  );
+}
 
   // Error state
   if (error) {
