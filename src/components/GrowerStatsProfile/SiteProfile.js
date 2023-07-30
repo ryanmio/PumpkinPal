@@ -26,9 +26,7 @@ const SiteDetailsCard = ({ data, popularityData, weightData }) => {
     <p className="text-xl sm:text-2xl font-light">{uniqueYears}</p>
   </div>
 </div>
-    <p><b>Entries by Year:</b></p>
     <Line data={popularityData} />
-    <p><b>Max Weight by Year:</b></p>
     <Line data={weightData} />
     <table className="mt-4 w-full table-auto">
       <thead>
