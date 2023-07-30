@@ -20,7 +20,7 @@ const SiteDetailsCard = ({ data, popularityData, weightData }) => (
     <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
       <th className="py-3 px-6 text-center">Year</th>
       <th className="py-3 px-6 text-center">Entries</th>
-      <th className="py-3 px-6 text-center">Max Weight</th>
+      <th className="py-3 px-6 text-center">1st Place (lbs)</th>
     </tr>
   </thead>
   <tbody className="text-gray-600 text-sm font-light">
