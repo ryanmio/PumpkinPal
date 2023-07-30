@@ -42,7 +42,7 @@ const TableSection = ({ data, columns }) => {
     return (
       <td {...cell.getCellProps()} className={`table-cell truncate overflow-hidden w-[200px]`}>
         <div className={`w-full`} title={cell.value}>
-          <Link to={`/site-profile/${row.original.siteId}`} className="text-current hover:text-current no-underline hover:underline">
+          <Link to={`/site-profile/${row.original.contestName.replace(/ /g, '_')}`} className="text-current hover:text-current no-underline hover:underline">
             {cell.render('Cell')}
           </Link>
         </div>
