@@ -11,8 +11,8 @@ const SiteDetailsCard = ({ data, popularityData, weightData }) => {
 
   return (
   <div className="bg-white shadow rounded-lg p-4 mb-4">
-    <h1 className="mb-4">{data.id}</h1>
-<div className="flex justify-between mb-6 border-b border-gray-200 pb-4 sm:flex-wrap">
+    <h1 className="mb-2">{data.id}</h1>
+<div className="flex justify-between mb-4 sm:flex-wrap">
   <div className="text-center mb-2 sm:mb-4">
     <h2 className="text-sm sm:text-lg mb-1">Site Record (lbs)</h2>
     <p className="text-xl sm:text-2xl font-light">{data['Site Record']}</p>
@@ -21,7 +21,7 @@ const SiteDetailsCard = ({ data, popularityData, weightData }) => {
     <h2 className="text-sm sm:text-lg mb-1">Total Entries</h2>
     <p className="text-xl sm:text-2xl font-light">{data['Total Entries']}</p>
   </div>
-  <div className="text-center mb-2 sm:mb-4 sm:hidden">
+  <div className="text-center mb-2 sm:mb-4 hidden sm:block">
     <h2 className="text-sm sm:text-lg mb-1">Unique Years</h2>
     <p className="text-xl sm:text-2xl font-light">{uniqueYears}</p>
   </div>
