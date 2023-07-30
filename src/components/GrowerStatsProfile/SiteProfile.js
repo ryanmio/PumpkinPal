@@ -36,25 +36,31 @@ const SiteProfile = () => {
         if (docSnap.exists()) {
           const data = docSnap.data();
           const popularityData = {
-            labels: Object.keys(data['Popularity by Year']),
-            datasets: [{
-              label: 'Entries by Year',
-              data: Object.values(data['Popularity by Year']),
-              fill: false,
-              backgroundColor: 'rgb(75, 192, 192)',
-              borderColor: 'rgba(75, 192, 192, 0.2)',
-            }],
-          };
+              labels: Object.keys(data['Popularity by Year']),
+              datasets: [{
+                label: 'Entries by Year',
+                data: Object.values(data['Popularity by Year']),
+                fill: false,
+                backgroundColor: 'rgb(75, 192, 192)',
+                borderColor: 'rgba(75, 192, 192, 0.2)',
+                pointRadius: 5, // Make points a bit larger
+                pointHoverRadius: 7, // Make points larger when hovering over them
+                pointLabel: Object.values(data['Popularity by Year']).toString(), // Add point labels
+              }],
+            };
           const weightData = {
-            labels: Object.keys(data['Max Weight by Year']),
-            datasets: [{
-              label: 'Max Weight by Year',
-              data: Object.values(data['Max Weight by Year']),
-              fill: false,
-              backgroundColor: 'rgb(255, 99, 132)',
-              borderColor: 'rgba(255, 99, 132, 0.2)',
-            }],
-          };
+              labels: Object.keys(data['Max Weight by Year']),
+              datasets: [{
+                label: 'Max Weight by Year',
+                data: Object.values(data['Max Weight by Year']),
+                fill: false,
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgba(255, 99, 132, 0.2)',
+                pointRadius: 5, // Make points a bit larger
+                pointHoverRadius: 7, // Make points larger when hovering over them
+                pointLabel: Object.values(data['Max Weight by Year']).toString(), // Add point labels
+              }],
+            };
           setSiteData({ id: siteName, ...data, popularityData, weightData });
         } else {
           setError(`No site found with name: ${siteName}`);
