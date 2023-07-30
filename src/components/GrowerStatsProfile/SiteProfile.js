@@ -18,17 +18,17 @@ const SiteDetailsCard = ({ data, popularityData, weightData }) => (
     <table className="mt-4 w-full table-auto">
   <thead>
     <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-      <th className="py-3 px-6 text-left">Year</th>
-      <th className="py-3 px-6 text-left">Entries</th>
-      <th className="py-3 px-6 text-left">Max Weight</th>
+      <th className="py-3 px-6 text-center">Year</th>
+      <th className="py-3 px-6 text-center">Entries</th>
+      <th className="py-3 px-6 text-center">Max Weight</th>
     </tr>
   </thead>
   <tbody className="text-gray-600 text-sm font-light">
     {popularityData.labels.map((year, i) => (
       <tr className="border-b border-gray-200 hover:bg-gray-100" key={year}>
-        <td className="py-3 px-6 text-left">{year}</td>
-        <td className="py-3 px-6 text-left">{popularityData.datasets[0].data[i]}</td>
-        <td className="py-3 px-6 text-left">{weightData.datasets[0].data[i]}</td>
+        <td className="py-3 px-6 text-center">{year}</td>
+        <td className="py-3 px-6 text-center">{popularityData.datasets[0].data[i]}</td>
+        <td className="py-3 px-6 text-center">{weightData.datasets[0].data[i]}</td>
       </tr>
     ))}
   </tbody>
