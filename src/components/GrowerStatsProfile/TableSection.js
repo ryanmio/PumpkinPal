@@ -1,4 +1,5 @@
 import { useTable, useSortBy } from 'react-table';
+import { useNavigate } from 'react-router-dom';
 
 const TableSection = ({ data, columns }) => {
   const {
@@ -12,6 +13,8 @@ const TableSection = ({ data, columns }) => {
     data, 
     initialState: { sortBy: [{ id: 'weight', desc: true }] }
   }, useSortBy);
+
+  const navigate = useNavigate();
 
   return (
     <div className="bg-white shadow rounded-lg p-4 flex flex-col overflow-x-auto">
@@ -36,19 +39,31 @@ const TableSection = ({ data, columns }) => {
             prepareRow(row);
             return (
               <tr {...row.getRowProps()}>
-                {row.cells.map(cell => (
-                  <td {...cell.getCellProps()} className={`table-cell truncate overflow-hidden ${cell.column.id === 'contestName' ? 'w-[200px]' : cell.column.id === 'year' ? 'w-[75px]' : 'w-[100px]'}`}>
-                    <div className={`w-full`} title={cell.value}>
-                      {cell.render('Cell')}
-                    </div>
-                  </td>
-                ))}
+                {row.cells.map(cell => {
+                  // 3. Use navigate function in the Cell
+                  if (cell.column.id === 'contestName') {
+                    return (
+                      <td {...cell.getCellProps()} className={`table-cell truncate overflow-hidden w-[200px]`}>
+                        <div className={`w-full`} title={cell.value}>
+                          <a onClick={() => navigate(`/site-profile/${row.original.siteId}`)} className="cursor-pointer text-current hover:text-current no-underline hover:underline">{cell.render('Cell')}</a>
+                        </div>
+                      </td>
+                    );
+                  }
+
+                  return (
+                    <td {...cell.getCellProps()} className={`table-cell truncate overflow-hidden ${cell.column.id === 'year' ? 'w-[75px]' : 'w-[100px]'}`}>
+                      <div className={`w-full`} title={cell.value}>
+                        {cell.render('Cell')}
+                      </div>
+                    </td>
+                  );
+                })}
               </tr>
             );
           })}
         </tbody>
-      </table>
-    </div>
+    ...
   );
 };
 
