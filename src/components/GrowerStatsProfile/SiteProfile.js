@@ -11,21 +11,21 @@ const SiteDetailsCard = ({ data, popularityData, weightData }) => {
 
   return (
   <div className="bg-white shadow rounded-lg p-4 mb-4">
-    <h1>{data.id}</h1>
-        <div className="flex justify-between mb-6 border-b border-gray-200 pb-4">
-      <div className="text-center">
-        <h2 className="text-lg mb-2">Site Record (lbs)</h2>
-        <p className="text-2xl font-light">{data['Site Record']}</p>
-      </div>
-      <div className="text-center">
-        <h2 className="text-lg mb-2">Total Entries</h2>
-        <p className="text-2xl font-light">{data['Total Entries']}</p>
-      </div>
-      <div className="text-center">
-        <h2 className="text-lg mb-2">Unique Years</h2>
-        <p className="text-2xl font-light">{uniqueYears}</p>
-      </div>
-    </div>
+    <h1 className="mb-4">{data.id}</h1>
+<div className="flex justify-between mb-6 border-b border-gray-200 pb-4 sm:flex-wrap">
+  <div className="text-center mb-2 sm:mb-4">
+    <h2 className="text-sm sm:text-lg mb-1">Site Record (lbs)</h2>
+    <p className="text-xl sm:text-2xl font-light">{data['Site Record']}</p>
+  </div>
+  <div className="text-center mb-2 sm:mb-4">
+    <h2 className="text-sm sm:text-lg mb-1">Total Entries</h2>
+    <p className="text-xl sm:text-2xl font-light">{data['Total Entries']}</p>
+  </div>
+  <div className="text-center mb-2 sm:mb-4 sm:hidden">
+    <h2 className="text-sm sm:text-lg mb-1">Unique Years</h2>
+    <p className="text-xl sm:text-2xl font-light">{uniqueYears}</p>
+  </div>
+</div>
     <p><b>Entries by Year:</b></p>
     <Line data={popularityData} />
     <p><b>Max Weight by Year:</b></p>
