@@ -62,9 +62,11 @@ const TableSection = ({ data, columns }) => {
               </tr>
             );
           })}
-        </tbody>
-    ...
+                </tbody>
+      </table>
+    </div>
   );
 };
 
 export default TableSection;
+
