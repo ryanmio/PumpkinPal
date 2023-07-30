@@ -50,7 +50,7 @@ const SiteDetailsCard = ({ data, popularityData, weightData }) => {
     </table>
   </div>
 );
-
+};
 
 const SiteProfile = () => {
   const { id } = useParams();
