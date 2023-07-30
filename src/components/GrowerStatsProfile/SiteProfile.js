@@ -7,7 +7,6 @@ import { Line } from 'react-chartjs-2';
 
 // Component for displaying site details
 const SiteDetailsCard = ({ data, popularityData, weightData }) => {
-  const uniqueYears = Object.keys(data['Popularity by Year']).length;
 
   return (
   <div className="bg-white shadow rounded-lg p-4 mb-4">
