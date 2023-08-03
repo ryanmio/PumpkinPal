@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { storage, db } from '../firebase';
 import { toast } from 'react-hot-toast';
 import PlusIcon from './icons/PlusIcon';
-import { UserContext } from '../context/UserContext';
+import { UserContext } from '../contexts/UserContext';
 import { updateDoc, arrayUnion } from 'firebase/firestore';
 
 const ImageCard = ({ pumpkinId }) => {
