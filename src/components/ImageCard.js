@@ -18,9 +18,11 @@ const ImageCard = ({ pumpkinId }) => {
 
       // Define the storage path
       const storagePath = `path/to/storage/${pumpkinId}/${file.name}`;
-      const storageRef = storage.ref(storagePath);
+      const storageRef = storage.ref(); // Get a reference to the storage service
+      const imageRef = storageRef.child(storagePath); // Create a reference to the file location
+
       try {
-        await storageRef.put(file);
+        await imageRef.put(file); // Upload the file
         toast.success('Image uploaded successfully.');
         // Placeholder: Save the URL to Firestore or other relevant location
       } catch (error) {
