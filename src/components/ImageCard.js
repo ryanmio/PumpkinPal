@@ -7,7 +7,7 @@ const ImageCard = ({ pumpkinId }) => {
   const [images, setImages] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       setImages([...images, file]);
@@ -17,26 +17,22 @@ const ImageCard = ({ pumpkinId }) => {
         setPreviewUrls([...previewUrls, e.target.result]);
       };
       reader.readAsDataURL(file);
+      await handleUpload(file); // Call handleUpload here
     }
   };
 
-  const handleUpload = async () => {
+  const handleUpload = async (image) => {
     try {
-      const downloadUrls = [];
-      for (const image of images) {
-        // Define the storage path
-        const storagePath = `path/to/storage/${pumpkinId}/${image.name}`;
-        const storageRef = storage.ref(storagePath); // Using storage from firebase.js
-        const snapshot = await storageRef.put(image);
-        const downloadUrl = await snapshot.ref.getDownloadURL();
-        downloadUrls.push(downloadUrl);
-        // Placeholder: Save the URL to Firestore or other relevant location
-      }
-      toast.success('Images uploaded successfully.');
-      // You can set the download URLs to the state or handle them as needed
+      // Define the storage path
+      const storagePath = `path/to/storage/${pumpkinId}/${image.name}`;
+      const storageRef = storage.ref(storagePath);
+      const snapshot = await storageRef.put(image);
+      const downloadUrl = await snapshot.ref.getDownloadURL();
+      // Placeholder: Save the URL to Firestore or other relevant location
+      toast.success('Image uploaded successfully.');
     } catch (error) {
-      console.error('Error uploading images:', error);
-      toast.error('Failed to upload images. Please try again.');
+      console.error('Error uploading image:', error);
+      toast.error('Failed to upload image. Please try again.');
     }
   };
 
