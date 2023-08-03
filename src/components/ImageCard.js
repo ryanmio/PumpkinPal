@@ -24,11 +24,11 @@ const ImageCard = ({ pumpkinId }) => {
   const handleUpload = async (image) => {
     try {
       // Define the storage path
-      const storagePath = `path/to/storage/${pumpkinId}/${image.name}`;
+      const storagePath = `gs://pumpkinpal-b60be.appspot.com/UserImages/${pumpkinId}/${image.name}`;
       const storageRef = storage.ref(storagePath);
       const snapshot = await storageRef.put(image);
       const downloadUrl = await snapshot.ref.getDownloadURL();
-      // Placeholder: Save the URL to Firestore or other relevant location
+      // You can handle the download URL as needed, such as saving it to Firestore
       toast.success('Image uploaded successfully.');
     } catch (error) {
       console.error('Error uploading image:', error);
