@@ -1,34 +1,42 @@
 import React, { useState } from 'react';
-import { storage } from '../firebase'; // Assuming Firebase storage is exported from firebase.js
+import { storage } from '../firebase';
 import { toast } from 'react-hot-toast';
 import PlusIcon from './icons/PlusIcon';
 
 const ImageCard = ({ pumpkinId }) => {
+  const [images, setImages] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
 
-  const handleImageChange = async (e) => {
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setImages([...images, file]);
       // Preview the selected image
       const reader = new FileReader();
       reader.onload = (e) => {
         setPreviewUrls([...previewUrls, e.target.result]);
       };
       reader.readAsDataURL(file);
+    }
+  };
 
-      // Define the storage path
-      const storagePath = `path/to/storage/${pumpkinId}/${file.name}`;
-      const storageRef = storage.ref(); // Get a reference to the storage service
-      const imageRef = storageRef.child(storagePath); // Create a reference to the file location
-
-      try {
-        await imageRef.put(file); // Upload the file
-        toast.success('Image uploaded successfully.');
+  const handleUpload = async () => {
+    try {
+      const downloadUrls = [];
+      for (const image of images) {
+        // Define the storage path
+        const storagePath = `path/to/storage/${pumpkinId}/${image.name}`;
+        const storageRef = storage.ref(storagePath); // Using storage from firebase.js
+        const snapshot = await storageRef.put(image);
+        const downloadUrl = await snapshot.ref.getDownloadURL();
+        downloadUrls.push(downloadUrl);
         // Placeholder: Save the URL to Firestore or other relevant location
-      } catch (error) {
-        console.error('Error uploading image:', error);
-        toast.error('Failed to upload image. Please try again.');
       }
+      toast.success('Images uploaded successfully.');
+      // You can set the download URLs to the state or handle them as needed
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      toast.error('Failed to upload images. Please try again.');
     }
   };
 
