@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { storage } from '../firebase'; // Assuming Firebase storage is exported from firebase.js
 import { toast } from 'react-hot-toast';
-import { PlusIcon } from '@heroicons/react/outline';
+import PlusIcon from './icons/PlusIcon';
 
 const ImageCard = ({ pumpkinId }) => {
   const [images, setImages] = useState([]);
