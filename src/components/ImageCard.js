@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
-import { storage } from '../firebase';
+import React, { useState, useContext } from 'react';
+import { storage, db } from '../firebase';
 import { toast } from 'react-hot-toast';
 import PlusIcon from './icons/PlusIcon';
+import { UserContext } from '../context/UserContext';
+import { updateDoc, arrayUnion } from 'firebase/firestore';
 
 const ImageCard = ({ pumpkinId }) => {
   const [images, setImages] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
+  const { user } = useContext(UserContext);
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
@@ -28,7 +31,15 @@ const ImageCard = ({ pumpkinId }) => {
       const storageRef = storage.ref(storagePath);
       const snapshot = await storageRef.put(image);
       const downloadUrl = await snapshot.ref.getDownloadURL();
-      // You can handle the download URL as needed, such as saving it to Firestore
+
+      // Get a reference to the specific pumpkin document
+      const pumpkinRef = db.collection('Users').doc(user.uid).collection('Pumpkins').doc(pumpkinId);
+
+      // Update the pumpkin document with the new download URL
+      await updateDoc(pumpkinRef, {
+        images: arrayUnion(downloadUrl) // Use arrayUnion to add the URL to an array field
+      });
+
       toast.success('Image uploaded successfully.');
     } catch (error) {
       console.error('Error uploading image:', error);
