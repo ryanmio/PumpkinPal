@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast';
 import PlusIcon from './icons/PlusIcon';
 import { UserContext } from '../contexts/UserContext';
 import { updateDoc, arrayUnion } from 'firebase/firestore';
+import { ref } from 'firebase/storage'; // Import the ref function
 
 const ImageCard = ({ pumpkinId }) => {
   const [images, setImages] = useState([]);
@@ -28,7 +29,7 @@ const ImageCard = ({ pumpkinId }) => {
     try {
       // Define the storage path
       const storagePath = `gs://pumpkinpal-b60be.appspot.com/UserImages/${pumpkinId}/${image.name}`;
-      const storageRef = storage.ref(storagePath);
+      const storageRef = ref(storage, storagePath); // Use the ref function with the storage object
       const snapshot = await storageRef.put(image);
       const downloadUrl = await snapshot.ref.getDownloadURL();
 
