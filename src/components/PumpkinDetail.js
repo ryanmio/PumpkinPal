@@ -123,6 +123,8 @@ return (
       pumpkinName={pumpkin?.name}
     />
 
+    {/* Card 5: Image Upload */}
+        <ImageCard pumpkinId={id} />
 
     </div> 
   </div>
