@@ -21,8 +21,23 @@ const ImageCard = ({ pumpkinId }) => {
   };
 
   const handleUpload = async () => {
-    // Placeholder: Implement the logic to upload all images in the gallery
-    // You can loop through the images array and upload each image
+    try {
+      const downloadUrls = [];
+      for (const image of images) {
+        // Define the storage path
+        const storagePath = `path/to/storage/${pumpkinId}/${image.name}`;
+        const storageRef = storage.ref(storagePath);
+        const snapshot = await storageRef.put(image);
+        const downloadUrl = await snapshot.ref.getDownloadURL();
+        downloadUrls.push(downloadUrl);
+        // Placeholder: Save the URL to Firestore or other relevant location
+      }
+      toast.success('Images uploaded successfully.');
+      // You can set the download URLs to the state or handle them as needed
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      toast.error('Failed to upload images. Please try again.');
+    }
   };
 
   return (
