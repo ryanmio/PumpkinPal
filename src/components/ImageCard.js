@@ -25,13 +25,13 @@ const ImageCard = ({ pumpkinId }) => {
   };
 
   const handleUpload = async (image) => {
-    try {
-      const storagePath = `UserImages/${pumpkinId}/${image.name}`;
-      const storageRef = ref(storage, storagePath);
-      const metadata = { contentType: image.type };
-      const uploadTask = uploadBytesResumable(storageRef, image, metadata);
+  try {
+    const storagePath = `UserImages/${pumpkinId}/${image.name}`;
+    const storageRef = ref(storage, storagePath);
+    const metadata = { contentType: image.type };
+    const uploadTask = uploadBytesResumable(storageRef, image, metadata);
 
-       uploadTask.on(
+    uploadTask.on(
       'state_changed',
       (snapshot) => {
         // You can add progress tracking here if needed
