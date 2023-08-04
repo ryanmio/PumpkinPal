@@ -119,26 +119,24 @@ const ImageCard = ({ pumpkinId }) => {
   <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-12">
     <h3 className="text-xl font-bold mb-4">Image Gallery</h3>
     <div className="grid grid-cols-2 gap-4">
-  {images.map((url, index) => (
-    <div key={index} onClick={() => openModal(url)} className="w-full">
-      <div className="relative pb-full">
-        <img src={url} alt="Preview" className="absolute w-full h-full object-cover" loading="lazy" />
-      </div>
+      {images.map((url, index) => (
+        <div key={index} onClick={() => openModal(url)} className="w-full aspect-w-1 aspect-h-1">
+          <img src={url} alt="Preview" className="w-full h-full object-cover" loading="lazy" />
+        </div>
+      ))}
+      <label className="w-full flex justify-center items-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 aspect-w-1 aspect-h-1">
+        <div className="w-full h-full flex justify-center items-center">
+          <input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={handleImageChange}
+            className="hidden"
+          />
+          <PlusIcon className="h-8 w-8 text-gray-400" />
+        </div>
+      </label>
     </div>
-  ))}
-  <label className="w-full flex justify-center items-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100">
-    <div className="relative pb-full w-full h-full flex justify-center items-center">
-      <input
-        type="file"
-        accept="image/*"
-        capture="environment"
-        onChange={handleImageChange}
-        className="hidden"
-      />
-      <PlusIcon className="h-8 w-8 text-gray-400" />
-    </div>
-  </label>
-</div>
     <Modal isOpen={isModalOpen} onRequestClose={closeModal} className="flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-lg mx-auto mt-10">
       <button onClick={closeModal} className="self-start text-xl font-bold">&times;</button>
       {isLoading ? (
