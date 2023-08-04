@@ -5,10 +5,34 @@ import PlusIcon from './icons/PlusIcon';
 import { UserContext } from '../contexts/UserContext';
 import { updateDoc, arrayUnion, collection, doc, getDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import Modal from 'react-modal';
 
 const ImageCard = ({ pumpkinId }) => {
   const [images, setImages] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useContext(UserContext);
+
+  const handleShare = () => {
+    // Share logic here
+  };
+
+  const handleDownload = () => {
+    // Download logic here
+  };
+
+  const handleDelete = () => {
+    // Delete logic here
+  };
+
+  const openModal = (image) => {
+    setSelectedImage(image);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     let isMounted = true; // Track whether the component is mounted
@@ -85,7 +109,9 @@ const ImageCard = ({ pumpkinId }) => {
       <h3 className="text-xl font-bold mb-4">Image Gallery</h3>
       <div className="grid grid-cols-2 gap-4">
         {images.map((url, index) => (
-          <img key={index} src={url} alt="Preview" className="w-full h-64 object-cover" loading="lazy" />
+          <div key={index} onClick={() => openModal(url)}>
+            <img src={url} alt="Preview" className="w-full h-64 object-cover" loading="lazy" />
+          </div>
         ))}
         <label className="w-full h-64 flex justify-center items-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100">
           <input
@@ -98,6 +124,12 @@ const ImageCard = ({ pumpkinId }) => {
           <PlusIcon className="h-8 w-8 text-gray-400" />
         </label>
       </div>
+      <Modal isOpen={isModalOpen} onRequestClose={closeModal}>
+        <img src={selectedImage} alt="Selected" className="w-full h-64 object-cover" />
+        <button onClick={handleShare}>Share to Facebook</button>
+        <button onClick={handleDownload}>Download</button>
+        <button onClick={handleDelete}>Delete</button>
+      </Modal>
     </div>
   );
 };
