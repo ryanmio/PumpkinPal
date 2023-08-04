@@ -89,46 +89,46 @@ const ImageCard = ({ pumpkinId }) => {
 
     uploadTask.on(
       'state_changed',
-        (snapshot) => {
-          // You can add progress tracking here if needed
-        },
-        (error) => {
-          console.error('Error uploading image:', error);
-          toast.error('Failed to upload image. Please try again.');
-        },
-        () => {
+      (snapshot) => {
+        // You can add progress tracking here if needed
+      },
+      (error) => {
+        console.error('Error uploading image:', error);
+        toast.error('Failed to upload image. Please try again.');
+      },
+      () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-  // Get the thumbnail URL
-  const thumbnailRef = ref(storage, thumbnailPath);
-  getDownloadURL(thumbnailRef).then((thumbnailURL) => {
-    const usersCollection = collection(db, 'Users');
-    const userDoc = doc(usersCollection, user.uid);
-    const pumpkinsCollection = collection(userDoc, 'Pumpkins');
-    const pumpkinRef = doc(pumpkinsCollection, pumpkinId);
+          // Get the thumbnail URL
+          const thumbnailRef = ref(storage, thumbnailPath);
+          getDownloadURL(thumbnailRef).then((thumbnailURL) => {
+            const usersCollection = collection(db, 'Users');
+            const userDoc = doc(usersCollection, user.uid);
+            const pumpkinsCollection = collection(userDoc, 'Pumpkins');
+            const pumpkinRef = doc(pumpkinsCollection, pumpkinId);
 
-    // Create a new image object
-    const newImage = { original: downloadURL, thumbnail: thumbnailURL };
+            // Create a new image object
+            const newImage = { original: downloadURL, thumbnail: thumbnailURL };
 
-    // Add the new image to the existing images array
-    setImages(prevImages => {
-      const updatedImages = [...prevImages, newImage];
-      
-      // Update the pumpkin document with the updated images array
-      updateDoc(pumpkinRef, { images: updatedImages });
+            // Add the new image to the existing images array
+            setImages((prevImages) => {
+              const updatedImages = [...prevImages, newImage];
 
-      return updatedImages;
-    });
+              // Update the pumpkin document with the updated images array
+              updateDoc(pumpkinRef, { images: updatedImages });
 
-    toast.success('Image uploaded successfully.');
-  });
-});
+              return updatedImages;
+            });
+
+            toast.success('Image uploaded successfully.');
+          });
+        });
       }
     );
   } catch (error) {
-      console.error('Error uploading image:', error);
-      toast.error('Failed to upload image. Please try again.');
-    }
-  };
+    console.error('Error uploading image:', error);
+    toast.error('Failed to upload image. Please try again.');
+  }
+};
 
   return (
   <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-12">
