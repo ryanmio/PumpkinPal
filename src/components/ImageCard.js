@@ -8,6 +8,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import Modal from 'react-modal';
 import Button from '../utilities/Button';
 import Spinner from '../components/Spinner';
+import { deleteObject } from 'firebase/storage';
 
 const ImageCard = ({ pumpkinId }) => {
   const [images, setImages] = useState([]);
@@ -24,9 +25,39 @@ const ImageCard = ({ pumpkinId }) => {
     // Download logic here
   };
 
-  const handleDelete = () => {
-    // Delete logic here
-  };
+  const handleDelete = async () => {
+  try {
+    // Find the image object to delete
+    const imageToDelete = images.find(imageObj => imageObj.original === selectedImage);
+    if (!imageToDelete) return;
+
+    // Delete the original image and thumbnail from storage
+    const originalRef = ref(storage, imageToDelete.original);
+    const thumbnailRef = ref(storage, imageToDelete.thumbnail);
+    await deleteObject(originalRef);
+    await deleteObject(thumbnailRef);
+
+    // Update the Firestore document
+    const updatedImages = images.filter(imageObj => imageObj !== imageToDelete);
+    const usersCollection = collection(db, 'Users');
+    const userDoc = doc(usersCollection, user.uid);
+    const pumpkinsCollection = collection(userDoc, 'Pumpkins');
+    const pumpkinRef = doc(pumpkinsCollection, pumpkinId);
+    await updateDoc(pumpkinRef, { images: updatedImages });
+
+    // Update the local state
+    setImages(updatedImages);
+
+    // Close the modal
+    closeModal();
+
+    // Show a success toast
+    toast.success('Image deleted successfully.');
+  } catch (error) {
+    console.error('Error deleting image:', error);
+    toast.error('Failed to delete image. Please try again.');
+  }
+};
 
   const openModal = (image) => {
   setSelectedImage(image);
