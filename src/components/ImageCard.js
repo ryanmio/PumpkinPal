@@ -50,7 +50,7 @@ const ImageCard = ({ pumpkinId }) => {
 
   return (
     <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-12">
-      <h3 className="text-xl font-bold mb-2">Image Gallery</h3>
+      <h3 className="text-xl font-bold mb-4">Image Gallery</h3>
       <div className="grid grid-cols-2 gap-4">
         {previewUrls.map((url, index) => (
           <img key={index} src={url} alt="Preview" className="w-full h-64 object-cover" />
