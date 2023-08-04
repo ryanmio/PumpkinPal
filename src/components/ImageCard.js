@@ -10,7 +10,7 @@ import Button from '../utilities/Button';
 import Spinner from '../components/Spinner';
 import { deleteObject } from 'firebase/storage';
 
-const ImageCard = ({ pumpkinId }) => {
+const ImageCard = ({ pumpkinId, pumpkinName }) => {
   const [images, setImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
