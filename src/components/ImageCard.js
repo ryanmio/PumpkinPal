@@ -3,7 +3,7 @@ import { storage, db } from '../firebase';
 import { toast } from 'react-hot-toast';
 import PlusIcon from './icons/PlusIcon';
 import { UserContext } from '../contexts/UserContext';
-import { updateDoc, arrayUnion } from 'firebase/firestore';
+import { updateDoc, arrayUnion, collection, doc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 const ImageCard = ({ pumpkinId }) => {
@@ -27,8 +27,6 @@ const ImageCard = ({ pumpkinId }) => {
   const handleUpload = async (image) => {
     try {
       const storagePath = `UserImages/${pumpkinId}/${image.name}`;
-      console.log('Storage Path:', storagePath); // Log the storage path
-
       const storageRef = ref(storage, storagePath);
       const metadata = { contentType: image.type };
       const uploadTask = uploadBytesResumable(storageRef, image, metadata);
@@ -44,12 +42,10 @@ const ImageCard = ({ pumpkinId }) => {
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            console.log('DB Object:', db);
-            console.log('Download URL:', downloadURL); // Log the download URL
-
-            // Corrected path to the specific pumpkin document
-            const pumpkinRef = db.collection('Users').doc(user.uid).collection('Pumpkins').doc(pumpkinId);
-            console.log('Pumpkin Reference:', pumpkinRef); // Log the pumpkin reference
+            const usersCollection = collection(db, 'Users');
+            const userDoc = doc(usersCollection, user.uid);
+            const pumpkinsCollection = collection(userDoc, 'Pumpkins');
+            const pumpkinRef = doc(pumpkinsCollection, pumpkinId);
 
             // Update the pumpkin document with the new download URL
             updateDoc(pumpkinRef, { images: arrayUnion(downloadURL) });
@@ -62,7 +58,7 @@ const ImageCard = ({ pumpkinId }) => {
       toast.error('Failed to upload image. Please try again.');
     }
   };
-    
+
   return (
     <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-12">
       <h3 className="text-xl font-bold mb-4">Image Gallery</h3>
