@@ -42,17 +42,18 @@ const ImageCard = ({ pumpkinId }) => {
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            const pumpkinRef = db.collection('Users').doc(user.uid).collection('Pumpkins').doc(pumpkinId);
-            updateDoc(pumpkinRef, { images: arrayUnion(downloadURL) });
-            toast.success('Image uploaded successfully.');
-          });
-        }
-      );
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      toast.error('Failed to upload image. Please try again.');
-    }
-  };
+      // Corrected path to the specific pumpkin document
+      const pumpkinRef = db.doc(`Users/${user.uid}/Pumpkins/${pumpkinId}`);
+
+      // Update the pumpkin document with the new download URL
+      updateDoc(pumpkinRef, { images: arrayUnion(downloadURL) });
+      toast.success('Image uploaded successfully.');
+    });
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    toast.error('Failed to upload image. Please try again.');
+  }
+};
 
   return (
     <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-12">
