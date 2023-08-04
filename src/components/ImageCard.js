@@ -120,11 +120,11 @@ const ImageCard = ({ pumpkinId }) => {
     <h3 className="text-xl font-bold mb-4">Image Gallery</h3>
     <div className="grid grid-cols-2 gap-4">
       {images.map((url, index) => (
-        <div key={index} onClick={() => openModal(url)}>
-          <img src={url} alt="Preview" className="w-full h-64 object-cover" loading="lazy" />
+        <div key={index} onClick={() => openModal(url)} className="w-full aspect-w-1 aspect-h-1">
+          <img src={url} alt="Preview" className="w-full h-full object-cover" loading="lazy" />
         </div>
       ))}
-      <label className="w-full h-64 flex justify-center items-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100">
+      <label className="w-full h-64 flex justify-center items-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 aspect-w-1 aspect-h-1">
         <input
           type="file"
           accept="image/*"
