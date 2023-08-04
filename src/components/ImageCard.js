@@ -3,7 +3,7 @@ import { storage, db } from '../firebase';
 import { toast } from 'react-hot-toast';
 import PlusIcon from './icons/PlusIcon';
 import { UserContext } from '../contexts/UserContext';
-import { updateDoc, arrayUnion, collection, doc, getDoc } from 'firebase/firestore';
+import { updateDoc, collection, doc, getDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import Modal from 'react-modal';
 import Button from '../utilities/Button';
