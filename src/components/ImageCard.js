@@ -4,7 +4,7 @@ import { toast } from 'react-hot-toast';
 import PlusIcon from './icons/PlusIcon';
 import { UserContext } from '../contexts/UserContext';
 import { updateDoc, arrayUnion } from 'firebase/firestore';
-import { ref } from 'firebase/storage'; // Import the ref function
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'; // Import the required functions
 
 const ImageCard = ({ pumpkinId }) => {
   const [images, setImages] = useState([]);
@@ -28,20 +28,42 @@ const ImageCard = ({ pumpkinId }) => {
   const handleUpload = async (image) => {
     try {
       // Define the storage path
-      const storagePath = `gs://pumpkinpal-b60be.appspot.com/UserImages/${pumpkinId}/${image.name}`;
-      const storageRef = ref(storage, storagePath); // Use the ref function with the storage object
-      const snapshot = await storageRef.put(image);
-      const downloadUrl = await snapshot.ref.getDownloadURL();
+      const storagePath = `UserImages/${pumpkinId}/${image.name}`;
+      const storageRef = ref(storage, storagePath);
 
-      // Get a reference to the specific pumpkin document
-      const pumpkinRef = db.collection('Users').doc(user.uid).collection('Pumpkins').doc(pumpkinId);
+      // Create the file metadata
+      const metadata = {
+        contentType: image.type,
+      };
 
-      // Update the pumpkin document with the new download URL
-      await updateDoc(pumpkinRef, {
-        images: arrayUnion(downloadUrl) // Use arrayUnion to add the URL to an array field
-      });
+      // Upload the file and metadata
+      const uploadTask = uploadBytesResumable(storageRef, image, metadata);
 
-      toast.success('Image uploaded successfully.');
+      // Listen for state changes, errors, and completion of the upload.
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          // Progress function ...
+        },
+        (error) => {
+          console.error('Error uploading image:', error);
+          toast.error('Failed to upload image. Please try again.');
+        },
+        () => {
+          // Upload completed successfully, now we can get the download URL
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            // Get a reference to the specific pumpkin document
+            const pumpkinRef = db.collection('Users').doc(user.uid).collection('Pumpkins').doc(pumpkinId);
+
+            // Update the pumpkin document with the new download URL
+            updateDoc(pumpkinRef, {
+              images: arrayUnion(downloadURL), // Use arrayUnion to add the URL to an array field
+            });
+
+            toast.success('Image uploaded successfully.');
+          });
+        }
+      );
     } catch (error) {
       console.error('Error uploading image:', error);
       toast.error('Failed to upload image. Please try again.');
@@ -50,7 +72,7 @@ const ImageCard = ({ pumpkinId }) => {
 
   return (
     <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-12">
-      <h3 className="text-xl font-bold mb-4">Image Gallery</h3>
+      <h3 className="text-xl font-bold mb-2">Image Gallery</h3>
       <div className="grid grid-cols-2 gap-4">
         {previewUrls.map((url, index) => (
           <img key={index} src={url} alt="Preview" className="w-full h-64 object-cover" />
