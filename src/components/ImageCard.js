@@ -6,6 +6,7 @@ import { UserContext } from '../contexts/UserContext';
 import { updateDoc, arrayUnion, collection, doc, getDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import Modal from 'react-modal';
+import Button from '../utilities/Button';
 
 const ImageCard = ({ pumpkinId }) => {
   const [images, setImages] = useState([]);
@@ -124,11 +125,14 @@ const ImageCard = ({ pumpkinId }) => {
           <PlusIcon className="h-8 w-8 text-gray-400" />
         </label>
       </div>
-      <Modal isOpen={isModalOpen} onRequestClose={closeModal}>
-        <img src={selectedImage} alt="Selected" className="w-full h-64 object-cover" />
-        <button onClick={handleShare}>Share to Facebook</button>
-        <button onClick={handleDownload}>Download</button>
-        <button onClick={handleDelete}>Delete</button>
+      <Modal isOpen={isModalOpen} onRequestClose={closeModal} className="flex flex-col items-center justify-center">
+        <button onClick={closeModal} className="absolute top-4 right-4 text-xl font-bold">&times;</button>
+        <img src={selectedImage} alt="Selected" className="max-w-full max-h-full object-contain" />
+        <div className="flex space-x-4 mt-4">
+          <Button onClick={handleShare}>Share to Facebook</Button>
+          <Button onClick={handleDownload}>Download</Button>
+          <Button onClick={handleDelete}>Delete</Button>
+        </div>
       </Modal>
     </div>
   );
