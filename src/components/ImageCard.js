@@ -25,37 +25,42 @@ const ImageCard = ({ pumpkinId }) => {
   };
 
   const handleUpload = async (image) => {
-  try {
-    const storagePath = `UserImages/${pumpkinId}/${image.name}`;
-    const storageRef = ref(storage, storagePath);
-    const metadata = { contentType: image.type };
-    const uploadTask = uploadBytesResumable(storageRef, image, metadata);
+    try {
+      const storagePath = `UserImages/${pumpkinId}/${image.name}`;
+      console.log('Storage Path:', storagePath); // Log the storage path
 
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        // You can add progress tracking here if needed
-      },
-      (error) => {
-        console.error('Error uploading image:', error);
-        toast.error('Failed to upload image. Please try again.');
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          // Corrected path to the specific pumpkin document
-          const pumpkinRef = db.collection('Users').doc(user.uid).collection('Pumpkins').doc(pumpkinId);
+      const storageRef = ref(storage, storagePath);
+      const metadata = { contentType: image.type };
+      const uploadTask = uploadBytesResumable(storageRef, image, metadata);
 
-          // Update the pumpkin document with the new download URL
-          updateDoc(pumpkinRef, { images: arrayUnion(downloadURL) });
-          toast.success('Image uploaded successfully.');
-        });
-      }
-    );
-  } catch (error) {
-    console.error('Error uploading image:', error);
-    toast.error('Failed to upload image. Please try again.');
-  }
-};
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          // You can add progress tracking here if needed
+        },
+        (error) => {
+          console.error('Error uploading image:', error);
+          toast.error('Failed to upload image. Please try again.');
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            console.log('Download URL:', downloadURL); // Log the download URL
+
+            // Corrected path to the specific pumpkin document
+            const pumpkinRef = db.collection('Users').doc(user.uid).collection('Pumpkins').doc(pumpkinId);
+            console.log('Pumpkin Reference:', pumpkinRef); // Log the pumpkin reference
+
+            // Update the pumpkin document with the new download URL
+            updateDoc(pumpkinRef, { images: arrayUnion(downloadURL) });
+            toast.success('Image uploaded successfully.');
+          });
+        }
+      );
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast.error('Failed to upload image. Please try again.');
+    }
+  };
     
   return (
     <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-12">
