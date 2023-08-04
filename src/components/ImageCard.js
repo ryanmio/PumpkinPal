@@ -7,12 +7,14 @@ import { updateDoc, arrayUnion, collection, doc, getDoc } from 'firebase/firesto
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import Modal from 'react-modal';
 import Button from '../utilities/Button';
+import Spinner from '../components/Spinner';
 
 const ImageCard = ({ pumpkinId }) => {
   const [images, setImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useContext(UserContext);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleShare = () => {
     // Share logic here
@@ -29,6 +31,7 @@ const ImageCard = ({ pumpkinId }) => {
   const openModal = (image) => {
     setSelectedImage(image);
     setIsModalOpen(true);
+    setIsLoading(true);
   };
 
   const closeModal = () => {
@@ -127,7 +130,11 @@ const ImageCard = ({ pumpkinId }) => {
     </div>
     <Modal isOpen={isModalOpen} onRequestClose={closeModal} className="flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-lg mx-auto mt-10">
       <button onClick={closeModal} className="self-start text-xl font-bold">&times;</button>
-      <img src={selectedImage} alt="Selected" className="max-w-full max-h-64 object-contain" />
+      {isLoading ? (
+        <Spinner /> // Show spinner while loading
+      ) : (
+        <img src={selectedImage} alt="Selected" className="max-w-full max-h-64 object-contain" onLoad={() => setIsLoading(false)} /> // Hide spinner when image is loaded
+      )}
       <div className="flex space-x-4 mt-4">
         <Button onClick={handleShare}>Share to Facebook</Button>
         <Button onClick={handleDownload}>Download</Button>
