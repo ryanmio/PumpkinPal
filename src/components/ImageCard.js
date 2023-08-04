@@ -82,7 +82,13 @@ const ImageCard = ({ pumpkinId }) => {
   const handleUpload = async (image) => {
   try {
     const storagePath = `UserImages/${pumpkinId}/${image.name}`;
-    const thumbnailPath = storagePath.replace('.png', '_680x680.webp');
+    
+    // Extract the file extension
+    const fileExtension = image.name.split('.').pop();
+    
+    // Replace the original extension with the desired thumbnail extension
+    const thumbnailPath = storagePath.replace(`.${fileExtension}`, '_680x680.webp');
+    
     const storageRef = ref(storage, storagePath);
     const metadata = { contentType: image.type };
     const uploadTask = uploadBytesResumable(storageRef, image, metadata);
@@ -152,6 +158,7 @@ const ImageCard = ({ pumpkinId }) => {
     toast.error('Failed to upload image. Please try again.');
   }
 };
+
 
   return (
   <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-12">
