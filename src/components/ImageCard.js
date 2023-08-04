@@ -98,20 +98,30 @@ const ImageCard = ({ pumpkinId }) => {
         },
         () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          // Get the thumbnail URL
-          const thumbnailRef = ref(storage, thumbnailPath);
-          getDownloadURL(thumbnailRef).then((thumbnailURL) => {
-            const usersCollection = collection(db, 'Users');
-            const userDoc = doc(usersCollection, user.uid);
-            const pumpkinsCollection = collection(userDoc, 'Pumpkins');
-            const pumpkinRef = doc(pumpkinsCollection, pumpkinId);
+  // Get the thumbnail URL
+  const thumbnailRef = ref(storage, thumbnailPath);
+  getDownloadURL(thumbnailRef).then((thumbnailURL) => {
+    const usersCollection = collection(db, 'Users');
+    const userDoc = doc(usersCollection, user.uid);
+    const pumpkinsCollection = collection(userDoc, 'Pumpkins');
+    const pumpkinRef = doc(pumpkinsCollection, pumpkinId);
 
-            // Update the pumpkin document with both URLs
-            updateDoc(pumpkinRef, { images: arrayUnion({ original: downloadURL, thumbnail: thumbnailURL }) });
-            setImages(prevImages => [...prevImages, { original: downloadURL, thumbnail: thumbnailURL }]);
-            toast.success('Image uploaded successfully.');
-          });
-        });
+    // Create a new image object
+    const newImage = { original: downloadURL, thumbnail: thumbnailURL };
+
+    // Add the new image to the existing images array
+    setImages(prevImages => {
+      const updatedImages = [...prevImages, newImage];
+      
+      // Update the pumpkin document with the updated images array
+      updateDoc(pumpkinRef, { images: updatedImages });
+
+      return updatedImages;
+    });
+
+    toast.success('Image uploaded successfully.');
+  });
+});
       }
     );
   } catch (error) {
