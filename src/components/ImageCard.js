@@ -106,36 +106,36 @@ const ImageCard = ({ pumpkinId }) => {
   };
 
   return (
-    <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-12">
-      <h3 className="text-xl font-bold mb-4">Image Gallery</h3>
-      <div className="grid grid-cols-2 gap-4">
-        {images.map((url, index) => (
-          <div key={index} onClick={() => openModal(url)}>
-            <img src={url} alt="Preview" className="w-full h-64 object-cover" loading="lazy" />
-          </div>
-        ))}
-        <label className="w-full h-64 flex justify-center items-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100">
-          <input
-            type="file"
-            accept="image/*"
-            capture="environment"
-            onChange={handleImageChange}
-            className="hidden"
-          />
-          <PlusIcon className="h-8 w-8 text-gray-400" />
-        </label>
-      </div>
-      <Modal isOpen={isModalOpen} onRequestClose={closeModal} className="flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-lg mx-auto mt-10">
-        <button onClick={closeModal} className="absolute top-4 right-4 text-xl font-bold">&times;</button>
-        <img src={selectedImage} alt="Selected" className="max-w-full max-h-64 object-contain" />
-        <div className="flex space-x-4 mt-4">
-          <Button onClick={handleShare}>Share to Facebook</Button>
-          <Button onClick={handleDownload}>Download</Button>
-          <Button onClick={handleDelete}>Delete</Button>
+  <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-12">
+    <h3 className="text-xl font-bold mb-4">Image Gallery</h3>
+    <div className="grid grid-cols-2 gap-4">
+      {images.map((url, index) => (
+        <div key={index} onClick={() => openModal(url)}>
+          <img src={url} alt="Preview" className="w-full h-64 object-cover" loading="lazy" />
         </div>
-      </Modal>
+      ))}
+      <label className="w-full h-64 flex justify-center items-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100">
+        <input
+          type="file"
+          accept="image/*"
+          capture="environment"
+          onChange={handleImageChange}
+          className="hidden"
+        />
+        <PlusIcon className="h-8 w-8 text-gray-400" />
+      </label>
     </div>
-  );
+    <Modal isOpen={isModalOpen} onRequestClose={closeModal} className="flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-full mx-auto mt-10">
+      <button onClick={closeModal} className="self-start text-xl font-bold">&times;</button>
+      <img src={selectedImage} alt="Selected" className="w-full h-64 object-cover" />
+      <div className="flex space-x-4 mt-4">
+        <Button onClick={handleShare}>Share to Facebook</Button>
+        <Button onClick={handleDownload}>Download</Button>
+        <Button onClick={handleDelete}>Delete</Button>
+      </div>
+    </Modal>
+  </div>
+);
 };
 
 export default ImageCard;
