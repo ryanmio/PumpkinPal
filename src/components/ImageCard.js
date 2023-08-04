@@ -11,19 +11,30 @@ const ImageCard = ({ pumpkinId }) => {
   const { user } = useContext(UserContext);
 
   useEffect(() => {
-    const fetchImages = async () => {
-      const usersCollection = collection(db, 'Users');
-      const userDoc = doc(usersCollection, user.uid);
-      const pumpkinsCollection = collection(userDoc, 'Pumpkins');
-      const pumpkinRef = doc(pumpkinsCollection, pumpkinId);
+    let isMounted = true; // Track whether the component is mounted
 
-      const pumpkinDoc = await getDoc(pumpkinRef);
-      if (pumpkinDoc.exists()) {
-        setImages(pumpkinDoc.data().images || []);
+    const fetchImages = async () => {
+      try {
+        const usersCollection = collection(db, 'Users');
+        const userDoc = doc(usersCollection, user.uid);
+        const pumpkinsCollection = collection(userDoc, 'Pumpkins');
+        const pumpkinRef = doc(pumpkinsCollection, pumpkinId);
+
+        const pumpkinDoc = await getDoc(pumpkinRef);
+        if (pumpkinDoc.exists() && isMounted) {
+          setImages(pumpkinDoc.data().images || []);
+        }
+      } catch (error) {
+        console.error('Error fetching images:', error);
+        toast.error('Failed to fetch images. Please try again.');
       }
     };
 
     fetchImages();
+
+    return () => {
+      isMounted = false; // Cleanup
+    };
   }, [user.uid, pumpkinId]);
 
   const handleImageChange = async (e) => {
