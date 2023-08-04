@@ -169,18 +169,21 @@ const ImageCard = ({ pumpkinId }) => {
             <img src={imageObj.thumbnail} alt="Preview" className="w-full h-full object-cover" loading="lazy" />
           </div>
         ))}
-      <label className="w-full flex justify-center items-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 aspect-w-1 aspect-h-1">
-        <div className="w-full h-full flex justify-center items-center">
-          <input
-            type="file"
-            accept="image/*"
-            capture="environment"
-            onChange={handleImageChange}
-            className="hidden"
-          />
-          <PlusIcon className="h-8 w-8 text-gray-400" />
-        </div>
-      </label>
+     <label
+  className="w-full flex justify-center items-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 aspect-w-1 aspect-h-1"
+  style={{ aspectRatio: '1/1' }} // Ensures a 1:1 aspect ratio
+>
+  <div className="w-full h-full flex justify-center items-center">
+    <input
+      type="file"
+      accept="image/*"
+      capture="environment"
+      onChange={handleImageChange}
+      className="hidden"
+    />
+    <PlusIcon className="h-8 w-8 text-gray-400" />
+  </div>
+</label>
     </div>
     <Modal isOpen={isModalOpen} onRequestClose={closeModal} className="flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-lg mx-auto mt-10">
       <button onClick={closeModal} className="self-start text-xl font-bold">&times;</button>
