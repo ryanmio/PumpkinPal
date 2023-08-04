@@ -30,8 +30,8 @@ const ImageCard = ({ pumpkinId, pumpkinName }) => {
     // Get the original image URL
     const originalURL = imageToDownload.original;
 
-    // Extract the filename and extension
-    const filename = originalURL.split('/').pop();
+    // Extract the filename before any URL parameters
+    const filename = originalURL.split('/').pop().split('?')[0];
     const extension = filename.split('.').pop();
 
     // Get the pumpkin name from the prop
@@ -47,7 +47,7 @@ const ImageCard = ({ pumpkinId, pumpkinName }) => {
     // Create the download link with the desired filename
     const downloadLink = document.createElement('a');
     downloadLink.href = blobURL;
-    downloadLink.download = `PumpkinPal_${name}_${filename}.${extension}`;
+    downloadLink.download = `PumpkinPal_${name}_${filename}`;
 
     // Append the link, trigger the download, and then remove the link
     document.body.appendChild(downloadLink);
