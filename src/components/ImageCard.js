@@ -21,9 +21,35 @@ const ImageCard = ({ pumpkinId }) => {
     // Share logic here
   };
 
-  const handleDownload = () => {
-    // Download logic here
-  };
+  const handleDownload = async () => {
+  try {
+    // Find the image object to download
+    const imageToDownload = images.find(imageObj => imageObj.original === selectedImage);
+    if (!imageToDownload) return;
+
+    // Get the original image URL
+    const originalURL = imageToDownload.original;
+
+    // Extract the filename and extension
+    const filename = originalURL.split('/').pop();
+    const extension = filename.split('.').pop();
+
+    // Get the pumpkin name from the prop
+    const name = pumpkinName;
+
+    // Create the download link with the desired filename
+    const downloadLink = document.createElement('a');
+    downloadLink.href = originalURL;
+    downloadLink.download = `PumpkinPal_${name}_${filename}.${extension}`;
+
+    // Trigger the download by clicking the link
+    downloadLink.click();
+  } catch (error) {
+    console.error('Error downloading image:', error);
+    toast.error('Failed to download image. Please try again.');
+  }
+};
+
 
   const handleDelete = async () => {
   try {
