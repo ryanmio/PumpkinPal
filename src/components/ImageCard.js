@@ -29,10 +29,17 @@ const ImageCard = ({ pumpkinId }) => {
   };
 
   const openModal = (image) => {
-    setSelectedImage(image);
-    setIsModalOpen(true);
-    setIsLoading(true);
+  setSelectedImage(image);
+  setIsModalOpen(true);
+  setIsLoading(true);
+
+  // Preload the image and listen for the load event
+  const img = new Image();
+  img.src = image;
+  img.onload = () => {
+    setIsLoading(false);
   };
+};
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -133,7 +140,7 @@ const ImageCard = ({ pumpkinId }) => {
       {isLoading ? (
         <Spinner /> // Show spinner while loading
       ) : (
-        <img src={selectedImage} alt="Selected" className="max-w-full max-h-64 object-contain" onLoad={() => setIsLoading(false)} /> // Hide spinner when image is loaded
+        <img src={selectedImage} alt="Selected" className="max-w-full max-h-64 object-contain" />
       )}
       <div className="flex space-x-4 mt-4">
         <Button onClick={handleShare}>Share to Facebook</Button>
