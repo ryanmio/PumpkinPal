@@ -97,46 +97,43 @@ const ImageCard = ({ pumpkinId }) => {
         toast.error('Failed to upload image. Please try again.');
       },
       () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          // Construct the thumbnail URL based on the original image URL
-          const thumbnailURL = downloadURL.replace('.png', '_680x680.webp');
+    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+      // Function to check for the thumbnail's existence
+      const checkThumbnail = () => {
+        const thumbnailRef = ref(storage, thumbnailPath); // Use thumbnailPath directly
+        getDownloadURL(thumbnailRef).then((thumbnailURL) => {
+          const usersCollection = collection(db, 'Users');
+          const userDoc = doc(usersCollection, user.uid);
+          const pumpkinsCollection = collection(userDoc, 'Pumpkins');
+          const pumpkinRef = doc(pumpkinsCollection, pumpkinId);
 
-          // Function to check for the thumbnail's existence
-          const checkThumbnail = () => {
-            const thumbnailRef = ref(storage, thumbnailPath);
-            getDownloadURL(thumbnailRef).then((thumbnailURL) => {
-              const usersCollection = collection(db, 'Users');
-              const userDoc = doc(usersCollection, user.uid);
-              const pumpkinsCollection = collection(userDoc, 'Pumpkins');
-              const pumpkinRef = doc(pumpkinsCollection, pumpkinId);
+          // Create a new image object
+          const newImage = { original: downloadURL, thumbnail: thumbnailURL };
 
-              // Create a new image object
-              const newImage = { original: downloadURL, thumbnail: thumbnailURL };
+          // Fetch the current images array
+          getDoc(pumpkinRef).then((pumpkinDoc) => {
+            const currentImages = pumpkinDoc.data().images || [];
 
-              // Fetch the current images array
-              getDoc(pumpkinRef).then((pumpkinDoc) => {
-                const currentImages = pumpkinDoc.data().images || [];
+            // Add the new image to the existing images array
+            const updatedImages = [...currentImages, newImage];
 
-                // Add the new image to the existing images array
-                const updatedImages = [...currentImages, newImage];
+            // Update the pumpkin document with the updated images array
+            updateDoc(pumpkinRef, { images: updatedImages });
+            setImages(updatedImages);
 
-                // Update the pumpkin document with the updated images array
-                updateDoc(pumpkinRef, { images: updatedImages });
-                setImages(updatedImages);
-
-                toast.success('Image uploaded successfully.');
-              });
-            }).catch(() => {
-              // Thumbnail not ready yet, retry in 1 second
-              setTimeout(checkThumbnail, 1000);
-            });
-          };
-
-          // Start checking for the thumbnail
-          checkThumbnail();
+            toast.success('Image uploaded successfully.');
+          });
+        }).catch(() => {
+          // Thumbnail not ready yet, retry in 1 second
+          setTimeout(checkThumbnail, 1000);
         });
-      }
-    );
+      };
+
+      // Start checking for the thumbnail
+      checkThumbnail();
+    });
+  }
+);
   } catch (error) {
     console.error('Error uploading image:', error);
     toast.error('Failed to upload image. Please try again.');
