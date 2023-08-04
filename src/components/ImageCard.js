@@ -85,7 +85,7 @@ const ImageCard = ({ pumpkinId }) => {
       <h3 className="text-xl font-bold mb-4">Image Gallery</h3>
       <div className="grid grid-cols-2 gap-4">
         {images.map((url, index) => (
-          <img key={index} src={url} alt="Preview" className="w-full h-64 object-cover" />
+          <img key={index} src={url} alt="Preview" className="w-full h-64 object-cover" loading="lazy" />
         ))}
         <label className="w-full h-64 flex justify-center items-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100">
           <input
