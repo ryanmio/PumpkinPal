@@ -125,9 +125,9 @@ const ImageCard = ({ pumpkinId }) => {
           <PlusIcon className="h-8 w-8 text-gray-400" />
         </label>
       </div>
-      <Modal isOpen={isModalOpen} onRequestClose={closeModal} className="flex flex-col items-center justify-center">
+      <Modal isOpen={isModalOpen} onRequestClose={closeModal} className="flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-lg mx-auto mt-10">
         <button onClick={closeModal} className="absolute top-4 right-4 text-xl font-bold">&times;</button>
-        <img src={selectedImage} alt="Selected" className="max-w-full max-h-full object-contain" />
+        <img src={selectedImage} alt="Selected" className="max-w-full max-h-64 object-contain" />
         <div className="flex space-x-4 mt-4">
           <Button onClick={handleShare}>Share to Facebook</Button>
           <Button onClick={handleDownload}>Download</Button>
