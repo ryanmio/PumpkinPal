@@ -44,6 +44,7 @@ const ImageCard = ({ pumpkinId }) => {
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            console.log('DB Object:', db);
             console.log('Download URL:', downloadURL); // Log the download URL
 
             // Corrected path to the specific pumpkin document
