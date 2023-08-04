@@ -37,19 +37,30 @@ const ImageCard = ({ pumpkinId, pumpkinName }) => {
     // Get the pumpkin name from the prop
     const name = pumpkinName;
 
+    // Fetch the image as a Blob
+    const response = await fetch(originalURL);
+    const blob = await response.blob();
+
+    // Create a URL for the Blob
+    const blobURL = URL.createObjectURL(blob);
+
     // Create the download link with the desired filename
     const downloadLink = document.createElement('a');
-    downloadLink.href = originalURL;
+    downloadLink.href = blobURL;
     downloadLink.download = `PumpkinPal_${name}_${filename}.${extension}`;
 
-    // Trigger the download by clicking the link
+    // Append the link, trigger the download, and then remove the link
+    document.body.appendChild(downloadLink);
     downloadLink.click();
+    document.body.removeChild(downloadLink);
+
+    // Revoke the blob URL to free up resources
+    URL.revokeObjectURL(blobURL);
   } catch (error) {
     console.error('Error downloading image:', error);
     toast.error('Failed to download image. Please try again.');
   }
 };
-
 
   const handleDelete = async () => {
   try {
