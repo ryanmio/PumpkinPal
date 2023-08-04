@@ -80,14 +80,15 @@ const ImageCard = ({ pumpkinId }) => {
   };
 
   const handleUpload = async (image) => {
-    try {
-      const storagePath = `UserImages/${pumpkinId}/${image.name}`;
-      const storageRef = ref(storage, storagePath);
-      const metadata = { contentType: image.type };
-      const uploadTask = uploadBytesResumable(storageRef, image, metadata);
+  try {
+    const storagePath = `UserImages/${pumpkinId}/${image.name}`;
+    const thumbnailPath = `UserImages/${pumpkinId}/${image.name.split('.').slice(0, -1).join('.')}_680x680.webp`; // Construct the thumbnail path
+    const storageRef = ref(storage, storagePath);
+    const metadata = { contentType: image.type };
+    const uploadTask = uploadBytesResumable(storageRef, image, metadata);
 
-      uploadTask.on(
-        'state_changed',
+    uploadTask.on(
+      'state_changed',
         (snapshot) => {
           // You can add progress tracking here if needed
         },
@@ -96,20 +97,24 @@ const ImageCard = ({ pumpkinId }) => {
           toast.error('Failed to upload image. Please try again.');
         },
         () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          // Get the thumbnail URL
+          const thumbnailRef = ref(storage, thumbnailPath);
+          getDownloadURL(thumbnailRef).then((thumbnailURL) => {
             const usersCollection = collection(db, 'Users');
             const userDoc = doc(usersCollection, user.uid);
             const pumpkinsCollection = collection(userDoc, 'Pumpkins');
             const pumpkinRef = doc(pumpkinsCollection, pumpkinId);
 
-            // Update the pumpkin document with the new download URL
-            updateDoc(pumpkinRef, { images: arrayUnion(downloadURL) });
-            setImages(prevImages => [...prevImages, downloadURL]);
+            // Update the pumpkin document with both URLs
+            updateDoc(pumpkinRef, { images: arrayUnion({ original: downloadURL, thumbnail: thumbnailURL }) });
+            setImages(prevImages => [...prevImages, { original: downloadURL, thumbnail: thumbnailURL }]);
             toast.success('Image uploaded successfully.');
           });
-        }
-      );
-    } catch (error) {
+        });
+      }
+    );
+  } catch (error) {
       console.error('Error uploading image:', error);
       toast.error('Failed to upload image. Please try again.');
     }
@@ -119,11 +124,11 @@ const ImageCard = ({ pumpkinId }) => {
   <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-12">
     <h3 className="text-xl font-bold mb-4">Image Gallery</h3>
     <div className="grid grid-cols-2 gap-4">
-      {images.map((url, index) => (
-        <div key={index} onClick={() => openModal(url)} className="w-full aspect-w-1 aspect-h-1">
-          <img src={url} alt="Preview" className="w-full h-full object-cover" loading="lazy" />
-        </div>
-      ))}
+      {images.map((imageObj, index) => (
+          <div key={index} onClick={() => openModal(imageObj.original)} className="w-full aspect-w-1 aspect-h-1">
+            <img src={imageObj.thumbnail} alt="Preview" className="w-full h-full object-cover" loading="lazy" />
+          </div>
+        ))}
       <label className="w-full flex justify-center items-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 aspect-w-1 aspect-h-1">
         <div className="w-full h-full flex justify-center items-center">
           <input
