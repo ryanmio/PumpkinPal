@@ -125,7 +125,7 @@ return (
     />
 
     {/* Card 5: Image Upload */}
-        <ImageCard pumpkinId={id} />
+        <ImageCard pumpkinId={id} pumpkinName={pumpkin?.name} />
 
     </div> 
   </div>
