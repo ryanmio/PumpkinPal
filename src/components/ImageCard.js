@@ -32,23 +32,25 @@ const ImageCard = ({ pumpkinId }) => {
       const uploadTask = uploadBytesResumable(storageRef, image, metadata);
 
       uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          // You can add progress tracking here if needed
-        },
-        (error) => {
-          console.error('Error uploading image:', error);
-          toast.error('Failed to upload image. Please try again.');
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-      // Corrected path to the specific pumpkin document
-      const pumpkinRef = db.doc(`Users/${user.uid}/Pumpkins/${pumpkinId}`);
+      'state_changed',
+      (snapshot) => {
+        // You can add progress tracking here if needed
+      },
+      (error) => {
+        console.error('Error uploading image:', error);
+        toast.error('Failed to upload image. Please try again.');
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          // Corrected path to the specific pumpkin document
+          const pumpkinRef = db.doc(`Users/${user.uid}/Pumpkins/${pumpkinId}`);
 
-      // Update the pumpkin document with the new download URL
-      updateDoc(pumpkinRef, { images: arrayUnion(downloadURL) });
-      toast.success('Image uploaded successfully.');
-    });
+          // Update the pumpkin document with the new download URL
+          updateDoc(pumpkinRef, { images: arrayUnion(downloadURL) });
+          toast.success('Image uploaded successfully.');
+        });
+      } // This closing parenthesis was missing
+    );
   } catch (error) {
     console.error('Error uploading image:', error);
     toast.error('Failed to upload image. Please try again.');
