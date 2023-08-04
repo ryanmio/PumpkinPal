@@ -18,8 +18,32 @@ const ImageCard = ({ pumpkinId, pumpkinName }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleShare = () => {
-    // Share logic here
-  };
+  // Check if the Facebook SDK is loaded
+  if (typeof FB !== 'undefined') {
+    // Find the image object to share
+    const imageToShare = images.find(imageObj => imageObj.original === selectedImage);
+    if (!imageToShare) return;
+
+    // Define the content to share
+    const shareContent = {
+      method: 'share',
+      href: imageToShare.original, // URL of the image to share
+      quote: pumpkinName, // Title/quote to share along with the image
+    };
+
+    // Open the Facebook share dialog
+    FB.ui(shareContent, function(response) {
+      if (response && !response.error_message) {
+        toast.success('Image shared successfully.');
+      } else {
+        toast.error('Failed to share image. Please try again.');
+      }
+    });
+  } else {
+    // Inform the user that the Facebook SDK is blocked (likely by an ad blocker)
+    toast.error('Facebook share is blocked by an ad blocker. Please disable it to share the image.');
+  }
+};
 
   const handleDownload = async () => {
   try {
@@ -37,7 +61,7 @@ const ImageCard = ({ pumpkinId, pumpkinName }) => {
     const name = pumpkinName;
 
     // Generate a filename using the pumpkin name and original extension
-    const filename = `PumpkinPal_${name}_image.${extension}`;
+    const filename = `PumpkinPal_${name}.${extension}`;
 
     // Fetch the image as a Blob
     const response = await fetch(originalURL);
