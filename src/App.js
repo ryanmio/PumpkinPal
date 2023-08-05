@@ -26,6 +26,7 @@ import MyStats from './components/GrowerStatsProfile/MyStats';
 import CloudFunctionTrigger from './components/GrowerStatsProfile/CloudFunctionTrigger';
 import PumpkinDetails from './components/GrowerStatsProfile/PumpkinDetails';
 import SiteProfile from './components/GrowerStatsProfile/SiteProfile';
+import ImageDisplay from './components/ImageDisplay';
 
 
 
