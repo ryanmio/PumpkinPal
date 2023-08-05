@@ -5,6 +5,7 @@ import Spinner from '../components/Spinner';
 import { doc, getDoc } from 'firebase/firestore';
 import { Helmet } from 'react-helmet';
 
+
 const ImageDisplay = () => {
   const { imageId } = useParams(); // Get the image ID from the URL
   const [imageData, setImageData] = useState(null);
