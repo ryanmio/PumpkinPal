@@ -42,7 +42,6 @@ const ImageDisplay = () => {
   return (
     <div>
       <img src={imageData.image} alt="Shared" />
-      // Other details...
     </div>
   );
 };
