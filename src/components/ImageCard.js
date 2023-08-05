@@ -24,11 +24,16 @@ const ImageCard = ({ pumpkinId, pumpkinName }) => {
   const pumpkinDoc = await getDoc(doc(db, 'Users', user.uid, 'Pumpkins', pumpkinId));
   const pumpkinData = pumpkinDoc.data();
 
-  // Calculate the latest weight
-  const latestWeight = pumpkinData.weights[pumpkinData.weights.length - 1]?.weight || null;
-
-  console.log('Latest weight:', latestWeight);
-  return latestWeight;
+  // Check if the 'weights' field is defined
+  if (pumpkinData && pumpkinData.weights && pumpkinData.weights.length > 0) {
+    // Calculate the latest weight
+    const latestWeight = pumpkinData.weights[pumpkinData.weights.length - 1].weight;
+    console.log('Latest weight:', latestWeight);
+    return latestWeight;
+  } else {
+    console.log('No weights field found or it is empty in the pumpkin document.');
+    return null;
+  }
 };
 
 const calculateDaysAfterPollination = async (pumpkinId) => {
@@ -36,11 +41,16 @@ const calculateDaysAfterPollination = async (pumpkinId) => {
   const pumpkinDoc = await getDoc(doc(db, 'Users', user.uid, 'Pumpkins', pumpkinId));
   const pumpkinData = pumpkinDoc.data();
 
-  // Calculate the days after pollination
-  const daysAfterPollination = differenceInDays(new Date(), pumpkinData.pollinationDate.toDate());
-
-  console.log('Days after pollination:', daysAfterPollination);
-  return daysAfterPollination;
+  // Check if the 'pollinationDate' field is defined
+  if (pumpkinData && pumpkinData.pollinationDate) {
+    // Calculate the days after pollination
+    const daysAfterPollination = differenceInDays(new Date(), pumpkinData.pollinationDate.toDate());
+    console.log('Days after pollination:', daysAfterPollination);
+    return daysAfterPollination;
+  } else {
+    console.log('No pollinationDate field found in the pumpkin document.');
+    return null;
+  }
 };
 
   const addSharedImage = async (imageUrl, pumpkinId, userId, pumpkinName) => {
