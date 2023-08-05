@@ -76,41 +76,44 @@ const calculateDaysAfterPollination = async (pumpkinId) => {
   };
 
   const handleShare = async () => {
-    // Check if the Facebook SDK is loaded
-    if (typeof FB !== 'undefined') {
-      // Find the image object to share
-      const imageToShare = images.find(imageObj => imageObj.original === selectedImage);
-      if (!imageToShare) return;
+  // Check if the Facebook SDK is loaded
+  if (typeof FB !== 'undefined') {
+    // Find the image object to share
+    const imageToShare = images.find(imageObj => imageObj.original === selectedImage);
+    if (!imageToShare) return;
 
-      console.log('Image to share:', imageToShare);
+    console.log('Image to share:', imageToShare);
 
-      // Add the image to the SharedImages collection and get the document ID
-      const sharedImageId = await addSharedImage(imageToShare.original, pumpkinId, user.uid, pumpkinName);
+    // Add the image to the SharedImages collection and get the document ID
+    const sharedImageId = await addSharedImage(imageToShare.original, pumpkinId, user.uid, pumpkinName);
 
-      console.log('Shared image ID:', sharedImageId);
+    console.log('Shared image ID:', sharedImageId);
 
-      // Define the content to share
-      const shareContent = {
-        method: 'share',
-        href: `https://release-v0-6-0--pumpkinpal.netlify.app/image/${sharedImageId}`, // URL of the page to share
-        quote: pumpkinName, // Title/quote to share along with the image
-      };
+    // Define the content to share
+    const shareContent = {
+      method: 'share',
+      href: imageToShare.original, // URL of the image to share
+      quote: `Check out my pumpkin ${pumpkinName}!`, // Custom title/quote
+      description: `Latest weight: ${imageToShare.latestWeight} | Days after Pollination: ${imageToShare.daysAfterPollination}`, // Custom description
+      picture: imageToShare.original // URL of the image to display
+    };
 
-      console.log('Share content:', shareContent);
+    console.log('Share content:', shareContent);
 
-      // Open the Facebook share dialog
-      FB.ui(shareContent, function(response) {
-        if (response && !response.error_message) {
-          toast.success('Image shared successfully.');
-        } else {
-          toast.error('Failed to share image. Please try again.');
-        }
-      });
-    } else {
-      // Inform the user that the Facebook SDK is blocked (likely by an ad blocker)
-      toast.error('Facebook share is blocked by an ad blocker. Please disable it to share the image.');
-    }
-  };
+    // Open the Facebook share dialog
+    FB.ui(shareContent, function(response) {
+      if (response && !response.error_message) {
+        toast.success('Image shared successfully.');
+      } else {
+        toast.error('Failed to share image. Please try again.');
+      }
+    });
+  } else {
+    // Inform the user that the Facebook SDK is blocked (likely by an ad blocker)
+    toast.error('Facebook share is blocked by an ad blocker. Please disable it to share the image.');
+  }
+};
+
 
 
   const handleDownload = async () => {
