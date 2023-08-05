@@ -188,6 +188,48 @@ exports.countMeasurementOnDelete = functions.firestore.document('Users/{userId}/
 });
 
 
+// Share image handling
+exports.renderSharedImage = functions.https.onRequest(async (req, res) => {
+  const sharedImageId = req.path.split('/').pop(); // Extract the shared image ID from the URL
+
+  // Fetch the shared image data from Firestore
+  const sharedImageRef = admin.firestore().collection('SharedImages').doc(sharedImageId);
+  const sharedImageDoc = await sharedImageRef.get();
+
+  if (!sharedImageDoc.exists) {
+    res.status(404).send('Shared image not found');
+    return;
+  }
+
+  const sharedImageData = sharedImageDoc.data();
+
+  // Construct the OG tags
+  const ogTitle = `Check out my pumpkin ${sharedImageData.pumpkinName}!`;
+  const ogDescription = `Latest weight: ${sharedImageData.latestWeight} | Days after Pollination: ${sharedImageData.daysAfterPollination}`;
+  const ogImage = sharedImageData.image;
+
+  // Respond with the HTML containing the OG tags
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta property="og:title" content="${ogTitle}">
+      <meta property="og:description" content="${ogDescription}">
+      <meta property="og:image" content="${ogImage}">
+      <meta property="og:url" content="${req.url}">
+      <title>${ogTitle}</title>
+    </head>
+    <body>
+      <h1>${ogTitle}</h1>
+      <p>${ogDescription}</p>
+      <img src="${ogImage}" alt="${ogTitle}">
+    </body>
+    </html>
+  `);
+});
+
+
 /* -----------------------------------------------
  * Metric Calculation Functions
  * -----------------------------------------------
