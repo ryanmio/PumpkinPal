@@ -8,6 +8,14 @@ function Header() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Check if the current route is for the ImageDisplay component
+  const isImageDisplayRoute = location.pathname.startsWith('/image/');
+
+  // Don't render the header if the current route is for the ImageDisplay component
+  if (isImageDisplayRoute) {
+    return null;
+  }
+
   return (
     <header className="App-header">
       <div className="nav-bar">
