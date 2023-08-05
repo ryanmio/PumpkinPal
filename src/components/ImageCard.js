@@ -76,42 +76,44 @@ const calculateDaysAfterPollination = async (pumpkinId) => {
   };
 
   const handleShare = async () => {
-  if (typeof FB === 'undefined') {
+  // Check if the Facebook SDK is loaded
+  if (typeof FB !== 'undefined') {
+    // Find the image object to share
+    const imageToShare = images.find(imageObj => imageObj.original === selectedImage);
+    if (!imageToShare) return;
+
+    console.log('Image to share:', imageToShare);
+
+    // Add the image to the SharedImages collection and get the document ID
+    const sharedImageId = await addSharedImage(imageToShare.original, pumpkinId, user.uid, pumpkinName);
+
+    console.log('Shared image ID:', sharedImageId);
+
+    // Define the content to share
+    const shareContent = {
+      method: 'share',
+      href: imageToShare.original, // URL of the image to share
+      quote: `Check out my pumpkin ${pumpkinName}!`, // Custom title/quote
+      description: `Latest weight: ${imageToShare.latestWeight} | Days after Pollination: ${imageToShare.daysAfterPollination}`, // Custom description
+      picture: imageToShare.original // URL of the image to display
+    };
+
+    console.log('Share content:', shareContent);
+
+    // Open the Facebook share dialog
+    FB.ui(shareContent, function(response) {
+      if (response && !response.error_message) {
+        toast.success('Image shared successfully.');
+      } else {
+        toast.error('Failed to share image. Please try again.');
+      }
+    });
+  } else {
+    // Inform the user that the Facebook SDK is blocked (likely by an ad blocker)
     toast.error('Facebook share is blocked by an ad blocker. Please disable it to share the image.');
-    return;
   }
-
-  const imageToShare = images.find(imageObj => imageObj.original === selectedImage);
-  if (!imageToShare) return;
-
-  const sharedImageId = await addSharedImage(imageToShare.original, pumpkinId, user.uid, pumpkinName);
-
-  // Create a shareable link for the image
-  const shareableLink = `https://release-v0-6-0--pumpkinpal.netlify.app/image/${sharedImageId}`;
-
-  // Fetch the Iframely embed data for the shareable link
-  const iframelyUrl = `https://iframe.ly/api/oembed?url=${encodeURIComponent(shareableLink)}&api_key=8417868c636055d0673ae5`;
-  const iframelyResponse = await fetch(iframelyUrl);
-  const iframelyData = await iframelyResponse.json();
-
-  // Construct the content to share using the Iframely embed data
-  const shareContent = {
-    method: 'share',
-    href: iframelyData.url || shareableLink,
-    quote: `Check out my pumpkin ${pumpkinName}!`,
-    description: `Latest weight: ${imageToShare.latestWeight} | Days after Pollination: ${imageToShare.daysAfterPollination}`,
-    picture: iframelyData.thumbnail_url || imageToShare.original
-  };
-
-  // Open the Facebook share dialog
-  FB.ui(shareContent, function(response) {
-    if (response && !response.error_message) {
-      toast.success('Image shared successfully.');
-    } else {
-      toast.error('Failed to share image. Please try again.');
-    }
-  });
 };
+
 
 
   const handleDownload = async () => {
