@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom'; // Assuming you're using react-router
-import { db } from '../firebase'; // Import your Firebase setup
-import Spinner from '../components/Spinner'; // Import your Spinner component
+import { useParams } from 'react-router-dom';
+import { db } from '../firebase';
+import Spinner from '../components/Spinner';
 import { doc, getDoc } from 'firebase/firestore';
-// import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet';
 
 const ImageDisplay = () => {
   const { imageId } = useParams(); // Get the image ID from the URL
@@ -37,11 +37,15 @@ const ImageDisplay = () => {
   }
 
   if (!imageData) {
-  return <div>Image not found</div>; // Handle image not found
-}
+    return <div>Image not found</div>; // Handle image not found
+  }
 
   return (
     <div>
+      <Helmet>
+        <title>{imageData.pumpkinName}</title>
+        <meta name="description" content={`Latest weight: ${imageData.latestWeight} | Days after Pollination: ${imageData.daysAfterPollination}`} />
+      </Helmet>
       <img src={imageData.image} alt="Shared" />
     </div>
   );
