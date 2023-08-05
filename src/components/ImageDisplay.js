@@ -12,6 +12,7 @@ const ImageDisplay = () => {
   useEffect(() => {
     // Fetch the image details based on the imageId
     const fetchImageDetails = async () => {
+        console.log('Fetching image details for imageId:', imageId);
       try {
         const sharedImageRef = doc(db, 'SharedImages', imageId);
         const sharedImageDoc = await getDoc(sharedImageRef);
@@ -36,9 +37,11 @@ const ImageDisplay = () => {
   }
 
   if (!imageData) {
-    return <div>Image not found</div>; // Handle image not found
-  }
+  console.log('Image data not found for imageId:', imageId); // Add this line
+  return <div>Image not found</div>; // Handle image not found
+}
 
+    console.log('Rendering image data:', imageData);
   return (
     <div>
       <img src={imageData.image} alt="Shared" />
