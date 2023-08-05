@@ -204,7 +204,7 @@ exports.renderSharedImage = functions.https.onRequest(async (req, res) => {
   const sharedImageData = sharedImageDoc.data();
 
   // Construct the OG tags
-  const ogTitle = `Check out my pumpkin ${sharedImageData.pumpkinName}!`;
+  const ogTitle = `${sharedImageData.pumpkinName} on PumpkinPal`;
   const ogDescription = `Latest weight: ${sharedImageData.latestWeight} | Days after Pollination: ${sharedImageData.daysAfterPollination}`;
   const ogImage = sharedImageData.image;
 
