@@ -84,7 +84,7 @@ const calculateDaysAfterPollination = async (pumpkinId) => {
   const imageToShare = images.find(imageObj => imageObj.original === selectedImage);
   if (!imageToShare) return;
 
-  const sharedImageId = await addSharedImage(imageToShare.original, pumpkinId, user.uid, pumpkinName);
+  await addSharedImage(imageToShare.original, pumpkinId, user.uid, pumpkinName);
 
   // Fetch the Iframely embed data for the selected image
   const iframelyUrl = `https://iframe.ly/api/oembed?url=${encodeURIComponent(imageToShare.original)}&api_key=8417868c636055d0673ae5`;
