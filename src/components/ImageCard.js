@@ -101,8 +101,6 @@ const ImageCard = ({ pumpkinId, pumpkinName }) => {
       toast.error('Facebook share is blocked by an ad blocker. Please disable it to share the image.');
     }
   };
-};
-
 
 
   const handleDownload = async () => {
