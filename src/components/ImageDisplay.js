@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'; // Assuming you're using react-rou
 import { db } from '../firebase'; // Import your Firebase setup
 import Spinner from '../components/Spinner'; // Import your Spinner component
 import { doc, getDoc } from 'firebase/firestore';
-import { Helmet } from 'react-helmet';
+// import { Helmet } from 'react-helmet';
 
 const ImageDisplay = () => {
   const { imageId } = useParams(); // Get the image ID from the URL
