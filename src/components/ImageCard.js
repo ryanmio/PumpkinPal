@@ -17,17 +17,25 @@ const ImageCard = ({ pumpkinId, pumpkinName }) => {
   const { user } = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleShare = () => {
+  const handleShare = async () => {
   // Check if the Facebook SDK is loaded
   if (typeof FB !== 'undefined') {
     // Find the image object to share
     const imageToShare = images.find(imageObj => imageObj.original === selectedImage);
     if (!imageToShare) return;
 
+    // Create a new document in the shared images collection
+    const sharedImagesCollection = collection(db, 'SharedImages');
+    const sharedImageDoc = await addDoc(sharedImagesCollection, {
+      userId: user.uid,
+      pumpkinId,
+      image: imageToShare.original,
+    });
+
     // Define the content to share
     const shareContent = {
       method: 'share',
-      href: imageToShare.original, // URL of the image to share
+      href: `https://release-v0-6-0--pumpkinpal.netlify.app/image/${sharedImageDoc.id}`, // URL of the page to share
       quote: pumpkinName, // Title/quote to share along with the image
     };
 

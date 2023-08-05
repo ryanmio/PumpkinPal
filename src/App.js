@@ -78,6 +78,7 @@ function App() {
               <Route path="/cloudadmin" element={<CloudFunctionTrigger />} />
               <Route path="/pumpkin-details/:id" element={<PumpkinDetails />} />
               <Route path="/site-profile/:id" element={<SiteProfile />} />
+              <Route path="/image/:imageId" component={ImageDisplay} />
             </Routes>
           </GrowerContextProvider>
         </UserProvider>
