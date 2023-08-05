@@ -20,28 +20,28 @@ const ImageCard = ({ pumpkinId, pumpkinName }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const calculateLatestWeight = async (pumpkinId) => {
-    // Fetch the pumpkin document
-    const pumpkinDoc = await getDoc(doc(collection(db, 'Pumpkins'), pumpkinId));
-    const pumpkinData = pumpkinDoc.data();
+  // Fetch the pumpkin document
+  const pumpkinDoc = await getDoc(doc(db, 'Users', user.uid, 'Pumpkins', pumpkinId));
+  const pumpkinData = pumpkinDoc.data();
 
-    // Calculate the latest weight
-    const latestWeight = pumpkinData.weights[pumpkinData.weights.length - 1]?.weight || null;
+  // Calculate the latest weight
+  const latestWeight = pumpkinData.weights[pumpkinData.weights.length - 1]?.weight || null;
 
-    console.log('Latest weight:', latestWeight);
-    return latestWeight;
-  };
+  console.log('Latest weight:', latestWeight);
+  return latestWeight;
+};
 
-  const calculateDaysAfterPollination = async (pumpkinId) => {
-    // Fetch the pumpkin document
-    const pumpkinDoc = await getDoc(doc(collection(db, 'Pumpkins'), pumpkinId));
-    const pumpkinData = pumpkinDoc.data();
+const calculateDaysAfterPollination = async (pumpkinId) => {
+  // Fetch the pumpkin document
+  const pumpkinDoc = await getDoc(doc(db, 'Users', user.uid, 'Pumpkins', pumpkinId));
+  const pumpkinData = pumpkinDoc.data();
 
-    // Calculate the days after pollination
-    const daysAfterPollination = differenceInDays(new Date(), pumpkinData.pollinationDate.toDate());
+  // Calculate the days after pollination
+  const daysAfterPollination = differenceInDays(new Date(), pumpkinData.pollinationDate.toDate());
 
-    console.log('Days after pollination:', daysAfterPollination);
-    return daysAfterPollination;
-  };
+  console.log('Days after pollination:', daysAfterPollination);
+  return daysAfterPollination;
+};
 
   const addSharedImage = async (imageUrl, pumpkinId, userId, pumpkinName) => {
     // Calculate the latest weight and days after pollination
