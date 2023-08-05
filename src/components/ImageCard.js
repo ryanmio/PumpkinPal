@@ -42,57 +42,67 @@ const calculateDaysAfterPollination = async (pumpkinId) => {
 };
 
   const addSharedImage = async (imageUrl, pumpkinId, userId, pumpkinName) => {
-    // Calculate the latest weight and days after pollination
-    const latestWeight = await calculateLatestWeight(pumpkinId);
-    const daysAfterPollination = await calculateDaysAfterPollination(pumpkinId);
+  // Calculate the latest weight and days after pollination
+  const latestWeight = await calculateLatestWeight(pumpkinId);
+  const daysAfterPollination = await calculateDaysAfterPollination(pumpkinId);
 
-    // Add the document to the SharedImages collection
-    try {
-      const docRef = await addDoc(collection(db, 'SharedImages'), {
-        image: imageUrl,
-        pumpkinId: pumpkinId,
-        userId: userId,
-        pumpkinName: pumpkinName,
-        latestWeight: latestWeight,
-        daysAfterPollination: daysAfterPollination
-      });
-      console.log('Document written with ID: ', docRef.id);
-      return docRef.id; // Return the document ID
-    } catch (e) {
-      console.error('Error adding document: ', e);
-    }
-  };
+  console.log('Latest weight:', latestWeight);
+  console.log('Days after pollination:', daysAfterPollination);
 
-  const handleShare = async () => {
-    // Check if the Facebook SDK is loaded
-    if (typeof FB !== 'undefined') {
-      // Find the image object to share
-      const imageToShare = images.find(imageObj => imageObj.original === selectedImage);
-      if (!imageToShare) return;
+  // Add the document to the SharedImages collection
+  try {
+    const docRef = await addDoc(collection(db, 'SharedImages'), {
+      image: imageUrl,
+      pumpkinId: pumpkinId,
+      userId: userId,
+      pumpkinName: pumpkinName,
+      latestWeight: latestWeight,
+      daysAfterPollination: daysAfterPollination
+    });
+    console.log('Document written with ID: ', docRef.id);
+    return docRef.id; // Return the document ID
+  } catch (e) {
+    console.error('Error adding document: ', e);
+  }
+};
 
-      // Add the image to the SharedImages collection and get the document ID
-      const sharedImageId = await addSharedImage(imageToShare.original, pumpkinId, user.uid, pumpkinName);
+const handleShare = async () => {
+  // Check if the Facebook SDK is loaded
+  if (typeof FB !== 'undefined') {
+    // Find the image object to share
+    const imageToShare = images.find(imageObj => imageObj.original === selectedImage);
+    if (!imageToShare) return;
 
-      // Define the content to share
-      const shareContent = {
-        method: 'share',
-        href: `https://release-v0-6-0--pumpkinpal.netlify.app/image/${sharedImageId}`, // URL of the page to share
-        quote: pumpkinName, // Title/quote to share along with the image
-      };
+    console.log('Image to share:', imageToShare);
 
-      // Open the Facebook share dialog
-      FB.ui(shareContent, function(response) {
-        if (response && !response.error_message) {
-          toast.success('Image shared successfully.');
-        } else {
-          toast.error('Failed to share image. Please try again.');
-        }
-      });
-    } else {
-      // Inform the user that the Facebook SDK is blocked (likely by an ad blocker)
-      toast.error('Facebook share is blocked by an ad blocker. Please disable it to share the image.');
-    }
-  };
+    // Add the image to the SharedImages collection and get the document ID
+    const sharedImageId = await addSharedImage(imageToShare.original, pumpkinId, user.uid, pumpkinName);
+
+    console.log('Shared image ID:', sharedImageId);
+
+    // Define the content to share
+    const shareContent = {
+      method: 'share',
+      href: `https://release-v0-6-0--pumpkinpal.netlify.app/image/${sharedImageId}`, // URL of the page to share
+      quote: pumpkinName, // Title/quote to share along with the image
+    };
+
+    console.log('Share content:', shareContent);
+
+    // Open the Facebook share dialog
+    FB.ui(shareContent, function(response) {
+      if (response && !response.error_message) {
+        toast.success('Image shared successfully.');
+      } else {
+        toast.error('Failed to share image. Please try again.');
+      }
+    });
+  } else {
+    // Inform the user that the Facebook SDK is blocked (likely by an ad blocker)
+    toast.error('Facebook share is blocked by an ad blocker. Please disable it to share the image.');
+  }
+};
+
 
   const handleDownload = async () => {
   try {
