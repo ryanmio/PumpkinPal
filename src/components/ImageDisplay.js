@@ -44,9 +44,13 @@ const ImageDisplay = () => {
   return (
     <div>
       <Helmet>
-        <title>{imageData.pumpkinName}</title>
-        <meta name="description" content={`Latest weight: ${imageData.latestWeight} | Days after Pollination: ${imageData.daysAfterPollination}`} />
-      </Helmet>
+  <title>{imageData.pumpkinName}</title>
+  <meta name="description" content={`Latest weight: ${imageData.latestWeight} | Days after Pollination: ${imageData.daysAfterPollination}`} />
+  <meta property="og:title" content={imageData.pumpkinName} />
+  <meta property="og:description" content={`Latest weight: ${imageData.latestWeight} | Days after Pollination: ${imageData.daysAfterPollination}`} />
+  <meta property="og:image" content={imageData.image} />
+  <meta property="og:url" content={window.location.href} />
+</Helmet>
       <img src={imageData.image} alt="Shared" />
     </div>
   );
