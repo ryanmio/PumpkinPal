@@ -87,7 +87,7 @@ const calculateDaysAfterPollination = async (pumpkinId) => {
   const sharedImageId = await addSharedImage(imageToShare.original, pumpkinId, user.uid, pumpkinName);
 
   // Create a shareable link for the image
-  const shareableLink = `https://release-v0-6-0--pumpkinpal.netlify.app/image/${sharedImageId}`;
+  const shareableLink = `https://us-central1-pumpkinpal-b60be.cloudfunctions.net/renderSharedImage/image/${sharedImageId}`;
 
   // Fetch the Iframely embed data for the shareable link
   const iframelyUrl = `https://iframe.ly/api/oembed?url=${encodeURIComponent(shareableLink)}&api_key=8417868c636055d0673ae5`;
