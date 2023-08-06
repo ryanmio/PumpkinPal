@@ -69,7 +69,7 @@ const calculateDaysAfterPollination = async (pumpkinId) => {
       pumpkinName: pumpkinName,
       latestWeight: latestWeight,
       daysAfterPollination: daysAfterPollination,
-      timestamp: admin.firestore.FieldValue.serverTimestamp() // Add the timestamp field
+      timestamp: new Date()
     });
     console.log('Document written with ID: ', docRef.id);
     return docRef.id; // Return the document ID
