@@ -11,6 +11,8 @@ import Button from '../utilities/Button';
 import Spinner from '../components/Spinner';
 import { deleteObject } from 'firebase/storage';
 import { differenceInDays } from 'date-fns';
+import { admin } from 'firebase-admin';
+
 
 const ImageCard = ({ pumpkinId, pumpkinName }) => {
   const [images, setImages] = useState([]);
@@ -54,26 +56,27 @@ const calculateDaysAfterPollination = async (pumpkinId) => {
 };
 
   const addSharedImage = async (imageUrl, pumpkinId, userId, pumpkinName) => {
-    // Calculate the latest weight and days after pollination
-    const latestWeight = await calculateLatestWeight(pumpkinId);
-    const daysAfterPollination = await calculateDaysAfterPollination(pumpkinId);
+  // Calculate the latest weight and days after pollination
+  const latestWeight = await calculateLatestWeight(pumpkinId);
+  const daysAfterPollination = await calculateDaysAfterPollination(pumpkinId);
 
-    // Add the document to the SharedImages collection
-    try {
-      const docRef = await addDoc(collection(db, 'SharedImages'), {
-        image: imageUrl,
-        pumpkinId: pumpkinId,
-        userId: userId,
-        pumpkinName: pumpkinName,
-        latestWeight: latestWeight,
-        daysAfterPollination: daysAfterPollination
-      });
-      console.log('Document written with ID: ', docRef.id);
-      return docRef.id; // Return the document ID
-    } catch (e) {
-      console.error('Error adding document: ', e);
-    }
-  };
+  // Add the document to the SharedImages collection
+  try {
+    const docRef = await addDoc(collection(db, 'SharedImages'), {
+      image: imageUrl,
+      pumpkinId: pumpkinId,
+      userId: userId,
+      pumpkinName: pumpkinName,
+      latestWeight: latestWeight,
+      daysAfterPollination: daysAfterPollination,
+      timestamp: admin.firestore.FieldValue.serverTimestamp() // Add the timestamp field
+    });
+    console.log('Document written with ID: ', docRef.id);
+    return docRef.id; // Return the document ID
+  } catch (e) {
+    console.error('Error adding document: ', e);
+  }
+};
 
   const handleShare = async () => {
   if (typeof FB === 'undefined') {
