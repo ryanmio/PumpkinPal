@@ -251,7 +251,7 @@ const ogImage = sharedImageData.image;
       <img src="${ogImage}" alt="${ogTitle}">
     </body>
     </html>
-  `);
+`);
 });
 
 
