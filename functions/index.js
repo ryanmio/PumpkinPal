@@ -202,36 +202,38 @@ exports.renderSharedImage = functions.https.onRequest(async (req, res) => {
   }
 
   const sharedImageData = sharedImageDoc.data();
+    
+    // Format the timestamp as a friendly-looking date string
+const sharedDate = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(sharedImageData.timestamp.toDate());
 
   // Construct the OG tags
-  const ogTitle = `${sharedImageData.pumpkinName} on PumpkinPal`;
-  let ogDescription = "Check out my pumpkin on PumpkinPal, the open-source companion app for pumpkin growers.";
-  if (sharedImageData.latestWeight != null && sharedImageData.daysAfterPollination != null) {
-    ogDescription = `Latest weight: ${sharedImageData.latestWeight} | Days after Pollination: ${sharedImageData.daysAfterPollination}`;
-  }
-  const ogImage = sharedImageData.image;
+const ogTitle = `${sharedImageData.pumpkinName} on PumpkinPal`;
+let ogDescription = `Check out my pumpkin on PumpkinPal, the open-source companion app for pumpkin growers. Shared on ${sharedDate}.`;
+if (sharedImageData.latestWeight != null && sharedImageData.daysAfterPollination != null) {
+  ogDescription = `Days after Pollination: ${sharedImageData.daysAfterPollination} | Shared on ${sharedDate}`;
+}
+const ogImage = sharedImageData.image;
 
-  // Respond with the HTML containing the OG tags
-  res.send(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta property="og:title" content="${ogTitle}">
-      <meta property="og:description" content="${ogDescription}">
-      <meta property="og:image" content="${ogImage}">
-      <meta property="og:url" content="${req.url}">
-      <title>${ogTitle}</title>
-    </head>
-    <body>
-      <h1>${ogTitle}</h1>
-      <p>${ogDescription}</p>
-      <img src="${ogImage}" alt="${ogTitle}">
-    </body>
-    </html>
-  `);
-});
-
+// Respond with the HTML containing the OG tags
+res.send(`
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta property="og:title" content="${ogTitle}">
+    <meta property="og:description" content="${ogDescription}">
+    <meta property="og:image" content="${ogImage}">
+    <meta property="og:url" content="${req.url}">
+    <title>${ogTitle}</title>
+  </head>
+  <body>
+    <h1>${ogTitle}</h1>
+    <p>${ogDescription}</p>
+    <p>Shared on ${sharedDate}</p>
+    <img src="${ogImage}" alt="${ogTitle}">
+  </body>
+  </html>
+`);
 
 /* -----------------------------------------------
  * Metric Calculation Functions
