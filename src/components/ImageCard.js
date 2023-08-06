@@ -87,8 +87,8 @@ const calculateDaysAfterPollination = async (pumpkinId) => {
 
   const sharedImageId = await addSharedImage(imageToShare.original, pumpkinId, user.uid, pumpkinName);
 
-  // Create a shareable link for the image using your testing domain
-  const shareableLink = `https://release-v0-6-0--pumpkinpal.netlify.app/share/${sharedImageId}`;
+  // Create a shareable link for the image using the cloud function URL
+  const shareableLink = `https://us-central1-pumpkinpal-b60be.cloudfunctions.net/renderSharedImage/image/${sharedImageId}`;
 
   // Construct the content to share
   const shareContent = {
