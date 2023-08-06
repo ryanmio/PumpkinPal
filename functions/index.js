@@ -205,7 +205,10 @@ exports.renderSharedImage = functions.https.onRequest(async (req, res) => {
 
   // Construct the OG tags
   const ogTitle = `${sharedImageData.pumpkinName} on PumpkinPal`;
-  const ogDescription = `Latest weight: ${sharedImageData.latestWeight} | Days after Pollination: ${sharedImageData.daysAfterPollination}`;
+  let ogDescription = "Check out my pumpkin on PumpkinPal, the open-source companion app for pumpkin growers.";
+  if (sharedImageData.latestWeight != null && sharedImageData.daysAfterPollination != null) {
+    ogDescription = `Latest weight: ${sharedImageData.latestWeight} | Days after Pollination: ${sharedImageData.daysAfterPollination}`;
+  }
   const ogImage = sharedImageData.image;
 
   // Respond with the HTML containing the OG tags
