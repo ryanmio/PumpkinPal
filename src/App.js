@@ -80,6 +80,7 @@ function App() {
               <Route path="/pumpkin-details/:id" element={<PumpkinDetails />} />
               <Route path="/site-profile/:id" element={<SiteProfile />} />
               <Route path="/image/:imageId" element={<ImageDisplay />} />
+              <Route path="/share/:imageId" element={<ShareRedirect />} />
             </Routes>
           </GrowerContextProvider>
         </UserProvider>

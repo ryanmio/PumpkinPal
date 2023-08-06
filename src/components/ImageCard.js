@@ -87,21 +87,16 @@ const calculateDaysAfterPollination = async (pumpkinId) => {
 
   const sharedImageId = await addSharedImage(imageToShare.original, pumpkinId, user.uid, pumpkinName);
 
-  // Create a shareable link for the image
-  const shareableLink = `https://us-central1-pumpkinpal-b60be.cloudfunctions.net/renderSharedImage/image/${sharedImageId}`;
+  // Create a shareable link for the image using your testing domain
+  const shareableLink = `https://release-v0-6-0--pumpkinpal.netlify.app/share/${sharedImageId}`;
 
-  // Fetch the Iframely embed data for the shareable link
-  const iframelyUrl = `https://iframe.ly/api/oembed?url=${encodeURIComponent(shareableLink)}&api_key=8417868c636055d0673ae5`;
-  const iframelyResponse = await fetch(iframelyUrl);
-  const iframelyData = await iframelyResponse.json();
-
-  // Construct the content to share using the Iframely embed data
+  // Construct the content to share
   const shareContent = {
     method: 'share',
-    href: iframelyData.url || shareableLink,
+    href: shareableLink,
     quote: `Check out my pumpkin ${pumpkinName}!`,
     description: `Latest weight: ${imageToShare.latestWeight} | Days after Pollination: ${imageToShare.daysAfterPollination}`,
-    picture: iframelyData.thumbnail_url || imageToShare.original
+    picture: imageToShare.original
   };
 
   // Open the Facebook share dialog

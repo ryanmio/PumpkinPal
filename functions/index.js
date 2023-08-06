@@ -215,42 +215,42 @@ if (sharedImageData.latestWeight != null && sharedImageData.daysAfterPollination
 const ogImage = sharedImageData.image;
 
   // Respond with the HTML containing the OG tags
-res.send(`
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0;url=https://release-v0-6-0--pumpkinpal.netlify.app/image/${sharedImageId}">
-    <meta property="og:title" content="${ogTitle}">
-    <meta property="og:description" content="${ogDescription}">
-    <meta property="og:image" content="${ogImage}">
-    <meta property="og:url" content="${req.url}">
-    <title>${ogTitle}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-      body {
-        font-family: 'Lato', sans-serif;
-      }
-      h1 {
-        font-size: 24px;
-        color: #333;
-      }
-      p {
-        font-size: 18px;
-        line-height: 1.5;
-        color: #666;
-      }
-      img {
-        max-width: 100%;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>${ogTitle}</h1>
-    <p>Shared on ${sharedDate}</p>
-    <img src="${ogImage}" alt="${ogTitle}">
-  </body>
-  </html>
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta property="og:title" content="${ogTitle}">
+      <meta property="og:description" content="${ogDescription}">
+      <meta property="og:image" content="${ogImage}">
+      <meta property="og:url" content="${req.url}">
+      <link rel="icon" href="https://pumpkinpal.app/favicon.ico" />
+      <title>${ogTitle}</title>
+      <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+      <style>
+        body {
+          font-family: 'Lato', sans-serif;
+        }
+        h1 {
+          font-size: 24px;
+          color: #333;
+        }
+        p {
+          font-size: 18px;
+          line-height: 1.5;
+          color: #666;
+        }
+        img {
+          max-width: 100%;
+        }
+      </style>
+    </head>
+    <body>
+      <h1>${ogTitle}</h1>
+      <p>Shared on ${sharedDate}</p>
+      <img src="${ogImage}" alt="${ogTitle}">
+    </body>
+    </html>
 `);
 });
 
