@@ -60,17 +60,23 @@ const calculateDaysAfterPollination = async (pumpkinId) => {
   const latestWeight = await calculateLatestWeight(pumpkinId);
   const daysAfterPollination = await calculateDaysAfterPollination(pumpkinId);
 
+  // Prepare the data object
+  const data = {
+    image: imageUrl,
+    pumpkinId: pumpkinId,
+    userId: userId,
+    pumpkinName: pumpkinName,
+    latestWeight: latestWeight,
+    daysAfterPollination: daysAfterPollination,
+    timestamp: new Date()
+  };
+
+  // Log the data object
+  console.log('Data to be added to Firestore:', data);
+
   // Add the document to the SharedImages collection
   try {
-    const docRef = await addDoc(collection(db, 'SharedImages'), {
-      image: imageUrl,
-      pumpkinId: pumpkinId,
-      userId: userId,
-      pumpkinName: pumpkinName,
-      latestWeight: latestWeight,
-      daysAfterPollination: daysAfterPollination,
-      timestamp: new Date()
-    });
+    const docRef = await addDoc(collection(db, 'SharedImages'), data);
     console.log('Document written with ID: ', docRef.id);
     return docRef.id; // Return the document ID
   } catch (e) {
@@ -86,8 +92,15 @@ const calculateDaysAfterPollination = async (pumpkinId) => {
 
   const imageToShare = images.find(imageObj => imageObj.original === selectedImage);
   if (!imageToShare) return;
+      
+      // Log the selected image object
+  console.log('Selected image to share:', imageToShare);
+
 
   const sharedImageId = await addSharedImage(imageToShare.original, pumpkinId, user.uid, pumpkinName);
+      
+        // Log the shared image ID
+  console.log('Shared image ID:', sharedImageId);
 
   // Create a shareable link for the image
   const shareableLink = `https://us-central1-pumpkinpal-b60be.cloudfunctions.net/renderSharedImage/image/${sharedImageId}`;
