@@ -214,7 +214,7 @@ if (sharedImageData.latestWeight != null && sharedImageData.daysAfterPollination
 }
 const ogImage = sharedImageData.image;
 
-// Respond with the HTML containing the OG tags
+  // Respond with the HTML containing the OG tags
 res.send(`
   <!DOCTYPE html>
   <html lang="en">
@@ -229,11 +229,13 @@ res.send(`
   <body>
     <h1>${ogTitle}</h1>
     <p>${ogDescription}</p>
-    <p>Shared on ${sharedDate}</p>
+    <p>Shared on ${sharedDate}</p> <!-- Adding the shared date here -->
     <img src="${ogImage}" alt="${ogTitle}">
   </body>
   </html>
 `);
+});
+
 
 /* -----------------------------------------------
  * Metric Calculation Functions
