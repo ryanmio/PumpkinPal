@@ -85,29 +85,38 @@ const calculateDaysAfterPollination = async (pumpkinId) => {
   const imageToShare = images.find(imageObj => imageObj.original === selectedImage);
   if (!imageToShare) return;
 
-  const sharedImageId = await addSharedImage(imageToShare.original, pumpkinId, user.uid, pumpkinName);
+  // Create a loading toast
+  const toastId = toast.loading('Creating sharable link...');
 
-  // Create a shareable link for the image using your testing domain
-  const shareableLink = `https://release-v0-6-0--pumpkinpal.netlify.app/share/${sharedImageId}`;
+  try {
+    const sharedImageId = await addSharedImage(imageToShare.original, pumpkinId, user.uid, pumpkinName);
+    const shareableLink = `https://release-v0-6-0--pumpkinpal.netlify.app/share/${sharedImageId}`;
+    const shareContent = {
+      method: 'share',
+      href: shareableLink,
+      quote: `Check out my pumpkin ${pumpkinName}!`,
+      description: `Latest weight: ${imageToShare.latestWeight} | Days after Pollination: ${imageToShare.daysAfterPollination}`,
+      picture: imageToShare.original
+    };
 
-  // Construct the content to share
-  const shareContent = {
-    method: 'share',
-    href: shareableLink,
-    quote: `Check out my pumpkin ${pumpkinName}!`,
-    description: `Latest weight: ${imageToShare.latestWeight} | Days after Pollination: ${imageToShare.daysAfterPollination}`,
-    picture: imageToShare.original
-  };
+    // Dismiss the loading toast
+    toast.dismiss(toastId);
 
-  // Open the Facebook share dialog
-  FB.ui(shareContent, function(response) {
-    if (response && !response.error_message) {
-      toast.success('Image shared successfully.');
-    } else {
-      toast.error('Failed to share image. Please try again.');
-    }
-  });
+    // Open the Facebook share dialog
+    FB.ui(shareContent, function(response) {
+      if (response && !response.error_message) {
+        toast.success('Image shared successfully.');
+      } else {
+        toast.error('Failed to share image. Please try again.');
+      }
+    });
+  } catch (e) {
+    // If there's an error, dismiss the loading toast and show an error toast
+    toast.dismiss(toastId);
+    toast.error('Failed to create sharable link. Please try again.');
+  }
 };
+
 
 
   const handleDownload = async () => {
