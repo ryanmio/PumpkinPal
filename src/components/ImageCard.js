@@ -36,15 +36,18 @@ const ImageCard = ({ pumpkinId, pumpkinName }) => {
   }
 };
 
-const calculateDaysAfterPollination = async (pumpkinId) => {
+const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
   // Fetch the pumpkin document
   const pumpkinDoc = await getDoc(doc(db, 'Users', user.uid, 'Pumpkins', pumpkinId));
   const pumpkinData = pumpkinDoc.data();
 
   // Check if the 'pollinationDate' field is defined
   if (pumpkinData && pumpkinData.pollinationDate) {
-    // Calculate the days after pollination
-    const daysAfterPollination = differenceInDays(new Date(), pumpkinData.pollinationDate.toDate());
+    // Convert pollinationDate to a Date object if it's a string
+    const pollinationDate = new Date(pumpkinData.pollinationDate);
+
+    // Calculate the days after pollination using shareDate
+    const daysAfterPollination = differenceInDays(shareDate, pollinationDate);
     console.log('Days after pollination:', daysAfterPollination);
     return daysAfterPollination;
   } else {
@@ -54,9 +57,12 @@ const calculateDaysAfterPollination = async (pumpkinId) => {
 };
 
   const addSharedImage = async (imageUrl, pumpkinId, userId, pumpkinName) => {
-  // Calculate the latest weight and days after pollination
+  // Define the share date
+  const shareDate = new Date();
+
+  // Calculate the latest weight and days after pollination using the share date
   const latestWeight = await calculateLatestWeight(pumpkinId);
-  const daysAfterPollination = await calculateDaysAfterPollination(pumpkinId);
+  const daysAfterPollination = await calculateDaysAfterPollination(pumpkinId, shareDate);
 
   // Add the document to the SharedImages collection
   try {
@@ -67,7 +73,7 @@ const calculateDaysAfterPollination = async (pumpkinId) => {
       pumpkinName: pumpkinName,
       latestWeight: latestWeight,
       daysAfterPollination: daysAfterPollination,
-      timestamp: new Date()
+      timestamp: shareDate
     });
     console.log('Document written with ID: ', docRef.id);
     return docRef.id; // Return the document ID
@@ -116,8 +122,6 @@ const calculateDaysAfterPollination = async (pumpkinId) => {
     toast.error('Failed to create sharable link. Please try again.');
   }
 };
-
-
 
   const handleDownload = async () => {
   try {
