@@ -190,7 +190,14 @@ exports.countMeasurementOnDelete = functions.firestore.document('Users/{userId}/
 
 // Share image handling
 exports.renderSharedImage = functions.https.onRequest(async (req, res) => {
-  const sharedImageId = req.path.split('/').pop(); // Extract the shared image ID from the URL
+  const sharedImageId = req.path.split('/').pop();
+  console.log("req.path:", req.path); // Log the request path
+  console.log("sharedImageId:", sharedImageId); // Log the extracted sharedImageId
+
+  if (!sharedImageId) {
+    res.status(400).send('Bad Request: Missing shared image ID'); // Return an error if sharedImageId is missing
+    return;
+  }
 
   // Fetch the shared image data from Firestore
   const sharedImageRef = admin.firestore().collection('SharedImages').doc(sharedImageId);
