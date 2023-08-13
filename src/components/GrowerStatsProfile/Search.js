@@ -21,6 +21,8 @@ const Hit = ({ hit }) => {
   );
 };
 
+const NoIcon = () => null; // Custom component that renders nothing
+
 const Search = () => {
   return (
     <div className="bg-f2eee3 text-36382e">
@@ -30,10 +32,7 @@ const Search = () => {
           <SearchBox
             placeholder="Search sites..."
             className="w-full rounded-md border border-gray-300 pl-3 py-2"
-            translations={{
-              submitTitle: 'Search',
-              resetTitle: 'Reset',
-            }}
+            submitIconComponent={NoIcon} // Use the custom NoIcon component
           />
         </div>
         <Hits hitComponent={Hit} className="p-4" />
