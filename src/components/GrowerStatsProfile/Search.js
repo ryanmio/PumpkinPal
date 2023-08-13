@@ -1,6 +1,6 @@
 import React from 'react';
 import algoliasearch from 'algoliasearch/lite';
-import { InstantSearch, SearchBox, Hits, Highlight } from 'react-instantsearch';
+import { InstantSearch, SearchBox, connectHits } from 'react-instantsearch';
 import { useNavigate } from 'react-router-dom';
 
 const searchClient = algoliasearch('SPV52PLJT9', '46d4c9707d1655c9a75d6949e02615a0');
@@ -14,14 +14,14 @@ const Hit = ({ hit }) => {
 
   return (
     <div onClick={handleHitClick} style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
-      <h3><Highlight attribute="objectID" hit={hit} /></h3>
+      <h3>{hit.objectID}</h3>
       <div>Site Record: {hit['Site Record']}</div>
       <div>Total Entries: {hit['Total Entries']}</div>
     </div>
   );
 };
 
-const CustomHits = ({ hits }) => {
+const CustomHits = connectHits(({ hits }) => {
   return hits.length > 0 ? (
     <div>
       {hits.map(hit => (
@@ -29,7 +29,7 @@ const CustomHits = ({ hits }) => {
       ))}
     </div>
   ) : null;
-};
+});
 
 const Search = () => {
   return (
@@ -37,7 +37,7 @@ const Search = () => {
       <h1>Search</h1>
       <InstantSearch searchClient={searchClient} indexName="Sites">
         <SearchBox />
-        <Hits hitComponent={CustomHits} />
+        <CustomHits />
       </InstantSearch>
     </div>
   );
