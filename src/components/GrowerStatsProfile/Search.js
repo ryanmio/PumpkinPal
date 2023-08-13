@@ -26,7 +26,7 @@ const Hit = ({ hit }) => {
 
   return (
     <div onClick={handleHitClick}>
-      <Highlight attribute="name" hit={hit} />
+      <Highlight attribute="objectID" hit={hit} />
     </div>
   );
 };
