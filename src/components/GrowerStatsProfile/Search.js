@@ -5,7 +5,7 @@ import {
   SearchBox,
   Hits,
   Highlight,
-  connectStateResults,
+  connectHits,
 } from 'react-instantsearch';
 import { useNavigate } from 'react-router-dom';
 
@@ -30,11 +30,15 @@ const Hit = ({ hit }) => {
   );
 };
 
-const Results = connectStateResults(({ searchState, searchResults, children }) =>
-  searchState && searchState.query && searchResults && searchResults.nbHits > 0 ? (
-    children
-  ) : null
-);
+const CustomHits = connectHits(({ hits }) => {
+  return hits.length > 0 ? (
+    <div>
+      {hits.map(hit => (
+        <Hit hit={hit} key={hit.objectID} />
+      ))}
+    </div>
+  ) : null;
+});
 
 const Search = () => {
   return (
@@ -42,9 +46,7 @@ const Search = () => {
       <h1>Search</h1>
       <InstantSearch searchClient={searchClient} indexName="Sites">
         <SearchBox />
-        <Results>
-          <Hits hitComponent={Hit} />
-        </Results>
+        <CustomHits />
       </InstantSearch>
     </div>
   );
