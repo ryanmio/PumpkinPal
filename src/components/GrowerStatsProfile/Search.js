@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import algoliasearch from 'algoliasearch/lite';
-import { InstantSearch, connectSearchBox, Hits } from 'react-instantsearch';
+import { InstantSearch, connectSearchBox, connectHits } from 'react-instantsearch-core';
 import { useNavigate } from 'react-router-dom';
 
 const searchClient = algoliasearch('SPV52PLJT9', '46d4c9707d1655c9a75d6949e02615a0');
@@ -21,28 +21,30 @@ const Hit = ({ hit }) => {
   );
 };
 
-const CustomSearchBox = ({ currentRefinement, refine }) => {
-  return (
-    <input
-      type="text"
-      value={currentRefinement}
-      onChange={e => refine(e.target.value)}
-      placeholder="Search..."
-    />
-  );
-};
+const CustomHits = connectHits(({ hits }) => {
+  return hits.length > 0 ? (
+    <div>
+      {hits.map(hit => (
+        <Hit hit={hit} key={hit.objectID} />
+      ))}
+    </div>
+  ) : null;
+});
 
-const ConnectedSearchBox = connectSearchBox(CustomSearchBox);
+const CustomSearchBox = connectSearchBox(({ currentRefinement, refine }) => (
+  <div>
+    <input type="text" value={currentRefinement} onChange={(e) => refine(e.target.value)} />
+    <button onClick={() => refine('')}>Reset</button>
+  </div>
+));
 
 const Search = () => {
-  const [query, setQuery] = useState('');
-
   return (
     <div>
       <h1>Search</h1>
       <InstantSearch searchClient={searchClient} indexName="Sites">
-        <ConnectedSearchBox onSearchStateChange={({ query }) => setQuery(query)} />
-        {query && <Hits hitComponent={Hit} />}
+        <CustomSearchBox />
+        <CustomHits />
       </InstantSearch>
     </div>
   );
