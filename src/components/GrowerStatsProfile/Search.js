@@ -1,6 +1,7 @@
 import React from 'react';
 import algoliasearch from 'algoliasearch/lite';
-import { InstantSearch, SearchBox, connectHits } from 'react-instantsearch';
+import { InstantSearch, SearchBox } from 'react-instantsearch-core'; // Import from 'react-instantsearch-core'
+import { connectHits } from 'react-instantsearch-core'; // Import 'connectHits' from 'react-instantsearch-core'
 import { useNavigate } from 'react-router-dom';
 
 const searchClient = algoliasearch('SPV52PLJT9', '46d4c9707d1655c9a75d6949e02615a0');
