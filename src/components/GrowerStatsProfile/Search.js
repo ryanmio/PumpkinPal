@@ -6,7 +6,7 @@ import {
   Hits,
   Highlight,
   connectStateResults,
-} from 'react-instantsearch-dom';
+} from 'react-instantsearch';
 import { useNavigate } from 'react-router-dom';
 
 const searchClient = algoliasearch(
