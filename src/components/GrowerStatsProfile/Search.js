@@ -32,7 +32,8 @@ const Search = () => {
           <SearchBox
             placeholder="Search sites..."
             className="w-full rounded-md border border-gray-300 pl-3 py-2"
-            submitIconComponent={NoIcon} // Use the custom NoIcon component
+            submitIconComponent={NoIcon}
+            resetIconComponent={() => <></>}
           />
         </div>
         <Hits hitComponent={Hit} className="p-4" />
