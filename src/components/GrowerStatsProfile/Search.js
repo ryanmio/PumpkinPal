@@ -1,6 +1,6 @@
 import React from 'react';
 import algoliasearch from 'algoliasearch/lite';
-import { InstantSearch, connectSearchBox, connectHits } from 'react-instantsearch-core';
+import { InstantSearch, SearchBox, Hits } from 'react-instantsearch'; // Updated import
 import { useNavigate } from 'react-router-dom';
 
 const searchClient = algoliasearch('SPV52PLJT9', '46d4c9707d1655c9a75d6949e02615a0');
@@ -21,30 +21,13 @@ const Hit = ({ hit }) => {
   );
 };
 
-const CustomHits = connectHits(({ hits }) => {
-  return hits.length > 0 ? (
-    <div>
-      {hits.map(hit => (
-        <Hit hit={hit} key={hit.objectID} />
-      ))}
-    </div>
-  ) : null;
-});
-
-const CustomSearchBox = connectSearchBox(({ currentRefinement, refine }) => (
-  <div>
-    <input type="text" value={currentRefinement} onChange={(e) => refine(e.target.value)} />
-    <button onClick={() => refine('')}>Reset</button>
-  </div>
-));
-
 const Search = () => {
   return (
     <div>
       <h1>Search</h1>
       <InstantSearch searchClient={searchClient} indexName="Sites">
-        <CustomSearchBox />
-        <CustomHits />
+        <SearchBox />
+        <Hits hitComponent={Hit} /> {/* Directly use the 'Hit' component */}
       </InstantSearch>
     </div>
   );
