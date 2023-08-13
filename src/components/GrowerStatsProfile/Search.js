@@ -23,11 +23,18 @@ const Hit = ({ hit }) => {
 
 const Search = () => {
   return (
-    <div>
-      <h1>Search</h1>
+    <div className="bg-f2eee3 text-36382e">
+      <h1 className="text-center text-2xl font-bold py-4">Search</h1>
       <InstantSearch searchClient={searchClient} indexName="Sites">
-        <SearchBox />
-        <Hits hitComponent={Hit} /> {/* Directly use the 'Hit' component */}
+        <div className="p-4 flex items-center">
+          <SearchBox
+            translations={{
+              placeholder: 'Search sites...',
+            }}
+            className="w-full rounded-md border border-gray-300 pl-3 py-2"
+          />
+        </div>
+        <Hits hitComponent={Hit} className="p-4"/> {/* Directly use the 'Hit' component */}
       </InstantSearch>
     </div>
   );
