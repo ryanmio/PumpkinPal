@@ -17,16 +17,15 @@ const Hit = ({ hit }) => {
   const navigate = useNavigate();
 
   const handleHitClick = () => {
-    if (hit.type === 'contest') {
-      navigate(`/contest/${encodeURIComponent(hit.name)}`);
-    } else {
-      navigate(`/pumpkin/${encodeURIComponent(hit.id)}`);
-    }
+    navigate(`/site/${encodeURIComponent(hit.objectID)}`);
   };
 
   return (
     <div onClick={handleHitClick}>
       <Highlight attribute="objectID" hit={hit} />
+      <div>Site Record: {hit.SiteRecord}</div>
+      <div>Total Entries: {hit.TotalEntries}</div>
+      {/* Additional details can be added here */}
     </div>
   );
 };
