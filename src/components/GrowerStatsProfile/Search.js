@@ -22,7 +22,7 @@ const Hit = ({ hit }) => {
 };
 
 const CustomHits = connectHits(({ hits }) => {
-  return hits.length > 0 ? (
+  return (hits && hits.length > 0) ? (
     <div>
       {hits.map(hit => (
         <Hit hit={hit} key={hit.objectID} />
