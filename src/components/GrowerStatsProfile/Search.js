@@ -13,10 +13,10 @@ const Hit = ({ hit }) => {
   };
 
   return (
-    <div onClick={handleHitClick} style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
-      <h3>{hit.objectID}</h3>
-      <div>Site Record: {hit['Site Record']}</div>
-      <div>Total Entries: {hit['Total Entries']}</div>
+    <div onClick={handleHitClick} className="border border-gray-300 p-4 mb-4 cursor-pointer">
+      <h3 className="text-lg font-semibold">{hit.objectID}</h3>
+      <div className="text-sm text-gray-600">Site Record: {hit['Site Record']}</div>
+      <div className="text-sm text-gray-600">Total Entries: {hit['Total Entries']}</div>
     </div>
   );
 };
