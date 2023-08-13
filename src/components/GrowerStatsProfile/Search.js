@@ -9,23 +9,22 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 const searchClient = algoliasearch(
-  'SPV52PLJT9', // Replace with your Algolia Application Id
-  '46d4c9707d1655c9a75d6949e02615a0' // Replace with your Algolia Search-Only API Key
+  'SPV52PLJT9',
+  '46d4c9707d1655c9a75d6949e02615a0'
 );
 
 const Hit = ({ hit }) => {
   const navigate = useNavigate();
 
   const handleHitClick = () => {
-    navigate(`/site/${encodeURIComponent(hit.objectID)}`);
+    navigate(`/site-profile/${encodeURIComponent(hit.objectID)}`);
   };
 
   return (
     <div onClick={handleHitClick}>
       <Highlight attribute="objectID" hit={hit} />
-      <div>Site Record: {hit.SiteRecord}</div>
-      <div>Total Entries: {hit.TotalEntries}</div>
-      {/* Additional details can be added here */}
+      <div>Site Record: {hit['Site Record']}</div>
+      <div>Total Entries: {hit['Total Entries']}</div>
     </div>
   );
 };
