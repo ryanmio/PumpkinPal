@@ -6,7 +6,7 @@ const ShareRedirect = () => {
 
   useEffect(() => {
     // Redirecting to the cloud function URL with the image ID
-    const cloudFunctionUrl = `https://us-central1-pumpkinpal-b60be.cloudfunctions.net/renderSharedImage/image/${imageId}`;
+    const cloudFunctionUrl = `https://api.pumpkinpal.app/renderSharedImage/${imageId}`;
     window.location.replace(cloudFunctionUrl);
   }, [imageId]);
 
