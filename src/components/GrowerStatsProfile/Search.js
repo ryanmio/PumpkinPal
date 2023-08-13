@@ -5,7 +5,8 @@ import {
   SearchBox,
   Hits,
   Highlight,
-} from 'react-instantsearch';
+  connectStateResults,
+} from 'react-instantsearch-dom';
 import { useNavigate } from 'react-router-dom';
 
 const searchClient = algoliasearch(
@@ -21,13 +22,19 @@ const Hit = ({ hit }) => {
   };
 
   return (
-    <div onClick={handleHitClick}>
-      <Highlight attribute="objectID" hit={hit} />
+    <div onClick={handleHitClick} style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
+      <h3><Highlight attribute="objectID" hit={hit} /></h3>
       <div>Site Record: {hit['Site Record']}</div>
       <div>Total Entries: {hit['Total Entries']}</div>
     </div>
   );
 };
+
+const Results = connectStateResults(({ searchState, searchResults, children }) =>
+  searchState && searchState.query && searchResults && searchResults.nbHits > 0 ? (
+    children
+  ) : null
+);
 
 const Search = () => {
   return (
@@ -35,7 +42,9 @@ const Search = () => {
       <h1>Search</h1>
       <InstantSearch searchClient={searchClient} indexName="Sites">
         <SearchBox />
-        <Hits hitComponent={Hit} />
+        <Results>
+          <Hits hitComponent={Hit} />
+        </Results>
       </InstantSearch>
     </div>
   );
