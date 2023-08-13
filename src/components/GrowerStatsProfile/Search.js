@@ -1,6 +1,6 @@
 import React from 'react';
 import algoliasearch from 'algoliasearch/lite';
-import { InstantSearch, SearchBox, Hits } from 'react-instantsearch'; // Updated import
+import { InstantSearch, SearchBox, Hits } from 'react-instantsearch';
 import { useNavigate } from 'react-router-dom';
 
 const searchClient = algoliasearch('SPV52PLJT9', '46d4c9707d1655c9a75d6949e02615a0');
@@ -28,13 +28,15 @@ const Search = () => {
       <InstantSearch searchClient={searchClient} indexName="Sites">
         <div className="p-4 flex items-center">
           <SearchBox
-            translations={{
-              placeholder: 'Search sites...',
-            }}
+            placeholder="Search sites..."
             className="w-full rounded-md border border-gray-300 pl-3 py-2"
+            translations={{
+              submitTitle: 'Search',
+              resetTitle: 'Reset',
+            }}
           />
         </div>
-        <Hits hitComponent={Hit} className="p-4"/> {/* Directly use the 'Hit' component */}
+        <Hits hitComponent={Hit} className="p-4" />
       </InstantSearch>
     </div>
   );
