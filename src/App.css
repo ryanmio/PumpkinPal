@@ -366,3 +366,9 @@ button.button-disabled {
   text-overflow: ellipsis;
   max-width: 200px;
 }
+
+.ais-SearchBox-input {
+  width: 100%; /* Make it full width */
+  padding: 10px; /* Increase internal padding */
+  font-size: 20px; /* Bigger text */
+}
