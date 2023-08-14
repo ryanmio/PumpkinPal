@@ -368,9 +368,9 @@ button.button-disabled {
 }
 
 .ais-SearchBox-input {
-  width: 100%; /* Make it full width */
-  padding: 10px; /* Increase internal padding */
-  font-size: 20px; /* Bigger text */
+  width: 100%;
+  padding: 10px;
+  font-size: 20px;
 }
 
 .MyCustomHits {
@@ -387,12 +387,13 @@ button.button-disabled {
   background-color: white;
   border-radius: 5px;
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adjust as needed */
-  margin-bottom: 20px; /* Space between cards */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
   box-sizing: border-box;
-  transition: box-shadow 0.3s ease; /* Optional hover effect */
+  transition: box-shadow 0.3s ease;
+  width: 300px; /* Fixed width */
 }
 
 .MyCustomHitItem:hover {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Optional hover effect */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
