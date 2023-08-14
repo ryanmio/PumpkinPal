@@ -21,7 +21,7 @@ const Hit = ({ hit }) => {
   );
 };
 
-const NoIcon = () => null; // Custom component that renders nothing
+const NoIcon = () => null;
 
 const Search = () => {
   return (
@@ -36,6 +36,7 @@ const Search = () => {
           />
         </div>
         <Hits
+          hitComponent={Hit}
           classNames={{
             root: 'MyCustomHits',
             list: 'MyCustomHitsList MyCustomHitsList--subclass',
