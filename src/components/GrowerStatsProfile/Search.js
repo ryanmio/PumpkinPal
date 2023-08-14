@@ -13,7 +13,7 @@ const Hit = ({ hit }) => {
   };
 
   return (
-    <div onClick={handleHitClick} className="border border-gray-300 p-4 mb-4 cursor-pointer bg-ffd699 text-36382e rounded-md">
+    <div onClick={handleHitClick} className="border border-gray-300 p-4 mb-4 cursor-pointer bg-white shadow-lg hover:shadow-xl text-36382e rounded-md">
       <h3 className="text-lg font-semibold cursor-pointer">{hit.objectID}</h3>
       <div className="text-sm">Site Record: {hit['Site Record']}</div>
       <div className="text-sm">Total Entries: {hit['Total Entries']}</div>
