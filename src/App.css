@@ -382,3 +382,17 @@ button.button-disabled {
   flex-wrap: wrap;
   justify-content: space-around;
 }
+
+.MyCustomHitItem {
+  background-color: white;
+  border-radius: 5px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adjust as needed */
+  margin-bottom: 20px; /* Space between cards */
+  box-sizing: border-box;
+  transition: box-shadow 0.3s ease; /* Optional hover effect */
+}
+
+.MyCustomHitItem:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Optional hover effect */
+}

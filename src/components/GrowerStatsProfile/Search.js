@@ -39,7 +39,7 @@ const Search = () => {
           classNames={{
             root: 'MyCustomHits',
             list: 'MyCustomHitsList MyCustomHitsList--subclass',
-            item: 'dashboard-pumpkin' // Using existing card style
+            item: 'MyCustomHitItem'
           }}
         />
       </InstantSearch>
