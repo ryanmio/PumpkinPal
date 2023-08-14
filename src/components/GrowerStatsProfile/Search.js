@@ -26,12 +26,11 @@ const NoIcon = () => null; // Custom component that renders nothing
 const Search = () => {
   return (
     <div className="bg-f2eee3 text-36382e">
-      <h1 className="text-center text-2xl font-bold py-4">Search</h1>
       <InstantSearch searchClient={searchClient} indexName="Sites">
         <div className="p-4 flex items-center">
           <SearchBox
             placeholder="Search sites..."
-            className="w-full rounded-md border border-gray-300 pl-6 py-4 text-xl"
+            className="w-full rounded-md border border-gray-300 text-xl"
             submitIconComponent={NoIcon}
             resetIconComponent={() => <></>}
           />
