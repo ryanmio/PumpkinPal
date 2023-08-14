@@ -372,3 +372,13 @@ button.button-disabled {
   padding: 10px; /* Increase internal padding */
   font-size: 20px; /* Bigger text */
 }
+
+.MyCustomHits {
+  padding: 20px;
+}
+
+.MyCustomHitsList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}

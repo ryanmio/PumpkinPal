@@ -35,7 +35,13 @@ const Search = () => {
             resetIconComponent={() => <></>}
           />
         </div>
-        <Hits hitComponent={Hit} className="p-4" />
+        <Hits
+          classNames={{
+            root: 'MyCustomHits',
+            list: 'MyCustomHitsList MyCustomHitsList--subclass',
+            item: 'dashboard-pumpkin' // Using existing card style
+          }}
+        />
       </InstantSearch>
     </div>
   );
