@@ -31,7 +31,7 @@ const Search = () => {
         <div className="p-4 flex items-center">
           <SearchBox
             placeholder="Search sites..."
-            className="w-full rounded-md border border-gray-300 pl-3 py-3 text-lg font-brand" // Customize styles here
+            className="w-full rounded-md border border-gray-300 pl-6 py-4 text-xl"
             submitIconComponent={NoIcon}
             resetIconComponent={() => <></>}
           />
