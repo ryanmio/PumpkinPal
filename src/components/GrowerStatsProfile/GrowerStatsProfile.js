@@ -6,7 +6,7 @@ import SummarySection from './SummarySection';
 import TableSection from './TableSection';
 
 const GrowerStatsProfile = () => {
-  const { setGrowerName, growerData, loading, error } = useContext(GrowerContext);
+  const { setGrowerName, growerData, pumpkins, loading, error } = useContext(GrowerContext);
   const { growerName: growerNameFromUrl } = useParams();
   console.log('Grower Name from URL:', growerNameFromUrl);
 
@@ -39,7 +39,7 @@ console.log('growerData.pumpkins:', growerData.pumpkins);
     <div>
       <Header data={growerData} />
       <SummarySection data={growerData} />
-      <TableSection data={growerData.pumpkins} columns={pumpkinColumns} />
+      <TableSection data={pumpkins} columns={pumpkinColumns} />
     </div>
   );
 };
