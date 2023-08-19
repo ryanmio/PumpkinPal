@@ -23,8 +23,8 @@ const GrowerStatsProfile = () => {
     return <div>Error: {error}</div>;  // Display error message when error exists
   }
 
-  if (!growerData || !Array.isArray(growerData.pumpkins)) {
-    return <div>No pumpkins data found for this grower</div>;  // Add an additional check for pumpkins data
+  if (!growerData) {
+    return <div>No data found for this grower</div>;  // Display a message when no data is found for the grower
   }
 
   return (
