@@ -34,5 +34,6 @@ const GrowerStatsProfile = () => {
     {/* <TableSection data={growerData.pumpkins} /> */}
   </div>
 );
+};
 
 export default GrowerStatsProfile;
