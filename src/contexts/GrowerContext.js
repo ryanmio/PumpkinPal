@@ -23,6 +23,7 @@ export const GrowerContextProvider = ({ children }) => {
         setGrowerData(growerData);
         setLoading(false);
       } catch (error) {
+        console.error(error); // Log the error to the console
         setError(error.message);
         toast.error(error.message);
         setLoading(false);
