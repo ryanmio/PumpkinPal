@@ -13,16 +13,25 @@ export const GrowerContextProvider = ({ children }) => {
   useEffect(() => {
     const fetchGrowerData = async () => {
       setLoading(true);
+      console.log('Fetching data for grower:', growerName); // Logging grower name
       try {
         const growerDoc = await db.collection('Stats_Growers').doc(growerName).get();
+        console.log('Grower Document:', growerDoc); // Logging grower document
+
         if (!growerDoc.exists) {
           throw new Error(`No grower found with the ID "${growerName}".`);
         }
+
         const pumpkinDocs = await db.collection('Stats_Pumpkins').where('grower', '==', growerName).get();
+        console.log('Pumpkin Documents:', pumpkinDocs); // Logging pumpkin documents
+
         const growerData = { ...growerDoc.data(), pumpkins: pumpkinDocs.docs.map(doc => doc.data()) };
+        console.log('Grower data fetched:', growerData); // Logging fetched grower data
+
         setGrowerData(growerData);
         setLoading(false);
       } catch (error) {
+        console.log('Error fetching data:', error); // Logging error
         setError(error.message);
         toast.error(error.message);
         setLoading(false);

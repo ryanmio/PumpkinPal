@@ -8,8 +8,10 @@ import TableSection from './TableSection';
 const GrowerStatsProfile = () => {
   const { setGrowerName, growerData, loading, error } = useContext(GrowerContext);
   const { growerName: growerNameFromUrl } = useParams(); // get growerName from the URL
+  console.log('Grower Name from URL:', growerNameFromUrl); // Logging grower name from URL
 
   useEffect(() => {
+    console.log('Setting grower name:', growerNameFromUrl); // Logging grower name being set
     setGrowerName(growerNameFromUrl); // directly set growerName from the URL
   }, [growerNameFromUrl, setGrowerName]);
 
