@@ -28,12 +28,11 @@ const GrowerStatsProfile = () => {
   }
 
   return (
-    <div>
-      <Header data={growerData} />
-      <SummarySection data={growerData} />
-     // <TableSection data={growerData.pumpkins} />
-    </div>
-  );
-};
+  <div>
+    <Header data={growerData} />
+    <SummarySection data={growerData} />
+    {/* <TableSection data={growerData.pumpkins} /> */}
+  </div>
+);
 
 export default GrowerStatsProfile;
