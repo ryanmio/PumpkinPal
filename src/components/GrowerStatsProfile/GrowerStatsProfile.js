@@ -3,16 +3,16 @@ import { GrowerContext } from '../../contexts/GrowerContext';
 import { useParams } from 'react-router-dom';
 import Header from './Header';
 import SummarySection from './SummarySection';
-// import TableSection from './TableSection';
+import TableSection from './TableSection';
 
 const GrowerStatsProfile = () => {
   const { setGrowerName, growerData, loading, error } = useContext(GrowerContext);
-  const { growerName: growerNameFromUrl } = useParams(); // get growerName from the URL
-  console.log('Grower Name from URL:', growerNameFromUrl); // Logging grower name from URL
+  const { growerName: growerNameFromUrl } = useParams();
+  console.log('Grower Name from URL:', growerNameFromUrl);
 
   useEffect(() => {
-    console.log('Setting grower name:', growerNameFromUrl); // Logging grower name being set
-    setGrowerName(growerNameFromUrl); // directly set growerName from the URL
+    console.log('Setting grower name:', growerNameFromUrl);
+    setGrowerName(growerNameFromUrl);
   }, [growerNameFromUrl, setGrowerName]);
 
   if (loading) {
@@ -20,20 +20,27 @@ const GrowerStatsProfile = () => {
   }
 
   if (error) {
-    return <div>Error: {error}</div>;  // Display error message when error exists
+    return <div>Error: {error}</div>;
   }
 
   if (!growerData) {
-    return <div>No data found for this grower</div>;  // Display a message when no data is found for the grower
+    return <div>No data found for this grower</div>;
   }
 
+  // Define columns for the table
+  const pumpkinColumns = [
+    { Header: 'Year', accessor: 'year' },
+    { Header: 'Contest', accessor: 'contestName' },
+    { Header: 'Weight', accessor: 'weight' },
+  ];
+
   return (
-  <div>
-    <Header data={growerData} />
-    <SummarySection data={growerData} />
-    {/* <TableSection data={growerData.pumpkins} /> */}
-  </div>
-);
+    <div>
+      <Header data={growerData} />
+      <SummarySection data={growerData} />
+      <TableSection data={growerData.pumpkins} columns={pumpkinColumns} />
+    </div>
+  );
 };
 
 export default GrowerStatsProfile;
