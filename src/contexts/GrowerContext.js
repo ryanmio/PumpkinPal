@@ -11,38 +11,31 @@ export const GrowerContextProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchGrowerData = async () => {
-        console.log('DB Object:', db);
-      setLoading(true);
-      console.log('Fetching data for grower:', growerName); // Logging grower name
-      try {
-        const growerDoc = await db.collection('Stats_Growers').doc(growerName).get();
-        console.log('Grower Document:', growerDoc); // Logging grower document
-
-        if (!growerDoc.exists) {
-          throw new Error(`No grower found with the ID "${growerName}".`);
-        }
-
-        const pumpkinDocs = await db.collection('Stats_Pumpkins').where('grower', '==', growerName).get();
-        console.log('Pumpkin Documents:', pumpkinDocs); // Logging pumpkin documents
-
-        const growerData = { ...growerDoc.data(), pumpkins: pumpkinDocs.docs.map(doc => doc.data()) };
-        console.log('Grower data fetched:', growerData); // Logging fetched grower data
-
-        setGrowerData(growerData);
-        setLoading(false);
-      } catch (error) {
-        console.log('Error fetching data:', error); // Logging error
-        setError(error.message);
-        toast.error(error.message);
-        setLoading(false);
+  const fetchGrowerData = async () => {
+    setLoading(true);
+    try {
+      // Query the document using growerName as the ID
+      const growerDoc = await db.collection('Stats_Growers').doc(growerName).get();
+      if (!growerDoc.exists) {
+        throw new Error(`No grower found with the ID "${growerName}".`);
       }
-    };
-
-    if (growerName) {
-      fetchGrowerData();
+      const pumpkinDocs = await db.collection('Stats_Pumpkins').where('id', '==', growerName).get(); // use 'id' in the where clause
+      const growerData = { ...growerDoc.data(), pumpkins: pumpkinDocs.docs.map(doc => doc.data()) };
+      setGrowerData(growerData);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error Detail:", error); // Log the entire error object
+      setError(error.message);
+      toast.error(error.message);
+      setLoading(false);
     }
-  }, [growerName]);
+  };
+
+  if (growerName) {
+    fetchGrowerData();
+  }
+}, [growerName]);
+
 
   return (
     <GrowerContext.Provider value={{ growerName, setGrowerName, growerData, loading, error }}>
