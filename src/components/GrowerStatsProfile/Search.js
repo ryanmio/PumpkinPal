@@ -3,7 +3,7 @@ import algoliasearch from 'algoliasearch/lite';
 import { InstantSearch, SearchBox, Hits } from 'react-instantsearch';
 import { useNavigate } from 'react-router-dom';
 
-const searchClient = algoliasearch('SPV52PLJT9', process.env.ALGOLIA_API_KEY);
+const searchClient = algoliasearch('SPV52PLJT9', process.env.REACT_APP_ALGOLIA_API_KEY);
 
 const Hit = ({ hit }) => {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ const Search = () => {
       <InstantSearch searchClient={searchClient} indexName="AllTypes">
         <div className="p-4 flex items-center">
           <SearchBox
-            placeholder="Search sites..."
+            placeholder="Search for growers, pumpkins, or sites..."
             className="w-full rounded-md border border-gray-300 text-xl"
             submitIconComponent={NoIcon}
             resetIconComponent={() => <></>}
