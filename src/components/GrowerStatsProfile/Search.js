@@ -1,18 +1,21 @@
-import React from 'react';
+import React, { useContext } from 'react'; // Add useContext import
 import algoliasearch from 'algoliasearch/lite';
 import { InstantSearch, SearchBox, Hits } from 'react-instantsearch';
 import { useNavigate } from 'react-router-dom';
+import { GrowerContext } from '../../contexts/GrowerContext'; // Import GrowerContext
 
 const searchClient = algoliasearch('SPV52PLJT9', process.env.REACT_APP_ALGOLIA_API_KEY);
 
 const Hit = ({ hit }) => {
   const navigate = useNavigate();
+  const { setGrowerName } = useContext(GrowerContext); // Destructure setGrowerName from context
 
   const handleHitClick = () => {
     const collectionType = hit.path.split('/')[0];
 
     switch (collectionType) {
       case 'Stats_Growers':
+        setGrowerName(hit.objectID); // Set the grower name in the context
         navigate(`/grower/${encodeURIComponent(hit.objectID)}`);
         break;
       case 'Stats_Pumpkins':
