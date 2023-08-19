@@ -15,7 +15,7 @@ const Hit = ({ hit }) => {
   return (
     <div onClick={handleHitClick}>
       <h3 className="text-lg font-semibold cursor-pointer">{hit.objectID}</h3>
-      <div className="text-sm">Site Record: {hit['Site Record']}</div>
+      <div className="text-sm">Site Record: {hit['Site Record']} lbs</div>
       <div className="text-sm">Total Entries: {hit['Total Entries']}</div>
     </div>
   );
