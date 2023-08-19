@@ -16,7 +16,7 @@ export const GrowerContextProvider = ({ children }) => {
       try {
         const growerDoc = await db.collection('Stats_Growers').doc(growerName).get();
         if (!growerDoc.exists) {
-          throw new Error(`No grower found with the name "${growerName}".`);
+          throw new Error(`No grower found with the ID "${growerName}".`);
         }
         const pumpkinDocs = await db.collection('Stats_Pumpkins').where('grower', '==', growerName).get();
         const growerData = { ...growerDoc.data(), pumpkins: pumpkinDocs.docs.map(doc => doc.data()) };

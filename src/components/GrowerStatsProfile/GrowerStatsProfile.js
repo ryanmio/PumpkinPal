@@ -6,14 +6,12 @@ import SummarySection from './SummarySection';
 import TableSection from './TableSection';
 
 const GrowerStatsProfile = () => {
-  const { growerName, setGrowerName, growerData, loading, error } = useContext(GrowerContext);
+  const { setGrowerName, growerData, loading, error } = useContext(GrowerContext);
   const { growerName: growerNameFromUrl } = useParams(); // get growerName from the URL
 
   useEffect(() => {
-    if (growerName !== growerNameFromUrl) {
-      setGrowerName(growerNameFromUrl); // update growerName in the context if it's different from the one in the URL
-    }
-  }, [growerName, growerNameFromUrl, setGrowerName]);
+    setGrowerName(growerNameFromUrl); // directly set growerName from the URL
+  }, [growerNameFromUrl, setGrowerName]);
 
   if (loading) {
     return <div>Loading...</div>;
