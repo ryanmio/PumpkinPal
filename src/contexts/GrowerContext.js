@@ -14,6 +14,7 @@ export const GrowerContextProvider = ({ children }) => {
     const fetchGrowerData = async () => {
       setLoading(true);
       try {
+        console.log('DB:', db);
         const growerDoc = await db.collection('Stats_Growers').doc(growerName).get();
         if (!growerDoc.exists) {
           throw new Error(`No grower found with the name "${growerName}".`);
