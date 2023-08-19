@@ -33,6 +33,7 @@ const GrowerStatsProfile = () => {
     { Header: 'Contest', accessor: 'contestName' },
     { Header: 'Weight', accessor: 'weight' },
   ];
+console.log('growerData.pumpkins:', growerData.pumpkins);
 
   return (
     <div>
