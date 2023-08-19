@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { db } from '../firebase';
-import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore'; // import necessary methods
+import { doc, getDoc } from 'firebase/firestore'; // Only import necessary methods
 import fetchPumpkins from '../utilities/fetchPumpkins'; // import your fetchPumpkins function
 
 export const GrowerContext = createContext();
