@@ -3,7 +3,7 @@ import { GrowerContext } from '../../contexts/GrowerContext';
 import { useParams } from 'react-router-dom';
 import Header from './Header';
 import SummarySection from './SummarySection';
-import TableSection from './TableSection';
+// import TableSection from './TableSection';
 
 const GrowerStatsProfile = () => {
   const { setGrowerName, growerData, loading, error } = useContext(GrowerContext);
