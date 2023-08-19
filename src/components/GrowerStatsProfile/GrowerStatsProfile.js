@@ -31,7 +31,7 @@ const GrowerStatsProfile = () => {
     <div>
       <Header data={growerData} />
       <SummarySection data={growerData} />
-      <TableSection data={growerData.pumpkins} />
+     // <TableSection data={growerData.pumpkins} />
     </div>
   );
 };
