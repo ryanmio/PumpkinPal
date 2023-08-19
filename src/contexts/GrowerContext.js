@@ -2,12 +2,14 @@ import React, { createContext, useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { db } from '../firebase';
 import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore'; // import necessary methods
+import fetchPumpkins from './fetchPumpkins'; // import your fetchPumpkins function
 
 export const GrowerContext = createContext();
 
 export const GrowerContextProvider = ({ children }) => {
   const [growerName, setGrowerName] = useState(null);
   const [growerData, setGrowerData] = useState(null);
+  const [pumpkins, setPumpkins] = useState(null); // Add state for pumpkins
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -20,11 +22,13 @@ export const GrowerContextProvider = ({ children }) => {
         if (!growerDoc.exists()) {
           throw new Error(`No grower found with the ID "${growerName}".`);
         }
-        const pumpkinQuery = query(collection(db, 'Stats_Pumpkins'), where('id', '==', growerName));
-        const pumpkinDocs = await getDocs(pumpkinQuery);
-        const growerData = { ...growerDoc.data(), pumpkins: pumpkinDocs.docs.map(doc => doc.data()) };
+        const growerData = growerDoc.data();
         setGrowerData(growerData);
         setLoading(false);
+
+        // Fetch pumpkins using your existing fetchPumpkins function
+        const fetchedPumpkins = await fetchPumpkins(growerName);
+        setPumpkins(fetchedPumpkins); // Set pumpkins state
       } catch (error) {
         console.error("Error Detail:", error);
         setError(error.message);
@@ -39,7 +43,7 @@ export const GrowerContextProvider = ({ children }) => {
   }, [growerName]);
 
   return (
-    <GrowerContext.Provider value={{ growerName, setGrowerName, growerData, loading, error }}>
+    <GrowerContext.Provider value={{ growerName, setGrowerName, growerData, pumpkins, loading, error }}>
       {children}
     </GrowerContext.Provider>
   );
