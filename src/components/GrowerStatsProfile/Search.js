@@ -9,14 +9,42 @@ const Hit = ({ hit }) => {
   const navigate = useNavigate();
 
   const handleHitClick = () => {
-    navigate(`/site-profile/${encodeURIComponent(hit.objectID)}`);
+    const collectionType = hit.path.split('/')[0];
+
+    switch (collectionType) {
+      case 'Stats_Growers':
+        navigate(`/grower/${encodeURIComponent(hit.objectID)}`);
+        break;
+      case 'Stats_Pumpkins':
+        navigate(`/pumpkin-details/${encodeURIComponent(hit.objectID)}`);
+        break;
+      case 'Stats_Sites':
+        navigate(`/site-profile/${encodeURIComponent(hit.objectID)}`);
+        break;
+      default:
+        console.error('Unknown collection type:', collectionType);
+        break;
+    }
+  };
+
+  const renderDetails = () => {
+    const collectionType = hit.path.split('/')[0];
+    if (collectionType === 'Stats_Sites') {
+      return (
+        <>
+          <div className="text-sm">Site Record: {hit['Site Record']} lbs</div>
+          <div className="text-sm">Total Entries: {hit['Total Entries']}</div>
+        </>
+      );
+    }
+    // Placeholder for pumpkin and grower details
+    return <div className="text-sm">Details to be added...</div>;
   };
 
   return (
     <div onClick={handleHitClick}>
       <h3 className="text-lg font-semibold cursor-pointer">{hit.objectID}</h3>
-      <div className="text-sm">Site Record: {hit['Site Record']} lbs</div>
-      <div className="text-sm">Total Entries: {hit['Total Entries']}</div>
+      {renderDetails()}
     </div>
   );
 };
@@ -49,4 +77,3 @@ const Search = () => {
 };
 
 export default Search;
-
