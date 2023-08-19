@@ -12,6 +12,7 @@ export const GrowerContextProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchGrowerData = async () => {
+        console.log('DB Object:', db);
       setLoading(true);
       console.log('Fetching data for grower:', growerName); // Logging grower name
       try {
