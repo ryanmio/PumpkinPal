@@ -379,8 +379,8 @@ button.button-disabled {
 
 .MyCustomHitsList {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
+  flex-direction: column;
+  align-items: stretch; /* Makes items full width */
 }
 
 .MyCustomHitItem {
@@ -391,7 +391,6 @@ button.button-disabled {
   margin-bottom: 20px;
   box-sizing: border-box;
   transition: box-shadow 0.3s ease;
-  width: 300px; /* Fixed width */
 }
 
 .MyCustomHitItem:hover {
