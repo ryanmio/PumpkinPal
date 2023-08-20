@@ -1,5 +1,9 @@
 module.exports = {
-  content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+  content: [
+    './src/**/*.{js,jsx,ts,tsx}',
+    './public/index.html',
+    'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}', // Flowbite source paths
+  ],
   theme: {
     extend: {
       fontFamily: {
@@ -14,5 +18,7 @@ module.exports = {
   variants: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    require('flowbite/plugin'), // Adding Flowbite as a plugin
+  ],
 }
