@@ -39,7 +39,9 @@ console.log('growerData.pumpkins:', growerData.pumpkins);
     <div>
       <Header data={growerData} />
       <SummarySection data={growerData} />
-      <TableSection data={pumpkins} columns={pumpkinColumns} />
+      {pumpkins && pumpkins.length > 0 && (
+  <TableSection data={pumpkins} columns={pumpkinColumns} />
+)}
     </div>
   );
 };
