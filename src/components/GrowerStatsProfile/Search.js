@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'; // Add useContext import
+import React, { useContext } from 'react';
 import algoliasearch from 'algoliasearch/lite';
 import { InstantSearch, SearchBox, Hits } from 'react-instantsearch';
 import { useNavigate, useLocation } from 'react-router-dom';
