@@ -34,18 +34,35 @@ const Hit = ({ hit }) => {
   };
 
   const renderDetails = () => {
-    const collectionType = hit.path.split('/')[0];
-    if (collectionType === 'Stats_Sites') {
+  const collectionType = hit.path.split('/')[0];
+  switch (collectionType) {
+    case 'Stats_Sites':
       return (
         <>
           <div className="text-sm">Site Record: {hit['Site Record']} lbs</div>
           <div className="text-sm">Total Entries: {hit['Total Entries']}</div>
         </>
       );
-    }
-    // Placeholder for pumpkin and grower details
-    return <div className="text-sm">Details to be added...</div>;
-  };
+    case 'Stats_Pumpkins':
+      return (
+        <>
+          <div className="text-sm">Year: {hit['year']}</div>
+          <div className="text-sm">Grower: {hit['grower']}</div>
+        </>
+      );
+    case 'Stats_Growers':
+      return (
+        <>
+          <div className="text-sm">Lifetime Max Weight: {hit['LifetimeMaxWeight']} lbs</div>
+          <div className="text-sm">Number Of Entries: {hit['NumberOfEntries']}</div>
+        </>
+      );
+    default:
+      console.error('Unknown collection type:', collectionType);
+      break;
+  }
+};
+
 
   return (
     <div onClick={handleHitClick}>
