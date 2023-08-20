@@ -1,8 +1,3 @@
-
-Certainly! Based on the provided example and your existing code, here's how you can update your Sidebar component to include the button to open and close the sidebar:
-
-jsx
-Copy code
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
