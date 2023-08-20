@@ -36,14 +36,16 @@ const GrowerStatsProfile = () => {
 console.log('growerData.pumpkins:', growerData.pumpkins);
 
   return (
-    <div>
+  <div className="min-h-screen flex justify-start flex-col container mx-auto px-4 pt-10 flex flex-col space-y-4">
+    <div className="bg-white shadow rounded-lg p-4 mb-4 flex flex-col">
       <Header data={growerData} />
       <SummarySection data={growerData} />
       {pumpkins && pumpkins.length > 0 && (
-  <TableSection data={pumpkins} columns={pumpkinColumns} />
-)}
+        <TableSection data={pumpkins} columns={pumpkinColumns} />
+      )}
     </div>
-  );
+  </div>
+);
 };
 
 export default GrowerStatsProfile;
