@@ -37,13 +37,17 @@ console.log('growerData.pumpkins:', growerData.pumpkins);
 
   return (
   <div className="min-h-screen flex justify-start flex-col container mx-auto px-4 pt-10 flex flex-col space-y-4">
-    <div className="bg-white shadow rounded-lg p-4 mb-4 flex flex-col">
+    <div className="bg-white shadow rounded-lg p-4 mb-4">
       <Header data={growerData} />
-      <SummarySection data={growerData} />
-      {pumpkins && pumpkins.length > 0 && (
-        <TableSection data={pumpkins} columns={pumpkinColumns} />
-      )}
     </div>
+    <div className="bg-white shadow rounded-lg p-4 mb-4">
+      <SummarySection data={growerData} />
+    </div>
+    {pumpkins && pumpkins.length > 0 && (
+      <div className="bg-white shadow rounded-lg p-4 mb-4">
+        <TableSection data={pumpkins} columns={pumpkinColumns} />
+      </div>
+    )}
   </div>
 );
 };
