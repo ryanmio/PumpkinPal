@@ -28,6 +28,7 @@ import PumpkinDetails from './components/GrowerStatsProfile/PumpkinDetails';
 import SiteProfile from './components/GrowerStatsProfile/SiteProfile';
 import ImageDisplay from './components/ImageDisplay';
 import ShareRedirect from './components/ShareRedirect';
+import Sidebar from './components/Sidebar';
 
 
 // Initialize GA once when the App.js module is loaded
@@ -59,6 +60,7 @@ function App() {
         <UserProvider value={currentUser}>
           <GrowerContextProvider>
             <TrackPageViews />
+            <Sidebar />
             <Header />
             <Toaster />
             <Routes>
