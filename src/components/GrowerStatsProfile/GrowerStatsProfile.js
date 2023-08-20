@@ -44,17 +44,17 @@ const GrowerStatsProfile = () => {
   ];
 
   return (
-    <div className="min-h-screen flex justify-start flex-col container mx-auto px-4 pt-10 space-y-4">
-      <div className="mb-4">
-        <button onClick={goBack} className="text-blue-600 hover:underline">← Back to Search Results</button>
-      </div>
-      <Header data={growerData} />
-      <SummarySection data={growerData} />
-      {pumpkins && pumpkins.length > 0 && (
-        <TableSection data={pumpkins} columns={pumpkinColumns} />
-      )}
+  <div className="min-h-screen flex justify-start flex-col container mx-auto px-4 pt-2 space-y-2">
+    <div className="mb-1 flex">
+      <button onClick={goBack} className="text-blue-600 hover:underline">← Back to Search</button>
     </div>
-  );
+    <Header data={growerData} />
+    <SummarySection data={growerData} />
+    {pumpkins && pumpkins.length > 0 && (
+      <TableSection data={pumpkins} columns={pumpkinColumns} />
+    )}
+  </div>
+);
 };
 
 export default GrowerStatsProfile;
