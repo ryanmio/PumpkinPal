@@ -403,6 +403,11 @@ button.button-disabled {
   transform: translateX(-100%);
 }
 
+/* Styles when sidebar is open */
+#logo-sidebar.open {
+  transform: translateX(0);
+}
+
 /* Styles for desktop */
 @media (min-width: 1024px) {
   #logo-sidebar {
@@ -411,9 +416,12 @@ button.button-disabled {
   .App {
     margin-left: 16rem; /* Adjust this value based on the width of your sidebar */
   }
-}
 
-/* Styles when sidebar is open */
-#logo-sidebar.open {
-  transform: translateX(0);
+  /* Styles when sidebar is closed on desktop */
+  #logo-sidebar.closed {
+    transform: translateX(-100%);
+  }
+  .App.closed {
+    margin-left: 0;
+  }
 }

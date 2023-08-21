@@ -46,6 +46,7 @@ function TrackPageViews() {
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -61,7 +62,7 @@ function App() {
           <GrowerContextProvider>
             <TrackPageViews />
             <Header />
-            <Sidebar />
+            <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
             <Toaster />
             <Routes>
               <Route path="/register" element={<Register />} />
