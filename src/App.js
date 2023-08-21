@@ -56,7 +56,7 @@ function App() {
   }, []);
 
   return (
-    <div className="App font-lato">
+    <div className={`App font-lato ${isSidebarOpen ? '' : 'closed'}`}>
       <Router>
         <UserProvider value={currentUser}>
           <GrowerContextProvider>
