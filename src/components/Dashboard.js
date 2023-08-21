@@ -78,7 +78,7 @@ function Dashboard() {
   }
 
 return (
-  <div className="container mx-auto px-4 h-screen">
+  <div className="container mx-auto px-4 min-h-screen">
     <div className="my-8">
       <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
       {!currentUser && (
