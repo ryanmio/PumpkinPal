@@ -63,6 +63,7 @@ function App() {
             <TrackPageViews />
             <Header />
             <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+            <div className="main-content">
             <Toaster />
             <Routes>
               <Route path="/register" element={<Register />} />
@@ -85,6 +86,7 @@ function App() {
               <Route path="/image/:imageId" element={<ImageDisplay />} />
               <Route path="/share/:imageId" element={<ShareRedirect />} />
             </Routes>
+            </div>
           </GrowerContextProvider>
         </UserProvider>
       </Router>

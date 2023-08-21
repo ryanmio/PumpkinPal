@@ -413,9 +413,8 @@ button.button-disabled {
 @media (min-width: 1024px) {
   #logo-sidebar {
     transform: translateX(0);
-    top: 3rem; /* Adjust this value based on the height of the navbar */
   }
-  .App {
+  .main-content { /* Target the main content */
     margin-left: 16rem; /* Adjust this value based on the width of your sidebar */
   }
 
@@ -423,7 +422,7 @@ button.button-disabled {
   #logo-sidebar.closed {
     transform: translateX(-100%);
   }
-  .App.closed {
+  .main-content.closed { /* Target the main content */
     margin-left: 0;
   }
 }
