@@ -409,8 +409,8 @@ button.button-disabled {
   transform: translateX(0);
 }
 
-/* Styles for desktop */
-@media (min-width: 1024px) {
+/* Styles for tablet and above */
+@media (min-width: 768px) { /* Adjust to tablet breakpoint */
   #logo-sidebar {
     transform: translateX(0);
   }
@@ -418,7 +418,7 @@ button.button-disabled {
     margin-left: 16rem; /* Adjust this value based on the width of your sidebar */
   }
 
-  /* Styles when sidebar is closed on desktop */
+  /* Styles when sidebar is closed on tablet and above */
   #logo-sidebar.closed {
     transform: translateX(-100%);
   }
