@@ -402,6 +402,7 @@ button.button-disabled {
 #logo-sidebar {
   top: 60px; /* Adjust this value to match your navbar height */
   transform: translateX(-100%);
+  height: calc(100% - 60px); /* Adjust this value to match your navbar height */
 }
 
 /* Styles when sidebar is open */
@@ -414,6 +415,7 @@ button.button-disabled {
   #logo-sidebar {
     top: 60px; /* Adjust this value to match your navbar height */
     transform: translateX(0);
+    height: calc(100% - 60px); /* Adjust this value to match your navbar height */
   }
   .App {
     margin-left: 16rem; /* Adjust this value based on the width of your sidebar */
@@ -427,3 +429,4 @@ button.button-disabled {
     margin-left: 0;
   }
 }
+
