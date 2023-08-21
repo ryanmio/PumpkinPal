@@ -61,30 +61,29 @@ function App() {
         <UserProvider value={currentUser}>
           <GrowerContextProvider>
             <TrackPageViews />
-            <Header />
             <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
-            <div className="main-content">
-            <Toaster />
-            <Routes>
-              <Route path="/register" element={<Register />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/add-pumpkin" element={<PumpkinForm />} />
-              <Route path="/edit-pumpkin/:id" element={<EditPumpkin />} />
-              <Route path="/add-measurement/:id" element={<AddMeasurement />} />
-              <Route path="/pumpkin/:id" element={<PumpkinDetail />} />
-              <Route path="/" element={<Homepage />} />
-              <Route path="/user-profile" element={<UserProfile />} />
-              <Route path="/edit-measurement/:pumpkinId/:measurementId" element={<EditMeasurement />} />
-              <Route path="/grower/:growerName" element={<GrowerStatsProfile />} />
-              <Route path="/growersearch" element={<GrowerSearch />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/my-stats" element={<MyStats />} />
-              <Route path="/cloudadmin" element={<CloudFunctionTrigger />} />
-              <Route path="/pumpkin-details/:id" element={<PumpkinDetails />} />
-              <Route path="/site-profile/:id" element={<SiteProfile />} />
-              <Route path="/image/:imageId" element={<ImageDisplay />} />
-              <Route path="/share/:imageId" element={<ShareRedirect />} />
+            <div className={`main-content ${isSidebarOpen ? '' : 'closed'}`}> {/* Updated line */}
+              <Toaster />
+              <Routes>
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/add-pumpkin" element={<PumpkinForm />} />
+                  <Route path="/edit-pumpkin/:id" element={<EditPumpkin />} />
+                  <Route path="/add-measurement/:id" element={<AddMeasurement />} />
+                  <Route path="/pumpkin/:id" element={<PumpkinDetail />} />
+                  <Route path="/" element={<Homepage />} />
+                  <Route path="/user-profile" element={<UserProfile />} />
+                  <Route path="/edit-measurement/:pumpkinId/:measurementId" element={<EditMeasurement />} />
+                  <Route path="/grower/:growerName" element={<GrowerStatsProfile />} />
+                  <Route path="/growersearch" element={<GrowerSearch />} />
+                  <Route path="/search" element={<Search />} />
+                  <Route path="/my-stats" element={<MyStats />} />
+                  <Route path="/cloudadmin" element={<CloudFunctionTrigger />} />
+                  <Route path="/pumpkin-details/:id" element={<PumpkinDetails />} />
+                  <Route path="/site-profile/:id" element={<SiteProfile />} />
+                  <Route path="/image/:imageId" element={<ImageDisplay />} />
+                  <Route path="/share/:imageId" element={<ShareRedirect />} />
             </Routes>
             </div>
           </GrowerContextProvider>
