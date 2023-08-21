@@ -415,7 +415,7 @@ button.button-disabled {
   #logo-sidebar {
     transform: translateX(0);
   }
-  .main-content { /* Target the main content */
+  .main-content.open { /* Target the main content when open */
     margin-left: 16rem; /* Adjust this value based on the width of your sidebar */
   }
 
@@ -423,7 +423,8 @@ button.button-disabled {
   #logo-sidebar.closed {
     transform: translateX(-100%);
   }
-  .main-content.closed { /* Target the main content */
+  .main-content.closed { /* Target the main content when closed */
     margin-left: 0;
   }
 }
+

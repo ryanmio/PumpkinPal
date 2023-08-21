@@ -62,7 +62,7 @@ function App() {
           <GrowerContextProvider>
             <TrackPageViews />
             <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
-            <div className={`main-content ${isSidebarOpen ? '' : 'closed'}`}> {/* Updated line */}
+            <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`}>
               <Toaster />
               <Routes>
                   <Route path="/register" element={<Register />} />
