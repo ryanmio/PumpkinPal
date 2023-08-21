@@ -400,6 +400,7 @@ button.button-disabled {
 
 /* Default styles for mobile */
 #logo-sidebar {
+  top: 60px; /* Adjust this value to match your navbar height */
   transform: translateX(-100%);
 }
 
@@ -411,6 +412,7 @@ button.button-disabled {
 /* Styles for desktop */
 @media (min-width: 1024px) {
   #logo-sidebar {
+    top: 60px; /* Adjust this value to match your navbar height */
     transform: translateX(0);
   }
   .App {
