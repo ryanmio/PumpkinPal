@@ -412,3 +412,8 @@ button.button-disabled {
     margin-left: 16rem; /* Adjust this value based on the width of your sidebar */
   }
 }
+
+/* Styles when sidebar is open */
+#logo-sidebar.open {
+  transform: translateX(0);
+}
