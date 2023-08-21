@@ -14,7 +14,7 @@ import PumpkinDetail from './components/PumpkinDetail';
 import Homepage from './components/Homepage';
 import UserProfile from './components/UserProfile';
 import EditMeasurement from './components/EditMeasurement';
-import Header from './components/Header';
+// import Header from './components/Header';
 import { Toaster } from 'react-hot-toast';
 import ReactGA from "react-ga4";
 import { UserProvider } from './contexts/UserContext';
