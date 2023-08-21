@@ -400,9 +400,8 @@ button.button-disabled {
 
 /* Default styles for mobile */
 #logo-sidebar {
-  top: 60px; /* Adjust this value to match your navbar height */
   transform: translateX(-100%);
-  height: calc(100% - 60px); /* Adjust this value to match your navbar height */
+  top: 3rem; /* Adjust this value based on the height of the navbar */
 }
 
 /* Styles when sidebar is open */
@@ -413,9 +412,8 @@ button.button-disabled {
 /* Styles for desktop */
 @media (min-width: 1024px) {
   #logo-sidebar {
-    top: 60px; /* Adjust this value to match your navbar height */
     transform: translateX(0);
-    height: calc(100% - 60px); /* Adjust this value to match your navbar height */
+    top: 3rem; /* Adjust this value based on the height of the navbar */
   }
   .App {
     margin-left: 16rem; /* Adjust this value based on the width of your sidebar */
