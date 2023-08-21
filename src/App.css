@@ -396,3 +396,19 @@ button.button-disabled {
 .MyCustomHitItem:hover {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
+
+
+/* Default styles for mobile */
+#logo-sidebar {
+  transform: translateX(-100%);
+}
+
+/* Styles for desktop */
+@media (min-width: 1024px) {
+  #logo-sidebar {
+    transform: translateX(0);
+  }
+  .App {
+    margin-left: 16rem; /* Adjust this value based on the width of your sidebar */
+  }
+}
