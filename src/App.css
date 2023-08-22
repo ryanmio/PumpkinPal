@@ -410,6 +410,16 @@ button.button-disabled {
   transform: translateX(0);
 }
 
+/* NAVBAR */
+.fixed.top-0.z-50 {
+  background-color: #80876E; /* Set the background color */
+}
+
+/* MAIN CONTENT */
+.main-content {
+  margin-top: 3rem; /* Adjust this value based on the height of the navbar */
+}
+
 /* Styles for tablet and above */
 @media (min-width: 768px) { /* Adjust to tablet breakpoint */
   #logo-sidebar {
@@ -427,4 +437,3 @@ button.button-disabled {
     margin-left: 0;
   }
 }
-
