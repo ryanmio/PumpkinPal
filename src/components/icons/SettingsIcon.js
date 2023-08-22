@@ -8,4 +8,4 @@ function SettingsIcon() {
   );
 }
 
-export default Settings;
+export default SettingsIcon;
