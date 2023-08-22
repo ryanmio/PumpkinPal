@@ -46,7 +46,7 @@ function TrackPageViews() {
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 768);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
