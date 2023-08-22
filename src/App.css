@@ -413,11 +413,12 @@ button.button-disabled {
 /* NAVBAR */
 .fixed.top-0.z-50 {
   background-color: #80876E; /* Set the background color */
+  height: 3rem; /* Set the height of the navbar */
 }
 
 /* MAIN CONTENT */
 .main-content {
-  margin-top: 3rem; /* Adjust this value based on the height of the navbar */
+  padding-top: 3rem; /* Add padding equal to the height of the navbar */
 }
 
 /* Styles for tablet and above */
