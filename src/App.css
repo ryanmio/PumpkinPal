@@ -421,6 +421,21 @@ button.button-disabled {
   padding-top: 3rem; /* Add padding equal to the height of the navbar */
 }
 
+/* Remove underline from links */
+a, .link {
+  text-decoration: none;
+}
+
+/* Define icon color and hover effect */
+.icon-hover {
+  color: #80876E;
+  transition: color 0.3s ease;
+}
+
+.icon-hover:hover {
+  color: #6A705C;
+}
+
 /* Styles for tablet and above */
 @media (min-width: 768px) { /* Adjust to tablet breakpoint */
   #logo-sidebar {
