@@ -45,13 +45,14 @@ function Sidebar({ isOpen, toggleSidebar }) {
           <ul className="space-y-2 font-medium">
             <li>
               <Link to="/dashboard" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group link">
-                <DashboardIcon className="icon-hover" color="#80876E" />
+                <DashboardIcon className="icon-hover"/>
+
                 <span className="ml-3">Dashboard</span>
               </Link>
             </li>
             <li>
               <Link to="/add-pumpkin" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group link">
-                <DashboardIcon className="icon-hover" color="#80876E" />
+                <DashboardIcon />
                 <span className="ml-3">Add Pumpkin</span>
               </Link>
             </li>

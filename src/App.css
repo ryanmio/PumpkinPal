@@ -428,16 +428,12 @@ a, .link {
 
 /* Define icon color and hover effect */
 .icon-hover {
-  color: #80876E;
-  transition: color 0.3s ease;
-}
-
-.icon-hover:hover {
-  color: #6A705C;
+  fill: #80876E; /* Set the default color */
+  transition: fill 0.3s ease; /* Transition effect */
 }
 
 .link:hover .icon-hover {
-  fill: #6A705C;
+  fill: #6A705C; /* Set the hover color */
 }
 
 
