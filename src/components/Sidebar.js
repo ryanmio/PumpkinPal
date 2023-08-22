@@ -4,6 +4,9 @@ import { UserContext } from '../contexts/UserContext';
 import Logout from './Logout';
 import MenuIcon from './icons/MenuIcon';
 import DashboardIcon from './icons/DashboardIcon';
+import AddPumpkinIcon from './icons/AddPumpkinIcon';
+import AddMeasurementIcon from './icons/AddMeasurementIcon';
+import SettingsIcon from './icons/SettingsIcon';
 
 function Sidebar({ isOpen, toggleSidebar }) {
   const currentUser = useContext(UserContext);
@@ -52,11 +55,22 @@ function Sidebar({ isOpen, toggleSidebar }) {
             </li>
             <li>
               <Link to="/add-pumpkin" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group link">
-                <DashboardIcon />
+                <AddPumpkinIcon className="icon-hover"/>
                 <span className="ml-3">Add Pumpkin</span>
               </Link>
             </li>
-            {/* Add other links here */}
+            <li>
+              <Link to="/add-measurement/:id" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group link">
+                <AddMeasurementIcon className="icon-hover"/>
+                <span className="ml-3">Add Measurement</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/user-profile" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group link">
+                <SettingsIcon className="icon-hover"/>
+                <span className="ml-3">User Settings</span>
+              </Link>
+            </li>
           </ul>
         </div>
       </aside>
