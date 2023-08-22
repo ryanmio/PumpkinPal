@@ -413,7 +413,7 @@ button.button-disabled {
 /* NAVBAR */
 .fixed.top-0.z-50 {
   background-color: #80876E; /* Set the background color */
-  height: 3rem; /* Set the height of the navbar */
+  height: 4.5rem; /* Set the height of the navbar */
 }
 
 /* MAIN CONTENT */
