@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../contexts/UserContext';
 import Logout from './Logout';
 import MenuIcon from './icons/MenuIcon';
+import DashboardIcon from './icons/DashboardIcon';
 
 function Sidebar({ isOpen, toggleSidebar }) {
   const currentUser = useContext(UserContext);
@@ -44,7 +45,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
           <ul className="space-y-2 font-medium">
             <li>
               <Link to="/dashboard" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                {/* Add icon here */}
+                <DashboardIcon />
                 <span className="ml-3">Dashboard</span>
               </Link>
             </li>
