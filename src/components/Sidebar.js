@@ -7,6 +7,9 @@ import DashboardIcon from './icons/DashboardIcon';
 import AddPumpkinIcon from './icons/AddPumpkinIcon';
 import AddMeasurementIcon from './icons/AddMeasurementIcon';
 import SettingsIcon from './icons/SettingsIcon';
+import MyStatsIcon from './icons/MyStatsIcon';
+import SearchIcon from './icons/SearchIcon';
+
 
 function Sidebar({ isOpen, toggleSidebar }) {
   const currentUser = useContext(UserContext);
@@ -56,13 +59,25 @@ function Sidebar({ isOpen, toggleSidebar }) {
             <li>
               <Link to="/add-pumpkin" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group link">
                 <AddPumpkinIcon className="icon-hover"/>
-                <span className="ml-3">Add Pumpkin</span>
+                <span className="ml-3">New Pumpkin</span>
               </Link>
             </li>
             <li>
               <Link to="/add-measurement/:id" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group link">
                 <AddMeasurementIcon className="icon-hover"/>
-                <span className="ml-3">Add Measurement</span>
+                <span className="ml-3">New Measurement</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/search" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group link">
+                <SearchIcon className="icon-hover"/>
+                <span className="ml-3">Search</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/my-stats" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group link">
+                <MyStatsIcon className="icon-hover"/>
+                <span className="ml-3">My Stats</span>
               </Link>
             </li>
             <li>
