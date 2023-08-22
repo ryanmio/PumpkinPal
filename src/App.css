@@ -436,6 +436,11 @@ a, .link {
   color: #6A705C;
 }
 
+.link:hover .icon-hover {
+  fill: #6A705C;
+}
+
+
 /* Styles for tablet and above */
 @media (min-width: 768px) { /* Adjust to tablet breakpoint */
   #logo-sidebar {
