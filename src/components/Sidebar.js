@@ -20,6 +20,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
       <nav className="fixed top-0 z-50 w-full bg-#80876E border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex items-center justify-between px-3 py-3 lg:px-5 lg:pl-3">
           <div className="flex items-center">
+          {currentUser && (
             <button
               onClick={toggleSidebar}
               aria-controls="logo-sidebar"
@@ -29,7 +30,8 @@ function Sidebar({ isOpen, toggleSidebar }) {
               <span className="sr-only">Open sidebar</span>
               <MenuIcon color="white" />
             </button>
-          </div>
+          )}
+        </div>
           <div className="flex items-center justify-center w-full"> {/* Centered logo */}
             <Link to={currentUser ? "/dashboard" : "/"}>
               <img src="/logowide.png" alt="Logo" className="App-logo" />
