@@ -401,6 +401,7 @@ button.button-disabled {
 
 /* Default styles for mobile */
 #logo-sidebar {
+  display: none; /* Hide by default */
   transform: translateX(-100%);
   top: 3rem; /* Adjust this value based on the height of the navbar */
   width: 14rem; /* Set the width of the sidebar */
@@ -408,6 +409,7 @@ button.button-disabled {
 
 /* Styles when sidebar is open */
 #logo-sidebar.open {
+  display: block; /* Show when open */
   transform: translateX(0);
 }
 
@@ -420,6 +422,7 @@ button.button-disabled {
 /* MAIN CONTENT */
 .main-content {
   padding-top: 4rem; /* Add padding equal to the height of the navbar */
+  margin-left: 0; /* No left margin by default */
 }
 
 /* Remove underline from links */
@@ -441,15 +444,17 @@ a, .link {
 /* Styles for tablet and above */
 @media (min-width: 768px) { /* Adjust to tablet breakpoint */
   #logo-sidebar {
+    display: block; /* Show by default on tablet and above */
     transform: translateX(0);
   }
   .main-content.open { /* Target the main content when open */
     margin-left: 14rem; /* Adjust this value based on the new width of your sidebar */
   }
 
+
   /* Styles when sidebar is closed on tablet and above */
   #logo-sidebar.closed {
-    transform: translateX(-100%);
+    display: none; /* Hide when closed */
   }
   .main-content.closed { /* Target the main content when closed */
     margin-left: 0;
