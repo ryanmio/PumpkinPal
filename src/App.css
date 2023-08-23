@@ -407,13 +407,14 @@ button.button-disabled {
   width: 14rem;
 }
 
-.main-content {
-  margin-left: 0;
-}
-
 /* Styles when sidebar is open */
 #logo-sidebar.open {
+  display: block; /* Show when open */
   transform: translateX(0);
+}
+
+.main-content {
+  margin-left: 0;
 }
 
 /* NAVBAR */
@@ -441,7 +442,6 @@ a, .link {
 .link:hover .icon-hover {
   fill: #6A705C; /* Set the hover color */
 }
-
 
 /* Styles for tablet and above */
 @media (min-width: 768px) {
