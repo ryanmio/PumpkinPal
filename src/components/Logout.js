@@ -19,7 +19,7 @@ function Logout() {
     <button
       onClick={handleLogout}
       className="relative px-1 py-1 text-sm font-medium text-gray-600 bg-gray-100 border border-gray-100 rounded-lg shadow-inner group focus:outline-none whitespace-nowrap" // Added whitespace-nowrap and adjusted padding
-      style={ '--hover-bg-color': '#4A4F40', minWidth: '40px' }} // Added custom property for hover background color and minimum width
+      style={{ '--hover-bg-color': '#4A4F40', minWidth: '40px' }} // Added custom property for hover background color and minimum width
     >
       <span className="absolute top-0 left-0 w-0 h-0 transition-all duration-200 border-t-2 border-gray-600 group-hover:w-full ease rounded-lg"></span> {/* Added border radius */}
       <span className="absolute bottom-0 right-0 w-0 h-0 transition-all duration-200 border-b-2 border-gray-600 group-hover:w-full ease rounded-lg"></span> {/* Added border radius */}
