@@ -12,7 +12,7 @@ import SearchIcon from './icons/SearchIcon';
 
 
 function Sidebar({ isOpen, toggleSidebar }) {
-  const currentUser = useContext(UserContext);
+  const { user: currentUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   return (

@@ -58,7 +58,7 @@ function App() {
   return (
     <div className={`App font-lato ${isSidebarOpen ? '' : 'closed'}`}>
       <Router>
-        <UserProvider value={currentUser}>
+        <UserProvider value={{ user: currentUser }}>
           <GrowerContextProvider>
             <TrackPageViews />
             <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
