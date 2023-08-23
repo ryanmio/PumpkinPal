@@ -419,7 +419,7 @@ button.button-disabled {
 
 /* MAIN CONTENT */
 .main-content {
-  padding-top: 3rem; /* Add padding equal to the height of the navbar */
+  padding-top: 4rem; /* Add padding equal to the height of the navbar */
 }
 
 /* Remove underline from links */
