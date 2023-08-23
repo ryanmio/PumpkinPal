@@ -14,7 +14,6 @@ import SignInButton from './SignInButton';
 
 function Sidebar({ isOpen, toggleSidebar }) {
   const { user: currentUser } = useContext(UserContext);
-  const navigate = useNavigate();
 
   return (
     <>
