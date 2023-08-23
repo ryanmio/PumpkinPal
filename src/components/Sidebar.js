@@ -9,6 +9,7 @@ import AddMeasurementIcon from './icons/AddMeasurementIcon';
 import SettingsIcon from './icons/SettingsIcon';
 import MyStatsIcon from './icons/MyStatsIcon';
 import SearchIcon from './icons/SearchIcon';
+import SignInButton from './SignInButton';
 
 
 function Sidebar({ isOpen, toggleSidebar }) {
@@ -17,7 +18,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
 
   return (
     <>
-      <nav className="fixed top-0 z-50 w-full bg-#80876E border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700"> {/* Updated color */}
+      <nav className="fixed top-0 z-50 w-full bg-#80876E border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex items-center justify-between px-3 py-3 lg:px-5 lg:pl-3">
           <div className="flex items-center">
             <button
@@ -37,20 +38,10 @@ function Sidebar({ isOpen, toggleSidebar }) {
           </div>
           <div className="flex items-center">
             {currentUser ? (
-  <Logout className="logout-button" />
-) : (
-  <button
-    onClick={() => navigate('/login')}
-    className="relative px-5 py-3 overflow-hidden font-medium text-gray-600 bg-gray-100 border border-gray-100 rounded-lg shadow-inner group logout-button login-button"
-  >
-    <span className="absolute top-0 left-0 w-0 h-0 transition-all duration-200 border-t-2 border-gray-600 group-hover:w-full ease"></span>
-    <span className="absolute bottom-0 right-0 w-0 h-0 transition-all duration-200 border-b-2 border-gray-600 group-hover:w-full ease"></span>
-    <span className="absolute top-0 left-0 w-full h-0 transition-all duration-300 delay-200 bg-gray-600 group-hover:h-full ease"></span>
-    <span className="absolute bottom-0 left-0 w-full h-0 transition-all duration-300 delay-200 bg-gray-600 group-hover:h-full ease"></span>
-    <span className="absolute inset-0 w-full h-full duration-300 delay-300 bg-gray-900 opacity-0 group-hover:opacity-100"></span>
-    <span className="relative transition-colors duration-300 delay-200 group-hover:text-white ease">Sign In</span>
-  </button>
-)}
+              <Logout className="logout-button" />
+            ) : (
+              <SignInButton />
+            )}
           </div>
         </div>
       </nav>
