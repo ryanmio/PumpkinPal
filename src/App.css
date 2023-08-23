@@ -401,9 +401,14 @@ button.button-disabled {
 
 /* Default styles for mobile */
 #logo-sidebar {
+  display: none; /* Hide by default */
   transform: translateX(-100%);
-  top: 3rem; /* Adjust this value based on the height of the navbar */
-  width: 14rem; /* Set the width of the sidebar */
+  top: 3rem;
+  width: 14rem;
+}
+
+.main-content {
+  margin-left: 0;
 }
 
 /* Styles when sidebar is open */
@@ -439,19 +444,20 @@ a, .link {
 
 
 /* Styles for tablet and above */
-@media (min-width: 768px) { /* Adjust to tablet breakpoint */
+@media (min-width: 768px) {
   #logo-sidebar {
+    display: block; /* Show by default on tablet and above */
     transform: translateX(0);
   }
-  .main-content.open { /* Target the main content when open */
+  .main-content.open {
     margin-left: 14rem; /* Adjust this value based on the new width of your sidebar */
   }
 
   /* Styles when sidebar is closed on tablet and above */
   #logo-sidebar.closed {
-    transform: translateX(-100%);
+    display: none; /* Hide when closed */
   }
-  .main-content.closed { /* Target the main content when closed */
+  .main-content.closed {
     margin-left: 0;
   }
 }
