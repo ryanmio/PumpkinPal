@@ -443,15 +443,16 @@ a, .link {
 
 /* Styles for tablet and above */
 @media (min-width: 768px) {
-  #logo-sidebar.logged-in {
-    display: block;
+  #logo-sidebar {
+    display: block; /* Show by default on tablet and above */
     transform: translateX(0);
   }
   #logo-sidebar.closed,
   #logo-sidebar.logged-out {
     display: none;
   }
-  .main-content.open {
+  .main-content.open,
+  .main-content.logged-in { /* Open by default for logged-in users */
     margin-left: 14rem;
   }
   .main-content.closed,
