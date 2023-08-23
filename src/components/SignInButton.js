@@ -19,7 +19,7 @@ function SignInButton() {
       <span className="absolute top-0 left-0 w-full h-full transition-all duration-300 delay-200 group-hover:h-0 ease rounded-lg" style={{ backgroundColor: 'var(--hover-bg-color)' }}></span>
       <span className="absolute bottom-0 left-0 w-full h-full transition-all duration-300 delay-200 group-hover:h-0 ease rounded-lg" style={{ backgroundColor: 'var(--hover-bg-color)' }}></span>
       <span className="absolute inset-0 w-full h-full duration-300 delay-300 opacity-0 group-hover:opacity-100" style={{ backgroundColor: 'var(--hover-bg-color)' }}></span>
-      <span className="relative transition-colors duration-300 delay-200 ease">Sign In</span>
+      <span className="relative transition-colors duration-300 delay-200 group-hover:text-gray-600 ease">Sign In</span> {/* Set hover text color to dark gray */}
     </button>
   );
 }
