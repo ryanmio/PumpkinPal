@@ -834,25 +834,23 @@ async function calculateGrowerRankings() {
             return;
         }
 
-        // Query all pumpkins
-        const pumpkinsSnapshot = await pumpkinsCollection.get();
-
         // Create a map to store grower rankings
         const growerRankings = {};
         growersSnapshot.forEach(doc => {
-            growerRankings[doc.id] = { globalRanking: null, countryRanking: null, stateRanking: null };
+            growerRankings[doc.id] = { globalRanking: Infinity, countryRanking: Infinity, stateRanking: Infinity };
         });
+
+        // Query all pumpkins
+        const pumpkinsSnapshot = await pumpkinsCollection.get();
 
         // Process pumpkins and update grower rankings
         pumpkinsSnapshot.forEach(doc => {
             const pumpkin = doc.data();
             const growerId = pumpkin.grower;
 
-            const globalRanking = `Global: #${pumpkin.lifetimeGlobalRank}`;
-            const countryRanking = `${pumpkin.country}: #${pumpkin.lifetimeCountryRank}`;
-            const stateRanking = `${pumpkin.state}: #${pumpkin.lifetimeStateRank}`;
-
-            growerRankings[growerId] = { globalRanking, countryRanking, stateRanking };
+            growerRankings[growerId].globalRanking = Math.min(growerRankings[growerId].globalRanking, pumpkin.lifetimeGlobalRank);
+            growerRankings[growerId].countryRanking = Math.min(growerRankings[growerId].countryRanking, pumpkin.lifetimeCountryRank);
+            growerRankings[growerId].stateRanking = Math.min(growerRankings[growerId].stateRanking, pumpkin.lifetimeStateRank);
         });
 
         // Begin a Firestore batch
@@ -861,8 +859,13 @@ async function calculateGrowerRankings() {
 
         // Update Firestore documents with grower rankings
         for (const growerId in growerRankings) {
+            const rankings = growerRankings[growerId];
             const docRef = growersCollection.doc(growerId);
-            batch.update(docRef, growerRankings[growerId]);
+            batch.update(docRef, {
+                globalRanking: `Global: #${rankings.globalRanking}`,
+                countryRanking: `Country: #${rankings.countryRanking}`,
+                stateRanking: `State: #${rankings.stateRanking}`
+            });
             batchCounter++;
 
             // If the batch has reached the maximum size (500), commit it and start a new one
@@ -888,7 +891,6 @@ exports.calculateGrowerRankings = functions.https.onRequest(async (req, res) => 
     await calculateGrowerRankings();
     res.send('Grower rankings calculation completed.');
 });
-
 
 
 
