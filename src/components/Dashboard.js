@@ -10,6 +10,7 @@ import { toast } from 'react-hot-toast';
 import { showDeleteConfirmation } from './Alert';
 import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../utilities/error-analytics';
 import { UserContext } from '../contexts/UserContext';
+import Login from './Login';
 
 function Dashboard() {
   const { user: currentUser, loading: userLoading } = useContext(UserContext);
@@ -81,9 +82,7 @@ return (
   <div className="container mx-auto px-4 min-h-screen">
     <div className="my-8">
       <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
-      {!currentUser && (
-        <button className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" onClick={() => navigate("/login")}>Login</button>
-      )}
+      {!currentUser && <Login />}
       {currentUser && <p className="mb-4">Logged in as {currentUser.email}</p>}
     </div>
     {currentUser && (
