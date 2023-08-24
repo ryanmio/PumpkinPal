@@ -697,28 +697,31 @@ async function calculateSiteRecords() {
         let batch = db.batch();
         let batchCounter = 0;
 
-        for (const doc of contestsSnapshot.docs) {
-            const contestId = doc.id;
+        // Query all pumpkins
+        const pumpkinsSnapshot = await pumpkinsCollection.get();
 
-            // Get all pumpkins associated with this contest
-            const pumpkinsSnapshot = await pumpkinsCollection.where('contest', '==', contestId).get();
+        // Create a map to store the record weight for each contest
+        const contestRecords = {};
+        contestsSnapshot.forEach(doc => {
+            contestRecords[doc.id] = 0;
+        });
 
-            // Exclude disqualified pumpkins and sort by weight in descending order
-            const pumpkins = pumpkinsSnapshot.docs
-                .map(doc => doc.data())
-                .filter(pumpkin => pumpkin.place !== 'DMG')
-                .sort((a, b) => b.weight - a.weight);
+        // Process pumpkins and update record weights
+        pumpkinsSnapshot.forEach(doc => {
+            const pumpkin = doc.data();
+            const contestId = pumpkin.contest;
 
-            // The pumpkin with the highest weight is the record for this site
-            if (pumpkins.length > 0) {
-                const recordPumpkin = pumpkins[0];
-                const recordWeight = recordPumpkin.weight;
-
-                // Update the contest document with the record weight
-                const docRef = contestsCollection.doc(contestId);
-                batch.update(docRef, { recordWeight });
-                batchCounter++;
+            if (pumpkin.place !== 'DMG' && pumpkin.weight > contestRecords[contestId]) {
+                contestRecords[contestId] = pumpkin.weight;
             }
+        });
+
+        // Update Firestore documents with record weights
+        for (const contestId in contestRecords) {
+            const docRef = contestsCollection.doc(contestId);
+            const recordWeight = contestRecords[contestId];
+            batch.update(docRef, { recordWeight });
+            batchCounter++;
 
             // If the batch has reached the maximum size (500), commit it and start a new one
             if (batchCounter === 500) {
