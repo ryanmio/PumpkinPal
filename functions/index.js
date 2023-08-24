@@ -762,39 +762,41 @@ async function calculateGrowerMetrics() {
             return;
         }
 
-        // Query all pumpkins
+        // Query all pumpkins at once
         const pumpkinsSnapshot = await pumpkinsCollection.get();
-
-        // Create a map to store grower metrics
-        const growerMetrics = {};
-        growersSnapshot.forEach(doc => {
-            growerMetrics[doc.id] = { LifetimeMaxWeight: 0, NumberOfEntries: 0 };
-        });
-
-        // Process pumpkins and update grower metrics
+        const pumpkinsByGrower = {};
         pumpkinsSnapshot.forEach(doc => {
             const pumpkin = doc.data();
-            const growerId = pumpkin.grower;
-
-            if (pumpkin.place !== 'DMG') {
-                growerMetrics[growerId].NumberOfEntries++;
-                if (pumpkin.weight > growerMetrics[growerId].LifetimeMaxWeight) {
-                    growerMetrics[growerId].LifetimeMaxWeight = pumpkin.weight;
+            if (pumpkin.place !== 'DMG') { // Exclude disqualified pumpkins
+                if (!pumpkinsByGrower[pumpkin.grower]) {
+                    pumpkinsByGrower[pumpkin.grower] = [];
                 }
+                pumpkinsByGrower[pumpkin.grower].push(pumpkin);
             }
         });
 
-        // Begin a Firestore batch
         let batch = db.batch();
         let batchCounter = 0;
 
-        // Update Firestore documents with grower metrics
-        for (const growerId in growerMetrics) {
-            const docRef = growersCollection.doc(growerId);
-            batch.update(docRef, growerMetrics[growerId]);
+        for (const doc of growersSnapshot.docs) {
+            const grower = doc.data();
+            const pumpkins = pumpkinsByGrower[grower.id] || [];
+
+            // LifetimeMaxWeight
+            if (pumpkins.length > 0) {
+                const maxWeight = Math.max(...pumpkins.map(pumpkin => pumpkin.weight));
+                grower.LifetimeMaxWeight = maxWeight;
+            } else {
+                grower.LifetimeMaxWeight = null; // or some other value indicating no pumpkins
+            }
+
+            // NumberOfEntries
+            grower.NumberOfEntries = pumpkins.length;
+
+            const docRef = growersCollection.doc(grower.id);
+            batch.update(docRef, { LifetimeMaxWeight: grower.LifetimeMaxWeight, NumberOfEntries: grower.NumberOfEntries });
             batchCounter++;
 
-            // If the batch has reached the maximum size (500), commit it and start a new one
             if (batchCounter === 500) {
                 await batch.commit();
                 batch = db.batch();
@@ -802,7 +804,6 @@ async function calculateGrowerMetrics() {
             }
         }
 
-        // Commit any remaining operations in the batch
         if (batchCounter > 0) {
             await batch.commit();
         }
@@ -817,7 +818,6 @@ exports.calculateGrowerMetrics = functions.https.onRequest(async (req, res) => {
     await calculateGrowerMetrics();
     res.send('Grower metrics calculation completed.');
 });
-
 
 
 // Calculate Grower Rankings (Global, Country, State)
