@@ -372,43 +372,38 @@ async function calculateStateRankings() {
             return;
         }
 
-        const statePumpkins = {};  
-        const yearlyStatePumpkins = {};  
+        const statePumpkins = {};
+        const yearlyStatePumpkins = {};
 
         for (const doc of pumpkinsSnapshot.docs) {
             const pumpkin = doc.data();
-
-            if (pumpkin.place === 'DMG') {
-                continue;
-            }
+            if (pumpkin.place === 'DMG') continue;
 
             const state = pumpkin.state;
 
-            if (!statePumpkins[state]) {
-                statePumpkins[state] = [];
-            }
+            if (!statePumpkins[state]) statePumpkins[state] = [];
             statePumpkins[state].push(pumpkin);
 
-            if (!yearlyStatePumpkins[state]) {
-                yearlyStatePumpkins[state] = {};
-            }
-            if (!yearlyStatePumpkins[state][pumpkin.year]) {
-                yearlyStatePumpkins[state][pumpkin.year] = [];
-            }
+            if (!yearlyStatePumpkins[state]) yearlyStatePumpkins[state] = {};
+            if (!yearlyStatePumpkins[state][pumpkin.year]) yearlyStatePumpkins[state][pumpkin.year] = [];
             yearlyStatePumpkins[state][pumpkin.year].push(pumpkin);
+        }
+
+        // Sort state pumpkins outside the loop
+        for (const state in statePumpkins) {
+            statePumpkins[state].sort((a, b) => b.weight - a.weight);
+            for (const year in yearlyStatePumpkins[state]) {
+                yearlyStatePumpkins[state][year].sort((a, b) => b.weight - a.weight);
+            }
         }
 
         let batch = db.batch();
         let batchCounter = 0;
 
         for (const state in statePumpkins) {
-            statePumpkins[state].sort((a, b) => b.weight - a.weight);
-
             for (let i = 0; i < statePumpkins[state].length; i++) {
                 const pumpkin = statePumpkins[state][i];
                 pumpkin.lifetimeStateRank = i + 1;
-
-                yearlyStatePumpkins[state][pumpkin.year].sort((a, b) => b.weight - a.weight);
 
                 const yearlyRank = yearlyStatePumpkins[state][pumpkin.year].findIndex(p => p.id === pumpkin.id);
                 if (yearlyRank !== -1) {
@@ -417,7 +412,7 @@ async function calculateStateRankings() {
 
                 if (typeof pumpkin.id === 'string' && pumpkin.id !== '') {
                     const docRef = pumpkinsCollection.doc(pumpkin.id);
-                    batch.update(docRef, {lifetimeStateRank: pumpkin.lifetimeStateRank, yearlyStateRank: pumpkin.yearlyStateRank});
+                    batch.update(docRef, { lifetimeStateRank: pumpkin.lifetimeStateRank, yearlyStateRank: pumpkin.yearlyStateRank });
                     batchCounter++;
                 } else {
                     console.error('Invalid pumpkin id:', pumpkin.id);
