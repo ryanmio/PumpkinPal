@@ -465,38 +465,33 @@ async function calculateCountryRankings() {
 
         for (const doc of pumpkinsSnapshot.docs) {
             const pumpkin = doc.data();
-
-            if (pumpkin.place === 'DMG') {
-                continue;
-            }
+            if (pumpkin.place === 'DMG') continue;
 
             const country = pumpkin.country;
 
-            if (!countryPumpkins[country]) {
-                countryPumpkins[country] = [];
-            }
+            if (!countryPumpkins[country]) countryPumpkins[country] = [];
             countryPumpkins[country].push(pumpkin);
 
-            if (!yearlyCountryPumpkins[country]) {
-                yearlyCountryPumpkins[country] = {};
-            }
-            if (!yearlyCountryPumpkins[country][pumpkin.year]) {
-                yearlyCountryPumpkins[country][pumpkin.year] = [];
-            }
+            if (!yearlyCountryPumpkins[country]) yearlyCountryPumpkins[country] = {};
+            if (!yearlyCountryPumpkins[country][pumpkin.year]) yearlyCountryPumpkins[country][pumpkin.year] = [];
             yearlyCountryPumpkins[country][pumpkin.year].push(pumpkin);
+        }
+
+        // Sort country pumpkins outside the loop
+        for (const country in countryPumpkins) {
+            countryPumpkins[country].sort((a, b) => b.weight - a.weight);
+            for (const year in yearlyCountryPumpkins[country]) {
+                yearlyCountryPumpkins[country][year].sort((a, b) => b.weight - a.weight);
+            }
         }
 
         let batch = db.batch();
         let batchCounter = 0;
 
         for (const country in countryPumpkins) {
-            countryPumpkins[country].sort((a, b) => b.weight - a.weight);
-
             for (let i = 0; i < countryPumpkins[country].length; i++) {
                 const pumpkin = countryPumpkins[country][i];
                 pumpkin.lifetimeCountryRank = i + 1;
-
-                yearlyCountryPumpkins[country][pumpkin.year].sort((a, b) => b.weight - a.weight);
 
                 const yearlyRank = yearlyCountryPumpkins[country][pumpkin.year].findIndex(p => p.id === pumpkin.id);
                 if (yearlyRank !== -1) {
@@ -505,7 +500,7 @@ async function calculateCountryRankings() {
 
                 if (typeof pumpkin.id === 'string' && pumpkin.id !== '') {
                     const docRef = pumpkinsCollection.doc(pumpkin.id);
-                    batch.update(docRef, {lifetimeCountryRank: pumpkin.lifetimeCountryRank, yearlyCountryRank: pumpkin.yearlyCountryRank});
+                    batch.update(docRef, { lifetimeCountryRank: pumpkin.lifetimeCountryRank, yearlyCountryRank: pumpkin.yearlyCountryRank });
                     batchCounter++;
                 } else {
                     console.error('Invalid pumpkin id:', pumpkin.id);
