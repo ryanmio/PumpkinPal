@@ -538,6 +538,7 @@ exports.calculateCountryRankings = functions.https.onRequest(async (req, res) =>
 async function calculateLifetimeBestRank() {
     const db = admin.firestore();
     const growersCollection = db.collection('Stats_Growers');
+    const pumpkinsCollection = db.collection('Stats_Pumpkins');
 
     try {
         const growersSnapshot = await growersCollection.get();
@@ -547,24 +548,31 @@ async function calculateLifetimeBestRank() {
             return;
         }
 
+        // Create a map to store grower rankings
+        const growerRankings = {};
+
+        // Query all pumpkins and group by grower
+        const pumpkinsSnapshot = await pumpkinsCollection.get();
+        pumpkinsSnapshot.forEach(doc => {
+            const pumpkin = doc.data();
+            if (pumpkin.place === 'DMG') return;
+
+            const growerId = pumpkin.grower;
+            if (!growerRankings[growerId]) growerRankings[growerId] = [];
+            growerRankings[growerId].push(pumpkin.yearGlobalRank);
+        });
+
         let batch = db.batch();
         let batchCounter = 0;
 
         for (const doc of growersSnapshot.docs) {
             const grower = doc.data();
-            const pumpkinsSnapshot = await db.collection('Stats_Pumpkins').where('grower', '==', grower.id).get();
-            
-            // Exclude disqualified pumpkins
-            const rankings = pumpkinsSnapshot.docs
-                .map(doc => doc.data())
-                .filter(pumpkin => pumpkin.place !== 'DMG')
-                .map(pumpkin => pumpkin.yearGlobalRank);
+            const rankings = growerRankings[grower.id] || [];
 
             if (rankings.length > 0) {
-                const bestRank = Math.min(...rankings);
-                grower.bestRank = bestRank;
+                grower.bestRank = Math.min(...rankings);
             } else {
-                grower.bestRank = null;  // or some other value indicating no pumpkins
+                grower.bestRank = null; // or some other value indicating no pumpkins
             }
 
             const docRef = growersCollection.doc(grower.id);
@@ -592,6 +600,7 @@ exports.calculateLifetimeBestRank = functions.https.onRequest(async (req, res) =
     await calculateLifetimeBestRank();
     res.send('Lifetime Best Rank calculation completed.');
 });
+
 
 
 // Contest Popularity Ranking (Lifetime and Yearly)
