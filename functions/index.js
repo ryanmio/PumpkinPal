@@ -282,19 +282,18 @@ async function calculateGlobalRankings() {
         }
 
         const pumpkins = [];
-        const yearlyPumpkins = {};  // Store pumpkins grouped by year
+        const yearlyPumpkins = new Map(); // Use Map to store pumpkins grouped by year
 
         pumpkinsSnapshot.forEach(doc => {
             const pumpkin = doc.data();
-            // Exclude disqualified pumpkins and check data validity
             if (pumpkin.place !== 'DMG' && typeof pumpkin.weight === 'number') {
                 pumpkins.push(pumpkin);
 
                 // Group pumpkins by year
-                if (!yearlyPumpkins[pumpkin.year]) {
-                    yearlyPumpkins[pumpkin.year] = [];
+                if (!yearlyPumpkins.has(pumpkin.year)) {
+                    yearlyPumpkins.set(pumpkin.year, []);
                 }
-                yearlyPumpkins[pumpkin.year].push(pumpkin);
+                yearlyPumpkins.get(pumpkin.year).push(pumpkin);
             }
         });
 
@@ -303,6 +302,11 @@ async function calculateGlobalRankings() {
 
         // Sort pumpkins by weight in descending order
         pumpkins.sort((a, b) => b.weight - a.weight);
+
+        // Sort yearly pumpkins outside the loop
+        yearlyPumpkins.forEach(yearPumpkins => {
+            yearPumpkins.sort((a, b) => b.weight - a.weight);
+        });
 
         // Begin a Firestore batch
         let batch = db.batch();
@@ -315,11 +319,8 @@ async function calculateGlobalRankings() {
             const pumpkin = pumpkins[i];
             pumpkin.lifetimeGlobalRank = i + 1;
 
-            // Sort pumpkins for the year in which the current pumpkin was grown
-            yearlyPumpkins[pumpkin.year].sort((a, b) => b.weight - a.weight);
-
             // Assign yearly rank
-            const yearlyRank = yearlyPumpkins[pumpkin.year].findIndex(p => p.id === pumpkin.id);
+            const yearlyRank = yearlyPumpkins.get(pumpkin.year).findIndex(p => p.id === pumpkin.id);
             if (yearlyRank !== -1) {
                 pumpkin.yearGlobalRank = yearlyRank + 1;
             }
@@ -356,6 +357,7 @@ exports.calculateGlobalRankings = functions.https.onRequest(async (req, res) => 
     await calculateGlobalRankings();
     res.send('Global rankings calculation completed.');
 });
+
 
 // State Ranking (Lifetime and Yearly)
 async function calculateStateRankings() {
