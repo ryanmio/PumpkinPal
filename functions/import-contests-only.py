@@ -34,8 +34,8 @@ contest_documents = []
 
 # Process each row in the dataframe
 for index, row in df.iterrows():
-    # Clean up the "GPC Site" value by replacing non-alphanumeric characters with underscores, including forward slashes
-    cleaned_site_name = ''.join(c if c.isalnum() else '_' for c in str(row["GPC Site"]))
+    # Clean up the "GPC Site" value by replacing slashes with nothing
+    cleaned_site_name = str(row["GPC Site"]).replace('/', '')
     
     # Create or update contest document
     contest_id = f'{cleaned_site_name}_{str(row["Year"])}'
