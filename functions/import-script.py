@@ -97,4 +97,5 @@ try:
     upload_to_firestore("Stats_Pumpkins", pumpkin_documents)
     print("Pumpkin data upload completed successfully.")
 except Exception as e:
-    print("There were errors during the pumpkin data upload. Please review the error messages above.")
+    print(f"There were errors during the contest data upload: {e}")
+
