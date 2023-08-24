@@ -36,7 +36,6 @@ function reducer(state, action) {
 }
 
 const GrowerSearch = ({ user, handleSave }) => {
-  console.log('In GrowerSearch, handleSave is:', handleSave);
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
@@ -82,7 +81,7 @@ const GrowerSearch = ({ user, handleSave }) => {
   return (
     <div className="min-h-screen flex justify-start flex-col items-center">  
     <div className="container mx-auto px-4 pt-10 mt-4 flex flex-col space-y-4 bg-white shadow rounded-lg p-4 max-w-2xl w-full">  
-      <h1 className="text-2xl font-bold mb-4 text-center">Search for a Grower</h1>
+      <h1 className="text-2xl font-bold mb-4 text-center">Search for your name</h1>
       <input
         type="text"
         value={state.growerName}
