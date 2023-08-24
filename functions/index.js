@@ -602,7 +602,6 @@ exports.calculateLifetimeBestRank = functions.https.onRequest(async (req, res) =
 });
 
 
-
 // Contest Popularity Ranking (Lifetime and Yearly)
 async function calculateContestPopularityRanking() {
     const db = admin.firestore();
@@ -621,22 +620,31 @@ async function calculateContestPopularityRanking() {
         let batch = db.batch();
         let batchCounter = 0;
 
+        // Initialize contest popularity counts
         const contestPopularity = {};
-        for (const doc of contestsSnapshot.docs) {
+        contestsSnapshot.forEach(doc => {
             const contestId = doc.id;
-            const contestName = doc.data().name;
-
-            // Initialize contest popularity counts
             contestPopularity[contestId] = { yearly: 0, lifetime: 0 };
+        });
 
-            // Get all pumpkins associated with this contest id for YearPopularity
-            const yearlyPumpkinsSnapshot = await pumpkinsCollection.where('contest', '==', contestId).get();
-            contestPopularity[contestId].yearly = yearlyPumpkinsSnapshot.size;
+        // Query all pumpkins
+        const pumpkinsSnapshot = await pumpkinsCollection.get();
+        pumpkinsSnapshot.forEach(doc => {
+            const pumpkin = doc.data();
+            const contestId = pumpkin.contest;
+            const contestName = pumpkin.contestName;
 
-            // Get all pumpkins associated with this contest name for LifetimePopularity
-            const lifetimePumpkinsSnapshot = await pumpkinsCollection.where('contestName', '==', contestName).get();
-            contestPopularity[contestId].lifetime += lifetimePumpkinsSnapshot.size;
-        }
+            if (contestPopularity[contestId]) {
+                contestPopularity[contestId].yearly += 1;
+            }
+
+            // Increment lifetime popularity for all contests with matching name
+            for (const contest of contestsSnapshot.docs) {
+                if (contest.data().name === contestName) {
+                    contestPopularity[contest.id].lifetime += 1;
+                }
+            }
+        });
 
         // Update Firestore document
         for (const contestId in contestPopularity) {
