@@ -930,9 +930,12 @@ async function calculateSiteStats() {
         let batch = db.batch();
         let batchCounter = 0;
 
-        for (const siteName in siteStats) {
+        for (const siteNameOriginal in siteStats) {
+            // Replace slashes with underscores in the site name
+            const siteName = siteNameOriginal.replace(/\//g, '');
+
             const docRef = sitesCollection.doc(siteName);
-            batch.set(docRef, siteStats[siteName]);
+            batch.set(docRef, siteStats[siteNameOriginal]);
             batchCounter++;
 
             // Commit the batch when it reaches the maximum size
