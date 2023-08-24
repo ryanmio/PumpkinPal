@@ -15,15 +15,6 @@ df = pd.read_csv("preprocessed-bigpumpkins.csv")  # Replace with your preprocess
 # Convert 'Weight (lbs)' to float
 df['Weight (lbs)'] = df['Weight (lbs)'].str.replace(',', '').astype(float)
 
-# Filter out rows with empty or invalid "GPC Site" values
-valid_rows = df[df['GPC Site'].apply(lambda x: x and '/' not in x)]
-
-# Log any invalid rows
-invalid_rows = df[~df.index.isin(valid_rows.index)]
-if not invalid_rows.empty:
-    print("Found invalid rows:")
-    print(invalid_rows)
-
 # Define function to upload documents to Firestore
 def upload_to_firestore(collection, documents):
     # Split documents into batches of 500
@@ -41,10 +32,13 @@ def upload_to_firestore(collection, documents):
 # Create empty list to hold contest documents
 contest_documents = []
 
-# Process only the valid rows
-for index, row in valid_rows.iterrows():
+# Process each row in the dataframe
+for index, row in df.iterrows():
+    # Clean up the "GPC Site" value by replacing non-alphanumeric characters with underscores, including forward slashes
+    cleaned_site_name = ''.join(c if c.isalnum() else '_' for c in str(row["GPC Site"]))
+    
     # Create or update contest document
-    contest_id = f'{row["GPC Site"]}_{row["Year"]}'
+    contest_id = f'{cleaned_site_name}_{str(row["Year"])}'
     contest_data = {
         "id": contest_id,
         "name": row["GPC Site"],
