@@ -935,6 +935,7 @@ async function calculateSiteStats() {
             batch.set(docRef, siteStats[siteName]);
             batchCounter++;
 
+            // Commit the batch when it reaches the maximum size
             if (batchCounter === 500) {
                 await batch.commit();
                 batch = db.batch();
@@ -942,6 +943,7 @@ async function calculateSiteStats() {
             }
         }
 
+        // Commit any remaining operations in the batch
         if (batchCounter > 0) {
             await batch.commit();
         }
