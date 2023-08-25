@@ -11,7 +11,7 @@ import { UserContext } from '../../contexts/UserContext';
 const PumpkinDetailsCard = ({ data }) => (
   <div className="bg-white shadow rounded-lg p-4 mb-4">
     <h1>{data.id} {data.name}</h1>
-    {data.grower && <p><b>Grower:</b> {data.grower}</p>}
+    {data.grower && <p><b>Grower:</b> <Link to={`/grower/${data.grower.replace(/ /g, '_')}`}>{data.grower}</Link></p>}
     {(data.ott !== null && data.ott !== 0) && <p><b>OTT:</b> {data.ott}</p>}
     <p><b>Weight:</b> {data.weight}</p>
     {(typeof data.seed !== 'undefined' && !isNaN(data.seed)) && <p><b>Seed:</b> {data.seed}</p>}
