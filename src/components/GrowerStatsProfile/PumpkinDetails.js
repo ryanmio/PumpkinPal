@@ -1,9 +1,10 @@
 // Import necessary modules and components
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import Spinner from '../Spinner';
+import { UserContext } from '../../contexts/UserContext';
 
 // Component for displaying pumpkin details
 // Conditionally renders fields based on their values
@@ -51,6 +52,7 @@ const PumpkinDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const { user } = useContext(UserContext);
 
   // Fetch data on component mount
   useEffect(() => {
@@ -88,7 +90,9 @@ const PumpkinDetails = () => {
     <div className="min-h-screen flex justify-start flex-col">
       <div className="container mx-auto px-4 pt-10 flex flex-col space-y-4">
         <div className="text-left">
-          <Link to="#" onClick={() => navigate(-1)} className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">Back</Link>
+          {user && ( // Conditionally render back button based on user
+            <Link to="#" onClick={() => navigate(-1)} className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">Back</Link>
+          )}
         </div>
         <PumpkinDetailsCard data={pumpkinData} />
         <PumpkinRankingsCard data={pumpkinData} />
