@@ -59,7 +59,7 @@ const GrowerStatsProfile = () => {
 
   return (
   <div className="min-h-screen flex justify-start flex-col container mx-auto px-4 pt-2 space-y-4">
-    <div className="my-2 flex">
+    <div className="mt-4 mb-2 flex">
         {user && ( // Conditionally render back button based on user
           <button onClick={() => navigate(-1)} className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">← Back</button>
         )}
