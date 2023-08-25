@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react';
 import { GrowerContext } from '../../contexts/GrowerContext';
-import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import Header from './Header';
 import SummarySection from './SummarySection';
 import TableSection from './TableSection';
@@ -11,7 +11,6 @@ const GrowerStatsProfile = () => {
   const { setGrowerName, growerData, pumpkins, loading, error } = useContext(GrowerContext);
   const { growerName: growerNameFromUrl } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
   const { user } = useContext(UserContext);
 
   useEffect(() => {
@@ -29,15 +28,6 @@ const GrowerStatsProfile = () => {
   if (!growerData) {
     return <div>No data found for this grower</div>;
   }
-
-  const goBack = () => {
-    if (location.state && location.state.from) {
-      navigate(location.state.from);
-    } else {
-      // fallback navigation if no previous location state is available
-      navigate('/search');
-    }
-  };
 
   // Define columns for the table
   const pumpkinColumns = [
@@ -71,7 +61,7 @@ const GrowerStatsProfile = () => {
   <div className="min-h-screen flex justify-start flex-col container mx-auto px-4 pt-2 space-y-4">
     <div className="my-2 flex">
         {user && ( // Conditionally render back button based on user
-          <button onClick={goBack} className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">← Back to Search</button>
+          <button onClick={() => navigate(-1)} className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">← Back</button>
         )}
       </div>
     <Header data={growerData} />
