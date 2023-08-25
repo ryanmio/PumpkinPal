@@ -46,7 +46,7 @@ const MyStats = () => {
     Header: 'Weight',
     accessor: 'weight',
     Cell: ({ value, row: { original } }) => (
-      <Link to={`/pumpkin-details/${original.id}`} className="text-blue-500 hover:underline">
+      <Link to={`/pumpkin-details/${original.id}`} className="text-current no-underline">
         {value} lbs
       </Link>
     ),
