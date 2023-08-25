@@ -38,14 +38,22 @@ const GrowerStatsProfile = () => {
 
   // Define columns for the table
   const pumpkinColumns = [
-  { Header: 'Weight', accessor: 'weight' },
+  {
+    Header: 'Weight',
+    accessor: 'weight',
+    Cell: ({ value, row: { original } }) => (
+      <Link to={`/pumpkin-details/${original.id}`} className="no-underline">
+        {value}
+      </Link>
+    ),
+  },
   { Header: 'Year', accessor: 'year' },
   { Header: 'Contest', accessor: 'contestName' },
-  { 
-    Header: 'Details', 
+  {
+    Header: 'Details',
     id: 'details', // we use 'id' because we are not using an accessor
     Cell: ({ row: { original } }) => ( // use the row's original data
-      <Link to={`/pumpkin-details/${original.id}`}>
+      <Link to={`/pumpkin-details/${original.id}`} className="no-underline">
         <button className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
           Details
         </button>
@@ -53,6 +61,7 @@ const GrowerStatsProfile = () => {
     ),
   },
 ];
+
 
   return (
   <div className="min-h-screen flex justify-start flex-col container mx-auto px-4 pt-2 space-y-2">
