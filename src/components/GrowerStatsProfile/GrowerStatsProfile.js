@@ -38,9 +38,9 @@ const GrowerStatsProfile = () => {
 
   // Define columns for the table
   const pumpkinColumns = [
+  { Header: 'Weight', accessor: 'weight' },
   { Header: 'Year', accessor: 'year' },
   { Header: 'Contest', accessor: 'contestName' },
-  { Header: 'Weight', accessor: 'weight' },
   { 
     Header: 'Details', 
     id: 'details', // we use 'id' because we are not using an accessor

@@ -42,8 +42,8 @@ const MyStats = () => {
   }
 
   const pumpkinColumns = [
-      { Header: 'Year', accessor: 'year' },
       { Header: 'Weight', accessor: 'weight' },
+      { Header: 'Year', accessor: 'year' },
       { Header: 'Site', accessor: 'contestName' },
       { 
         Header: 'Details', 
