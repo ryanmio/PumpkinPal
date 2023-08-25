@@ -90,8 +90,8 @@ const PumpkinDetails = () => {
     <div className="min-h-screen flex justify-start flex-col">
       <div className="container mx-auto px-4 pt-10 flex flex-col space-y-4">
         <div className="text-left">
-          {user && ( // Conditionally render back button based on user
-            <Link to="#" onClick={() => navigate(-1)} className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">Back</Link>
+          {user && (
+            <button onClick={() => navigate(-1)} className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">← Back</button>
           )}
         </div>
         <PumpkinDetailsCard data={pumpkinData} />
