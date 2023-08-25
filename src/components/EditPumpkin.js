@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { auth, db } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../utilities/error-analytics';
+import { toast } from 'react-hot-toast';
 
 function EditPumpkin() {
   const { id } = useParams();
@@ -10,32 +12,47 @@ function EditPumpkin() {
   const location = useLocation();
 
   useEffect(() => {
-    // Add the auth state observer
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        const fetchPumpkin = async () => {
+  // Add the auth state observer
+  const unsubscribe = auth.onAuthStateChanged((user) => {
+    if (user) {
+      const fetchPumpkin = async () => {
+        try {
           const pumpkinDoc = await getDoc(doc(db, 'Users', user.uid, 'Pumpkins', id));
           setPumpkin({ ...pumpkinDoc.data(), id: pumpkinDoc.id });
-        };
-        fetchPumpkin();
-      }
-    });
+        } catch (error) {
+          toast.error("Failed to load pumpkin. Please try again.");
+          console.error("Error loading pumpkin: ", error);
+          trackError(error, 'EditPumpkin - Failed Fetch', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);  // Add this line
+        }
+      };
+      fetchPumpkin();
+    }
+  });
 
-    // Unsubscribe from the observer when the component is unmounted
-    return () => unsubscribe();
-  }, [id]);
+  // Unsubscribe from the observer when the component is unmounted
+  return () => unsubscribe();
+}, [id]);
+
 
   const handleChange = (e) => {
     setPumpkin({ ...pumpkin, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (auth.currentUser) {
+  e.preventDefault();
+  if (auth.currentUser) {
+    try {
       await updateDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id), pumpkin);
+      toast.success('Pumpkin updated successfully!');
+      trackUserEvent(GA_ACTIONS.EDIT_PUMPKIN, 'EditPumpkin - Successful');  // Add this line
+      navigate(`/dashboard`);
+    } catch (error) {
+      toast.error("Failed to update pumpkin. Please try again.");
+      console.error("Error updating pumpkin: ", error);
+      trackError(error, 'EditPumpkin - Failed', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);  // Add this line
     }
-    navigate(`/dashboard`);
-  };
+  }
+};
 
   if (!pumpkin) return 'Loading...';
 

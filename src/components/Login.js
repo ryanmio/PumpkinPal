@@ -92,7 +92,7 @@ function Login() {
         <Container>
           <Row className="justify-content-center">
             <Col xs={12} className="d-flex align-items-center justify-content-center">
-              <div className="bg-white shadow-soft border border-light rounded p-4 p-lg-5 w-100 fmxw-500">
+              <div className="bg-white shadow-soft border border-light rounded p-4 p-lg-5 w-100 fmxw-500" style={{ maxWidth: '600px' }}>
                 <div className="text-center text-md-center mb-4 mt-md-0">
                   <h3 className="mb-0">Sign in</h3>
                   {error && <p className="text-danger">{error}</p>}

@@ -10,6 +10,8 @@
       name="description"
       content="PumpkinPal is a user-friendly, open-source application designed for serious pumpkin growers. Calculate and track the weight of your pumpkins using the OTT method, manage your pumpkins and measurements, and view detailed data all in one place."
     />
+    <!-- Fragment meta tag for prerendering -->
+    <meta name="fragment" content="!">
     <meta name="title" content="PumpkinPal: Your Pumpkin Growing Companion">
     <meta name="keywords" content="PumpkinPal, Pumpkin Growing, OTT Weight Calculation, Pumpkin Management, Measurement Management, Pumpkin Detail View, User Profile, Real-Time Updates, Data Backup">
     <meta property="og:title" content="PumpkinPal: Your Pumpkin Growing Companion">
@@ -23,6 +25,30 @@
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <!-- Update your website title -->
     <title>PumpkinPal</title>
+      
+    
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '179617655128077',
+      cookie     : true,
+      xfbml      : true,
+      version    : 'v11.0'
+    });
+      
+    FB.AppEvents.logPageView();   
+      
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "https://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+      
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

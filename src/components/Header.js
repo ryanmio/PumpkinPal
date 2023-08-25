@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useContext } from 'react'; // import useContext
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Logout from './Logout';
+import { UserContext } from '../contexts/UserContext'; // import UserContext
 
-function Header({ currentUser }) {
+function Header() {
+  const currentUser = useContext(UserContext); // get the current user from UserContext
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Check if the current route is for the ImageDisplay component
+  const isImageDisplayRoute = location.pathname.startsWith('/image/');
+
+  // Don't render the header if the current route is for the ImageDisplay component
+  if (isImageDisplayRoute) {
+    return null;
+  }
 
   return (
     <header className="App-header">

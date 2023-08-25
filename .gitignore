@@ -82,3 +82,8 @@ typings/
 
 # DynamoDB Local files
 .dynamodb/
+functions/bigpumpkins.csv
+functions/name_changes.csv
+functions/preprocessed-bigpumpkins.csv
+functions/bigpumpkins_2004_2022.csv
+functions/pumpkinpal-b60be-firebase-adminsdk-jtia5-63bbe231d8.json

@@ -4,6 +4,7 @@ import { auth, db } from '../firebase';
 import { collection, doc, getDoc, orderBy, onSnapshot, query } from 'firebase/firestore';
 import MeasurementsCard from './MeasurementsCard';
 import GraphCard from './GraphCard';
+import ImageCard from './ImageCard';
 import { toast } from 'react-hot-toast';
 
 function PumpkinDetail() {
@@ -25,48 +26,55 @@ function PumpkinDetail() {
     }
   }, []);
 
-  const fetchPumpkin = useCallback(async () => {
+  useEffect(() => {
+  let isCancelled = false;
+
+  const fetchPumpkin = async () => {
     if(auth.currentUser) {
       try {
         const docRef = doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id);
         const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          data.seedStarted = formatDate(data.seedStarted) ?? 'not set';
-          data.transplantOut = formatDate(data.transplantOut) ?? 'not set';
-          data.pollinated = formatDate(data.pollinated) ?? 'not set';
-          data.weighOff = formatDate(data.weighOff) ?? 'not set';
-          setPumpkin(data);
-        }
+        if (!isCancelled) {
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            data.seedStarted = formatDate(data.seedStarted) ?? 'not set';
+            data.transplantOut = formatDate(data.transplantOut) ?? 'not set';
+            data.pollinated = formatDate(data.pollinated) ?? 'not set';
+            data.weighOff = formatDate(data.weighOff) ?? 'not set';
+            setPumpkin(data);
+          }
 
-        // Define a Firestore query to retrieve the pumpkin's measurements ordered by timestamp
-        const measurementsQuery = query(collection(db, 'Users', auth.currentUser.uid, 'Pumpkins', id, 'Measurements'), orderBy('timestamp'));
+          // Define a Firestore query to retrieve the pumpkin's measurements ordered by timestamp
+          const measurementsQuery = query(collection(db, 'Users', auth.currentUser.uid, 'Pumpkins', id, 'Measurements'), orderBy('timestamp'));
 
-        // Subscribe to the measurements in real time
-        const unsubscribe = onSnapshot(measurementsQuery, (snapshot) => {
-          let measurementData = [];
-          snapshot.forEach((doc) => {
-            const data = doc.data();
-            if (data.timestamp) {
-              data.timestamp = formatDate(data.timestamp.toDate().toISOString().slice(0, 10));
-            }
-            measurementData.push({ id: doc.id, ...data });
+          // Subscribe to the measurements in real time
+          const unsubscribe = onSnapshot(measurementsQuery, (snapshot) => {
+            let measurementData = [];
+            snapshot.forEach((doc) => {
+              const data = doc.data();
+              if (data.timestamp) {
+                data.timestamp = formatDate(data.timestamp.toDate().toISOString().slice(0, 10));
+              }
+              measurementData.push({ id: doc.id, ...data });
+            });
+            setMeasurements(measurementData);
           });
-          setMeasurements(measurementData);
-        });
 
-        return unsubscribe;
+          return unsubscribe;
+        }
       } catch (err) {
         toast.error("Failed to fetch pumpkin data: " + err.message);
       }
     }
-  }, [id, formatDate]);
+  };
 
-  useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      if (user) fetchPumpkin();
-    });
-  }, [fetchPumpkin]);
+  fetchPumpkin();
+
+  return () => {
+    isCancelled = true;
+  };
+}, [id, formatDate]);
+
 
 
 return (
@@ -116,6 +124,8 @@ return (
       pumpkinName={pumpkin?.name}
     />
 
+    {/* Card 5: Image Upload */}
+        <ImageCard pumpkinId={id} pumpkinName={pumpkin?.name} />
 
     </div> 
   </div>

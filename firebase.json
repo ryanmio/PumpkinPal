@@ -13,5 +13,20 @@
         "npm --prefix \"$RESOURCE_DIR\" run lint"
       ]
     }
-  ]
+  ],
+  "hosting": {
+    "target": "api",
+    "public": "public-api",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/renderSharedImage/:id",
+        "function": "renderSharedImage"
+      }
+    ]
+  }
 }

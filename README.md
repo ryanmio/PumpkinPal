@@ -125,6 +125,88 @@ The PumpkinPal app incorporates several design principles to ensure ease of use 
 Here's what it looks like in action:<br>
 <img src="https://raw.githubusercontent.com/ryanmio/PumpkinPal/main/public/images/entrydemo.gif" width="50%" alt="Data Entry GIF">
 
+
+## Firestore Data Backups
+
+Data resilience and reliability are non-negotiable. PumpkinPal uses Google's cloud ecosystem to maintain data integrity and ensure high availability through automatic, daily snapshots of our entire Firestore backend. This mitigates potential data loss scenarios and provides swift recovery paths.
+
+### Implementation Overview
+
+Our data backups use Google Cloud's serverless technology, enhancing scalability, and minimizing overhead. We've implemented a Cloud Function, `scheduledFirestoreExport`, that operates on a cron-based schedule. This function orchestrates the export of Firestore data, leveraging Firestore's built-in `exportDocuments` operation and pushing the data to a secure Google Cloud Storage bucket.
+
+### Google Cloud Function
+
+A Google Cloud Function, `scheduledFirestoreExport`, orchestrates the data export pipeline. It interfaces with Firestore's `exportDocuments` method, initiating a server-side operation that atomically exports Firestore documents to a designated Google Cloud Storage bucket. Here's the function:
+
+```javascript
+const firestore = require('@google-cloud/firestore');
+const client = new firestore.v1.FirestoreAdminClient();
+const bucket = 'gs://pumpkinpal_backup'
+
+exports.scheduledFirestoreExport = (event, context) => {
+  const projectId = process.env.GCLOUD_PROJECT;
+  const databaseName = `projects/${projectId}/databases/(default)`;
+
+  return client
+    .exportDocuments({
+      name: databaseName,
+      outputUriPrefix: bucket,
+      collectionIds: [],
+    })
+    .then(responses => {
+      const response = responses[0];
+      console.log(`Operation Name: ${response['name']}`);
+      return response;
+    })
+    .catch(err => {
+      console.error(err);
+    });
+};
+```
+
+### Google Cloud Storage Bucket
+
+The Firestore backups live in a secure Google Cloud Storage bucket. Leveraging the high durability and regional redundancy offered by Google Cloud, our data is replicated across multiple regions in the United States. This setup fortifies our data integrity, ensuring robust data durability and high availability.
+
+### Data Security
+
+Access control is handled through Google's Identity and Access Management (IAM) system. IAM is used to orchestrate granular permissions, defining who can interact with the bucket and delineating permissible actions, denying unauthorized access.
+
+## Contextual State Management with React Context API
+
+The PumpkinPal application uses React's Context API for state management, providing a way to share state and functionality across components.
+
+### Implementation
+
+React's Context API is used to create global state variables that can be accessed from any component. A `UserContext` is created to store the current user's data and a loading state. This context is provided at the root level of the application, making it accessible to all child components.
+
+```jsx
+import React, { createContext, useState, useEffect } from 'react';
+import { auth } from '../firebase';
+
+export const UserContext = createContext();
+
+export function UserProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      setUser(user);
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  return (
+    <UserContext.Provider value={{ user, loading }}>
+      {children}
+    </UserContext.Provider>
+  );
+}
+```
+
 ### Future Development
 
 Several enhancements and new features are planned, including improvements to the UI, additional data features, enhancements to the dashboard, new features like a chatbot and a to-do list functionality, integration with BigPumpkins.com, and user experience improvements.

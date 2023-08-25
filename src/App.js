@@ -14,9 +14,22 @@ import PumpkinDetail from './components/PumpkinDetail';
 import Homepage from './components/Homepage';
 import UserProfile from './components/UserProfile';
 import EditMeasurement from './components/EditMeasurement';
-import Header from './components/Header';
+// import Header from './components/Header';
 import { Toaster } from 'react-hot-toast';
 import ReactGA from "react-ga4";
+import { UserProvider } from './contexts/UserContext';
+import { GrowerContextProvider } from './contexts/GrowerContext';
+import GrowerStatsProfile from './components/GrowerStatsProfile/GrowerStatsProfile';
+import GrowerSearch from './components/GrowerStatsProfile/GrowerSearch';
+import Search from './components/GrowerStatsProfile/Search';
+import MyStats from './components/GrowerStatsProfile/MyStats';
+import CloudFunctionTrigger from './components/GrowerStatsProfile/CloudFunctionTrigger';
+import PumpkinDetails from './components/GrowerStatsProfile/PumpkinDetails';
+import SiteProfile from './components/GrowerStatsProfile/SiteProfile';
+import ImageDisplay from './components/ImageDisplay';
+import ShareRedirect from './components/ShareRedirect';
+import Sidebar from './components/Sidebar';
+
 
 // Initialize GA once when the App.js module is loaded
 ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
@@ -33,6 +46,7 @@ function TrackPageViews() {
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 768 && currentUser);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -42,23 +56,38 @@ function App() {
   }, []);
 
   return (
-    <div className="App font-lato">
+    <div className={`App font-lato ${isSidebarOpen ? '' : 'closed'}`}>
       <Router>
-        <TrackPageViews />
-        <Header currentUser={currentUser} />
-        <Toaster />
-        <Routes>
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/add-pumpkin" element={<PumpkinForm />} />
-          <Route path="/edit-pumpkin/:id" element={<EditPumpkin />} />
-          <Route path="/add-measurement/:id" element={<AddMeasurement />} />
-          <Route path="/pumpkin/:id" element={<PumpkinDetail />} />
-          <Route path="/" element={<Homepage />} />
-          <Route path="/user-profile" element={<UserProfile />} />
-          <Route path="/edit-measurement/:pumpkinId/:measurementId" element={<EditMeasurement />} />
-        </Routes>
+        <UserProvider value={{ user: currentUser }}>
+          <GrowerContextProvider>
+            <TrackPageViews />
+            <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+            <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`}>
+              <Toaster />
+              <Routes>
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/add-pumpkin" element={<PumpkinForm />} />
+                  <Route path="/edit-pumpkin/:id" element={<EditPumpkin />} />
+                  <Route path="/add-measurement/:id" element={<AddMeasurement />} />
+                  <Route path="/pumpkin/:id" element={<PumpkinDetail />} />
+                  <Route path="/" element={<Homepage />} />
+                  <Route path="/user-profile" element={<UserProfile />} />
+                  <Route path="/edit-measurement/:pumpkinId/:measurementId" element={<EditMeasurement />} />
+                  <Route path="/grower/:growerName" element={<GrowerStatsProfile />} />
+                  <Route path="/growersearch" element={<GrowerSearch />} />
+                  <Route path="/search" element={<Search />} />
+                  <Route path="/my-stats" element={<MyStats />} />
+                  <Route path="/cloudadmin" element={<CloudFunctionTrigger />} />
+                  <Route path="/pumpkin-details/:id" element={<PumpkinDetails />} />
+                  <Route path="/site-profile/:id" element={<SiteProfile />} />
+                  <Route path="/image/:imageId" element={<ImageDisplay />} />
+                  <Route path="/share/:imageId" element={<ShareRedirect />} />
+            </Routes>
+            </div>
+          </GrowerContextProvider>
+        </UserProvider>
       </Router>
     </div>
   );

@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "pumpkinpal-b60be"
-  }
+  },
+  "targets": {
+    "pumpkinpal-b60be": {
+      "hosting": {
+        "api": [
+          "pumpkinpal-b60be"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

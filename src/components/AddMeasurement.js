@@ -7,6 +7,7 @@ import MeasurementInput from './MeasurementInput';
 import DateInput from './DateInput';
 import toast, { Toaster } from 'react-hot-toast';
 import { GA_ACTIONS, trackUserEvent, trackError } from '../utilities/error-analytics';
+import Button from '../utilities/Button';
 
 function AddMeasurement() {
   const { id } = useParams();
@@ -164,16 +165,17 @@ const addMeasurement = async (e) => {
             selected={measurementDate}
             onChange={(date) => setMeasurementDate(date)} 
           />
-          <div className="flex justify-between items-center mt-4">
-            <button type="button" onClick={() => navigate('/dashboard')} className="text-blue-600 hover:underline">Cancel</button>
-            <button 
-              type="submit" 
-              className={`inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 ${endToEnd && sideToSide && circumference ? 'bg-green-500 text-white hover:bg-green-600 focus:ring-green-500' : 'button-disabled'}`}
-              disabled={!(endToEnd && sideToSide && circumference)}
-            >
-              Save Measurement (OTT: {calculateOTT()})
-            </button>
-          </div>
+         <div className="flex justify-between items-center mt-4">
+          <button type="button" onClick={() => navigate('/dashboard')} className="text-blue-600 hover:underline">Cancel</button>
+          <Button 
+            type="submit" 
+            disabled={!(endToEnd && sideToSide && circumference)}
+            extraClasses={`${endToEnd && sideToSide && circumference ? 'bg-green-button hover:bg-green-button-hover' : 'button-disabled'}`}
+          >
+            Save Measurement (OTT: {calculateOTT()})
+          </Button>
+        </div>
+
         </form>
       </div>
     </div>
