@@ -11,14 +11,14 @@ import { UserContext } from '../../contexts/UserContext';
 const PumpkinDetailsCard = ({ data }) => (
   <div className="bg-white shadow rounded-lg p-4 mb-4">
     <h1>{data.id} {data.name}</h1>
-    {data.grower && <p><b>Grower:</b> <Link to={`/grower/${encodeURIComponent(data.grower)}`}>{data.grower}</Link></p>}
+    {data.grower && <p><b>Grower:</b> <Link to={`/grower/${encodeURIComponent(data.grower)}`} className="text-current no-underline hover:underline">{data.grower}</Link></p>}
     {(data.ott !== null && data.ott !== 0) && <p><b>OTT:</b> {data.ott}</p>}
     <p><b>Weight:</b> {data.weight}</p>
     {(typeof data.seed !== 'undefined' && !isNaN(data.seed)) && <p><b>Seed:</b> {data.seed}</p>}
     {(typeof data.pollinator !== 'undefined' && !isNaN(data.pollinator)) && <p><b>Pollinator:</b> {data.pollinator}</p>}
     <p><b>Year:</b> {data.year}</p>
     {data.state && <p><b>State:</b> {data.state}</p>}
-    {data.contestName && <p><b>Site:</b> <Link to={`/site-profile/${data.contestName.replace(/ /g, '_')}`}>{data.contestName}</Link></p>}
+    {data.contestName && <p><b>Site:</b> <Link to={`/site-profile/${data.contestName.replace(/ /g, '_')}`} className="text-current no-underline hover:underline">{data.contestName}</Link></p>}
   </div>
 );
 
