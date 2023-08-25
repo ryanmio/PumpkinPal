@@ -66,7 +66,7 @@ const GrowerStatsProfile = () => {
 
   return (
   <div className="min-h-screen flex justify-start flex-col container mx-auto px-4 pt-2 space-y-4">
-    <div className="mb-1 flex">
+    <div className="my-2 flex">
       <button onClick={goBack} className="text-blue-600 hover:underline">← Back to Search</button>
     </div>
     <Header data={growerData} />
