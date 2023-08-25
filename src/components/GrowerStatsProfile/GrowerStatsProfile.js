@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react';
 import { GrowerContext } from '../../contexts/GrowerContext';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import Header from './Header';
 import SummarySection from './SummarySection';
 import TableSection from './TableSection';
