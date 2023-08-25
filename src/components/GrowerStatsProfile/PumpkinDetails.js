@@ -18,7 +18,7 @@ const PumpkinDetailsCard = ({ data }) => (
     {(typeof data.pollinator !== 'undefined' && !isNaN(data.pollinator)) && <p><b>Pollinator:</b> {data.pollinator}</p>}
     <p><b>Year:</b> {data.year}</p>
     {data.state && <p><b>State:</b> {data.state}</p>}
-    {data.contestName && <p><b>Site:</b> <Link to={`/site-profile/${data.contestName.replace(/ /g, '_')}`} className="text-current no-underline hover:underline">{data.contestName}</Link></p>}
+    {data.contestName && <p><b>Site:</b> <Link to={`/site-profile/${data.contestName.replace(/ /g, '_')}`} className="text-current no-underline hover:underline flex items-center">{data.contestName} <svg className="h-4 w-4 ml-1" viewBox="0 0 14 10" xmlns="http://www.w3.org/2000/svg"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9"/></svg></Link></p>}
   </div>
 );
 
