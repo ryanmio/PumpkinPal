@@ -11,7 +11,7 @@ import { UserContext } from '../../contexts/UserContext';
 const PumpkinDetailsCard = ({ data }) => (
   <div className="bg-white shadow rounded-lg p-4 mb-4">
     <h1>{data.id} {data.name}</h1>
-    {data.grower && <p><b>Grower:</b> <Link to={`/grower/${encodeURIComponent(data.grower)}`} className="text-current no-underline hover:underline">{data.grower}</Link></p>}
+    {data.grower && <p><b>Grower:</b> <Link to={`/grower/${encodeURIComponent(data.grower)}`} className="text-current no-underline hover:underline flex items-center">{data.grower} <svg className="h-4 w-4 ml-1" viewBox="0 0 14 10" xmlns="http://www.w3.org/2000/svg"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9"/></svg></Link></p>}
     {(data.ott !== null && data.ott !== 0) && <p><b>OTT:</b> {data.ott}</p>}
     <p><b>Weight:</b> {data.weight}</p>
     {(typeof data.seed !== 'undefined' && !isNaN(data.seed)) && <p><b>Seed:</b> {data.seed}</p>}
