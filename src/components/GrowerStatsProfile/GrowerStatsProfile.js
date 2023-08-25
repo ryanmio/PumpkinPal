@@ -4,12 +4,15 @@ import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import Header from './Header';
 import SummarySection from './SummarySection';
 import TableSection from './TableSection';
+import { UserContext } from '../../contexts/UserContext'; // Import UserContext
+
 
 const GrowerStatsProfile = () => {
   const { setGrowerName, growerData, pumpkins, loading, error } = useContext(GrowerContext);
   const { growerName: growerNameFromUrl } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     setGrowerName(growerNameFromUrl);
@@ -67,8 +70,10 @@ const GrowerStatsProfile = () => {
   return (
   <div className="min-h-screen flex justify-start flex-col container mx-auto px-4 pt-2 space-y-4">
     <div className="my-2 flex">
-      <button onClick={goBack} className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">← Back to Search</button>
-    </div>
+        {user && ( // Conditionally render back button based on user
+          <button onClick={goBack} className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">← Back to Search</button>
+        )}
+      </div>
     <Header data={growerData} />
     <SummarySection data={growerData} />
     {pumpkins && pumpkins.length > 0 && (
