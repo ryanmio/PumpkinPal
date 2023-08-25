@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import Spinner from '../Spinner';
 import { Line } from 'react-chartjs-2';
+import { UserContext } from '../../contexts/UserContext';
 
 // Component for displaying site details
 const SiteDetailsCard = ({ data, popularityData, weightData }) => {
@@ -52,6 +53,7 @@ const SiteProfile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -117,15 +119,17 @@ if (loading) {
 
   // Render fetched data
   return (
-    <div className="min-h-screen flex justify-start flex-col">
-      <div className="container mx-auto px-4 pt-10 flex flex-col space-y-4">
-        <div className="text-left">
+  <div className="min-h-screen flex justify-start flex-col">
+    <div className="container mx-auto px-4 pt-10 flex flex-col space-y-4">
+      <div className="text-left">
+        {user && (
           <Link to="#" onClick={() => navigate(-1)} className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">Back</Link>
-        </div>
-        <SiteDetailsCard data={siteData} popularityData={siteData.popularityData} weightData={siteData.weightData} />
+        )}
       </div>
+      <SiteDetailsCard data={siteData} popularityData={siteData.popularityData} weightData={siteData.weightData} />
     </div>
-  );
+  </div>
+);
 };
 
 export default SiteProfile;
