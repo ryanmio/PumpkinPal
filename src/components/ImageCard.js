@@ -11,7 +11,7 @@ import Button from '../utilities/Button';
 import Spinner from '../components/Spinner';
 import { deleteObject } from 'firebase/storage';
 import { differenceInDays } from 'date-fns';
-import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../utilities/error-analytics';
+import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../utilities/error-analytics';
 
 const ImageCard = ({ pumpkinId, pumpkinName }) => {
   const [images, setImages] = useState([]);
