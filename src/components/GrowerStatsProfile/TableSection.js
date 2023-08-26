@@ -15,7 +15,7 @@ const TableSection = ({ data, columns }) => {
   }, useSortBy);
 
   return (
-    <div className="bg-white shadow rounded-lg p-4 flex flex-col overflow-x-auto">
+    <div className="bg-white shadow rounded-lg p-4 flex flex-col overflow-x-auto mb-4">
       <h2 className="text-xl font-bold mb-2">Weigh-Off History</h2>
       <table {...getTableProps()} className="w-full table-fixed">
         <thead>
