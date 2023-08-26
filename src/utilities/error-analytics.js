@@ -5,6 +5,7 @@ export const GA_CATEGORIES = {
   SYSTEM: "System",
   MY_STATS: 'My Stats',
   SEARCH: 'Search',
+  IMAGE_CARD: 'ImageCard',
 };
 
 export const GA_ACTIONS = {
@@ -26,6 +27,12 @@ export const GA_ACTIONS = {
   NAVIGATE_PUMPKIN_DETAILS: 'navigate_pumpkin_details',
   PERFORM_SEARCH: 'perform_search',
   SEARCH_CLICK: 'search_click',
+  DOWNLOAD_SUCCESS: 'Download_Success',
+  DOWNLOAD_FAILURE: 'Download_Failure',
+  SHARE_SUCCESS: 'Share_Success',
+  SHARE_FAILURE: 'Share_Failure',
+  DELETE_SUCCESS: 'Delete_Success',
+  DELETE_FAILURE: 'Delete_Failure',
 };
 
 
