@@ -57,7 +57,7 @@ const GrowerStatsProfile = () => {
 
 
 
- return (
+  return (
   <div className="min-h-screen flex justify-start flex-col container mx-auto px-4 pt-2 space-y-4">
     <div className="mt-3 flex">
         {user && ( // Conditionally render back button based on user
@@ -67,9 +67,7 @@ const GrowerStatsProfile = () => {
     <Header data={growerData} />
     <SummarySection data={growerData} />
     {pumpkins && pumpkins.length > 0 && (
-      <div className="mb-4">
-        <TableSection data={pumpkins} columns={pumpkinColumns} />
-      </div>
+      <TableSection data={pumpkins} columns={pumpkinColumns} />
     )}
   </div>
 );
