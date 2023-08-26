@@ -10,6 +10,7 @@ import Spinner from '../Spinner';
 import useGrowerData from '../../utilities/useGrowerDataHook';
 import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
+import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../utilities/error-analytics';
 
 const MyStats = () => {
   const { user, growerId, setGrowerId } = useContext(UserContext);
@@ -18,20 +19,24 @@ const MyStats = () => {
 
   const handleEdit = () => {
     setEditingGrowerId(true);
+    trackUserEvent(GA_ACTIONS.EDIT_GROWER_ID, GA_CATEGORIES.MY_STATS);
   };
 
   const handleSave = (newGrowerId) => {
-    updateDoc(doc(db, 'Users', user.uid), {
-      growerId: newGrowerId
-    }).then(() => {
-      setGrowerId(newGrowerId); // Update growerId in context
-      setEditingGrowerId(false); // Exit editing mode
-      toast.success('Grower ID confirmed!'); // Add this line to show a success toast
-    }).catch(error => {
-      console.error('Error updating document:', error); // Keep this log to record potential errors
-      toast.error('Error confirming Grower ID.'); // Add this line to show an error toast
-    });
-  };
+  updateDoc(doc(db, 'Users', user.uid), {
+    growerId: newGrowerId
+  }).then(() => {
+    setGrowerId(newGrowerId); // Update growerId in context
+    setEditingGrowerId(false); // Exit editing mode
+    toast.success('Grower ID confirmed!'); // Show a success toast
+    trackUserEvent(GA_ACTIONS.CONFIRM_GROWER_ID, GA_CATEGORIES.MY_STATS); // Track successful update
+  }).catch(error => {
+    console.error('Error updating document:', error); // Keep this log to record potential errors
+    toast.error('Error confirming Grower ID.'); // Show an error toast
+    trackError(error.message, GA_CATEGORIES.MY_STATS, 'MyStats', GA_ACTIONS.CONFIRM_GROWER_ID); // Track error
+  });
+};
+
 
   if (loading) {
     return <Spinner />;
