@@ -83,11 +83,16 @@ const Hit = ({ hit }) => {
 const NoIcon = () => null;
 
 const Search = () => {
+  const handleSearch = (event) => {
+    trackUserEvent(GA_ACTIONS.PERFORM_SEARCH, GA_CATEGORIES.SEARCH);
+  };
+
   return (
     <div className="bg-f2eee3 text-36382e">
       <InstantSearch searchClient={searchClient} indexName="AllTypes">
         <div className="p-4 flex items-center">
           <SearchBox
+            onSearchChange={handleSearch}
             placeholder="Search for growers, pumpkins, or sites..."
             className="w-full rounded-md border border-gray-300 text-xl"
             submitIconComponent={NoIcon}
