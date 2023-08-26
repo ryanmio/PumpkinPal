@@ -50,6 +50,8 @@ export function trackError(error, method, category = GA_CATEGORIES.SYSTEM, actio
     category: category,
     action: action,
     label: `${method} - ${error.code || "Unknown error"}: ${error.message || ""}`,
+    dimensions: {
+    'dimension1': process.env.NODE_ENV // 'development' or 'production'
   });
 }
 
