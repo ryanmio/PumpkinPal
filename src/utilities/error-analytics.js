@@ -3,6 +3,7 @@ import ReactGA from 'react-ga4';
 export const GA_CATEGORIES = {
   USER: "User",
   SYSTEM: "System",
+  MY_STATS: 'My Stats',
 };
 
 export const GA_ACTIONS = {
@@ -19,6 +20,9 @@ export const GA_ACTIONS = {
   DELETE_ACCOUNT: "Delete Account",
   UPDATE_PREFERENCES: "Update Preferences",
   EXPORT_DATA: "Export Data",
+  EDIT_GROWER_ID: 'edit_grower_id',
+  CONFIRM_GROWER_ID: 'confirm_grower_id',
+  NAVIGATE_PUMPKIN_DETAILS: 'navigate_pumpkin_details',
 };
 
 
