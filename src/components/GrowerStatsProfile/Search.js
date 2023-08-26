@@ -3,6 +3,8 @@ import algoliasearch from 'algoliasearch/lite';
 import { InstantSearch, SearchBox, Hits } from 'react-instantsearch';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { GrowerContext } from '../../contexts/GrowerContext';
+import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../utilities/error-analytics';
+
 
 const searchClient = algoliasearch('SPV52PLJT9', process.env.REACT_APP_ALGOLIA_API_KEY);
 
@@ -12,7 +14,9 @@ const Hit = ({ hit }) => {
   const location = useLocation(); // Import useLocation
 
   const handleHitClick = () => {
+    trackUserEvent(GA_ACTIONS.SEARCH_CLICK, GA_CATEGORIES.SEARCH);
     const collectionType = hit.path.split('/')[0];
+    
 
     switch (collectionType) {
       case 'Stats_Growers':
@@ -28,8 +32,10 @@ const Hit = ({ hit }) => {
         navigate(`/site-profile/${encodeURIComponent(hit.objectID)}`);
         break;
       default:
-        console.error('Unknown collection type:', collectionType);
-        break;
+      const errorMsg = 'Unknown collection type: ' + collectionType;
+      console.error(errorMsg);
+      trackError(errorMsg, GA_CATEGORIES.SEARCH, 'Search', GA_ACTIONS.SEARCH_CLICK);
+      break;
     }
   };
 
@@ -58,7 +64,9 @@ const Hit = ({ hit }) => {
         </>
       );
     default:
-      console.error('Unknown collection type:', collectionType);
+      const errorMsg = 'Unknown collection type: ' + collectionType;
+      console.error(errorMsg);
+      trackError(errorMsg, GA_CATEGORIES.SEARCH, 'Search', GA_ACTIONS.SEARCH_CLICK);
       break;
   }
 };
@@ -75,6 +83,9 @@ const Hit = ({ hit }) => {
 const NoIcon = () => null;
 
 const Search = () => {
+  const handleSearch = () => {
+    trackUserEvent(GA_ACTIONS.PERFORM_SEARCH, GA_CATEGORIES.SEARCH);
+  };
   return (
     <div className="bg-f2eee3 text-36382e">
       <InstantSearch searchClient={searchClient} indexName="AllTypes">
