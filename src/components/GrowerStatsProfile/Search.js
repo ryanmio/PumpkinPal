@@ -83,9 +83,6 @@ const Hit = ({ hit }) => {
 const NoIcon = () => null;
 
 const Search = () => {
-  const handleSearch = () => {
-    trackUserEvent(GA_ACTIONS.PERFORM_SEARCH, GA_CATEGORIES.SEARCH);
-  };
   return (
     <div className="bg-f2eee3 text-36382e">
       <InstantSearch searchClient={searchClient} indexName="AllTypes">
