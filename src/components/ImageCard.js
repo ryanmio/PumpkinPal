@@ -11,6 +11,7 @@ import Button from '../utilities/Button';
 import Spinner from '../components/Spinner';
 import { deleteObject } from 'firebase/storage';
 import { differenceInDays } from 'date-fns';
+import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../utilities/error-analytics';
 
 const ImageCard = ({ pumpkinId, pumpkinName }) => {
   const [images, setImages] = useState([]);
@@ -110,14 +111,17 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
 
     // Open the Facebook share dialog
     FB.ui(shareContent, function(response) {
-      if (response && !response.error_message) {
-        toast.success('Image shared successfully.');
-      } else {
-        toast.error('Failed to share image. Please try again.');
-      }
-    });
+        if (response && !response.error_message) {
+          trackUserEvent(GA_ACTIONS.Share_Success, GA_CATEGORIES.ImageCard);
+          toast.success('Image shared successfully.');
+        } else {
+          trackError('Failed to share image', GA_CATEGORIES.ImageCard, 'handleShare', GA_ACTIONS.Share_Failure);
+          toast.error('Failed to share image. Please try again.');
+        }
+      });
   } catch (e) {
     // If there's an error, dismiss the loading toast and show an error toast
+    trackError('Failed to create sharable link', GA_CATEGORIES.ImageCard, 'handleShare', GA_ACTIONS.Share_Failure);
     toast.dismiss(toastId);
     toast.error('Failed to create sharable link. Please try again.');
   }
@@ -160,7 +164,9 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
 
     // Revoke the blob URL to free up resources
     URL.revokeObjectURL(blobURL);
-  } catch (error) {
+  trackUserEvent(GA_ACTIONS.Download_Success, GA_CATEGORIES.ImageCard);
+    } catch (error) {
+      trackError('Failed to download image', GA_CATEGORIES.ImageCard, 'handleDownload', GA_ACTIONS.Download_Failure);
     console.error('Error downloading image:', error);
     toast.error('Failed to download image. Please try again.');
   }
@@ -194,7 +200,9 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
 
     // Show a success toast
     toast.success('Image deleted successfully.');
-  } catch (error) {
+  trackUserEvent(GA_ACTIONS.Delete_Success, GA_CATEGORIES.ImageCard);
+    } catch (error) {
+      trackError('Failed to delete image', GA_CATEGORIES.ImageCard, 'handleDelete', GA_ACTIONS.Delete_Failure);
     console.error('Error deleting image:', error);
     toast.error('Failed to delete image. Please try again.');
   }
