@@ -3,6 +3,8 @@ import getGrowerSuggestions from '../../utilities/getGrowerSuggestions';
 import fetchPumpkins from '../../utilities/fetchPumpkins';
 import { toast } from 'react-hot-toast';
 import TableSection from './TableSection';
+import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../utilities/error-analytics';
+
 
 // Function to convert a string to title case
 function toTitleCase(str) {
@@ -39,34 +41,43 @@ const GrowerSearch = ({ user, handleSave }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    if (state.growerName) {
-      getGrowerSuggestions(toTitleCase(state.growerName), (error, suggestions) => {
-        if (error) {
-          toast.error('Error fetching grower suggestions: ' + error.message);
-        } else {
-          dispatch({ type: 'SET_SUGGESTIONS', payload: suggestions });
-        }
-      });
-    }
-  }, [state.growerName]);
+  if (state.growerName) {
+    // Track the search initiation event
+    trackUserEvent(GA_ACTIONS.Search_Initiated, GA_CATEGORIES.GrowerSearch);
+
+   getGrowerSuggestions(toTitleCase(state.growerName), (error, suggestions) => {
+  if (error) {
+    // Track the error event
+    trackError(error.message, 'getGrowerSuggestions', GA_CATEGORIES.GrowerSearch, GA_ACTIONS.Fetch_Suggestions_Failure);
+    toast.error('Error fetching grower suggestions: ' + error.message);
+  } else {
+    // Track the successful fetch event
+    trackUserEvent(GA_ACTIONS.Fetch_Suggestions_Success, GA_CATEGORIES.GrowerSearch);
+    dispatch({ type: 'SET_SUGGESTIONS', payload: suggestions });
+  }
+});
+  }
+}, [state.growerName]);
 
   useEffect(() => {
     if (state.selectedGrower && state.selectedGrower.id) {
       fetchPumpkins(state.selectedGrower.id)
         .then((pumpkins) => {
-          dispatch({ type: 'SET_PUMPKIN_PREVIEW', payload: pumpkins });
+          trackUserEvent(GA_ACTIONS.Pumpkin_Data_Fetched, GA_CATEGORIES.GrowerSearch);
         })
         .catch((error) => {
-          toast.error('Error fetching pumpkins: ' + error.message);
+          trackError(error, 'fetchPumpkins', GA_CATEGORIES.GrowerSearch, GA_ACTIONS.Pumpkin_Data_Error);
         });
     }
   }, [state.selectedGrower]);
 
   const handleSelectGrower = (grower) => {
+    trackUserEvent(GA_ACTIONS.Grower_Selected, GA_CATEGORIES.GrowerSearch);
     dispatch({ type: 'SET_SELECTED_GROWER', payload: grower });
   };
 
   const handleConfirm = () => {
+    trackUserEvent(GA_ACTIONS.Grower_Confirmed, GA_CATEGORIES.GrowerSearch);
     console.log('handleConfirm called. user.uid:', user.uid, 'state.selectedGrower.id:', state.selectedGrower.id);
     console.log('handleConfirm', user.uid, state.selectedGrower.id);
     handleSave(state.selectedGrower.id); // Call handleSave from MyStats
