@@ -60,16 +60,18 @@ const GrowerSearch = ({ user, handleSave }) => {
 }, [state.growerName]);
 
   useEffect(() => {
-    if (state.selectedGrower && state.selectedGrower.id) {
-      fetchPumpkins(state.selectedGrower.id)
-        .then((pumpkins) => {
-          trackUserEvent(GA_ACTIONS.Pumpkin_Data_Fetched, GA_CATEGORIES.GrowerSearch);
-        })
-        .catch((error) => {
-          trackError(error, 'fetchPumpkins', GA_CATEGORIES.GrowerSearch, GA_ACTIONS.Pumpkin_Data_Error);
-        });
-    }
-  }, [state.selectedGrower]);
+  if (state.selectedGrower && state.selectedGrower.id) {
+    fetchPumpkins(state.selectedGrower.id)
+      .then((pumpkins) => {
+        trackUserEvent(GA_ACTIONS.Pumpkin_Data_Fetched, GA_CATEGORIES.GrowerSearch);
+        dispatch({ type: 'SET_PUMPKIN_PREVIEW', payload: pumpkins });
+      })
+      .catch((error) => {
+        trackError(error, 'fetchPumpkins', GA_CATEGORIES.GrowerSearch, GA_ACTIONS.Pumpkin_Data_Error);
+      });
+  }
+}, [state.selectedGrower]);
+
 
   const handleSelectGrower = (grower) => {
     trackUserEvent(GA_ACTIONS.Grower_Selected, GA_CATEGORIES.GrowerSearch);
