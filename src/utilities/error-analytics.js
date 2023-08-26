@@ -4,6 +4,7 @@ export const GA_CATEGORIES = {
   USER: "User",
   SYSTEM: "System",
   MY_STATS: 'My Stats',
+  SEARCH: 'Search',
 };
 
 export const GA_ACTIONS = {
@@ -23,6 +24,8 @@ export const GA_ACTIONS = {
   EDIT_GROWER_ID: 'edit_grower_id',
   CONFIRM_GROWER_ID: 'confirm_grower_id',
   NAVIGATE_PUMPKIN_DETAILS: 'navigate_pumpkin_details',
+  PERFORM_SEARCH: 'perform_search',
+  SEARCH_CLICK: 'search_click',
 };
 
 
