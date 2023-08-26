@@ -6,6 +6,7 @@ export const GA_CATEGORIES = {
   MY_STATS: 'My Stats',
   SEARCH: 'Search',
   IMAGE_CARD: 'ImageCard',
+  GrowerSearch: 'GrowerSearch',
 };
 
 export const GA_ACTIONS = {
@@ -33,6 +34,13 @@ export const GA_ACTIONS = {
   SHARE_FAILURE: 'Share_Failure',
   DELETE_SUCCESS: 'Delete_Success',
   DELETE_FAILURE: 'Delete_Failure',
+  Search_Initiated: 'Search_Initiated',
+  Fetch_Suggestions_Success: 'Fetch_Suggestions_Success',
+  Fetch_Suggestions_Failure: 'Fetch_Suggestions_Failure',
+  Pumpkin_Data_Fetched: 'Pumpkin_Data_Fetched',
+  Pumpkin_Data_Error: 'Pumpkin_Data_Error',
+  Grower_Selected: 'Grower_Selected',
+  Grower_Confirmed: 'Grower_Confirmed',
 };
 
 
