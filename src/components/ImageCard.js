@@ -12,6 +12,7 @@ import Spinner from '../components/Spinner';
 import { deleteObject } from 'firebase/storage';
 import { differenceInDays } from 'date-fns';
 import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../utilities/error-analytics';
+import { useDropzone } from 'react-dropzone';
 
 const ImageCard = ({ pumpkinId, pumpkinName }) => {
   const [images, setImages] = useState([]);
@@ -259,7 +260,7 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
     }
   };
 
-  const handleUpload = async (image) => {
+  const handleUpload = async ([file]) => {
   try {
     const storagePath = `UserImages/${pumpkinId}/${image.name}`;
     
@@ -349,21 +350,17 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
             <img src={imageObj.thumbnail} alt="Preview" className="w-full h-full object-cover" loading="lazy" />
           </div>
         ))}
-     <label
-  className="w-full flex justify-center items-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 aspect-w-1 aspect-h-1"
-  style={{ aspectRatio: '1/1' }} // Ensures a 1:1 aspect ratio
->
+
+        const { getRootProps, getInputProps } = useDropzone({ onDrop: handleUpload });
+
+// Replace the existing label and input
+<div {...getRootProps()} className="w-full flex justify-center items-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 aspect-w-1 aspect-h-1">
+  <input {...getInputProps()} className="hidden" />
   <div className="w-full h-full flex justify-center items-center">
-    <input
-      type="file"
-      accept="image/*"
-      capture="environment"
-      onChange={handleImageChange}
-      className="hidden"
-    />
     <PlusIcon className="h-8 w-8 text-gray-400" />
   </div>
-</label>
+</div>
+
     </div>
     <Modal isOpen={isModalOpen} onRequestClose={closeModal} className="flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-lg mx-auto mt-20">
       <button onClick={closeModal} className="self-start text-xl font-bold">&times;</button>
