@@ -41,9 +41,9 @@ const ImageDisplay = () => {
   }
 
   // Sanitize metadata
-  const sanitizedPumpkinName = sanitizeHtml(imageData.pumpkinName);
-  const sanitizedLatestWeight = sanitizeHtml(imageData.latestWeight.toString());
-  const sanitizedDaysAfterPollination = sanitizeHtml(imageData.daysAfterPollination.toString());
+  const sanitizedPumpkinName = imageData.pumpkinName ? sanitizeHtml(imageData.pumpkinName) : '';
+  const sanitizedLatestWeight = imageData.latestWeight ? sanitizeHtml(imageData.latestWeight.toString()) : '';
+  const sanitizedDaysAfterPollination = imageData.daysAfterPollination ? sanitizeHtml(imageData.daysAfterPollination.toString()) : '';
 
   return (
     <div>
