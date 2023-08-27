@@ -149,6 +149,13 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
     // Fetch the image as a Blob
     const response = await fetch(originalURL);
     const blob = await response.blob();
+      
+    // Check for a 200 status code
+    if (response.status !== 200) {
+      throw new Error(`Failed to fetch image: ${response.status}`);
+    }
+
+    const blob = await response.blob();
 
     // Create a URL for the Blob
     const blobURL = URL.createObjectURL(blob);
@@ -167,7 +174,7 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
     URL.revokeObjectURL(blobURL);
   trackUserEvent(GA_ACTIONS.Download_Success, GA_CATEGORIES.ImageCard);
     } catch (error) {
-      trackError('Failed to download image', GA_CATEGORIES.ImageCard, 'handleDownload', GA_ACTIONS.Download_Failure);
+    trackError('Failed to download image', GA_CATEGORIES.ImageCard, 'handleDownload', GA_ACTIONS.Download_Failure);
     console.error('Error downloading image:', error);
     toast.error('Failed to download image. Please try again.');
   }
