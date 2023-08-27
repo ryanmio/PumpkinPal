@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, useMemo } from 'react';
 import { auth, db } from '../firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
-import Spinner from '../Spinner';
+import Spinner from '../components/Spinner';
 
 export const UserContext = createContext();
 
