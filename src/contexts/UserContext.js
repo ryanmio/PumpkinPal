@@ -61,8 +61,14 @@ export const UserProvider = ({ children }) => {
   }, [growerId]);
 
   if (loading) {
-    return <div>Loading...</div>; // Or a loading spinner
-  }
+  return (
+    <div className="spinner-container">
+      <Spinner animation="border" role="status">
+        <span className="sr-only">Loading...</span>
+      </Spinner>
+    </div>
+  );
+}
 
   return (
     <UserContext.Provider value={contextValue}>
