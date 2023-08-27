@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useMemo } from 'react';
 import { auth, db } from '../firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
+import Spinner from '../Spinner';
 
 export const UserContext = createContext();
 
@@ -61,13 +62,7 @@ export const UserProvider = ({ children }) => {
   }, [growerId]);
 
   if (loading) {
-  return (
-    <div className="spinner-container">
-      <Spinner animation="border" role="status">
-        <span className="sr-only">Loading...</span>
-      </Spinner>
-    </div>
-  );
+  return <Spinner />;
 }
 
   return (
