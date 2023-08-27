@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useMemo } from 'react';
 import { auth, db } from '../firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 
@@ -53,6 +53,8 @@ export const UserProvider = ({ children }) => {
     // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
+    
+  const contextValue = useMemo(() => ({ user, growerId, setGrowerId, loading }), [user, growerId, loading]);
 
   useEffect(() => {
     console.log('UserContext useEffect, growerId changed:', growerId);
@@ -63,7 +65,7 @@ export const UserProvider = ({ children }) => {
   }
 
   return (
-    <UserContext.Provider value={{user, growerId, setGrowerId, loading}}>
+    <UserContext.Provider value={contextValue}>
       {children}
     </UserContext.Provider>
   );
