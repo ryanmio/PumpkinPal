@@ -253,13 +253,6 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
     };
   }, [user.uid, pumpkinId]);
 
-  const handleImageChange = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      await handleUpload(file);
-    }
-  };
-
   const handleUpload = async ([file]) => {
   try {
     const storagePath = `UserImages/${pumpkinId}/${file.name}`;
