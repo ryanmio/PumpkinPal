@@ -340,8 +340,9 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
   }
 };
 
+const { getRootProps, getInputProps } = useDropzone({ onDrop: handleUpload });
 
-  return (
+return (
   <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-12">
     <h3 className="text-xl font-bold mb-4">Image Gallery</h3>
     <div className="grid grid-cols-2 gap-4">
@@ -350,10 +351,6 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
             <img src={imageObj.thumbnail} alt="Preview" className="w-full h-full object-cover" loading="lazy" />
           </div>
         ))}
-
-        const { getRootProps, getInputProps } = useDropzone({ onDrop: handleUpload });
-
-// Replace the existing label and input
 <div {...getRootProps()} className="w-full flex justify-center items-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 aspect-w-1 aspect-h-1">
   <input {...getInputProps()} className="hidden" />
   <div className="w-full h-full flex justify-center items-center">
