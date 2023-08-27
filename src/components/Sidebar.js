@@ -34,7 +34,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
             </button>
           )}
         </div>
-          <div className="flex items-center justify-center w-full"> {/* Centered logo */}
+          <div className="flex items-center justify-center w-full">
             <Link to={currentUser ? "/dashboard" : "/"}>
               <img src="/logowide.png" alt="Logo" className="App-logo" />
             </Link>
