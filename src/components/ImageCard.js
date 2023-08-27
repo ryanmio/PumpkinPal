@@ -262,17 +262,12 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
 
   const handleUpload = async ([file]) => {
   try {
-    const storagePath = `UserImages/${pumpkinId}/${image.name}`;
-    
-    // Extract the file extension
-    const fileExtension = image.name.split('.').pop();
-    
-    // Replace the original extension with the desired thumbnail extension
+    const storagePath = `UserImages/${pumpkinId}/${file.name}`;
+    const fileExtension = file.name.split('.').pop();
     const thumbnailPath = storagePath.replace(`.${fileExtension}`, '_680x680.webp');
-    
     const storageRef = ref(storage, storagePath);
-    const metadata = { contentType: image.type };
-    const uploadTask = uploadBytesResumable(storageRef, image, metadata);
+    const metadata = { contentType: file.type };
+    const uploadTask = uploadBytesResumable(storageRef, file, metadata);
 
     // Toast for upload started
     const uploadToastId = toast.loading('Uploading image...');
