@@ -4,15 +4,14 @@ import { db } from '../firebase';
 import Spinner from '../components/Spinner';
 import { doc, getDoc } from 'firebase/firestore';
 import { Helmet } from 'react-helmet';
-
+import sanitizeHtml from 'sanitize-html';
 
 const ImageDisplay = () => {
-  const { imageId } = useParams(); // Get the image ID from the URL
+  const { imageId } = useParams();
   const [imageData, setImageData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch the image details based on the imageId
     const fetchImageDetails = async () => {
       try {
         const sharedImageRef = doc(db, 'SharedImages', imageId);
@@ -34,23 +33,28 @@ const ImageDisplay = () => {
   }, [imageId]);
 
   if (isLoading) {
-    return <Spinner />; // Show spinner while loading
+    return <Spinner />;
   }
 
   if (!imageData) {
-    return <div>Image not found</div>; // Handle image not found
+    return <div>Image not found</div>;
   }
+
+  // Sanitize metadata
+  const sanitizedPumpkinName = sanitizeHtml(imageData.pumpkinName);
+  const sanitizedLatestWeight = sanitizeHtml(imageData.latestWeight.toString());
+  const sanitizedDaysAfterPollination = sanitizeHtml(imageData.daysAfterPollination.toString());
 
   return (
     <div>
       <Helmet>
-  <title>{imageData.pumpkinName}</title>
-  <meta name="description" content={`Latest weight: ${imageData.latestWeight} | Days after Pollination: ${imageData.daysAfterPollination}`} />
-  <meta property="og:title" content={imageData.pumpkinName} />
-  <meta property="og:description" content={`Latest weight: ${imageData.latestWeight} | Days after Pollination: ${imageData.daysAfterPollination}`} />
-  <meta property="og:image" content={imageData.image} />
-  <meta property="og:url" content={window.location.href} />
-</Helmet>
+        <title>{sanitizedPumpkinName}</title>
+        <meta name="description" content={`Latest weight: ${sanitizedLatestWeight} | Days after Pollination: ${sanitizedDaysAfterPollination}`} />
+        <meta property="og:title" content={sanitizedPumpkinName} />
+        <meta property="og:description" content={`Latest weight: ${sanitizedLatestWeight} | Days after Pollination: ${sanitizedDaysAfterPollination}`} />
+        <meta property="og:image" content={imageData.image} />
+        <meta property="og:url" content={window.location.href} />
+      </Helmet>
       <img src={imageData.image} alt="Shared" />
     </div>
   );
