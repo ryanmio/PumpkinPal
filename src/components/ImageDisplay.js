@@ -6,6 +6,8 @@ import { doc, getDoc } from 'firebase/firestore';
 import { Helmet } from 'react-helmet';
 import sanitizeHtml from 'sanitize-html';
 
+// this component isn't really used. there's a cloud function that redirects share/:imageId to a cloud html page with the meta tags i.e. https://api.pumpkinpal.app/renderSharedImage/2Jbma4UETB7xd6HSqdnA
+
 const ImageDisplay = () => {
   const { imageId } = useParams();
   const [imageData, setImageData] = useState(null);
