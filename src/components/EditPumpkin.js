@@ -12,7 +12,6 @@ function EditPumpkin() {
   const location = useLocation();
 
   useEffect(() => {
-  // Add the auth state observer
   const unsubscribe = auth.onAuthStateChanged((user) => {
     if (user) {
       const fetchPumpkin = async () => {
@@ -28,8 +27,7 @@ function EditPumpkin() {
       fetchPumpkin();
     }
   });
-
-  // Unsubscribe from the observer when the component is unmounted
+      
   return () => unsubscribe();
 }, [id]);
 
@@ -44,12 +42,12 @@ function EditPumpkin() {
     try {
       await updateDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id), pumpkin);
       toast.success('Pumpkin updated successfully!');
-      trackUserEvent(GA_ACTIONS.EDIT_PUMPKIN, 'EditPumpkin - Successful');  // Add this line
+      trackUserEvent(GA_ACTIONS.EDIT_PUMPKIN, 'EditPumpkin - Successful');
       navigate(`/dashboard`);
     } catch (error) {
       toast.error("Failed to update pumpkin. Please try again.");
       console.error("Error updating pumpkin: ", error);
-      trackError(error, 'EditPumpkin - Failed', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);  // Add this line
+      trackError(error, 'EditPumpkin - Failed', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);
     }
   }
 };
