@@ -5,6 +5,7 @@ import { collection, doc, getDoc, orderBy, onSnapshot, query } from 'firebase/fi
 import MeasurementsCard from './MeasurementsCard';
 import GraphCard from './GraphCard';
 import { toast } from 'react-hot-toast';
+import Spinner from './Spinner';
 
 const LazyImageCard = lazy(() => import('./ImageCard'));
 
