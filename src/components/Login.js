@@ -69,7 +69,6 @@ function Login() {
       });
   }
 
-
   const handleForgotPassword = (e) => {
     e.preventDefault();
     if(email.trim() === ''){
