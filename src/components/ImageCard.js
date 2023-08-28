@@ -148,8 +148,7 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
 
     // Fetch the image as a Blob
     const response = await fetch(originalURL);
-    const blob = await response.blob();
-      
+
     // Check for a 200 status code
     if (response.status !== 200) {
       throw new Error(`Failed to fetch image: ${response.status}`);
