@@ -3,14 +3,16 @@ import { Link } from 'react-router-dom';
 import { UserContext } from '../contexts/UserContext';
 import Logout from './Logout';
 import MenuIcon from './icons/MenuIcon';
-import DashboardIcon from './icons/DashboardIcon';
-import AddPumpkinIcon from './icons/AddPumpkinIcon';
-import AddMeasurementIcon from './icons/AddMeasurementIcon';
-import SettingsIcon from './icons/SettingsIcon';
-import MyStatsIcon from './icons/MyStatsIcon';
-import SearchIcon from './icons/SearchIcon';
 import SignInButton from './SignInButton';
 
+const links = [
+  { to: '/dashboard', label: 'Dashboard', Icon: require('./icons/DashboardIcon').default },
+  { to: '/add-pumpkin', label: 'New Pumpkin', Icon: require('./icons/AddPumpkinIcon').default },
+  { to: '/add-measurement/:id', label: 'New Measurement', Icon: require('./icons/AddMeasurementIcon').default },
+  { to: '/search', label: 'Search', Icon: require('./icons/SearchIcon').default },
+  { to: '/my-stats', label: 'My Stats', Icon: require('./icons/MyStatsIcon').default },
+  { to: '/user-profile', label: 'User Settings', Icon: require('./icons/SettingsIcon').default }
+];
 
 function Sidebar({ isOpen, toggleSidebar }) {
   const { user: currentUser } = useContext(UserContext);
@@ -32,7 +34,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
             </button>
           )}
         </div>
-          <div className="flex items-center justify-center w-full"> {/* Centered logo */}
+          <div className="flex items-center justify-center w-full">
             <Link to={currentUser ? "/dashboard" : "/"}>
               <img src="/logowide.png" alt="Logo" className="App-logo" />
             </Link>
@@ -46,50 +48,22 @@ function Sidebar({ isOpen, toggleSidebar }) {
           </div>
         </div>
       </nav>
-      {currentUser && (
-      <aside id="logo-sidebar" className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform ${currentUser && isOpen ? 'open' : 'closed'} bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700`} aria-label="Sidebar">
-        <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
-          <ul className="space-y-2 font-medium pl-0">
-            <li>
-              <Link to="/dashboard" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group link">
-                <DashboardIcon className="icon-hover"/>
-                <span className="ml-3">Dashboard</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/add-pumpkin" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group link">
-                <AddPumpkinIcon className="icon-hover"/>
-                <span className="ml-3">New Pumpkin</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/add-measurement/:id" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group link">
-                <AddMeasurementIcon className="icon-hover"/>
-                <span className="ml-3">New Measurement</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/search" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group link">
-                <SearchIcon className="icon-hover"/>
-                <span className="ml-3">Search</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/my-stats" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group link">
-                <MyStatsIcon className="icon-hover"/>
-                <span className="ml-3">My Stats</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/user-profile" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group link">
-                <SettingsIcon className="icon-hover"/>
-                <span className="ml-3">User Settings</span>
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </aside>
-        )}
+       {currentUser && (
+        <aside id="logo-sidebar" className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform ${currentUser && isOpen ? 'open' : 'closed'} bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700`} aria-label="Sidebar">
+          <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
+            <ul className="space-y-2 font-medium pl-0">
+              {links.map(({ to, label, Icon }) => (
+                <li key={to}>
+                  <Link to={to} className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group link">
+                    <Icon className="icon-hover" />
+                    <span className="ml-3">{label}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </aside>
+      )}
     </>
   );
 }

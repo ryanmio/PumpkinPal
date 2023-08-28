@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { auth, db } from '../firebase';
 import { collection, doc, getDoc, orderBy, onSnapshot, query } from 'firebase/firestore';
 import MeasurementsCard from './MeasurementsCard';
 import GraphCard from './GraphCard';
-import ImageCard from './ImageCard';
 import { toast } from 'react-hot-toast';
+
+const LazyImageCard = lazy(() => import('./ImageCard'));
 
 function PumpkinDetail() {
   const { id } = useParams();
@@ -125,7 +126,9 @@ return (
     />
 
     {/* Card 5: Image Upload */}
-        <ImageCard pumpkinId={id} pumpkinName={pumpkin?.name} />
+        <Suspense fallback={<div>Loading...</div>}>
+          <LazyImageCard pumpkinId={id} pumpkinName={pumpkin?.name} />
+        </Suspense>
 
     </div> 
   </div>

@@ -12,6 +12,8 @@ import Spinner from '../components/Spinner';
 import { deleteObject } from 'firebase/storage';
 import { differenceInDays } from 'date-fns';
 import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../utilities/error-analytics';
+import { useDropzone } from 'react-dropzone';
+import { showDeleteConfirmation } from '../components/Alert';
 
 const ImageCard = ({ pumpkinId, pumpkinName }) => {
   const [images, setImages] = useState([]);
@@ -147,6 +149,12 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
 
     // Fetch the image as a Blob
     const response = await fetch(originalURL);
+
+    // Check for a 200 status code
+    if (response.status !== 200) {
+      throw new Error(`Failed to fetch image: ${response.status}`);
+    }
+
     const blob = await response.blob();
 
     // Create a URL for the Blob
@@ -166,14 +174,15 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
     URL.revokeObjectURL(blobURL);
   trackUserEvent(GA_ACTIONS.Download_Success, GA_CATEGORIES.ImageCard);
     } catch (error) {
-      trackError('Failed to download image', GA_CATEGORIES.ImageCard, 'handleDownload', GA_ACTIONS.Download_Failure);
+    trackError('Failed to download image', GA_CATEGORIES.ImageCard, 'handleDownload', GA_ACTIONS.Download_Failure);
     console.error('Error downloading image:', error);
     toast.error('Failed to download image. Please try again.');
   }
 };
 
   const handleDelete = async () => {
-  try {
+  showDeleteConfirmation('Delete Image', 'Are you sure you want to delete this image?', async () => {
+    try {
     // Find the image object to delete
     const imageToDelete = images.find(imageObj => imageObj.original === selectedImage);
     if (!imageToDelete) return;
@@ -252,26 +261,14 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
     };
   }, [user.uid, pumpkinId]);
 
-  const handleImageChange = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      await handleUpload(file);
-    }
-  };
-
-  const handleUpload = async (image) => {
+  const handleUpload = async ([file]) => {
   try {
-    const storagePath = `UserImages/${pumpkinId}/${image.name}`;
-    
-    // Extract the file extension
-    const fileExtension = image.name.split('.').pop();
-    
-    // Replace the original extension with the desired thumbnail extension
+    const storagePath = `UserImages/${pumpkinId}/${file.name}`;
+    const fileExtension = file.name.split('.').pop();
     const thumbnailPath = storagePath.replace(`.${fileExtension}`, '_680x680.webp');
-    
     const storageRef = ref(storage, storagePath);
-    const metadata = { contentType: image.type };
-    const uploadTask = uploadBytesResumable(storageRef, image, metadata);
+    const metadata = { contentType: file.type };
+    const uploadTask = uploadBytesResumable(storageRef, file, metadata);
 
     // Toast for upload started
     const uploadToastId = toast.loading('Uploading image...');
@@ -339,8 +336,9 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
   }
 };
 
+const { getRootProps, getInputProps } = useDropzone({ onDrop: handleUpload });
 
-  return (
+return (
   <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-12">
     <h3 className="text-xl font-bold mb-4">Image Gallery</h3>
     <div className="grid grid-cols-2 gap-4">
@@ -349,21 +347,13 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
             <img src={imageObj.thumbnail} alt="Preview" className="w-full h-full object-cover" loading="lazy" />
           </div>
         ))}
-     <label
-  className="w-full flex justify-center items-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 aspect-w-1 aspect-h-1"
-  style={{ aspectRatio: '1/1' }} // Ensures a 1:1 aspect ratio
->
+<div {...getRootProps()} className="w-full flex justify-center items-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 aspect-w-1 aspect-h-1">
+  <input {...getInputProps()} className="hidden" />
   <div className="w-full h-full flex justify-center items-center">
-    <input
-      type="file"
-      accept="image/*"
-      capture="environment"
-      onChange={handleImageChange}
-      className="hidden"
-    />
     <PlusIcon className="h-8 w-8 text-gray-400" />
   </div>
-</label>
+</div>
+
     </div>
     <Modal isOpen={isModalOpen} onRequestClose={closeModal} className="flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-lg mx-auto mt-20">
       <button onClick={closeModal} className="self-start text-xl font-bold">&times;</button>

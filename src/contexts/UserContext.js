@@ -1,6 +1,7 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useMemo } from 'react';
 import { auth, db } from '../firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
+import Spinner from '../components/Spinner';
 
 export const UserContext = createContext();
 
@@ -53,17 +54,19 @@ export const UserProvider = ({ children }) => {
     // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
+    
+  const contextValue = useMemo(() => ({ user, growerId, setGrowerId, loading }), [user, growerId, loading]);
 
   useEffect(() => {
     console.log('UserContext useEffect, growerId changed:', growerId);
   }, [growerId]);
 
   if (loading) {
-    return <div>Loading...</div>; // Or a loading spinner
-  }
+  return <Spinner />;
+}
 
   return (
-    <UserContext.Provider value={{user, growerId, setGrowerId, loading}}>
+    <UserContext.Provider value={contextValue}>
       {children}
     </UserContext.Provider>
   );
