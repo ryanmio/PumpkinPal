@@ -1,3 +1,4 @@
+// this component is not currently being used
 import React from 'react';
 import Autosuggest from 'react-autosuggest';
 
