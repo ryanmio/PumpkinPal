@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Line } from 'react-chartjs-2';
 
 const GraphCard = ({ measurements, pumpkinName }) => {
@@ -11,9 +11,14 @@ const GraphCard = ({ measurements, pumpkinName }) => {
     return utcDate.toLocaleDateString(undefined, options);
   }
 
+  // Memoize formatted dates
+  const formattedDates = useMemo(() => {
+    return measurements?.map(m => formatDate(m.timestamp));
+  }, [measurements]);
+
   // Prepare the data for the chart
   const chartData = {
-    labels: measurements?.map(m => formatDate(m.timestamp)),
+    labels: formattedDates,
     datasets: [
       {
         label: 'OTT Weight by Date (lbs)',
@@ -25,7 +30,7 @@ const GraphCard = ({ measurements, pumpkinName }) => {
     ],
   };
 
-   const options = {
+  const options = {
     scales: {
       y: {
         min: 0,
