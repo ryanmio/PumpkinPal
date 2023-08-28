@@ -20,8 +20,6 @@ export default function Homepage() {
     </div>
 </div>
 
-
-
     {/* Features Section */}
 <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full px-4 sm:px-8 -mx-4 sm:-mx-8 mb-8">
     {[
