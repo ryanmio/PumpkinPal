@@ -1,4 +1,3 @@
-// Import necessary modules and components
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
@@ -6,7 +5,6 @@ import { db } from '../../firebase';
 import Spinner from '../Spinner';
 import { UserContext } from '../../contexts/UserContext';
 
-// Component for displaying pumpkin details
 // Conditionally renders fields based on their values
 const PumpkinDetailsCard = ({ data }) => (
   <div className="bg-white shadow rounded-lg p-4 mb-4">
