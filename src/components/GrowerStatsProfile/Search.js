@@ -5,7 +5,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { GrowerContext } from '../../contexts/GrowerContext';
 import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../utilities/error-analytics';
 
-
 const searchClient = algoliasearch('SPV52PLJT9', process.env.REACT_APP_ALGOLIA_API_KEY);
 
 const Hit = ({ hit }) => {
@@ -17,7 +16,6 @@ const Hit = ({ hit }) => {
     trackUserEvent(GA_ACTIONS.SEARCH_CLICK, GA_CATEGORIES.SEARCH);
     const collectionType = hit.path.split('/')[0];
     
-
     switch (collectionType) {
       case 'Stats_Growers':
         setGrowerName(hit.objectID);
@@ -70,7 +68,6 @@ const Hit = ({ hit }) => {
       break;
   }
 };
-
 
   return (
     <div onClick={handleHitClick}>
