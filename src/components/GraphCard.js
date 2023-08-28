@@ -24,8 +24,8 @@ const GraphCard = ({ measurements, pumpkinName }) => {
         label: 'OTT Weight by Date (lbs)',
         data: measurements?.map(m => m.estimatedWeight),
         fill: false,
-        backgroundColor: 'rgb(75, 192, 192)',
-        borderColor: 'rgba(75, 192, 192, 0.2)',
+        backgroundColor: '#fb9336',  // Brand color for background
+        borderColor: '#df6139',      // Brand color for border
       },
     ],
   };
