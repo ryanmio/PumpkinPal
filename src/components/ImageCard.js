@@ -215,8 +215,9 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
     console.error('Error deleting image:', error);
     toast.error('Failed to delete image. Please try again.');
   }
+  });
 };
-
+    
   const openModal = (image) => {
   setSelectedImage(image);
   setIsModalOpen(true);
