@@ -31,7 +31,6 @@ function UserProfile() {
     }
   };
 
-
 const fetchPreferences = useCallback(async () => {
     try {
       if (auth.currentUser) {
@@ -106,13 +105,10 @@ const fetchPreferences = useCallback(async () => {
     toast.error("Error updating password: " + error.message);
   }
 };
-
-    
-    
+  
   if (loading) {
     return <div>Loading...</div>;
   }
-    
     
 const exportAllData = async () => {
   const idToken = await auth.currentUser.getIdToken();
@@ -175,7 +171,6 @@ const handleLogout = () => {
     setShowDeleteModal(false);
   };
 
-    
   return (
     <div className="container mx-auto px-4 min-h-screen pb-10">
       <Toaster />
@@ -231,7 +226,6 @@ const handleLogout = () => {
     <button onClick={handleDeleteAccount} className="green-button text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 px-4 py-2 w-2/3">Delete Account</button>
   </div>
 
-
           {showDeleteModal && (
       <div className="modal" style={{display: 'block', position: 'fixed', zIndex: 1, left: 0, top: 0, width: '100%', height: '100%', overflow: 'auto', backgroundColor: 'rgba(0,0,0,0.4)'}}>
         <div className="modal-content" style={{backgroundColor: '#fefefe', margin: '15% auto', padding: '20px', border: '1px solid #888', width: '80%'}}>
@@ -241,7 +235,6 @@ const handleLogout = () => {
           <button onClick={closeDeleteModal} className="modal-button">Cancel</button>
           <button onClick={confirmDeleteAccount} className="delete-button">Confirm</button>
         </div>
-
         </div>
       </div>
     )}

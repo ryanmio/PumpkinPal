@@ -73,7 +73,6 @@ function Register() {
         });
     }
 
-
     return (
       <main style={{ minHeight: "100vh", paddingBottom: "1rem" }}>
         <section className="d-flex align-items-center my-5 mt-lg-6 mb-lg-5">
