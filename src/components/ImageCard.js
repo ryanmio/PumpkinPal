@@ -13,6 +13,7 @@ import { deleteObject } from 'firebase/storage';
 import { differenceInDays } from 'date-fns';
 import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../utilities/error-analytics';
 import { useDropzone } from 'react-dropzone';
+import { showDeleteConfirmation } from '../components/Alert';
 
 const ImageCard = ({ pumpkinId, pumpkinName }) => {
   const [images, setImages] = useState([]);
@@ -180,7 +181,8 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
 };
 
   const handleDelete = async () => {
-  try {
+  showDeleteConfirmation('Delete Image', 'Are you sure you want to delete this image?', async () => {
+    try {
     // Find the image object to delete
     const imageToDelete = images.find(imageObj => imageObj.original === selectedImage);
     if (!imageToDelete) return;
