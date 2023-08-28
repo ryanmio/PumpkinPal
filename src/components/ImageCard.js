@@ -14,6 +14,7 @@ import { differenceInDays } from 'date-fns';
 import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../utilities/error-analytics';
 import { useDropzone } from 'react-dropzone';
 import { showDeleteConfirmation } from '../components/Alert';
+import uploadImage from '../utilities/uploadImage';
 
 const ImageCard = ({ pumpkinId, pumpkinName }) => {
   const [images, setImages] = useState([]);
@@ -264,73 +265,9 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
 
   const handleUpload = async ([file]) => {
   try {
-    const storagePath = `UserImages/${pumpkinId}/${file.name}`;
-    const fileExtension = file.name.split('.').pop();
-    const thumbnailPath = storagePath.replace(`.${fileExtension}`, '_680x680.webp');
-    const storageRef = ref(storage, storagePath);
-    const metadata = { contentType: file.type };
-    const uploadTask = uploadBytesResumable(storageRef, file, metadata);
-
-    // Toast for upload started
-    const uploadToastId = toast.loading('Uploading image...');
-
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        // Optional: Update the toast with the upload progress
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        toast.loading(`Uploading: ${Math.round(progress)}%`, { id: uploadToastId });
-      },
-      (error) => {
-        console.error('Error uploading image:', error);
-        toast.error('Failed to upload image. Please try again.');
-      },
-      () => {
-        // Toast for processing thumbnail
-        const processingToastId = toast.loading('Processing thumbnail...');
-
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          // Function to check for the thumbnail's existence
-          const checkThumbnail = () => {
-            const thumbnailRef = ref(storage, thumbnailPath);
-            getDownloadURL(thumbnailRef).then((thumbnailURL) => {
-              const usersCollection = collection(db, 'Users');
-              const userDoc = doc(usersCollection, user.uid);
-              const pumpkinsCollection = collection(userDoc, 'Pumpkins');
-              const pumpkinRef = doc(pumpkinsCollection, pumpkinId);
-
-              // Create a new image object
-              const newImage = { original: downloadURL, thumbnail: thumbnailURL };
-
-              // Fetch the current images array
-              getDoc(pumpkinRef).then((pumpkinDoc) => {
-                const currentImages = pumpkinDoc.data().images || [];
-
-                // Add the new image to the existing images array
-                const updatedImages = [...currentImages, newImage];
-
-                // Update the pumpkin document with the updated images array
-                updateDoc(pumpkinRef, { images: updatedImages });
-                setImages(updatedImages);
-
-                // Dismiss the processing toast and show success toast
-                toast.dismiss(processingToastId);
-                toast.success('Image uploaded successfully.');
-              });
-            }).catch(() => {
-              // Thumbnail not ready yet, retry in 1 second
-              setTimeout(checkThumbnail, 1000);
-            });
-          };
-
-          // Start checking for the thumbnail
-          checkThumbnail();
-        });
-
-        // Dismiss the upload toast
-        toast.dismiss(uploadToastId);
-      }
-    );
+    const updatedImages = await uploadImage(file, pumpkinId, user.uid, db, storage);
+    setImages(updatedImages);
+    toast.success('Image uploaded successfully.');
   } catch (error) {
     console.error('Error uploading image:', error);
     toast.error('Failed to upload image. Please try again.');
