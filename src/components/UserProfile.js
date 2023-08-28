@@ -150,7 +150,6 @@ const exportAllData = async () => {
     });
   };
 
-
 const handleLogout = () => {
     signOut(auth)
       .then(() => {
