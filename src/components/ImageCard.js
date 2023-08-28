@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import PlusIcon from './icons/PlusIcon';
 import { UserContext } from '../contexts/UserContext';
 import { updateDoc, collection, doc, getDoc, addDoc } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { ref } from 'firebase/storage';
 import Modal from 'react-modal';
 import Button from '../utilities/Button';
 import Spinner from '../components/Spinner';
