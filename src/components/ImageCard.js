@@ -272,7 +272,6 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
   }
 };
 
-
 const { getRootProps, getInputProps } = useDropzone({ onDrop: handleUpload });
 
 return (
