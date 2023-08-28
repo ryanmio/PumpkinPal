@@ -43,7 +43,6 @@ export const GA_ACTIONS = {
   Grower_Confirmed: 'Grower_Confirmed',
 };
 
-
 // Function for sending error events to Google Analytics
 export function trackError(error, method, category = GA_CATEGORIES.SYSTEM, action = GA_ACTIONS.ERROR) {
   ReactGA.event({

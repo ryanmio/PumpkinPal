@@ -69,7 +69,6 @@ function Login() {
       });
   }
 
-
   const handleForgotPassword = (e) => {
     e.preventDefault();
     if(email.trim() === ''){
@@ -154,7 +153,6 @@ function Login() {
       </section>
     </main>
   );
-
 }
 
 export default Login;

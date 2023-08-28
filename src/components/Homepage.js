@@ -20,8 +20,6 @@ export default function Homepage() {
     </div>
 </div>
 
-
-
     {/* Features Section */}
 <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full px-4 sm:px-8 -mx-4 sm:-mx-8 mb-8">
     {[
@@ -58,9 +56,6 @@ export default function Homepage() {
     <Link to="/register" className="px-8 py-2 mb-8 green-button rounded text-white text-xl text-white hover:text-white focus:outline-none focus:ring-0 underline-none no-underline font-bold">Sign Up</Link>
     <p className="mt-3">Already signed up? <Link to="/login" className="text-blue-500">Login here</Link></p>
 </div>
-
-
-
 
            {/* Footer Section */}
 <div className="App-footer w-full py-8 px-4 md:px-8 lg:px-16">

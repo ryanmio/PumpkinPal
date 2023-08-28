@@ -5,7 +5,6 @@ import { toast } from 'react-hot-toast';
 import TableSection from './TableSection';
 import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../utilities/error-analytics';
 
-
 // Function to convert a string to title case
 function toTitleCase(str) {
   return str.replace(/\w\S*/g, function(txt) {
@@ -42,16 +41,12 @@ const GrowerSearch = ({ user, handleSave }) => {
 
   useEffect(() => {
   if (state.growerName) {
-    // Track the search initiation event
     trackUserEvent(GA_ACTIONS.Search_Initiated, GA_CATEGORIES.GrowerSearch);
-
    getGrowerSuggestions(toTitleCase(state.growerName), (error, suggestions) => {
   if (error) {
-    // Track the error event
     trackError(error.message, 'getGrowerSuggestions', GA_CATEGORIES.GrowerSearch, GA_ACTIONS.Fetch_Suggestions_Failure);
     toast.error('Error fetching grower suggestions: ' + error.message);
   } else {
-    // Track the successful fetch event
     trackUserEvent(GA_ACTIONS.Fetch_Suggestions_Success, GA_CATEGORIES.GrowerSearch);
     dispatch({ type: 'SET_SUGGESTIONS', payload: suggestions });
   }
