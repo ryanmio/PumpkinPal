@@ -118,11 +118,17 @@ return (
  {/* Card 3: Measurements */}
    <MeasurementsCard measurements={measurements} navigate={navigate} pumpkinId={id} pumpkin={pumpkin} />
 
-    {/* Card 4: Graph */}
-    <GraphCard
-      measurements={measurements}
-      pumpkinName={pumpkin?.name}
-    />
+   {/* Card 4: Graph */}
+{measurements && pumpkin ? (
+  <GraphCard
+    measurements={measurements}
+    pumpkinName={pumpkin?.name}
+  />
+) : measurements === null || pumpkin === null ? (
+  <div>Error loading graph.</div>
+) : (
+  <Spinner />
+)}
 
     {/* Card 5: Image Upload */}
         <Suspense fallback={<div>Loading...</div>}>
