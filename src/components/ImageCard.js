@@ -267,12 +267,11 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
   try {
     const updatedImages = await uploadImage(file, pumpkinId, user.uid, db, storage);
     setImages(updatedImages);
-    toast.success('Image uploaded successfully.');
   } catch (error) {
     console.error('Error uploading image:', error);
-    toast.error('Failed to upload image. Please try again.');
   }
 };
+
 
 const { getRootProps, getInputProps } = useDropzone({ onDrop: handleUpload });
 
