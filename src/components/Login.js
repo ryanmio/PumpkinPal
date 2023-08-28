@@ -154,7 +154,6 @@ function Login() {
       </section>
     </main>
   );
-
 }
 
 export default Login;
