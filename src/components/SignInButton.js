@@ -5,7 +5,7 @@ function SignInButton() {
   const navigate = useNavigate();
 
   const handleSignIn = () => {
-    navigate('/login'); // Redirect to the login page
+    navigate('/login');
   };
 
   return (
