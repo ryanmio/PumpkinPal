@@ -17,18 +17,19 @@ const GraphCard = ({ measurements, pumpkinName }) => {
   }, [measurements]);
 
   // Prepare the data for the chart
-  const chartData = {
-    labels: formattedDates,
-    datasets: [
-      {
-        label: 'OTT Weight by Date (lbs)',
-        data: measurements?.map(m => m.estimatedWeight),
-        fill: false,
-        backgroundColor: '#fb9336',  // Brand color for background
-        borderColor: '#df6139',      // Brand color for border
-      },
-    ],
-  };
+const chartData = {
+  labels: formattedDates,
+  datasets: [
+    {
+      label: 'OTT Weight by Date (lbs)',
+      data: measurements?.map(m => m.estimatedWeight),
+      fill: false,
+      backgroundColor: '#80876E',  // Updated color for data points
+      borderColor: '#80876E',      // Updated color for line
+    },
+  ],
+};
+
 
   const options = {
     scales: {
