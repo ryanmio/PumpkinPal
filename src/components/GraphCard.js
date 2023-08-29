@@ -3,12 +3,11 @@ import { Line } from 'react-chartjs-2';
 
 const GraphCard = ({ measurements, pumpkinName }) => {
 
-  // Helper function to format a date string as Month D, YYYY
+  // Helper function to return a date object
   function formatDate(dateString) {
     const date = new Date(dateString);
     const utcDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return utcDate.toLocaleDateString(undefined, options);
+    return utcDate;
   }
 
   // Memoize formatted dates
@@ -17,26 +16,42 @@ const GraphCard = ({ measurements, pumpkinName }) => {
   }, [measurements]);
 
   // Prepare the data for the chart
-const chartData = {
-  labels: formattedDates,
-  datasets: [
-    {
-      label: 'OTT Weight by Date (lbs)',
-      data: measurements?.map(m => m.estimatedWeight),
-      fill: false,
-      backgroundColor: '#80876E',  // Updated color for data points
-      borderColor: '#80876E',      // Updated color for line
-    },
-  ],
-};
-
+  const chartData = {
+    labels: formattedDates,
+    datasets: [
+      {
+        label: 'OTT Weight by Date (lbs)',
+        data: measurements?.map(m => m.estimatedWeight),
+        fill: false,
+        backgroundColor: '#80876E',
+        borderColor: '#80876E',
+      },
+    ],
+  };
 
   const options = {
     scales: {
+      x: {
+        type: 'time',
+        time: {
+          unit: 'day',
+          displayFormats: {
+            day: 'MMM D'
+          }
+        },
+        title: {
+          display: true,
+          text: 'Date'
+        }
+      },
       y: {
         min: 0,
-      },
-    },
+        title: {
+          display: true,
+          text: 'Weight (lbs)'
+        }
+      }
+    }
   };
 
   return (
