@@ -1,8 +1,21 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { Line } from 'react-chartjs-2';
 import 'chartjs-adapter-date-fns';
 
 const GraphCard = ({ measurements, pumpkinName }) => {
+  const graphCardRef = useRef(null);
+
+  const toggleFullscreen = () => {
+    const elem = graphCardRef.current;
+
+    if (!document.fullscreenElement) {
+      elem.requestFullscreen().catch(err => {
+        alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
 
   // Helper function to return a date object
   function formatDate(dateString) {
@@ -56,7 +69,8 @@ const GraphCard = ({ measurements, pumpkinName }) => {
 };
 
   return (
-    <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto">
+    <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto" ref={graphCardRef}>
+      <button onClick={toggleFullscreen}>Toggle Fullscreen</button>
       <h3 className="text-xl font-bold mb-2">{pumpkinName} Weight Trend</h3>
       <Line data={chartData} options={options} />
     </div>
