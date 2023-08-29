@@ -31,29 +31,29 @@ const GraphCard = ({ measurements, pumpkinName }) => {
   };
 
   const options = {
-    scales: {
-      x: {
-        type: 'time',
-        time: {
-          unit: 'day',
-          displayFormats: {
-            day: 'MMM D'
-          }
-        },
-        title: {
-          display: true,
-          text: 'Date'
+  scales: {
+    x: {
+      type: 'time',
+      time: {
+        unit: 'day',
+        displayFormats: {
+          day: 'MMM d'  // Changed 'D' to 'd'
         }
       },
-      y: {
-        min: 0,
-        title: {
-          display: true,
-          text: 'Weight (lbs)'
-        }
+      title: {
+        display: true,
+        text: 'Date'
+      }
+    },
+    y: {
+      min: 0,
+      title: {
+        display: true,
+        text: 'Weight (lbs)'
       }
     }
-  };
+  }
+};
 
   return (
     <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto">
