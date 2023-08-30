@@ -160,11 +160,13 @@ const addMeasurement = async (e) => {
             max={999}
             value={circumference} 
           />
+          <div className="flex flex-col items-start">
           <DateInput 
             id="measurementDate"
             selected={measurementDate}
             onChange={(date) => setMeasurementDate(date)} 
           />
+        </div>
          <div className="flex justify-between items-center mt-4">
           <button type="button" onClick={() => navigate('/dashboard')} className="text-blue-600 hover:underline">Cancel</button>
           <Button 
