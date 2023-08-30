@@ -22,28 +22,39 @@ function AddMeasurement() {
   const [measurementDate, setMeasurementDate] = useState(new Date());
 
   useEffect(() => {
+  const fetchData = async () => {
     const unsubscribe = onAuthStateChanged(auth, async user => {
-      if (user) {
+      if (!user) return;
+      try {
+        // Fetch user's preferred unit
         const userRef = doc(db, 'Users', user.uid);
         const userDoc = await getDoc(userRef);
         const fetchedUnit = userDoc.exists() && userDoc.data().preferredUnit ? userDoc.data().preferredUnit : 'in';
         setMeasurementUnit(fetchedUnit);
 
+        // Fetch pumpkins
         const q = collection(db, 'Users', user.uid, 'Pumpkins');
         const snapshot = await getDocs(q);
         const pumpkinsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setPumpkins(pumpkinsData);
 
+        // Set default pumpkin
         if (id) {
           setSelectedPumpkin(id);
         } else if (pumpkinsData.length > 0) {
           setSelectedPumpkin(pumpkinsData[0].id);
         }
+      } catch (error) {
+        // Handle or log error
       }
     });
 
     return () => unsubscribe();
-  }, [id]);
+  };
+
+  fetchData();
+}, [id]);
+
 
   useEffect(() => {
     const fetchLastMeasurement = async () => {
@@ -78,7 +89,8 @@ function AddMeasurement() {
     }
     let weight = (((14.2 / (1 + 7.3 * Math.pow(2, -(ott) / 96))) ** 3 + (ott / 51) ** 2.91) - 8) * 0.993;
 
-    return (Math.max(0, weight)).toFixed(2);
+ return (Math.max(0, weight)).toFixed(2);
+};
     
  const addMeasurement = async (e) => {
     e.preventDefault();
