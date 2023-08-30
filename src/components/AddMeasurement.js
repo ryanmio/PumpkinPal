@@ -57,16 +57,10 @@ function AddMeasurement() {
         setMeasurementDate(new Date());
       }
     } catch (error) {
-    if (error.code === 'permission-denied') {
-      toast.error("Permission denied.");
-    } else if (error.code === 'unavailable') {
-      toast.error("Service unavailable. Try again later.");
-    } else {
       toast.error("Failed to fetch data: " + error.message);
+      trackError(error, 'FetchData', GA_CATEGORIES.USER, GA_ACTIONS.NEW_ACTION);
     }
-    trackError(error, 'FetchData', GA_CATEGORIES.USER, GA_ACTIONS.NEW_ACTION);
-  }
-};
+  };
 
   unsubscribe = onAuthStateChanged(auth, async user => {
     await fetchData(user);
@@ -106,14 +100,9 @@ function AddMeasurement() {
       navigate(`/pumpkin/${selectedPumpkin}`);
       toast.success("Measurement added successfully!");
     } catch (error) {
-    if (error.code === 'permission-denied') {
-      toast.error("Permission denied.");
-    } else if (error.code === 'unavailable') {
-      toast.error("Service unavailable. Try again later.");
-    } else {
+      trackError(error, 'AddMeasurement - Failed');
       toast.error("Failed to add measurement. Please ensure the date is valid and try again.");
     }
-    trackError(error, 'AddMeasurement - Failed');
   }
 };
 
