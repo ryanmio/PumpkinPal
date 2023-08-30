@@ -22,53 +22,49 @@ function AddMeasurement() {
   const [measurementDate, setMeasurementDate] = useState(new Date());
 
   useEffect(() => {
-  let unsubscribe;
+  const fetchData = async () => {
+    const unsubscribe = onAuthStateChanged(auth, async user => {
+      if (!user) return;
 
-  const fetchData = async (user) => {
-    if (!user) return;
+      try {
+        // Fetch user's preferred unit
+        const userRef = doc(db, 'Users', user.uid);
+        const userDoc = await getDoc(userRef);
+        const fetchedUnit = userDoc.exists() && userDoc.data().preferredUnit ? userDoc.data().preferredUnit : 'in';
+        setMeasurementUnit(fetchedUnit);
 
-    try {
-      // Fetch user's preferred unit
-      const userRef = doc(db, 'Users', user.uid);
-      const userDoc = await getDoc(userRef);
-      const fetchedUnit = userDoc.exists() && userDoc.data().preferredUnit ? userDoc.data().preferredUnit : 'in';
-      setMeasurementUnit(fetchedUnit);
+        // Fetch pumpkins
+        const q = collection(db, 'Users', user.uid, 'Pumpkins');
+        const snapshot = await getDocs(q);
+        const pumpkinsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setPumpkins(pumpkinsData);
 
-      // Fetch pumpkins
-      const q = collection(db, 'Users', user.uid, 'Pumpkins');
-      const snapshot = await getDocs(q);
-      const pumpkinsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setPumpkins(pumpkinsData);
+        // Set default pumpkin
+        setSelectedPumpkin(id || pumpkinsData.length > 0 ? pumpkinsData[0].id : null);
 
-      // Set default pumpkin
-      setSelectedPumpkin(id || pumpkinsData.length > 0 ? pumpkinsData[0].id : null);
-
-      // Fetch last measurement if pumpkin is selected
-      if (id || pumpkinsData.length > 0) {
-        const selected = id || pumpkinsData[0].id;
-        const measurementQuery = query(collection(db, 'Users', user.uid, 'Pumpkins', selected, 'Measurements'), orderBy('timestamp', 'desc'), limit(1));
-        const measurementSnapshot = await getDocs(measurementQuery);
-        if (!measurementSnapshot.empty) {
-          const measurement = measurementSnapshot.docs[0].data();
-          setEndToEnd(parseFloat(measurement.endToEnd));
-          setSideToSide(parseFloat(measurement.sideToSide));
-          setCircumference(parseFloat(measurement.circumference));
+        // Fetch last measurement if pumpkin is selected
+        if (id || pumpkinsData.length > 0) {
+          const selected = id || pumpkinsData[0].id;
+          const measurementQuery = query(collection(db, 'Users', user.uid, 'Pumpkins', selected, 'Measurements'), orderBy('timestamp', 'desc'), limit(1));
+          const measurementSnapshot = await getDocs(measurementQuery);
+          if (!measurementSnapshot.empty) {
+            const measurement = measurementSnapshot.docs[0].data();
+            setEndToEnd(parseFloat(measurement.endToEnd));
+            setSideToSide(parseFloat(measurement.sideToSide));
+            setCircumference(parseFloat(measurement.circumference));
+          }
+          setMeasurementDate(new Date());
         }
-        setMeasurementDate(new Date());
-      }
-    } catch (error) {
-      toast.error("Failed to fetch data: " + error.message);
-      trackError(error, 'FetchData', GA_CATEGORIES.USER, GA_ACTIONS.NEW_ACTION);
-    }
+      } catch (error) {
+  toast.error("Failed to fetch data: " + error.message);
+  trackError(error, 'FetchData', GA_CATEGORIES.USER, GA_ACTIONS.NEW_ACTION);
+}
+    });
+
+    return () => unsubscribe();
   };
 
-  unsubscribe = onAuthStateChanged(auth, async user => {
-    await fetchData(user);
-  });
-
-  return () => {
-    if (unsubscribe) unsubscribe();
-  };
+  fetchData();
 }, [id]);
 
   const calculateEstimatedWeight = (endToEnd, sideToSide, circumference, measurementUnit) => {
