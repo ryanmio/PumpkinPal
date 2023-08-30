@@ -15,9 +15,9 @@ function AddMeasurement() {
 
   const [pumpkins, setPumpkins] = useState([]);
   const [selectedPumpkin, setSelectedPumpkin] = useState('');
-  const [endToEnd, setEndToEnd] = useState('');
-  const [sideToSide, setSideToSide] = useState('');
-  const [circumference, setCircumference] = useState('');
+  const [endToEnd, setEndToEnd] = useState('0');
+  const [sideToSide, setSideToSide] = useState('0');
+  const [circumference, setCircumference] = useState('0');
   const [measurementUnit, setMeasurementUnit] = useState('cm'); 
   const [measurementDate, setMeasurementDate] = useState(new Date());
 
@@ -87,19 +87,12 @@ function AddMeasurement() {
 };
 
 
-  const calculateOTT = () => {
-    if(endToEnd && sideToSide && circumference) {
-      return parseFloat(endToEnd) + parseFloat(sideToSide) + parseFloat(circumference);
-    }
-    return 0;
-  };
-
-const addMeasurement = async (e) => {
-  e.preventDefault();
-  const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumference, measurementUnit);
-  const measurementId = Date.now().toString();
-  const user = auth.currentUser;
-  if(user && selectedPumpkin) {
+ const addMeasurement = async (e) => {
+    e.preventDefault();
+    const estimatedWeight = calculateEstimatedWeight(parseFloat(endToEnd), parseFloat(sideToSide), parseFloat(circumference), measurementUnit);
+    const measurementId = Date.now().toString();
+    const user = auth.currentUser;
+    if(user && selectedPumpkin) {
     try {
       await setDoc(doc(db, 'Users', user.uid, 'Pumpkins', selectedPumpkin, 'Measurements', measurementId), {
         endToEnd,
@@ -137,29 +130,29 @@ const addMeasurement = async (e) => {
             </select>
           </div>
           <MeasurementInput 
-            id="endToEnd"
-            placeholder="End to End"
-            onChange={(e) => setEndToEnd(parseFloat(e.target.value))}
-            min={0} 
-            max={999}
-            value={endToEnd} 
-          />
-          <MeasurementInput 
-            id="sideToSide"
-            placeholder="Side to Side"
-            onChange={(e) => setSideToSide(parseFloat(e.target.value))}
-            min={0} 
-            max={999}
-            value={sideToSide} 
-          />
-          <MeasurementInput 
-            id="circumference"
-            placeholder="Circumference"
-            onChange={(e) => setCircumference(parseFloat(e.target.value))}
-            min={0} 
-            max={999}
-            value={circumference} 
-          />
+          id="endToEnd"
+          placeholder="End to End"
+          onChange={(e) => setEndToEnd(e.target.value)}
+          min={0} 
+          max={999}
+          value={endToEnd} 
+        />
+        <MeasurementInput 
+          id="sideToSide"
+          placeholder="Side to Side"
+          onChange={(e) => setSideToSide(e.target.value)}
+          min={0} 
+          max={999}
+          value={sideToSide} 
+        />
+        <MeasurementInput 
+          id="circumference"
+          placeholder="Circumference"
+          onChange={(e) => setCircumference(e.target.value)}
+          min={0} 
+          max={999}
+          value={circumference} 
+        />
           <div className="flex flex-col">
           <DateInput 
             id="measurementDate"
@@ -174,7 +167,7 @@ const addMeasurement = async (e) => {
             disabled={!(endToEnd && sideToSide && circumference)}
             extraClasses={`${endToEnd && sideToSide && circumference ? 'bg-green-button hover:bg-green-button-hover' : 'button-disabled'}`}
           >
-            Save Measurement (OTT: {calculateOTT()})
+            Save Measurement (OTT: {parseFloat(endToEnd) + parseFloat(sideToSide) + parseFloat(circumference)})
           </Button>
         </div>
 
