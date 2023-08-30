@@ -160,7 +160,7 @@ const addMeasurement = async (e) => {
             max={999}
             value={circumference} 
           />
-          <div className="flex flex-col items-start">
+          <div className="flex flex-col">
           <DateInput 
             id="measurementDate"
             selected={measurementDate}
