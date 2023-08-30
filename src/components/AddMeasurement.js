@@ -6,7 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import MeasurementInput from './MeasurementInput';
 import DateInput from './DateInput';
 import toast, { Toaster } from 'react-hot-toast';
-import { GA_ACTIONS, trackUserEvent, trackError } from '../utilities/error-analytics';
+import { GA_ACTIONS, GA_CATEGORIES, trackUserEvent, trackError } from '../utilities/error-analytics';
 import Button from '../utilities/Button';
 
 function AddMeasurement() {
@@ -56,8 +56,9 @@ function AddMeasurement() {
           setMeasurementDate(new Date());
         }
       } catch (error) {
-        // Handle or log error
-      }
+  toast.error("Failed to fetch data: " + error.message);
+  trackError(error, 'FetchData', GA_CATEGORIES.USER, GA_ACTIONS.NEW_ACTION);
+}
     });
 
     return () => unsubscribe();
