@@ -25,6 +25,7 @@ function AddMeasurement() {
   const fetchData = async () => {
     const unsubscribe = onAuthStateChanged(auth, async user => {
       if (!user) return;
+
       try {
         // Fetch user's preferred unit
         const userRef = doc(db, 'Users', user.uid);
@@ -39,10 +40,20 @@ function AddMeasurement() {
         setPumpkins(pumpkinsData);
 
         // Set default pumpkin
-        if (id) {
-          setSelectedPumpkin(id);
-        } else if (pumpkinsData.length > 0) {
-          setSelectedPumpkin(pumpkinsData[0].id);
+        setSelectedPumpkin(id || pumpkinsData.length > 0 ? pumpkinsData[0].id : null);
+
+        // Fetch last measurement if pumpkin is selected
+        if (id || pumpkinsData.length > 0) {
+          const selected = id || pumpkinsData[0].id;
+          const measurementQuery = query(collection(db, 'Users', user.uid, 'Pumpkins', selected, 'Measurements'), orderBy('timestamp', 'desc'), limit(1));
+          const measurementSnapshot = await getDocs(measurementQuery);
+          if (!measurementSnapshot.empty) {
+            const measurement = measurementSnapshot.docs[0].data();
+            setEndToEnd(parseFloat(measurement.endToEnd));
+            setSideToSide(parseFloat(measurement.sideToSide));
+            setCircumference(parseFloat(measurement.circumference));
+          }
+          setMeasurementDate(new Date());
         }
       } catch (error) {
         // Handle or log error
@@ -54,33 +65,6 @@ function AddMeasurement() {
 
   fetchData();
 }, [id]);
-
-
-  useEffect(() => {
-    const fetchLastMeasurement = async () => {
-      if(selectedPumpkin) {
-        const user = auth.currentUser;
-        if(user) {
-          const q = query(collection(db, 'Users', user.uid, 'Pumpkins', selectedPumpkin, 'Measurements'), orderBy('timestamp', 'desc'), limit(1));
-          const snapshot = await getDocs(q);
-          if(!snapshot.empty) {
-            const measurement = snapshot.docs[0].data();
-            setEndToEnd(parseFloat(measurement.endToEnd));
-            setSideToSide(parseFloat(measurement.sideToSide));
-            setCircumference(parseFloat(measurement.circumference));
-            setMeasurementDate(new Date());
-          } else {
-            setEndToEnd('');
-            setSideToSide('');
-            setCircumference('');
-            setMeasurementDate(new Date());
-          }
-        }
-      }
-    };
-
-    fetchLastMeasurement();
-  }, [selectedPumpkin]);
 
   const calculateEstimatedWeight = (endToEnd, sideToSide, circumference, measurementUnit) => {
     let ott = parseFloat(endToEnd) + parseFloat(sideToSide) + parseFloat(circumference);
@@ -111,7 +95,7 @@ function AddMeasurement() {
       navigate(`/pumpkin/${selectedPumpkin}`);
       toast.success("Measurement added successfully!");
     } catch (error) {
-      trackError(error, 'AddMeasurement - Failed');  // Add this line
+      trackError(error, 'AddMeasurement - Failed');
       toast.error("Failed to add measurement. Please ensure the date is valid and try again.");
     }
   }
