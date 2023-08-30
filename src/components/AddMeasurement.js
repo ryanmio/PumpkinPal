@@ -22,49 +22,59 @@ function AddMeasurement() {
   const [measurementDate, setMeasurementDate] = useState(new Date());
 
   useEffect(() => {
-  const fetchData = async () => {
-    const unsubscribe = onAuthStateChanged(auth, async user => {
-      if (!user) return;
+  let unsubscribe;
 
-      try {
-        // Fetch user's preferred unit
-        const userRef = doc(db, 'Users', user.uid);
-        const userDoc = await getDoc(userRef);
-        const fetchedUnit = userDoc.exists() && userDoc.data().preferredUnit ? userDoc.data().preferredUnit : 'in';
-        setMeasurementUnit(fetchedUnit);
+  const fetchData = async (user) => {
+    if (!user) return;
 
-        // Fetch pumpkins
-        const q = collection(db, 'Users', user.uid, 'Pumpkins');
-        const snapshot = await getDocs(q);
-        const pumpkinsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setPumpkins(pumpkinsData);
+    try {
+      // Fetch user's preferred unit
+      const userRef = doc(db, 'Users', user.uid);
+      const userDoc = await getDoc(userRef);
+      const fetchedUnit = userDoc.exists() && userDoc.data().preferredUnit ? userDoc.data().preferredUnit : 'in';
+      setMeasurementUnit(fetchedUnit);
 
-        // Set default pumpkin
-        setSelectedPumpkin(id || pumpkinsData.length > 0 ? pumpkinsData[0].id : null);
+      // Fetch pumpkins
+      const q = collection(db, 'Users', user.uid, 'Pumpkins');
+      const snapshot = await getDocs(q);
+      const pumpkinsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setPumpkins(pumpkinsData);
 
-        // Fetch last measurement if pumpkin is selected
-        if (id || pumpkinsData.length > 0) {
-          const selected = id || pumpkinsData[0].id;
-          const measurementQuery = query(collection(db, 'Users', user.uid, 'Pumpkins', selected, 'Measurements'), orderBy('timestamp', 'desc'), limit(1));
-          const measurementSnapshot = await getDocs(measurementQuery);
-          if (!measurementSnapshot.empty) {
-            const measurement = measurementSnapshot.docs[0].data();
-            setEndToEnd(parseFloat(measurement.endToEnd));
-            setSideToSide(parseFloat(measurement.sideToSide));
-            setCircumference(parseFloat(measurement.circumference));
-          }
-          setMeasurementDate(new Date());
+      // Set default pumpkin
+      setSelectedPumpkin(id || pumpkinsData.length > 0 ? pumpkinsData[0].id : null);
+
+      // Fetch last measurement if pumpkin is selected
+      if (id || pumpkinsData.length > 0) {
+        const selected = id || pumpkinsData[0].id;
+        const measurementQuery = query(collection(db, 'Users', user.uid, 'Pumpkins', selected, 'Measurements'), orderBy('timestamp', 'desc'), limit(1));
+        const measurementSnapshot = await getDocs(measurementQuery);
+        if (!measurementSnapshot.empty) {
+          const measurement = measurementSnapshot.docs[0].data();
+          setEndToEnd(parseFloat(measurement.endToEnd));
+          setSideToSide(parseFloat(measurement.sideToSide));
+          setCircumference(parseFloat(measurement.circumference));
         }
-      } catch (error) {
-  toast.error("Failed to fetch data: " + error.message);
-  trackError(error, 'FetchData', GA_CATEGORIES.USER, GA_ACTIONS.NEW_ACTION);
-}
-    });
+        setMeasurementDate(new Date());
+      }
+    } catch (error) {
+    if (error.code === 'permission-denied') {
+      toast.error("Permission denied.");
+    } else if (error.code === 'unavailable') {
+      toast.error("Service unavailable. Try again later.");
+    } else {
+      toast.error("Failed to fetch data: " + error.message);
+    }
+    trackError(error, 'FetchData', GA_CATEGORIES.USER, GA_ACTIONS.NEW_ACTION);
+  }
+};
 
-    return () => unsubscribe();
+  unsubscribe = onAuthStateChanged(auth, async user => {
+    await fetchData(user);
+  });
+
+  return () => {
+    if (unsubscribe) unsubscribe();
   };
-
-  fetchData();
 }, [id]);
 
   const calculateEstimatedWeight = (endToEnd, sideToSide, circumference, measurementUnit) => {
@@ -96,9 +106,14 @@ function AddMeasurement() {
       navigate(`/pumpkin/${selectedPumpkin}`);
       toast.success("Measurement added successfully!");
     } catch (error) {
-      trackError(error, 'AddMeasurement - Failed');
+    if (error.code === 'permission-denied') {
+      toast.error("Permission denied.");
+    } else if (error.code === 'unavailable') {
+      toast.error("Service unavailable. Try again later.");
+    } else {
       toast.error("Failed to add measurement. Please ensure the date is valid and try again.");
     }
+    trackError(error, 'AddMeasurement - Failed');
   }
 };
 
