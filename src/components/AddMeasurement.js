@@ -131,7 +131,7 @@ const addMeasurement = async (e) => {
                 <option key={pumpkin.id} value={pumpkin.id}>{pumpkin.name}</option>
               ))}
             </select>
-            <select value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)} className="mt-1 w-20 p-2 border-2 border-gray-300 rounded text-center -ml-1">
+            <select value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)} className="mt-1 w-20 p-2 pl-3 border-2 border-gray-300 rounded text-center">
               <option value="in">in</option>
               <option value="cm">cm</option>
             </select>
