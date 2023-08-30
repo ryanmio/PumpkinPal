@@ -78,15 +78,8 @@ function AddMeasurement() {
     }
     let weight = (((14.2 / (1 + 7.3 * Math.pow(2, -(ott) / 96))) ** 3 + (ott / 51) ** 2.91) - 8) * 0.993;
 
-    // If weight is less than 0, set it to 0
-    if (weight < 0) {
-      weight = 0;
-    }
-
-    return weight.toFixed(2);  // round to 2 decimal places
-};
-
-
+    return (Math.max(0, weight)).toFixed(2);
+    
  const addMeasurement = async (e) => {
     e.preventDefault();
     const estimatedWeight = calculateEstimatedWeight(parseFloat(endToEnd), parseFloat(sideToSide), parseFloat(circumference), measurementUnit);
