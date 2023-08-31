@@ -116,51 +116,31 @@ const ImageCard = ({ pumpkinId, pumpkinName }) => {
 
   const handleDownload = async () => {
   try {
-    // Find the image object to download
-    const imageToDownload = images.find(imageObj => imageObj.original === selectedImage);
+    const imageToDownload = images.find(img => img.original === selectedImage);
     if (!imageToDownload) return;
 
-    // Get the original image URL
     const originalURL = imageToDownload.original;
-
-    // Extract the extension from the URL
     const extension = originalURL.split('.').pop().split('?')[0];
+    const filename = `PumpkinPal_${pumpkinName}.${extension}`;
 
-    // Get the pumpkin name from the prop
-    const name = pumpkinName;
-
-    // Generate a filename using the pumpkin name and original extension
-    const filename = `PumpkinPal_${name}.${extension}`;
-
-    // Fetch the image as a Blob
     const response = await fetch(originalURL);
-
-    // Check for a 200 status code
-    if (response.status !== 200) {
-      throw new Error(`Failed to fetch image: ${response.status}`);
-    }
+    if (response.status !== 200) throw new Error(`Failed to fetch image: ${response.status}`);
 
     const blob = await response.blob();
-
-    // Create a URL for the Blob
     const blobURL = URL.createObjectURL(blob);
 
-    // Create the download link with the desired filename
     const downloadLink = document.createElement('a');
     downloadLink.href = blobURL;
     downloadLink.download = filename;
-
-    // Append the link, trigger the download, and then remove the link
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
 
-    // Revoke the blob URL to free up resources
     URL.revokeObjectURL(blobURL);
-  trackUserEvent(GA_ACTIONS.Download_Success, GA_CATEGORIES.ImageCard);
-    } catch (error) {
+    trackUserEvent(GA_ACTIONS.Download_Success, GA_CATEGORIES.ImageCard);
+  } catch (error) {
     trackError('Failed to download image', GA_CATEGORIES.ImageCard, 'handleDownload', GA_ACTIONS.Download_Failure);
-    console.error('Error downloading image:', error);
+    console.error('Error:', error);
     toast.error('Failed to download image. Please try again.');
   }
 };
