@@ -51,7 +51,7 @@ const GraphCard = ({ measurements, pumpkinName }) => {
       time: {
         unit: 'day',
         displayFormats: {
-          day: 'MMM d'  // Changed 'D' to 'd'
+          day: 'MMM d'
         }
       },
       title: {
@@ -72,7 +72,7 @@ const GraphCard = ({ measurements, pumpkinName }) => {
  return (
   <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto" ref={graphCardRef}>
     <button onClick={toggleFullscreen}>
-    <FullscreenIcon alt="Toggle Fullscreen" />
+    <FullscreenIcon alt="Toggle Fullscreen" className="w-5 h-5 text-gray-500 icon-hover" />
     </button>
     <h3 className="text-xl font-bold mb-2">{pumpkinName} Weight Trend</h3>
     <Line data={chartData} options={options} />
