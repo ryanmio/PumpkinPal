@@ -279,16 +279,17 @@ return (
     <h3 className="text-xl font-bold mb-4">Image Gallery</h3>
     <div className="grid grid-cols-2 gap-4">
       {images.map((imageObj, index) => (
-          <div key={index} onClick={() => openModal(imageObj.original)} className="w-full aspect-w-1 aspect-h-1">
-            <img src={imageObj.thumbnail} alt="Preview" className="w-full h-full object-cover" loading="lazy" />
-          </div>
-        ))}
-<div {...getRootProps()} className="w-full flex justify-center items-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 aspect-w-1 aspect-h-1">
-  <input {...getInputProps()} className="hidden" />
-  <div className="w-full h-full flex justify-center items-center">
-    <PlusIcon className="h-8 w-8 text-gray-400" />
-  </div>
-</div>
+        <div key={index} onClick={() => openModal(imageObj.original)} className="w-full aspect-ratio-square relative">
+          <img src={imageObj.thumbnail} alt="Preview" className="w-full h-full object-cover absolute top-0 left-0" loading="lazy" />
+        </div>
+      ))}
+      <div {...getRootProps()} className="w-full flex justify-center items-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 aspect-ratio-square relative">
+        <input {...getInputProps()} className="hidden" />
+        <div className="w-full h-full flex justify-center items-center absolute top-0 left-0">
+          <PlusIcon className="h-8 w-8 text-gray-400" />
+        </div>
+      </div>
+    </div>
 
     </div>
     <Modal isOpen={isModalOpen} onRequestClose={closeModal} className="flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-lg mx-auto mt-20">
