@@ -98,8 +98,8 @@ return (
           <h3 className="text-xl font-bold mb-2">Basic Info</h3>
           <p><b>Name:</b> {pumpkin?.name}</p>
           <p><b>Description:</b> {pumpkin?.description}</p>
-          <p><b>Maternal Lineage:</b> {pumpkin?.maternalLineage}</p>
-          <p><b>Paternal Lineage:</b> {pumpkin?.paternalLineage}</p>
+          <p><b>Seed:</b> {pumpkin?.maternalLineage}</p>
+          <p><b>Cross:</b> {pumpkin?.paternalLineage}</p>
         </div>
         <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 self-end">Edit Info</button>
       </div>

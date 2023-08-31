@@ -60,12 +60,12 @@ function PumpkinForm() {
           </div>
           
           <div className="field space-y-1">
-            <label className="block text-left">Maternal Lineage:</label>
+            <label className="block text-left">Seed:</label>
             <input type="text" placeholder="1375 Connolly" value={maternalLineage} onChange={(e) => setMaternalLineage(e.target.value)} className="w-full p-2 border-2 border-gray-300 rounded" />
           </div>
 
           <div className="field space-y-1">
-            <label className="block text-left">Paternal Lineage:</label>
+            <label className="block text-left">Cross:</label>
             <input type="text" placeholder="1676 New" value={paternalLineage} onChange={(e) => setPaternalLineage(e.target.value)} className="w-full p-2 border-2 border-gray-300 rounded" />
           </div>
           
