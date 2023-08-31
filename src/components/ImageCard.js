@@ -294,7 +294,7 @@ return (
     <Modal isOpen={isModalOpen} onRequestClose={closeModal} className="flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-lg mx-auto mt-20">
       <button onClick={closeModal} className="self-start text-xl font-bold">&times;</button>
       {isLoading ? (
-        <Spinner /> // Show spinner while loading
+        <Spinner />
       ) : (
         <img src={selectedImage} alt="Selected" className="max-w-full max-h-64 object-contain" />
       )}
