@@ -6,7 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import MeasurementInput from './MeasurementInput';
 import DateInput from './DateInput';
 import toast, { Toaster } from 'react-hot-toast';
-import { GA_ACTIONS, GA_CATEGORIES, trackUserEvent, trackError } from '../utilities/error-analytics';
+import { GA_ACTIONS, trackUserEvent, trackError } from '../utilities/error-analytics';
 import Button from '../utilities/Button';
 
 function AddMeasurement() {
@@ -15,57 +15,61 @@ function AddMeasurement() {
 
   const [pumpkins, setPumpkins] = useState([]);
   const [selectedPumpkin, setSelectedPumpkin] = useState('');
-  const [endToEnd, setEndToEnd] = useState('0');
-  const [sideToSide, setSideToSide] = useState('0');
-  const [circumference, setCircumference] = useState('0');
+  const [endToEnd, setEndToEnd] = useState('');
+  const [sideToSide, setSideToSide] = useState('');
+  const [circumference, setCircumference] = useState('');
   const [measurementUnit, setMeasurementUnit] = useState('cm'); 
   const [measurementDate, setMeasurementDate] = useState(new Date());
 
   useEffect(() => {
-  const fetchData = async () => {
     const unsubscribe = onAuthStateChanged(auth, async user => {
-      if (!user) return;
-
-      try {
-        // Fetch user's preferred unit
+      if (user) {
         const userRef = doc(db, 'Users', user.uid);
         const userDoc = await getDoc(userRef);
         const fetchedUnit = userDoc.exists() && userDoc.data().preferredUnit ? userDoc.data().preferredUnit : 'in';
         setMeasurementUnit(fetchedUnit);
 
-        // Fetch pumpkins
         const q = collection(db, 'Users', user.uid, 'Pumpkins');
         const snapshot = await getDocs(q);
         const pumpkinsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setPumpkins(pumpkinsData);
 
-        // Set default pumpkin
-        setSelectedPumpkin(id || pumpkinsData.length > 0 ? pumpkinsData[0].id : null);
-
-        // Fetch last measurement if pumpkin is selected
-        if (id || pumpkinsData.length > 0) {
-          const selected = id || pumpkinsData[0].id;
-          const measurementQuery = query(collection(db, 'Users', user.uid, 'Pumpkins', selected, 'Measurements'), orderBy('timestamp', 'desc'), limit(1));
-          const measurementSnapshot = await getDocs(measurementQuery);
-          if (!measurementSnapshot.empty) {
-            const measurement = measurementSnapshot.docs[0].data();
-            setEndToEnd(parseFloat(measurement.endToEnd));
-            setSideToSide(parseFloat(measurement.sideToSide));
-            setCircumference(parseFloat(measurement.circumference));
-          }
-          setMeasurementDate(new Date());
+        if (id) {
+          setSelectedPumpkin(id);
+        } else if (pumpkinsData.length > 0) {
+          setSelectedPumpkin(pumpkinsData[0].id);
         }
-      } catch (error) {
-  toast.error("Failed to fetch data: " + error.message);
-  trackError(error, 'FetchData', GA_CATEGORIES.USER, GA_ACTIONS.NEW_ACTION);
-}
+      }
     });
 
     return () => unsubscribe();
-  };
+  }, [id]);
 
-  fetchData();
-}, [id]);
+  useEffect(() => {
+    const fetchLastMeasurement = async () => {
+      if(selectedPumpkin) {
+        const user = auth.currentUser;
+        if(user) {
+          const q = query(collection(db, 'Users', user.uid, 'Pumpkins', selectedPumpkin, 'Measurements'), orderBy('timestamp', 'desc'), limit(1));
+          const snapshot = await getDocs(q);
+          if(!snapshot.empty) {
+            const measurement = snapshot.docs[0].data();
+            setEndToEnd(parseFloat(measurement.endToEnd));
+            setSideToSide(parseFloat(measurement.sideToSide));
+            setCircumference(parseFloat(measurement.circumference));
+            setMeasurementDate(new Date());
+          } else {
+            setEndToEnd('');
+            setSideToSide('');
+            setCircumference('');
+            setMeasurementDate(new Date());
+          }
+        }
+      }
+    };
+
+    fetchLastMeasurement();
+  }, [selectedPumpkin]);
 
   const calculateEstimatedWeight = (endToEnd, sideToSide, circumference, measurementUnit) => {
     let ott = parseFloat(endToEnd) + parseFloat(sideToSide) + parseFloat(circumference);
@@ -74,15 +78,23 @@ function AddMeasurement() {
     }
     let weight = (((14.2 / (1 + 7.3 * Math.pow(2, -(ott) / 96))) ** 3 + (ott / 51) ** 2.91) - 8) * 0.993;
 
- return (Math.max(0, weight)).toFixed(2);
+    return (Math.max(0, weight)).toFixed(2);
 };
-    
- const addMeasurement = async (e) => {
-    e.preventDefault();
-    const estimatedWeight = calculateEstimatedWeight(parseFloat(endToEnd), parseFloat(sideToSide), parseFloat(circumference), measurementUnit);
-    const measurementId = Date.now().toString();
-    const user = auth.currentUser;
-    if(user && selectedPumpkin) {
+
+
+  const calculateOTT = () => {
+    if(endToEnd && sideToSide && circumference) {
+      return parseFloat(endToEnd) + parseFloat(sideToSide) + parseFloat(circumference);
+    }
+    return 0;
+  };
+
+const addMeasurement = async (e) => {
+  e.preventDefault();
+  const estimatedWeight = calculateEstimatedWeight(endToEnd, sideToSide, circumference, measurementUnit);
+  const measurementId = Date.now().toString();
+  const user = auth.currentUser;
+  if(user && selectedPumpkin) {
     try {
       await setDoc(doc(db, 'Users', user.uid, 'Pumpkins', selectedPumpkin, 'Measurements', measurementId), {
         endToEnd,
@@ -96,7 +108,7 @@ function AddMeasurement() {
       navigate(`/pumpkin/${selectedPumpkin}`);
       toast.success("Measurement added successfully!");
     } catch (error) {
-      trackError(error, 'AddMeasurement - Failed');
+      trackError(error, 'AddMeasurement - Failed');  // Add this line
       toast.error("Failed to add measurement. Please ensure the date is valid and try again.");
     }
   }
@@ -120,36 +132,34 @@ function AddMeasurement() {
             </select>
           </div>
           <MeasurementInput 
-          id="endToEnd"
-          placeholder="End to End"
-          onChange={(e) => setEndToEnd(e.target.value)}
-          min={0} 
-          max={999}
-          value={endToEnd} 
-        />
-        <MeasurementInput 
-          id="sideToSide"
-          placeholder="Side to Side"
-          onChange={(e) => setSideToSide(e.target.value)}
-          min={0} 
-          max={999}
-          value={sideToSide} 
-        />
-        <MeasurementInput 
-          id="circumference"
-          placeholder="Circumference"
-          onChange={(e) => setCircumference(e.target.value)}
-          min={0} 
-          max={999}
-          value={circumference} 
-        />
-          <div className="flex flex-col">
+            id="endToEnd"
+            placeholder="End to End"
+            onChange={(e) => setEndToEnd(parseFloat(e.target.value))}
+            min={0} 
+            max={999}
+            value={endToEnd} 
+          />
+          <MeasurementInput 
+            id="sideToSide"
+            placeholder="Side to Side"
+            onChange={(e) => setSideToSide(parseFloat(e.target.value))}
+            min={0} 
+            max={999}
+            value={sideToSide} 
+          />
+          <MeasurementInput 
+            id="circumference"
+            placeholder="Circumference"
+            onChange={(e) => setCircumference(parseFloat(e.target.value))}
+            min={0} 
+            max={999}
+            value={circumference} 
+          />
           <DateInput 
             id="measurementDate"
             selected={measurementDate}
             onChange={(date) => setMeasurementDate(date)} 
           />
-        </div>
          <div className="flex justify-between items-center mt-4">
           <button type="button" onClick={() => navigate('/dashboard')} className="text-blue-600 hover:underline">Cancel</button>
           <Button 
@@ -157,7 +167,7 @@ function AddMeasurement() {
             disabled={!(endToEnd && sideToSide && circumference)}
             extraClasses={`${endToEnd && sideToSide && circumference ? 'bg-green-button hover:bg-green-button-hover' : 'button-disabled'}`}
           >
-            Save Measurement (OTT: {parseFloat(endToEnd) + parseFloat(sideToSide) + parseFloat(circumference)})
+            Save Measurement (OTT: {calculateOTT()})
           </Button>
         </div>
 
