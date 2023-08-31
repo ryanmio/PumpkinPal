@@ -440,3 +440,16 @@ a, .link {
     margin-left: 0;
   }
 }
+
+
+.aspect-ratio-square::before {
+  float: left;
+  padding-top: 100%;
+  content: "";
+}
+
+.aspect-ratio-square::after {
+  content: "";
+  display: table;
+  clear: both;
+}
