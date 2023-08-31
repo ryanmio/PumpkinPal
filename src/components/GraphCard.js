@@ -73,9 +73,9 @@ const GraphCard = ({ measurements, pumpkinName }) => {
   <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto" ref={graphCardRef}>
     <div className="flex justify-center items-start relative">
       <h3 className="text-xl font-bold mb-2">{pumpkinName} Weight Trend</h3>
-      <button onClick={toggleFullscreen} className="hover:scale-110 hover:text-gray-700 transition duration-300 ease-in-out absolute right-0 top-0">
-  <FullscreenIcon alt="Toggle Fullscreen" className="w-7 h-7 text-gray-500 icon-hover" />
-</button>
+      <button onClick={toggleFullscreen} className="absolute right-0 top-0">
+          <FullscreenIcon alt="Toggle Fullscreen" />
+        </button>
     </div>
     <Line data={chartData} options={options} />
   </div>
