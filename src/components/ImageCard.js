@@ -231,7 +231,6 @@ img.onload = () => setIsLoading(false);
   
   return () => { isMounted = false; };
 }, [user.uid, pumpkinId]);
-};
 
   const handleUpload = async ([file]) => {
   try {
