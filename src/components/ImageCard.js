@@ -227,9 +227,7 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
   // Preload the image and listen for the load event
   const img = new Image();
   img.src = image;
-  img.onload = () => {
-    setIsLoading(false);
-  };
+  img.onload = () => setIsLoading(false);
 };
 
   const closeModal = () => {
