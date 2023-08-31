@@ -22,27 +22,42 @@ const ImageCard = ({ pumpkinId, pumpkinName }) => {
   const { user } = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchPumpkinData = async (pumpkinId) => {
-    const pumpkinDoc = await getDoc(doc(db, 'Users', user.uid, 'Pumpkins', pumpkinId));
-    return pumpkinDoc.data();
-  };
-
   const calculateLatestWeight = async (pumpkinId) => {
-    const pumpkinData = await fetchPumpkinData(pumpkinId);
-    if (pumpkinData?.weights?.length > 0) {
-      return pumpkinData.weights[pumpkinData.weights.length - 1].weight;
-    }
-    return null;
-  };
+  // Fetch the pumpkin document
+  const pumpkinDoc = await getDoc(doc(db, 'Users', user.uid, 'Pumpkins', pumpkinId));
+  const pumpkinData = pumpkinDoc.data();
 
-  const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
-    const pumpkinData = await fetchPumpkinData(pumpkinId);
-    if (pumpkinData?.pollinationDate) {
-      const pollinationDate = new Date(pumpkinData.pollinationDate);
-      return differenceInDays(shareDate, pollinationDate);
-    }
+  // Check if the 'weights' field is defined
+  if (pumpkinData && pumpkinData.weights && pumpkinData.weights.length > 0) {
+    // Calculate the latest weight
+    const latestWeight = pumpkinData.weights[pumpkinData.weights.length - 1].weight;
+    console.log('Latest weight:', latestWeight);
+    return latestWeight;
+  } else {
+    console.log('No weights field found or it is empty in the pumpkin document.');
     return null;
-  };
+  }
+};
+
+const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
+  // Fetch the pumpkin document
+  const pumpkinDoc = await getDoc(doc(db, 'Users', user.uid, 'Pumpkins', pumpkinId));
+  const pumpkinData = pumpkinDoc.data();
+
+  // Check if the 'pollinationDate' field is defined
+  if (pumpkinData && pumpkinData.pollinationDate) {
+    // Convert pollinationDate to a Date object if it's a string
+    const pollinationDate = new Date(pumpkinData.pollinationDate);
+
+    // Calculate the days after pollination using shareDate
+    const daysAfterPollination = differenceInDays(shareDate, pollinationDate);
+    console.log('Days after pollination:', daysAfterPollination);
+    return daysAfterPollination;
+  } else {
+    console.log('No pollinationDate field found in the pumpkin document.');
+    return null;
+  }
+};
 
   const addSharedImage = async (imageUrl, pumpkinId, userId, pumpkinName) => {
   // Define the share date
