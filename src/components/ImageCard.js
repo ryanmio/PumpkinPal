@@ -5,11 +5,10 @@ import { toast } from 'react-hot-toast';
 import PlusIcon from './icons/PlusIcon';
 import { UserContext } from '../contexts/UserContext';
 import { updateDoc, collection, doc, getDoc, addDoc } from 'firebase/firestore';
-import { ref } from 'firebase/storage';
+import { ref, deleteObject } from 'firebase/storage';
 import Modal from 'react-modal';
 import Button from '../utilities/Button';
 import Spinner from '../components/Spinner';
-import { deleteObject } from 'firebase/storage';
 import { differenceInDays } from 'date-fns';
 import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../utilities/error-analytics';
 import { useDropzone } from 'react-dropzone';
@@ -187,10 +186,8 @@ const ImageCard = ({ pumpkinId, pumpkinName }) => {
     const pumpkinRef = doc(pumpkinsCollection, pumpkinId);
     await updateDoc(pumpkinRef, { images: updatedImages });
 
-    // Update the local state
+    // Update the local state and close the modal
     setImages(updatedImages);
-
-    // Close the modal
     closeModal();
 
     // Show a success toast
@@ -210,43 +207,30 @@ const ImageCard = ({ pumpkinId, pumpkinName }) => {
   setIsLoading(true);
 
   // Preload the image and listen for the load event
-  const img = new Image();
-  img.src = image;
-  img.onload = () => {
-    setIsLoading(false);
-  };
-};
+const img = new Image();
+img.src = image;
+img.onload = () => setIsLoading(false);
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+  const closeModal = () => setIsModalOpen(false);
 
   useEffect(() => {
-    let isMounted = true; // Track whether the component is mounted
+  let isMounted = true;
 
-    const fetchImages = async () => {
-      try {
-        const usersCollection = collection(db, 'Users');
-        const userDoc = doc(usersCollection, user.uid);
-        const pumpkinsCollection = collection(userDoc, 'Pumpkins');
-        const pumpkinRef = doc(pumpkinsCollection, pumpkinId);
+  const fetchImages = async () => {
+    try {
+      const pumpkinRef = doc(db, 'Users', user.uid, 'Pumpkins', pumpkinId);
+      const pumpkinDoc = await getDoc(pumpkinRef);
+      if (pumpkinDoc.exists() && isMounted) setImages(pumpkinDoc.data().images || []);
+    } catch (error) {
+      console.error('Error fetching images:', error);
+      toast.error('Failed to fetch images. Please try again.');
+    }
+  };
 
-        const pumpkinDoc = await getDoc(pumpkinRef);
-        if (pumpkinDoc.exists() && isMounted) {
-          setImages(pumpkinDoc.data().images || []);
-        }
-      } catch (error) {
-        console.error('Error fetching images:', error);
-        toast.error('Failed to fetch images. Please try again.');
-      }
-    };
-
-    fetchImages();
-
-    return () => {
-      isMounted = false; // Cleanup
-    };
-  }, [user.uid, pumpkinId]);
+  fetchImages();
+  
+  return () => { isMounted = false; };
+}, [user.uid, pumpkinId]);
 
   const handleUpload = async ([file]) => {
   try {
@@ -279,7 +263,7 @@ return (
     <Modal isOpen={isModalOpen} onRequestClose={closeModal} className="flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-lg mx-auto mt-20">
       <button onClick={closeModal} className="self-start text-xl font-bold">&times;</button>
       {isLoading ? (
-        <Spinner /> // Show spinner while loading
+        <Spinner />
       ) : (
         <img src={selectedImage} alt="Selected" className="max-w-full max-h-64 object-contain" />
       )}
