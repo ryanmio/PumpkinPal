@@ -4,11 +4,7 @@ import { storage, db } from '../firebase';
 import { toast } from 'react-hot-toast';
 import { UserContext } from '../contexts/UserContext';
 import { updateDoc, collection, doc, getDoc, addDoc } from 'firebase/firestore';
-import { ref } from 'firebase/storage';
-import Modal from 'react-modal';
-import Button from '../utilities/Button';
-import Spinner from '../components/Spinner';
-import { deleteObject } from 'firebase/storage';
+import { ref, deleteObject } from 'firebase/storage';
 import { differenceInDays } from 'date-fns';
 import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../utilities/error-analytics';
 import { showDeleteConfirmation } from '../components/Alert';
@@ -237,7 +233,7 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
   };
 
   useEffect(() => {
-    let isMounted = true; // Track whether the component is mounted
+    let isMounted = true;
 
     const fetchImages = async () => {
       try {
@@ -259,7 +255,7 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
     fetchImages();
 
     return () => {
-      isMounted = false; // Cleanup
+      isMounted = false;
     };
   }, [user.uid, pumpkinId]);
 
