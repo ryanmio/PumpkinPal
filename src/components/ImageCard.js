@@ -14,6 +14,7 @@ import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../utilit
 import { showDeleteConfirmation } from '../components/Alert';
 import uploadImage from '../utilities/uploadImage';
 import ImageGallery from './ImageGallery';
+import ImageModal from './ImageModal';
 
 const ImageCard = ({ pumpkinId, pumpkinName }) => {
   const [images, setImages] = useState([]);
@@ -275,19 +276,15 @@ return (
   <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-12">
     <h3 className="text-xl font-bold mb-4">Image Gallery</h3>
     <ImageGallery images={images} openModal={openModal} handleUpload={handleUpload} />
-    <Modal isOpen={isModalOpen} onRequestClose={closeModal} className="flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-lg mx-auto mt-20">
-      <button onClick={closeModal} className="self-start text-xl font-bold">&times;</button>
-      {isLoading ? (
-        <Spinner />
-      ) : (
-        <img src={selectedImage} alt="Selected" className="max-w-full max-h-64 object-contain" />
-      )}
-      <div className="flex space-x-4 mt-4">
-        <Button onClick={handleShare}>Share to Facebook</Button>
-        <Button onClick={handleDownload}>Download</Button>
-        <Button onClick={handleDelete}>Delete</Button>
-      </div>
-    </Modal>
+    <ImageModal 
+      isOpen={isModalOpen} 
+      closeModal={closeModal} 
+      selectedImage={selectedImage} 
+      isLoading={isLoading}
+      handleShare={handleShare}
+      handleDownload={handleDownload}
+      handleDelete={handleDelete}
+    />
   </div>
 );
 };
