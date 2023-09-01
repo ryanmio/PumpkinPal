@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { storage, db } from '../firebase';
 import { toast } from 'react-hot-toast';
-import PlusIcon from './icons/PlusIcon';
 import { UserContext } from '../contexts/UserContext';
 import { updateDoc, collection, doc, getDoc, addDoc } from 'firebase/firestore';
 import { ref } from 'firebase/storage';
@@ -12,7 +11,6 @@ import Spinner from '../components/Spinner';
 import { deleteObject } from 'firebase/storage';
 import { differenceInDays } from 'date-fns';
 import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../utilities/error-analytics';
-import { useDropzone } from 'react-dropzone';
 import { showDeleteConfirmation } from '../components/Alert';
 import uploadImage from '../utilities/uploadImage';
 import ImageGallery from './ImageGallery';
@@ -272,8 +270,6 @@ const calculateDaysAfterPollination = async (pumpkinId, shareDate) => {
     console.error('Error uploading image:', error);
   }
 };
-
-const { getRootProps, getInputProps } = useDropzone({ onDrop: handleUpload });
 
 return (
   <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-12">
