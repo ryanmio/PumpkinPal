@@ -15,6 +15,7 @@ import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../utilit
 import { useDropzone } from 'react-dropzone';
 import { showDeleteConfirmation } from '../components/Alert';
 import uploadImage from '../utilities/uploadImage';
+import ImageGallery from './ImageGallery';
 
 const ImageCard = ({ pumpkinId, pumpkinName }) => {
   const [images, setImages] = useState([]);
@@ -277,19 +278,7 @@ const { getRootProps, getInputProps } = useDropzone({ onDrop: handleUpload });
 return (
   <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto mb-12">
     <h3 className="text-xl font-bold mb-4">Image Gallery</h3>
-    <div className="grid grid-cols-2 gap-4">
-      {images.map((imageObj, index) => (
-        <div key={index} onClick={() => openModal(imageObj.original)} className="w-full aspect-ratio-square relative">
-          <img src={imageObj.thumbnail} alt="Preview" className="w-full h-full object-cover absolute top-0 left-0" loading="lazy" />
-        </div>
-      ))}
-      <div {...getRootProps()} className="w-full flex justify-center items-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 aspect-ratio-square relative">
-        <input {...getInputProps()} className="hidden" />
-        <div className="w-full h-full flex justify-center items-center absolute top-0 left-0">
-          <PlusIcon className="h-8 w-8 text-gray-400" />
-        </div>
-      </div>
-    </div>
+    <ImageGallery images={images} openModal={openModal} handleUpload={handleUpload} />
     <Modal isOpen={isModalOpen} onRequestClose={closeModal} className="flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-lg mx-auto mt-20">
       <button onClick={closeModal} className="self-start text-xl font-bold">&times;</button>
       {isLoading ? (
