@@ -5,6 +5,7 @@ import { collection, doc, getDoc, orderBy, onSnapshot, query } from 'firebase/fi
 import MeasurementsCard from './MeasurementsCard';
 import GraphCard from './GraphCard';
 import { toast } from 'react-hot-toast';
+import Spinner from './Spinner';
 
 const LazyImageCard = lazy(() => import('./ImageCard'));
 
@@ -97,8 +98,8 @@ return (
           <h3 className="text-xl font-bold mb-2">Basic Info</h3>
           <p><b>Name:</b> {pumpkin?.name}</p>
           <p><b>Description:</b> {pumpkin?.description}</p>
-          <p><b>Maternal Lineage:</b> {pumpkin?.maternalLineage}</p>
-          <p><b>Paternal Lineage:</b> {pumpkin?.paternalLineage}</p>
+          <p><b>Seed:</b> {pumpkin?.maternalLineage}</p>
+          <p><b>Cross:</b> {pumpkin?.paternalLineage}</p>
         </div>
         <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 self-end">Edit Info</button>
       </div>
@@ -118,11 +119,17 @@ return (
  {/* Card 3: Measurements */}
    <MeasurementsCard measurements={measurements} navigate={navigate} pumpkinId={id} pumpkin={pumpkin} />
 
-    {/* Card 4: Graph */}
-    <GraphCard
-      measurements={measurements}
-      pumpkinName={pumpkin?.name}
-    />
+   {/* Card 4: Graph */}
+{measurements && pumpkin ? (
+  <GraphCard
+    measurements={measurements}
+    pumpkinName={pumpkin?.name}
+  />
+) : measurements === null || pumpkin === null ? (
+  <div>Error loading graph.</div>
+) : (
+  <Spinner />
+)}
 
     {/* Card 5: Image Upload */}
         <Suspense fallback={<div>Loading...</div>}>

@@ -70,12 +70,12 @@ function EditPumpkin() {
           </div>
           
           <div className="field space-y-1">
-            <label className="block text-left">Maternal Lineage:</label>
+            <label className="block text-left">Seed:</label>
             <input name="maternalLineage" value={pumpkin.maternalLineage} onChange={handleChange} className="w-full p-2 border-2 border-gray-300 rounded" />
           </div>
 
           <div className="field space-y-1">
-            <label className="block text-left">Paternal Lineage:</label>
+            <label className="block text-left">Cross:</label>
             <input name="paternalLineage" value={pumpkin.paternalLineage} onChange={handleChange} className="w-full p-2 border-2 border-gray-300 rounded" />
           </div>
           

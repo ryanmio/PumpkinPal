@@ -200,27 +200,6 @@ button.button-disabled {
   cursor: not-allowed!important;
 }
 
-.date-input .label-float {
-    color: #9e9e9e;
-    left: 15px;
-    position: absolute;
-    top: 15px !important;
-    transition: .2s;
-    padding: 0 5px;
-    pointer-events: none;
-    font-size: 0.8rem;
-}
-
-.date-input .input.filled + .label-float {
-  color: #80876E !important;
-}
-
-.date-input .input {
-  font-size: 1rem; 
-  padding: 0.5rem;  
-  height: auto;  
-}
-
 .modal-button {
   background-color: #80876E;
   color: white;
@@ -460,4 +439,17 @@ a, .link {
   .main-content.closed {
     margin-left: 0;
   }
+}
+
+
+.aspect-ratio-square::before {
+  float: left;
+  padding-top: 100%;
+  content: "";
+}
+
+.aspect-ratio-square::after {
+  content: "";
+  display: table;
+  clear: both;
 }

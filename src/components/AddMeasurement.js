@@ -78,12 +78,7 @@ function AddMeasurement() {
     }
     let weight = (((14.2 / (1 + 7.3 * Math.pow(2, -(ott) / 96))) ** 3 + (ott / 51) ** 2.91) - 8) * 0.993;
 
-    // If weight is less than 0, set it to 0
-    if (weight < 0) {
-      weight = 0;
-    }
-
-    return weight.toFixed(2);  // round to 2 decimal places
+    return (Math.max(0, weight)).toFixed(2);
 };
 
 
@@ -131,7 +126,7 @@ const addMeasurement = async (e) => {
                 <option key={pumpkin.id} value={pumpkin.id}>{pumpkin.name}</option>
               ))}
             </select>
-            <select value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)} className="mt-1 w-auto p-2 border-2 border-gray-300 rounded text-center">
+            <select value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)} className="mt-1 w-16 p-2 border-2 border-gray-300 rounded">
               <option value="in">in</option>
               <option value="cm">cm</option>
             </select>
@@ -160,11 +155,13 @@ const addMeasurement = async (e) => {
             max={999}
             value={circumference} 
           />
+           <div className="flex flex-col">
           <DateInput 
             id="measurementDate"
             selected={measurementDate}
             onChange={(date) => setMeasurementDate(date)} 
           />
+        </div>
          <div className="flex justify-between items-center mt-4">
           <button type="button" onClick={() => navigate('/dashboard')} className="text-blue-600 hover:underline">Cancel</button>
           <Button 

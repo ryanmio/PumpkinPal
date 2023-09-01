@@ -4,21 +4,23 @@ import moment from 'moment';
 import { toast } from 'react-hot-toast';
 
 function CustomInput({ value, onClick, className, onBlur, onChange }) {
-  const id = "custom-date-input"; // or any other unique id
+  const id = "custom-date-input";
   const isToday = value && new Date(value).toDateString() === new Date().toDateString();
   
   return (
-    <div className={`relative date-input ${value ? "filled" : ""}`}>
+    <div className="relative">
       <input 
         id={id}
-        className={`input text-center text-2xl w-full p-2 border-2 border-gray-300 rounded ${value ? "filled" : ""}`}
+        className={`text-center text-xl w-full p-2 border-2 border-gray-300 rounded ${value ? 'text-80876E' : 'text-gray-600'}`}
         onClick={onClick}
         onBlur={onBlur}
         onChange={onChange}
         value={value}
         autoComplete="off"
       />
-      <label htmlFor={id} className={`absolute left-0 top-0 label-float ${value ? "filled" : ""}`}>{isToday ? "Date (Today)" : "Date"}</label>
+      <label htmlFor={id} className={`absolute left-4 top-4 transition-all duration-200 ${value ? 'text-80876E' : 'text-gray-600'} text-sm`}>
+        {isToday ? "Date (Today)" : "Date"}
+      </label>
     </div>
   )
 }
