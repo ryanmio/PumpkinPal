@@ -9,7 +9,7 @@ import { showDeleteConfirmation } from '../components/Alert';
 import { addDoc, collection, updateDoc, getDoc, doc } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 import { differenceInDays } from 'date-fns';
-
+import FullscreenIcon from './icons/FullscreenIcon';
 
 const ImageModal = ({ isOpen, closeModal, selectedImage, isLoading, images, pumpkinId, user, pumpkinName, db, storage, updateImages }) => {
   const modalRef = useRef(null);
