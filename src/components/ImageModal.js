@@ -135,7 +135,8 @@ const ImageModal = ({ isOpen, closeModal, selectedImage, isLoading, images, pump
         const pumpkinsCollection = collection(userDoc, 'Pumpkins');
         const pumpkinRef = doc(pumpkinsCollection, pumpkinId);
         await updateDoc(pumpkinRef, { images: updatedImages });
-        closeModal();
+          updateImages(updatedImages);  // New line
+          closeModal();
         toast.success('Image deleted successfully.');
         trackUserEvent(GA_ACTIONS.Delete_Success, GA_CATEGORIES.ImageCard);
       } catch (error) {

@@ -29,6 +29,10 @@ const ImageCard = ({ pumpkinId, pumpkinName }) => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+    
+  const updateImages = (newImages) => {
+    setImages(newImages);
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -80,6 +84,7 @@ const ImageCard = ({ pumpkinId, pumpkinName }) => {
         pumpkinName={pumpkinName}
         db={db}
         storage={storage}
+        updateImages={updateImages}
       />
     </div>
   );
