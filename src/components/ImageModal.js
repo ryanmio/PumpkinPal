@@ -6,10 +6,9 @@ import Spinner from '../components/Spinner';
 import { toast } from 'react-hot-toast';
 import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../utilities/error-analytics';
 import { showDeleteConfirmation } from '../components/Alert';
-import { addDoc, collection, updateDoc, doc } from 'firebase/firestore';
+import { addDoc, collection, updateDoc, getDoc, doc } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 import { differenceInDays } from 'date-fns';
-import { getDoc, doc, addDoc, collection } from 'firebase/firestore';
 
 
 const ImageModal = ({ isOpen, closeModal, selectedImage, isLoading, images, pumpkinId, user, pumpkinName, db, storage }) => {
