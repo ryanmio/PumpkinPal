@@ -1,3 +1,4 @@
+/* global FB */
 import React from 'react';
 import Modal from 'react-modal';
 import Button from '../utilities/Button';
@@ -8,6 +9,8 @@ import { showDeleteConfirmation } from '../components/Alert';
 import { addDoc, collection, updateDoc, doc } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 import { differenceInDays } from 'date-fns';
+import { getDoc, doc, addDoc, collection } from 'firebase/firestore';
+
 
 const ImageModal = ({ isOpen, closeModal, selectedImage, isLoading, images, pumpkinId, user, pumpkinName, db, storage }) => {
   
