@@ -1,5 +1,5 @@
 /* global FB */
-import React from 'react';
+import React, { useRef } from 'react';
 import Modal from 'react-modal';
 import Button from '../utilities/Button';
 import Spinner from '../components/Spinner';
@@ -12,6 +12,7 @@ import { differenceInDays } from 'date-fns';
 
 
 const ImageModal = ({ isOpen, closeModal, selectedImage, isLoading, images, pumpkinId, user, pumpkinName, db, storage, updateImages }) => {
+  const modalRef = useRef(null);
   
   const calculateLatestWeight = async () => {
     const pumpkinDoc = await getDoc(doc(db, 'Users', user.uid, 'Pumpkins', pumpkinId));
@@ -145,10 +146,30 @@ const ImageModal = ({ isOpen, closeModal, selectedImage, isLoading, images, pump
       }
     });
   };
+    
+    const toggleFullscreen = () => {
+    const elem = modalRef.current;
+
+    if (!document.fullscreenElement) {
+      elem.requestFullscreen().catch(err => {
+        alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
 
   return (
-    <Modal isOpen={isOpen} onRequestClose={closeModal} className="flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-lg mx-auto mt-20">
+    <Modal 
+      isOpen={isOpen} 
+      onRequestClose={closeModal} 
+      className="flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-lg mx-auto mt-20"
+      ref={modalRef}
+    >
       <button onClick={closeModal} className="self-start text-xl font-bold">&times;</button>
+      <button onClick={toggleFullscreen} className="hover:scale-110 hover:text-gray-700 transition      duration-300 ease-in-out absolute right-0 top-0">
+      <FullscreenIcon alt="Toggle Fullscreen" className="w-7 h-7 text-gray-500 icon-hover" />
+      </button>
       {isLoading ? (
         <Spinner />
       ) : (
