@@ -11,7 +11,7 @@ import { deleteObject, ref } from 'firebase/storage';
 import { differenceInDays } from 'date-fns';
 
 
-const ImageModal = ({ isOpen, closeModal, selectedImage, isLoading, images, pumpkinId, user, pumpkinName, db, storage }) => {
+const ImageModal = ({ isOpen, closeModal, selectedImage, isLoading, images, pumpkinId, user, pumpkinName, db, storage, updateImages }) => {
   
   const calculateLatestWeight = async () => {
     const pumpkinDoc = await getDoc(doc(db, 'Users', user.uid, 'Pumpkins', pumpkinId));
