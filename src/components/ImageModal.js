@@ -164,23 +164,25 @@ const ImageModal = ({ isOpen, closeModal, selectedImage, isLoading, images, pump
     isOpen={isOpen} 
     onRequestClose={closeModal} 
     className="flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-lg mx-auto mt-20"
-    ref={modalRef}
   >
-    <div className="w-full flex justify-between">
-      <button onClick={closeModal} className="text-xl font-bold">&times;</button>
-      <button onClick={toggleFullscreen} className="hover:scale-110 hover:text-gray-700 transition duration-300 ease-in-out">
+    <div ref={modalRef} className="relative w-full">
+      <button onClick={closeModal} className="absolute top-0 left-0 text-xl font-bold">&times;</button>
+      <button onClick={toggleFullscreen} className="absolute top-0 right-0 hover:scale-110 hover:text-gray-700 transition duration-300 ease-in-out">
         <FullscreenIcon alt="Toggle Fullscreen" className="w-7 h-7 text-gray-500 icon-hover" />
       </button>
-    </div>
-    {isLoading ? (
-      <Spinner />
-    ) : (
-      <img src={selectedImage} alt="Selected" className="max-w-full max-h-64 object-contain" />
-    )}
-    <div className="flex space-x-4 mt-4">
-      <Button onClick={handleShare}>Share to Facebook</Button>
-      <Button onClick={handleDownload}>Download</Button>
-      <Button onClick={handleDelete}>Delete</Button>
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <img src={selectedImage} alt="Selected" className="max-w-full max-h-64 object-contain" />
+      )}
+      <div className="flex space-x-4 mt-4">
+        <Button onClick={handleShare}>Share to Facebook</Button>
+        <Button onClick={handleDownload}>Download</Button>
+        <Button onClick={handleDelete}>Delete</Button>
+      </div>
     </div>
   </Modal>
 );
+};
+
+export default ImageModal;
