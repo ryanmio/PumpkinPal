@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { storage, db } from '../firebase';
 import { toast } from 'react-hot-toast';
 import { UserContext } from '../contexts/UserContext';
-import { collection, getDoc } from 'firebase/firestore';
+import { collection, doc, getDoc } from 'firebase/firestore';
 import uploadImage from '../utilities/uploadImage';
 import ImageGallery from './ImageGallery';
 import ImageModal from './ImageModal';
