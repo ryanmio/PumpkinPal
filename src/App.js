@@ -54,14 +54,18 @@ function App() {
     return () => unsubscribe();
   }, []);
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <div className={`App font-lato ${isSidebarOpen ? '' : 'closed'}`}>
       <Router>
         <UserProvider value={{ user: currentUser }}>
           <GrowerContextProvider>
             <TrackPageViews />
-            <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
-            <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`}>
+            <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`} onClick={toggleSidebar}>
               <Toaster />
               <Routes>
                   <Route path="/register" element={<Register />} />
@@ -83,7 +87,7 @@ function App() {
                   <Route path="/site-profile/:id" element={<SiteProfile />} />
                   <Route path="/image/:imageId" element={<ImageDisplay />} />
                   <Route path="/share/:imageId" element={<ShareRedirect />} />
-            </Routes>
+                  </Routes>
             </div>
           </GrowerContextProvider>
         </UserProvider>
