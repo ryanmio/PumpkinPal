@@ -5,6 +5,7 @@ import { auth, db } from '../firebase';
 import { toast, Toaster } from 'react-hot-toast';
 import { showDeleteConfirmation } from './Alert';
 import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../utilities/error-analytics';
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/solid';
 
 const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
   const navigate = useNavigate();
@@ -98,9 +99,10 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
           </tbody>
         </table>
         {measurements && measurements.length > 12 && (
-          <button onClick={() => setIsExpanded(!isExpanded)}>
-            {isExpanded ? 'Show Less' : 'Show More'}
-          </button>
+          <button onClick={() => setIsExpanded(!isExpanded)} className="flex items-center text-blue-500 hover:text-blue-700 font-bold transition duration-300 ease-in-out">
+          {isExpanded ? <ChevronUpIcon className="w-4 h-4 mr-1" /> : <ChevronDownIcon className="w-4 h-4 mr-1" />}
+          {isExpanded ? 'Show Less' : 'Show More'}
+        </button>
         )}
       </div>
     </div>
