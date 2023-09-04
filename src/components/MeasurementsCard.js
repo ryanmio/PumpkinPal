@@ -8,6 +8,7 @@ import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../utilit
 
 const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
   const navigate = useNavigate();
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const deleteMeasurement = async (measurementId) => {
     showDeleteConfirmation('Are you sure you want to delete this measurement?', "You won't be able to undo this.", async () => {
@@ -82,7 +83,7 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
             </tr>
           </thead>
           <tbody>
-            {measurements && measurements.map(measurement => (
+          {measurements && measurements.slice(0, isExpanded ? measurements.length : 12).map(measurement => (
               <tr key={measurement.id}>
                 <td className="whitespace-nowrap table-cell">{measurement.timestamp}</td>
                 <td className="table-cell">{measurement.endToEnd}</td>
@@ -96,6 +97,11 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
             ))}
           </tbody>
         </table>
+        {measurements && measurements.length > 12 && (
+          <button onClick={() => setIsExpanded(!isExpanded)}>
+            {isExpanded ? 'Show Less' : 'Show More'}
+          </button>
+        )}
       </div>
     </div>
   );
