@@ -101,18 +101,18 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
         {measurements && measurements.length > 12 && (
           <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out ${
+          className={`green-button inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 ${
             isExpanded ? 'mb-4' : ''
-          } ${isExpanded ? 'slide-down-fade-in' : ''}`}
+          }`}
         >
           {isExpanded ? (
             <>
-              <BsChevronUp className="inline-block w-4 h-4 mr-1" />
+              <BsChevronUp className="w-4 h-4 mr-1" />
               Show Less
             </>
           ) : (
             <>
-              <BsChevronDown className="inline-block w-4 h-4 mr-1" />
+              <BsChevronDown className="w-4 h-4 mr-1" />
               Show More
             </>
           )}
