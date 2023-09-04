@@ -5,7 +5,7 @@ import { auth, db } from '../firebase';
 import { toast, Toaster } from 'react-hot-toast';
 import { showDeleteConfirmation } from './Alert';
 import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../utilities/error-analytics';
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/solid';
+import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 
 const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
   const navigate = useNavigate();
@@ -99,9 +99,23 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
           </tbody>
         </table>
         {measurements && measurements.length > 12 && (
-          <button onClick={() => setIsExpanded(!isExpanded)} className="flex items-center text-blue-500 hover:text-blue-700 font-bold transition duration-300 ease-in-out">
-          {isExpanded ? <ChevronUpIcon className="w-4 h-4 mr-1" /> : <ChevronDownIcon className="w-4 h-4 mr-1" />}
-          {isExpanded ? 'Show Less' : 'Show More'}
+          <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out ${
+            isExpanded ? 'mb-4' : ''
+          } ${isExpanded ? 'slide-down-fade-in' : ''}`}
+        >
+          {isExpanded ? (
+            <>
+              <BsChevronUp className="inline-block w-4 h-4 mr-1" />
+              Show Less
+            </>
+          ) : (
+            <>
+              <BsChevronDown className="inline-block w-4 h-4 mr-1" />
+              Show More
+            </>
+          )}
         </button>
         )}
       </div>
