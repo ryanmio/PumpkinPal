@@ -99,9 +99,10 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
           </tbody>
         </table>
         {measurements && measurements.length > 12 && (
-          <button
+          <div className="mt-4">
+            <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className={`green-button inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 ${
+          className={`green-button inline-flex items-center justify-center px-4 py-1 text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 ${
             isExpanded ? 'mb-4' : ''
           }`}
         >
@@ -117,6 +118,7 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
             </>
           )}
         </button>
+        </div>
         )}
       </div>
     </div>
