@@ -17,7 +17,6 @@ const authErrorMap = {
   "auth/email-already-in-use": "An account with this email already exists.",
   "auth/operation-not-allowed": "Operation not allowed. Please contact support.",
   "auth/weak-password": "Please choose a stronger password.",
-  // Add other error codes as needed
 };
 
 function Register() {
@@ -45,7 +44,6 @@ function Register() {
             setDoc(doc(db, 'Users', userCredential.user.uid), {
                 email: userCredential.user.email,
             });
-            // Event tracking for 'register' action
             trackUserEvent(GA_ACTIONS.REGISTER, "Email & Password");
             navigate('/login');
         })
@@ -62,7 +60,6 @@ function Register() {
             setDoc(doc(db, 'Users', result.user.uid), {
                 email: result.user.email,
             });
-            // Event tracking for 'register' action with Google
             trackUserEvent(GA_ACTIONS.REGISTER, "Google");
             navigate('/dashboard');
         })
