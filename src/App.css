@@ -147,14 +147,11 @@ body {
   background-color: #da8329; 
 }
 
-
 .section-break {
   width: 100%;
   border-bottom: 1px solid #ccc; 
   margin: 20px 0; 
 }
-
-
 
 .green-button {
   background-color: #80876E !important;
@@ -243,16 +240,16 @@ button.button-disabled {
 }
 
 .App-footer {
-  background-color: #80876E; /* Dark color for contrast */
-  color: #F2EEE3; /* Light color for text and links */
+  background-color: #80876E;
+  color: #F2EEE3;
 }
 
 .table-cell {
-  padding: 0 1rem; /* adjust as per your needs */
+  padding: 0 1rem;
 }
 
 .table-cell {
-  padding: 0 1rem; /* adjust as per your needs */
+  padding: 0 1rem;
 }
 
 .overflow-x-scroll {
@@ -272,7 +269,6 @@ button.button-disabled {
   outline: 1px solid slategrey;
 }
 
-
 /* Alert Modal Styles */
 .swal2-popup {
   font-size: 1.2rem !important;
@@ -285,15 +281,6 @@ button.button-disabled {
 .swal2-icon {
   display: none !important;
 }
-
-/* .swal2-icon {           */
-/*  width: 20px !important;  */
-/*  height: 20px !important;*/
-/*  border: none !important;*/
-/*  font-size: 1rem !important; */
-/*  margin-top: 10px !important;*/
-/*  margin-bottom: 20px !important;*/
-/* } */
 
 .swal2-title {
   font-size: 1.2rem !important;
@@ -335,7 +322,7 @@ button.button-disabled {
 }
 
 .swal2-content {
-  margin-top: -10px !important;  /* Adjust this value as needed */
+  margin-top: -10px !important;
 }
 
 .table-cell-contest-name {
@@ -359,7 +346,7 @@ button.button-disabled {
 .MyCustomHitsList {
   display: flex;
   flex-direction: column;
-  align-items: stretch; /* Makes items full width */
+  align-items: stretch;
 }
 
 .MyCustomHitItem {
@@ -434,13 +421,14 @@ a, .link {
 
   /* Styles when sidebar is closed on tablet and above */
   #logo-sidebar.closed {
-    display: none; /* Hide when closed */
+    display: none;
   }
   .main-content.closed {
     margin-left: 0;
   }
 }
 
+/* Misc */
 
 .aspect-ratio-square::before {
   float: left;

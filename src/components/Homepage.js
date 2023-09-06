@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Stats from './Stats';
+// import Stats from './Stats';
 
 export default function Homepage() {
     return (
@@ -47,8 +47,8 @@ export default function Homepage() {
     </div>
 </div>
 
-    {/* Stats Section */}
-    <Stats />
+ {/* Stats Section */}
+ {/* <Stats /> */}
 
        {/* Call to Action Section */}
 <div className="w-full p-8">

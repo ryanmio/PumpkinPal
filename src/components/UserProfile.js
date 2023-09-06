@@ -153,11 +153,9 @@ const exportAllData = async () => {
 const handleLogout = () => {
     signOut(auth)
       .then(() => {
-        // Redirect to homepage after logging out
         navigate('/');
       })
       .catch((error) => {
-        // Handle any errors
         console.log(error.message);
       });
   };

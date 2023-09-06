@@ -1,18 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { toast, Toaster } from 'react-hot-toast';
 import { showDeleteConfirmation } from './Alert';
 import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../utilities/error-analytics';
+import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 
 const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
   const navigate = useNavigate();
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const deleteMeasurement = async (measurementId) => {
     showDeleteConfirmation('Are you sure you want to delete this measurement?', "You won't be able to undo this.", async () => {
       try {
-        if (auth.currentUser && auth.currentUser.uid && pumpkinId && measurementId) {
+        if (auth.currentUser?.uid && pumpkinId && measurementId) {
           const measurementPath = `Users/${auth.currentUser.uid}/Pumpkins/${pumpkinId}/Measurements/${measurementId}`;
           await deleteDoc(doc(db, measurementPath));
           toast.success("Measurement deleted successfully.");
@@ -30,7 +32,7 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
 
   const exportData = async () => {
     toast('Exporting...', { id: 'exporting' }); // Start with an "Exporting..." toast
-    const idToken = await auth.currentUser.getIdToken();
+    const idToken = await auth.currentUser?.getIdToken();
 
     fetch(`https://us-central1-pumpkinpal-b60be.cloudfunctions.net/exportData?pumpkinId=${pumpkinId}&timeZone=${Intl.DateTimeFormat().resolvedOptions().timeZone}`, {
       headers: {
@@ -48,12 +50,12 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
-        toast.dismiss('exporting'); // Dismiss the "Exporting..." toast
+        toast.dismiss(); // Dismiss all toasts
         toast.success("Export successful!"); // Show a success toast
         trackUserEvent(GA_ACTIONS.EXPORT_DATA, 'MeasurementsCard - Successful Export');  // Add this line
       }).catch(e => {
         console.error(e);
-        toast.dismiss('exporting'); // Dismiss the "Exporting..." toast
+        toast.dismiss(); // Dismiss all toasts
         toast.error("An error occurred during export."); // Show an error toast
         trackError(e, 'MeasurementsCard - Failed Export', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);  // Add this line
       });
@@ -82,7 +84,7 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
             </tr>
           </thead>
           <tbody>
-            {measurements && measurements.map(measurement => (
+            {measurements?.slice(0, isExpanded ? measurements.length : 12)?.map((measurement) => (
               <tr key={measurement.id}>
                 <td className="whitespace-nowrap table-cell">{measurement.timestamp}</td>
                 <td className="table-cell">{measurement.endToEnd}</td>
@@ -96,6 +98,28 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
             ))}
           </tbody>
         </table>
+        {measurements?.length > 12 && (
+          <div className="mt-4">
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className={`green-button inline-flex items-center justify-center px-4 py-1 text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 ${
+                isExpanded ? 'mb-4' : ''
+              }`}
+            >
+              {isExpanded ? (
+                <>
+                  <BsChevronUp className="w-4 h-4 mr-1" />
+                  Show Less
+                </>
+              ) : (
+                <>
+                  <BsChevronDown className="w-4 h-4 mr-1" />
+                  Show More
+                </>
+              )}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
