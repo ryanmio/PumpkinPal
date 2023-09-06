@@ -47,8 +47,8 @@ export default function Homepage() {
     </div>
 </div>
 
-    {/* Stats Section */}
-    <Stats />
+// {/* Stats Section */}
+// <Stats />
 
        {/* Call to Action Section */}
 <div className="w-full p-8">
