@@ -19,8 +19,8 @@ function CustomInput({ value, onClick, className, onBlur, onChange }) {
         autoComplete="off"
       />
       <label htmlFor={id} className={`absolute left-4 top-4 transition-all duration-200 ${value ? 'text-80876E' : 'text-gray-600'} text-sm`}>
-        {isToday ? "Date (Today)" : "Date"}
-      </label>
+      {"Date"}
+    </label>
     </div>
   )
 }
