@@ -5,7 +5,6 @@ import { toast } from 'react-hot-toast';
 
 function CustomInput({ value, onClick, className, onBlur, onChange }) {
   const id = "custom-date-input";
-  const isToday = value && new Date(value).toDateString() === new Date().toDateString();
   
   return (
     <div className="relative">
@@ -19,8 +18,8 @@ function CustomInput({ value, onClick, className, onBlur, onChange }) {
         autoComplete="off"
       />
       <label htmlFor={id} className={`absolute left-4 top-4 transition-all duration-200 ${value ? 'text-80876E' : 'text-gray-600'} text-sm`}>
-      {"Date"}
-    </label>
+        {"Date"}
+      </label>
     </div>
   )
 }
