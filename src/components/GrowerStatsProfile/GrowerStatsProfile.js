@@ -6,7 +6,6 @@ import SummarySection from './SummarySection';
 import TableSection from './TableSection';
 import { UserContext } from '../../contexts/UserContext'; // Import UserContext
 
-
 const GrowerStatsProfile = () => {
   const { setGrowerName, growerData, pumpkins, loading, error } = useContext(GrowerContext);
   const { growerName: growerNameFromUrl } = useParams();
