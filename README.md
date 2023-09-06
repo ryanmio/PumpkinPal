@@ -19,7 +19,7 @@ Our mission is to empower the pumpkin growing community by providing a tool that
 
 ### 💸 Always Free
 
-PumpkinPal is committed to remaining free for all users. We believe in the power of community and the spirit of sharing knowledge and resources. As such, we pledge to keep PumpkinPal free to use, now and always. Our mission is to support the pumpkin growing community, and we believe that making our app accessible to everyone, regardless of their financial situation, is a crucial part of that mission.
+PumpkinPal is committed to remaining free for all users. We believe in the power of community and the spirit of sharing knowledge and resources. As such, we pledge to keep PumpkinPal free to use, now and always.
 
 ## Core Features
 
