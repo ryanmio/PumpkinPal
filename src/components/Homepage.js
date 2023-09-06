@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Stats from './Stats';
+// import Stats from './Stats';
 
 export default function Homepage() {
     return (
