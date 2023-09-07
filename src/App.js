@@ -50,24 +50,6 @@ function App() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // Private routing checks if user is logged in
-function PrivateRoute({ children }) {
-  const [currentUser, setCurrentUser] = useState(null);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      if (!user) {
-        navigate("/login");
-      }
-    });
-    return () => unsubscribe();
-  }, [navigate]); // Include navigate in the dependency array
-
-  return currentUser ? children : null;
-}
-
   return (
     <div className={`App font-lato ${isSidebarOpen ? '' : 'closed'}`}>
       <Router>
@@ -102,8 +84,26 @@ function PrivateRoute({ children }) {
           </GrowerContextProvider>
         </UserProvider>
       </Router>
-    </div>
+      </div>
   );
+
+  // Private routing checks if user is logged in
+  function PrivateRoute({ path, element }) {
+    const [currentUser, setCurrentUser] = useState(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        setCurrentUser(user);
+        if (!user) {
+          navigate("/login");
+        }
+      });
+      return () => unsubscribe();
+    }, [navigate]); // Include navigate in the dependency array
+
+    return currentUser ? <Route path={path} element={element} /> : null;
+  }
 }
 
 export default App;
