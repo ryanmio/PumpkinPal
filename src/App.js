@@ -52,21 +52,22 @@ function App() {
   };
 
   // Private routing checks if user is logged in
-  function PrivateRoute({ children }) {
-    const [currentUser, setCurrentUser] = useState(null);
+function PrivateRoute({ children }) {
+  const [currentUser, setCurrentUser] = useState(null);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
-        setCurrentUser(user);
-        if (!user) {
-          navigate("/login");
-        }
-      });
-      return () => unsubscribe();
-    }, [navigate]);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      if (!user) {
+        navigate("/login");
+      }
+    });
+    return () => unsubscribe();
+  }, []); // Removed navigate from the dependency array
 
-    return currentUser ? children : null;
-  }
+  return currentUser ? children : null;
+}
 
   return (
     <div className={`App font-lato ${isSidebarOpen ? '' : 'closed'}`}>
