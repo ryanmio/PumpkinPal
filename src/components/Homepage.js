@@ -30,7 +30,7 @@ export default function Homepage() {
 
     {/* Features Section */}
     <h2 className="text-2xl font-bold mb-4">Core Features</h2> 
-    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full px-4 sm:px-8 -mx-4 sm:-mx-8 mb-8">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full px-2 sm:px-6 -mx-4 sm:-mx-8 mb-8">
     {[
         { title: "Pumpkin Dashboard", description: "A central hub for growers to keep track of all their growing pumpkins."},
         { title: "OTT Weight Tracking", description: "Allows for in-field estimation of pumpkin weight using the Over The Top (OTT) formula, tracking these measurements over time."},
