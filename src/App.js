@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'chart.js/auto';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { auth } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import Register from './components/Register';
@@ -43,19 +43,25 @@ function TrackPageViews() {
   return null;
 }
 
+// Private routing checks if user is logged in
 function PrivateRoute({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
+      if (!user) {
+        navigate("/login");
+      }
     });
     return () => unsubscribe();
-  }, []);
+  }, [navigate]);
 
-  return currentUser ? children : <Navigate to="/login" />;
+  return currentUser ? children : null;
 }
 
+//Main App
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 768);
 
