@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'chart.js/auto';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { auth } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import Register from './components/Register';
@@ -85,7 +85,7 @@ function App() {
                 <PrivateRoute path="/edit-measurement/:pumpkinId/:measurementId" element={<EditMeasurement />} />
                 <Route path="/grower/:growerName" element={<GrowerStatsProfile />} />
                 <Route path="/growersearch" element={<GrowerSearch />} />
-                <Route path="/search" element={<Search />} />
+                <PrivateRoute path="/search" element={<Search />} />
                 <PrivateRoute path="/my-stats" element={<MyStats />} />
                 <PrivateRoute path="/cloudadmin" element={<CloudFunctionTrigger />} />
                 <Route path="/pumpkin-details/:id" element={<PumpkinDetails />} />
