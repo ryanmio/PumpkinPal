@@ -22,9 +22,9 @@ export default function Homepage() {
 
     {/* Mission Statement Section */}
     <div className="w-full px-8 py-8">
-        <h2 className="text-2xl font-bold mb-4">🌱 Our Mission</h2>
+        <h2 className="text-2xl font-bold mb-2">🌱 Our Mission</h2>
         <p className="text-lg mb-6">Our mission is to empower the pumpkin growing community by providing tools that makes the hobby more accessible and enjoyable. We envision a future where every weigh-off is crowded with more and heavier pumpkins, and we're committed to making that vision a reality through the continuous development and improvement of PumpkinPal.</p>
-        <h2 className="text-2xl font-bold mb-4">💸 Always Free</h2>
+        <h2 className="text-2xl font-bold mb-2">💸 Always Free</h2>
         <p className="text-lg mb-6">PumpkinPal is committed to remaining free for all users. We believe in the power of community and the spirit of sharing knowledge and resources. As such, we pledge to keep PumpkinPal free to use, now and always.</p>
     </div>
 
