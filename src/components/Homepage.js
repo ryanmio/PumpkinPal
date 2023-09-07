@@ -20,17 +20,26 @@ export default function Homepage() {
     </div>
 </div>
 
+    {/* Mission Statement Section */}
+    <div className="w-full px-8 py-8">
+        <h2 className="text-2xl font-bold mb-2">🌱 Our Mission</h2>
+        <p className="text-lg mb-6">Our mission is to empower the pumpkin growing community by providing tools that makes the hobby more accessible and enjoyable. We envision a future where every weigh-off is crowded with more and heavier pumpkins, and we're committed to making that vision a reality through the continuous development and improvement of PumpkinPal.</p>
+        <h2 className="text-2xl font-bold mb-2">💸 Always Free</h2>
+        <p className="text-lg mb-6">PumpkinPal is committed to remaining free for all users. We believe in the power of community and the spirit of sharing knowledge and resources. As such, we pledge to keep PumpkinPal free to use, now and always.</p>
+    </div>
+
     {/* Features Section */}
-<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full px-4 sm:px-8 -mx-4 sm:-mx-8 mb-8">
+    <h2 className="text-2xl font-bold mb-4">Core Features</h2> 
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full px-4 sm:px-6 -mx-4 sm:-mx-8 mb-8">
     {[
-        { title: "Pumpkin Dashboard", description: "View an overview of all your pumpkins and the data you've collected."},
-        { title: "OTT Weight Calculation", description: "Calculate the OTT weight of your pumpkins and track progress over time."},
-        { title: "Pumpkin Management", description: "Add new pumpkins to your profile, edit existing ones."},
-        { title: "Data Export", description: "Export your pumpkin's data as a CSV file for further analysis or record-keeping."},
-        { title: "Real-Time Data Entry", description: "Enter your measurements as you take them. Your data is instantly accessible from any device."},
-        { title: "Data Backup", description: "All measurements are automatically backed up in the cloud."},
+        { title: "Pumpkin Dashboard", description: "A central hub for growers to keep track of all their growing pumpkins."},
+        { title: "OTT Weight Tracking", description: "Allows for in-field estimation of pumpkin weight using the Over The Top (OTT) formula, tracking these measurements over time."},
+        { title: "Image Gallery", description: "Growers can take photos with the app or upload them, associating each image with the relevant pumpkin and its stats like DAP and date."},
+        { title: "PumpkinPal Database", description: "The custom-built PumpkinPal Database enables the calculation of rankings and stats for growers, pumpkins, and GPC sites."},
+        { title: "Weigh-Off Stats", description: "Provides a personal grower profile for users who have competed in GPC sanctioned weigh-offs."},
+        { title: "GPC Search", description: "Enables users to find any grower, pumpkin, or site and see a comprehensive overview, rankings, and stats."},
+        { title: "User Data Export", description: "Users can export their data for further analysis or record-keeping."},
         { title: "Field-Friendly Interface", description: "Large, easy-to-tap buttons and simple forms make it easy to enter data even with gloves on."},
-        { title: "Instant Weight Estimation", description: "As soon as you enter a measurement you will know your pumpkin's weight, right from the field."},
     ].map((feature, i) => (
         <div className="flex flex-col items-center bg-white px-3 py-4 sm:p-4 rounded" key={i}>
             <img src="/logo192.webp" alt="Feature" className="w-6/12 h-auto sm:w-1/4 lg:w-3/8" />
