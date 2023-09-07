@@ -23,12 +23,12 @@ export default function Homepage() {
     {/* Features Section */}
     <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full px-4 sm:px-8 -mx-4 sm:-mx-8 mb-8">
     {[
-        { title: "Pumpkin Dashboard", description: "A central hub for growers to track all their growing pumpkins, providing a comprehensive overview of each pumpkin's progress."},
-        { title: "OTT Weight Calculation & Tracking", description: "Allows for in-field estimation of pumpkin weight using the Over The Top (OTT) formula. Tracks these measurements over time, providing a visual graph of each pumpkin's growth trend."},
+        { title: "Pumpkin Dashboard", description: "A central hub for growers to track all their growing pumpkins."},
+        { title: "OTT Weight Calculation & Tracking", description: "Allows for in-field estimation of pumpkin weight using the Over The Top (OTT) formula, tracking these measurements over time."},
         { title: "Image Gallery", description: "Growers can take photos with the app or upload them, associating each image with the relevant pumpkin and its stats like DAP and date."},
         { title: "PumpkinPal Database", description: "The custom-built PumpkinPal Database enables the calculation of rankings and stats for growers, pumpkins, and GPC sites."},
         { title: "Weigh-Off Stats", description: "Provides a personal grower profile for users who have competed in GPC sanctioned weigh-offs."},
-        { title: "GPC Search", description: "Enables users to find any grower, pumpkin, or site and see a comprehensive overview, rankings, stats, etc."},
+        { title: "GPC Search", description: "Enables users to find any grower, pumpkin, or site and see a comprehensive overview, rankings, and stats."},
         { title: "User Data Export", description: "Users can export their data for further analysis or record-keeping."},
         { title: "Field-Friendly Interface", description: "Large, easy-to-tap buttons and simple forms make it easy to enter data even with gloves on."},
     ].map((feature, i) => (
