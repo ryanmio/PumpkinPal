@@ -21,16 +21,16 @@ export default function Homepage() {
 </div>
 
     {/* Features Section */}
-<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full px-4 sm:px-8 -mx-4 sm:-mx-8 mb-8">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full px-4 sm:px-8 -mx-4 sm:-mx-8 mb-8">
     {[
-        { title: "Pumpkin Dashboard", description: "View an overview of all your pumpkins and the data you've collected."},
-        { title: "OTT Weight Calculation", description: "Calculate the OTT weight of your pumpkins and track progress over time."},
-        { title: "Pumpkin Management", description: "Add new pumpkins to your profile, edit existing ones."},
-        { title: "Data Export", description: "Export your pumpkin's data as a CSV file for further analysis or record-keeping."},
-        { title: "Real-Time Data Entry", description: "Enter your measurements as you take them. Your data is instantly accessible from any device."},
-        { title: "Data Backup", description: "All measurements are automatically backed up in the cloud."},
+        { title: "Pumpkin Dashboard", description: "A central hub for growers to track all their growing pumpkins, providing a comprehensive overview of each pumpkin's progress."},
+        { title: "OTT Weight Calculation & Tracking", description: "Allows for in-field estimation of pumpkin weight using the Over The Top (OTT) formula. Tracks these measurements over time, providing a visual graph of each pumpkin's growth trend."},
+        { title: "Image Gallery", description: "Growers can take photos with the app or upload them, associating each image with the relevant pumpkin and its stats like DAP and date."},
+        { title: "PumpkinPal Database", description: "The custom-built PumpkinPal Database enables the calculation of rankings and stats for growers, pumpkins, and GPC sites."},
+        { title: "Weigh-Off Stats", description: "Provides a personal grower profile for users who have competed in GPC sanctioned weigh-offs."},
+        { title: "GPC Search", description: "Enables users to find any grower, pumpkin, or site and see a comprehensive overview, rankings, stats, etc."},
+        { title: "User Data Export", description: "Users can export their data for further analysis or record-keeping."},
         { title: "Field-Friendly Interface", description: "Large, easy-to-tap buttons and simple forms make it easy to enter data even with gloves on."},
-        { title: "Instant Weight Estimation", description: "As soon as you enter a measurement you will know your pumpkin's weight, right from the field."},
     ].map((feature, i) => (
         <div className="flex flex-col items-center bg-white px-3 py-4 sm:p-4 rounded" key={i}>
             <img src="/logo192.webp" alt="Feature" className="w-6/12 h-auto sm:w-1/4 lg:w-3/8" />
