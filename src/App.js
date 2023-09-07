@@ -45,29 +45,28 @@ function TrackPageViews() {
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 768);
-  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
   // Private routing checks if user is logged in
-function PrivateRoute({ children }) {
-  const [currentUser, setCurrentUser] = useState(null);
-  const navigate = useNavigate();
+  function PrivateRoute({ children }) {
+    const [currentUser, setCurrentUser] = useState(null);
+    const navigate = useNavigate(); // Declare navigate here
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      if (!user) {
-        navigate("/login");
-      }
-    });
-    return () => unsubscribe();
-  }, []); // Removed navigate from the dependency array
+    useEffect(() => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        setCurrentUser(user);
+        if (!user) {
+          navigate("/login");
+        }
+      });
+      return () => unsubscribe();
+    }, []); // Removed navigate from the dependency array
 
-  return currentUser ? children : null;
-}
+    return currentUser ? children : null;
+  }
 
   return (
     <div className={`App font-lato ${isSidebarOpen ? '' : 'closed'}`}>
