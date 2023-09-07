@@ -43,9 +43,8 @@ function TrackPageViews() {
   return null;
 }
 
-function App() {
+function PrivateRoute({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 768 && currentUser);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -54,6 +53,12 @@ function App() {
     return () => unsubscribe();
   }, []);
 
+  return currentUser ? children : <Navigate to="/login" />;
+}
+
+function App() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 768);
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -61,33 +66,33 @@ function App() {
   return (
     <div className={`App font-lato ${isSidebarOpen ? '' : 'closed'}`}>
       <Router>
-        <UserProvider value={{ user: currentUser }}>
+        <UserProvider>
           <GrowerContextProvider>
             <TrackPageViews />
             <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
             <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`} onClick={() => setIsSidebarOpen(false)}>
               <Toaster />
               <Routes>
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/add-pumpkin" element={<PumpkinForm />} />
-                  <Route path="/edit-pumpkin/:id" element={<EditPumpkin />} />
-                  <Route path="/add-measurement/:id" element={<AddMeasurement />} />
-                  <Route path="/pumpkin/:id" element={<PumpkinDetail />} />
-                  <Route path="/" element={<Homepage />} />
-                  <Route path="/user-profile" element={<UserProfile />} />
-                  <Route path="/edit-measurement/:pumpkinId/:measurementId" element={<EditMeasurement />} />
-                  <Route path="/grower/:growerName" element={<GrowerStatsProfile />} />
-                  <Route path="/growersearch" element={<GrowerSearch />} />
-                  <Route path="/search" element={<Search />} />
-                  <Route path="/my-stats" element={<MyStats />} />
-                  <Route path="/cloudadmin" element={<CloudFunctionTrigger />} />
-                  <Route path="/pumpkin-details/:id" element={<PumpkinDetails />} />
-                  <Route path="/site-profile/:id" element={<SiteProfile />} />
-                  <Route path="/image/:imageId" element={<ImageDisplay />} />
-                  <Route path="/share/:imageId" element={<ShareRedirect />} />
-                  </Routes>
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <PrivateRoute path="/dashboard" element={<Dashboard />} />
+                <PrivateRoute path="/add-pumpkin" element={<PumpkinForm />} />
+                <PrivateRoute path="/edit-pumpkin/:id" element={<EditPumpkin />} />
+                <PrivateRoute path="/add-measurement/:id" element={<AddMeasurement />} />
+                <PrivateRoute path="/pumpkin/:id" element={<PumpkinDetail />} />
+                <Route path="/" element={<Homepage />} />
+                <PrivateRoute path="/user-profile" element={<UserProfile />} />
+                <PrivateRoute path="/edit-measurement/:pumpkinId/:measurementId" element={<EditMeasurement />} />
+                <Route path="/grower/:growerName" element={<GrowerStatsProfile />} />
+                <Route path="/growersearch" element={<GrowerSearch />} />
+                <Route path="/search" element={<Search />} />
+                <PrivateRoute path="/my-stats" element={<MyStats />} />
+                <PrivateRoute path="/cloudadmin" element={<CloudFunctionTrigger />} />
+                <Route path="/pumpkin-details/:id" element={<PumpkinDetails />} />
+                <Route path="/site-profile/:id" element={<SiteProfile />} />
+                <Route path="/image/:imageId" element={<ImageDisplay />} />
+                <Route path="/share/:imageId" element={<ShareRedirect />} />
+              </Routes>
             </div>
           </GrowerContextProvider>
         </UserProvider>
