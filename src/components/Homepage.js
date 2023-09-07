@@ -52,7 +52,7 @@ export default function Homepage() {
 {/* Screenshots Section */}
 <div className="w-full px-8">
     <div className="px-4 sm:px-6 lg:px-32">
-        <img className="w-full h-auto rounded-lg" src="/images/details.gif" alt="App screenshot" />
+        <img className="w-full h-auto rounded-lg" src="/images/screenmockup-details.webp" alt="App screenshot" />
     </div>
 </div>
 
