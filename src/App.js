@@ -68,9 +68,6 @@ function PrivateRoute({ children }) {
   return currentUser ? children : null;
 }
 
-    return currentUser ? children : null;
-  }
-
   return (
     <div className={`App font-lato ${isSidebarOpen ? '' : 'closed'}`}>
       <Router>
