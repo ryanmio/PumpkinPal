@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import 'chart.js/auto';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
@@ -75,7 +75,7 @@ function App() {
                   <Route path="/edit-pumpkin/:id" element={<EditPumpkin />} />
                   <Route path="/add-measurement/:id" element={<AddMeasurement />} />
                   <Route path="/pumpkin/:id" element={<PumpkinDetail />} />
-                  <Route path="/" element={<Homepage />} />
+                  <Route path="/" element={currentUser ? <Dashboard /> : <Homepage />} />
                   <Route path="/user-profile" element={<UserProfile />} />
                   <Route path="/edit-measurement/:pumpkinId/:measurementId" element={<EditMeasurement />} />
                   <Route path="/grower/:growerName" element={<GrowerStatsProfile />} />
