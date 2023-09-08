@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'chart.js/auto';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { auth } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import Register from './components/Register';
@@ -44,7 +44,15 @@ function TrackPageViews() {
 }
 
 function App() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 768);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 768 && currentUser);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -53,64 +61,39 @@ function App() {
   return (
     <div className={`App font-lato ${isSidebarOpen ? '' : 'closed'}`}>
       <Router>
-        <UserProvider>
+        <UserProvider value={{ user: currentUser }}>
           <GrowerContextProvider>
             <TrackPageViews />
             <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
             <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`} onClick={() => setIsSidebarOpen(false)}>
               <Toaster />
               <Routes>
-                <Route path="/register" element={<Register />} />
-                <Route path="/login" element={<Login />} />
-                <PrivateRoute path="/dashboard" element={<Dashboard />} />
-                <PrivateRoute path="/add-pumpkin" element={<PumpkinForm />} />
-                <PrivateRoute path="/edit-pumpkin/:id" element={<EditPumpkin />} />
-                <PrivateRoute path="/add-measurement/:id" element={<AddMeasurement />} />
-                <PrivateRoute path="/pumpkin/:id" element={<PumpkinDetail />} />
-                <Route path="/" element={<Homepage />} />
-                <PrivateRoute path="/user-profile" element={<UserProfile />} />
-                <PrivateRoute path="/edit-measurement/:pumpkinId/:measurementId" element={<EditMeasurement />} />
-                <Route path="/grower/:growerName" element={<GrowerStatsProfile />} />
-                <Route path="/growersearch" element={<GrowerSearch />} />
-                <PrivateRoute path="/search" element={<Search />} />
-                <PrivateRoute path="/my-stats" element={<MyStats />} />
-                <PrivateRoute path="/cloudadmin" element={<CloudFunctionTrigger />} />
-                <Route path="/pumpkin-details/:id" element={<PumpkinDetails />} />
-                <Route path="/site-profile/:id" element={<SiteProfile />} />
-                <Route path="/image/:imageId" element={<ImageDisplay />} />
-                <Route path="/share/:imageId" element={<ShareRedirect />} />
-                </Routes>
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/add-pumpkin" element={<PumpkinForm />} />
+                  <Route path="/edit-pumpkin/:id" element={<EditPumpkin />} />
+                  <Route path="/add-measurement/:id" element={<AddMeasurement />} />
+                  <Route path="/pumpkin/:id" element={<PumpkinDetail />} />
+                  <Route path="/" element={<Homepage />} />
+                  <Route path="/user-profile" element={<UserProfile />} />
+                  <Route path="/edit-measurement/:pumpkinId/:measurementId" element={<EditMeasurement />} />
+                  <Route path="/grower/:growerName" element={<GrowerStatsProfile />} />
+                  <Route path="/growersearch" element={<GrowerSearch />} />
+                  <Route path="/search" element={<Search />} />
+                  <Route path="/my-stats" element={<MyStats />} />
+                  <Route path="/cloudadmin" element={<CloudFunctionTrigger />} />
+                  <Route path="/pumpkin-details/:id" element={<PumpkinDetails />} />
+                  <Route path="/site-profile/:id" element={<SiteProfile />} />
+                  <Route path="/image/:imageId" element={<ImageDisplay />} />
+                  <Route path="/share/:imageId" element={<ShareRedirect />} />
+                  </Routes>
             </div>
           </GrowerContextProvider>
         </UserProvider>
       </Router>
     </div>
   );
-
-  // Private routing checks if user is logged in
-function PrivateRoute({ path, element }) {
-  const [currentUser, setCurrentUser] = useState(null);
-  const navigate = useNavigate();
-  const [shouldRedirect, setShouldRedirect] = useState(false);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      if (!user) {
-        setShouldRedirect(true);
-      }
-    });
-    return () => unsubscribe();
-  }, [navigate]); // Include navigate in the dependency array
-
-  useEffect(() => {
-    if (shouldRedirect) {
-      navigate("/login");
-    }
-  }, [shouldRedirect, navigate]);
-
-  return currentUser ? <Route path={path} element={element} /> : null;
-}
 }
 
 export default App;
