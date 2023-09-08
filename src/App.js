@@ -111,5 +111,6 @@ function PrivateRoute({ path, element }) {
 
   return currentUser ? <Route path={path} element={element} /> : null;
 }
+}
 
 export default App;
