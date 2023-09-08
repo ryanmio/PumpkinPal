@@ -59,7 +59,7 @@ function App() {
   };
 
   return (
-    <div className={`App font-lato ${isSidebarOpen ? '' : 'closed'}`}>
+    <div className={`App font-lato min-h-screen ${isSidebarOpen ? '' : 'closed'}`}>>
       <Router>
         <UserProvider value={{ user: currentUser }}>
           <GrowerContextProvider>
