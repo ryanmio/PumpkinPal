@@ -59,13 +59,13 @@ function App() {
   };
 
   return (
-    <div className={`App font-lato ${isSidebarOpen ? '' : 'closed'}`}>
+    <div className={`App font-lato flex flex-col min-h-screen ${isSidebarOpen ? '' : 'closed'}`}>
       <Router>
         <UserProvider value={{ user: currentUser }}>
           <GrowerContextProvider>
             <TrackPageViews />
             <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-            <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`} onClick={() => setIsSidebarOpen(false)}>
+            <div className={`main-content flex-grow ${isSidebarOpen ? 'open' : 'closed'}`} onClick={() => setIsSidebarOpen(false)}>
               <Toaster />
               <Routes>
                   <Route path="/register" element={<Register />} />
@@ -75,7 +75,7 @@ function App() {
                   <Route path="/edit-pumpkin/:id" element={<EditPumpkin />} />
                   <Route path="/add-measurement/:id" element={<AddMeasurement />} />
                   <Route path="/pumpkin/:id" element={<PumpkinDetail />} />
-                  <Route path="/" element={<Homepage />} />
+                  <Route path="/" element={currentUser ? <Dashboard /> : <Homepage />} />
                   <Route path="/user-profile" element={<UserProfile />} />
                   <Route path="/edit-measurement/:pumpkinId/:measurementId" element={<EditMeasurement />} />
                   <Route path="/grower/:growerName" element={<GrowerStatsProfile />} />
