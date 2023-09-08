@@ -79,31 +79,37 @@ function App() {
                 <Route path="/site-profile/:id" element={<SiteProfile />} />
                 <Route path="/image/:imageId" element={<ImageDisplay />} />
                 <Route path="/share/:imageId" element={<ShareRedirect />} />
-              </Routes>
+                </Routes>
             </div>
           </GrowerContextProvider>
         </UserProvider>
       </Router>
-      </div>
+    </div>
   );
 
   // Private routing checks if user is logged in
-  function PrivateRoute({ path, element }) {
-    const [currentUser, setCurrentUser] = useState(null);
-    const navigate = useNavigate();
+function PrivateRoute({ path, element }) {
+  const [currentUser, setCurrentUser] = useState(null);
+  const navigate = useNavigate();
+  const [shouldRedirect, setShouldRedirect] = useState(false);
 
-    useEffect(() => {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
-        setCurrentUser(user);
-        if (!user) {
-          navigate("/login");
-        }
-      });
-      return () => unsubscribe();
-    }, [navigate]); // Include navigate in the dependency array
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      if (!user) {
+        setShouldRedirect(true);
+      }
+    });
+    return () => unsubscribe();
+  }, [navigate]); // Include navigate in the dependency array
 
-    return currentUser ? <Route path={path} element={element} /> : null;
-  }
+  useEffect(() => {
+    if (shouldRedirect) {
+      navigate("/login");
+    }
+  }, [shouldRedirect, navigate]);
+
+  return currentUser ? <Route path={path} element={element} /> : null;
 }
 
 export default App;
