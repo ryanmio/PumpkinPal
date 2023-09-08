@@ -59,13 +59,13 @@ function App() {
   };
 
   return (
-    <div className={`App font-lato min-h-screen ${isSidebarOpen ? '' : 'closed'}`}>>
+    <div className={`App font-lato flex flex-col min-h-screen ${isSidebarOpen ? '' : 'closed'}`}>
       <Router>
         <UserProvider value={{ user: currentUser }}>
           <GrowerContextProvider>
             <TrackPageViews />
             <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-            <div className={`main-content min-h-screen ${isSidebarOpen ? 'open' : 'closed'}`} onClick={() => setIsSidebarOpen(false)}>
+            <div className={`main-content flex-grow ${isSidebarOpen ? 'open' : 'closed'}`} onClick={() => setIsSidebarOpen(false)}>
               <Toaster />
               <Routes>
                   <Route path="/register" element={<Register />} />
