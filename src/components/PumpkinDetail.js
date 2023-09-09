@@ -8,7 +8,6 @@ import { toast } from 'react-hot-toast';
 import Spinner from './Spinner';
 
 const LazyImageCard = lazy(() => import('./ImageCard'));
-const [fullscreenComponent, setFullscreenComponent] = useState(null);
 
 function PumpkinDetail() {
   const { id } = useParams();
@@ -16,6 +15,7 @@ function PumpkinDetail() {
   const [measurements, setMeasurements] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
+  const [fullscreenComponent, setFullscreenComponent] = useState(null);
 
   // Helper function to format a date string as Month D, YYYY
   const formatDate = useCallback((dateString) => {
