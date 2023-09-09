@@ -10,7 +10,7 @@ import { addDoc, collection, updateDoc, getDoc, doc } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 import { differenceInDays } from 'date-fns';
 import FullscreenIcon from './icons/FullscreenIcon';
-import { ModalImage } from 'react-modal-image';
+import { Lightbox } from 'react-modal-image';
 
 const ImageModal = ({ isOpen, closeModal, selectedImage, isLoading, images, pumpkinId, user, pumpkinName, db, storage, updateImages }) => {
   const modalRef = useRef(null);
@@ -160,7 +160,7 @@ const ImageModal = ({ isOpen, closeModal, selectedImage, isLoading, images, pump
       {isLoading ? (
         <Spinner />
       ) : (
-        <ModalImage
+        <Lightbox
           small={selectedImage}
           large={selectedImage}
           alt="Selected"
