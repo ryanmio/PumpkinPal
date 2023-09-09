@@ -9,10 +9,21 @@ import { showDeleteConfirmation } from '../components/Alert';
 import { addDoc, collection, updateDoc, getDoc, doc } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 import { differenceInDays } from 'date-fns';
-import { Lightbox } from 'react-modal-image';
+import FullscreenIcon from './icons/FullscreenIcon';
 
 const ImageModal = ({ isOpen, closeModal, selectedImage, isLoading, images, pumpkinId, user, pumpkinName, db, storage, updateImages }) => {
   const modalRef = useRef(null);
+  const [isFullscreen, setIsFullscreen] = React.useState(false);
+
+React.useEffect(() => {
+  const changeHandler = () => {
+    setIsFullscreen(!!document.fullscreenElement);
+  };
+
+  document.addEventListener("fullscreenchange", changeHandler);
+  return () => document.removeEventListener("fullscreenchange", changeHandler);
+}, []);
+
   
   const calculateLatestWeight = async () => {
     const pumpkinDoc = await getDoc(doc(db, 'Users', user.uid, 'Pumpkins', pumpkinId));
@@ -146,22 +157,37 @@ const ImageModal = ({ isOpen, closeModal, selectedImage, isLoading, images, pump
       }
     });
   };
+    
+    const toggleFullscreen = () => {
+    const elem = modalRef.current;
+
+    if (!document.fullscreenElement) {
+      elem.requestFullscreen().catch(err => {
+        alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
 
   return (
-    <Modal 
-  isOpen={isOpen} 
-  onRequestClose={closeModal} 
-  className="flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-lg mx-auto mt-20"
->
+  <Modal 
+    isOpen={isOpen} 
+    onRequestClose={closeModal} 
+    className="flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-lg mx-auto mt-20"
+  >
     <div ref={modalRef} className="relative w-full flex flex-col items-center">
       <button onClick={closeModal} className="absolute top-0 left-0 text-xl font-bold">&times;</button>
+      <button onClick={toggleFullscreen} className="absolute top-0 right-0 hover:scale-110 hover:text-gray-700 transition duration-300 ease-in-out hidden sm:inline-block">
+      <FullscreenIcon alt="Toggle Fullscreen" className="w-7 h-7 text-gray-500 icon-hover" />
+    </button>
       {isLoading ? (
         <Spinner />
       ) : (
-        <Lightbox
-          small={selectedImage}
-          large={selectedImage}
-          alt="Selected"
+        <img 
+          src={selectedImage} 
+          alt="Selected" 
+          className={`object-contain ${isFullscreen ? 'w-screen h-screen' : 'max-w-full max-h-64'}`} 
         />
       )}
       <div className="flex space-x-4 mt-4">
