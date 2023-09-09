@@ -123,7 +123,7 @@ return (
   <GraphCard
   measurements={measurements}
   pumpkinName={pumpkin?.name}
-  setFullscreen={fullscreenComponent => fullscreenComponent === 'graph' ? null : 'graph'}
+  setFullscreen={setFullscreenComponent}
   isFullscreen={fullscreenComponent === 'graph'}
 />
     ) : measurements === null || pumpkin === null ? (
