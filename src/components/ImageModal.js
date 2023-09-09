@@ -14,6 +14,7 @@ import FullscreenIcon from './icons/FullscreenIcon';
 const ImageModal = ({ isOpen, closeModal, selectedImage, isLoading, images, pumpkinId, user, pumpkinName, db, storage, updateImages }) => {
   const modalRef = useRef(null);
   const [isFullscreen, setIsFullscreen] = React.useState(false);
+  const imageRef = useRef(null);
 
 React.useEffect(() => {
   const changeHandler = () => {
@@ -158,23 +159,15 @@ React.useEffect(() => {
     });
   };
     
-    const toggleFullscreen = () => {
-    const elem = modalRef.current;
-
-    if (!document.fullscreenElement) {
-      elem.requestFullscreen().catch(err => {
-        alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-      });
-    } else {
-      document.exitFullscreen();
-    }
+  const toggleFullscreen = () => {
+    setFullscreen(prevState => prevState === 'imageModal' ? null : 'imageModal');
   };
 
   return (
   <Modal 
     isOpen={isOpen} 
     onRequestClose={closeModal} 
-    className="flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-lg mx-auto mt-20"
+    className={`flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-lg mx-auto mt-20 ${isFullscreen ? 'fullscreen' : ''}`}
   >
     <div ref={modalRef} className="relative w-full flex flex-col items-center">
       <button onClick={closeModal} className="absolute top-0 left-0 text-xl font-bold">&times;</button>
@@ -185,6 +178,7 @@ React.useEffect(() => {
         <Spinner />
       ) : (
         <img 
+          ref={imageRef}
           src={selectedImage} 
           alt="Selected" 
           className={`object-contain ${isFullscreen ? 'w-screen h-screen' : 'max-w-full max-h-64'}`} 
