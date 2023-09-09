@@ -8,6 +8,7 @@ import { toast } from 'react-hot-toast';
 import Spinner from './Spinner';
 
 const LazyImageCard = lazy(() => import('./ImageCard'));
+const [fullscreenComponent, setFullscreenComponent] = useState(null);
 
 function PumpkinDetail() {
   const { id } = useParams();
@@ -120,9 +121,11 @@ return (
    {/* Card 4: Graph */}
   {measurements && pumpkin ? (
   <GraphCard
-    measurements={measurements}
-    pumpkinName={pumpkin?.name}
-  />
+  measurements={measurements}
+  pumpkinName={pumpkin?.name}
+  setFullscreen={() => setFullscreenComponent('graph')}
+  isFullscreen={fullscreenComponent === 'graph'}
+/>
     ) : measurements === null || pumpkin === null ? (
       <div>Error loading graph.</div>
     ) : (
