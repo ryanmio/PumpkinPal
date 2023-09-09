@@ -85,8 +85,6 @@ const ImageCard = ({ pumpkinId, pumpkinName, setFullscreen, isFullscreen }) => {
         db={db}
         storage={storage}
         updateImages={updateImages}
-        setFullscreen={() => setFullscreen('imageModal')}
-        isFullscreen={isFullscreen === 'imageModal'}
       />
     </div>
   );
