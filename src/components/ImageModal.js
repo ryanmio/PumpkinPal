@@ -164,10 +164,10 @@ React.useEffect(() => {
   };
 
   return (
-  <Modal 
+    <Modal 
     isOpen={isOpen} 
     onRequestClose={closeModal} 
-    className={`flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-lg mx-auto mt-20 ${isFullscreen ? 'fullscreen' : ''}`}
+    className={`flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-lg mx-auto mt-20`}
   >
     <div ref={modalRef} className="relative w-full flex flex-col items-center">
       <button onClick={closeModal} className="absolute top-0 left-0 text-xl font-bold">&times;</button>
@@ -181,7 +181,7 @@ React.useEffect(() => {
           ref={imageRef}
           src={selectedImage} 
           alt="Selected" 
-          className={`object-contain ${isFullscreen ? 'w-screen h-screen' : 'max-w-full max-h-64'}`} 
+          className={`object-contain ${isFullscreen ? 'fixed top-0 left-0 w-screen h-screen z-50' : 'max-w-full max-h-64'}`} 
         />
       )}
       <div className="flex space-x-4 mt-4">
