@@ -180,7 +180,7 @@ React.useEffect(() => {
           ref={imageRef}
           src={selectedImage} 
           alt="Selected" 
-          className={`object-contain ${isFullscreen ? 'fixed top-0 left-0 w-screen h-screen z-50' : 'max-w-full max-h-64'}`} 
+          className={`${isFullscreen ? 'fixed top-0 left-0 w-screen h-screen z-50 object-cover' : 'max-w-full max-h-64 object-contain'}`} 
         />
       )}
       <div className="flex space-x-4 mt-4">
