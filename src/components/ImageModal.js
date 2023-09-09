@@ -13,7 +13,6 @@ import FullscreenIcon from './icons/FullscreenIcon';
 
 const ImageModal = ({ isOpen, closeModal, selectedImage, isLoading, images, pumpkinId, user, pumpkinName, db, storage, updateImages }) => {
   const modalRef = useRef(null);
-  const [isFullscreen, setIsFullscreen] = React.useState(false);
 
 React.useEffect(() => {
   const changeHandler = () => {

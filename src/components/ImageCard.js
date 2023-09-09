@@ -7,7 +7,7 @@ import uploadImage from '../utilities/uploadImage';
 import ImageGallery from './ImageGallery';
 import ImageModal from './ImageModal';
 
-const ImageCard = ({ pumpkinId, pumpkinName, setFullscreen, isFullscreen }) => {
+const ImageCard = ({ pumpkinId, pumpkinName }) => {
   const [images, setImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
