@@ -62,8 +62,12 @@ export const UserProvider = ({ children }) => {
   }, [growerId]);
 
   if (loading) {
-  return <Spinner />;
-}
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <UserContext.Provider value={contextValue}>

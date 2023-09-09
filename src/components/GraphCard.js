@@ -3,19 +3,11 @@ import { Line } from 'react-chartjs-2';
 import 'chartjs-adapter-date-fns';
 import FullscreenIcon from './icons/FullscreenIcon';
 
-const GraphCard = ({ measurements, pumpkinName }) => {
+const GraphCard = ({ measurements, pumpkinName, setFullscreen, isFullscreen }) => {
   const graphCardRef = useRef(null);
 
   const toggleFullscreen = () => {
-    const elem = graphCardRef.current;
-
-    if (!document.fullscreenElement) {
-      elem.requestFullscreen().catch(err => {
-        alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-      });
-    } else {
-      document.exitFullscreen();
-    }
+    setFullscreen(prevState => prevState === 'graph' ? null : 'graph');
   };
 
   // Helper function to return a date object
@@ -70,9 +62,9 @@ const GraphCard = ({ measurements, pumpkinName }) => {
 };
 
  return (
-  <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto" ref={graphCardRef}>
+  <div className={`bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto ${isFullscreen ? 'fullscreen' : ''}`} ref={graphCardRef}>
     <div className="flex justify-center items-start relative">
-      <h3 className="text-xl font-bold mb-2">{pumpkinName} Weight Trend</h3>
+      <h3 className="text-xl font-bold mb-2">OTT Weight Over Time</h3>
       <button onClick={toggleFullscreen} className="hover:scale-110 hover:text-gray-700 transition duration-300 ease-in-out absolute right-0 top-0">
   <FullscreenIcon alt="Toggle Fullscreen" className="w-7 h-7 text-gray-500 icon-hover" />
 </button>

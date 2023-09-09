@@ -178,9 +178,9 @@ React.useEffect(() => {
   >
     <div ref={modalRef} className="relative w-full flex flex-col items-center">
       <button onClick={closeModal} className="absolute top-0 left-0 text-xl font-bold">&times;</button>
-      <button onClick={toggleFullscreen} className="absolute top-0 right-0 hover:scale-110 hover:text-gray-700 transition duration-300 ease-in-out">
-        <FullscreenIcon alt="Toggle Fullscreen" className="w-7 h-7 text-gray-500 icon-hover" />
-      </button>
+      <button onClick={toggleFullscreen} className="absolute top-0 right-0 hover:scale-110 hover:text-gray-700 transition duration-300 ease-in-out hidden sm:inline-block">
+      <FullscreenIcon alt="Toggle Fullscreen" className="w-7 h-7 text-gray-500 icon-hover" />
+    </button>
       {isLoading ? (
         <Spinner />
       ) : (

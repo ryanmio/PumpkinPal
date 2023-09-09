@@ -15,6 +15,7 @@ function PumpkinDetail() {
   const [measurements, setMeasurements] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
+  const [fullscreenComponent, setFullscreenComponent] = useState(null);
 
   // Helper function to format a date string as Month D, YYYY
   const formatDate = useCallback((dateString) => {
@@ -120,9 +121,11 @@ return (
    {/* Card 4: Graph */}
   {measurements && pumpkin ? (
   <GraphCard
-    measurements={measurements}
-    pumpkinName={pumpkin?.name}
-  />
+  measurements={measurements}
+  pumpkinName={pumpkin?.name}
+  setFullscreen={setFullscreenComponent}
+  isFullscreen={fullscreenComponent === 'graph'}
+/>
     ) : measurements === null || pumpkin === null ? (
       <div>Error loading graph.</div>
     ) : (
