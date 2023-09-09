@@ -1,5 +1,5 @@
 /* global FB */
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Modal from 'react-modal';
 import Button from '../utilities/Button';
 import Spinner from '../components/Spinner';
