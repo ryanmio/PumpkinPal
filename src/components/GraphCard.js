@@ -7,7 +7,7 @@ const GraphCard = ({ measurements, pumpkinName, setFullscreen, isFullscreen }) =
   const graphCardRef = useRef(null);
 
   const toggleFullscreen = () => {
-    setFullscreen(prevState => prevState ? null : 'graph');
+    setFullscreen(prevState => prevState === 'graph' ? null : 'graph');
   };
 
   // Helper function to return a date object
