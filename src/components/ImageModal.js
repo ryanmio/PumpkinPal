@@ -18,13 +18,12 @@ const ImageModal = ({ isOpen, closeModal, selectedImage, isLoading, images, pump
 
 React.useEffect(() => {
   const changeHandler = () => {
-    setIsFullscreen(!!document.fullscreenElement);
+    setFullscreen(!!document.fullscreenElement);
   };
 
   document.addEventListener("fullscreenchange", changeHandler);
   return () => document.removeEventListener("fullscreenchange", changeHandler);
 }, []);
-
   
   const calculateLatestWeight = async () => {
     const pumpkinDoc = await getDoc(doc(db, 'Users', user.uid, 'Pumpkins', pumpkinId));
