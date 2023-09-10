@@ -16,6 +16,9 @@ for year in years:
     # Send HTTP request
     response = requests.get(url)
     
+    # Check the status of the request
+    print(f"Status code for year {year}: {response.status_code}")
+    
     # Parse HTML content
     soup = BeautifulSoup(response.content, 'html.parser')
     
