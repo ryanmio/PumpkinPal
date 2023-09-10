@@ -7,7 +7,7 @@ from collections import Counter
 import re
 
 # Load the data
-pumpkins_df = pd.read_csv('bigpumpkins_2004_2022.csv')
+pumpkins_df = pd.read_csv('bigpumpkins_2004_2023_2023-09-10.csv')
 
 # Function to preprocess names
 def preprocess_name(name):
