@@ -39,7 +39,7 @@ contest_documents = []
 pumpkin_documents = []
 
 # Process each row in the dataframe (only the first # rows for testing)
-for index, row in df.head(30125).iterrows():  # Change this to df.iterrows() to process all rows
+for index, row in df.iterrows():
     # Create or update grower document
     grower_data = {
         "id": row["Processed Name"],
