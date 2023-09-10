@@ -3,8 +3,8 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import datetime
 
-# List of years to scrape
-years = list(range(2005, 2023))
+# List of years to scrape. Note: To include 2023, the range is set to 2024 because range() excludes the end value.
+years = list(range(2005, 2024))
 
 # List to hold all the data
 all_data = []
@@ -15,9 +15,6 @@ for year in years:
     
     # Send HTTP request
     response = requests.get(url)
-    
-    # Check the status of the request
-    print(f"Status code for year {year}: {response.status_code}")
     
     # Parse HTML content
     soup = BeautifulSoup(response.content, 'html.parser')
