@@ -40,6 +40,9 @@ for year in years:
     # Append the dataframe to the list
     all_data.append(df)
 
+    # Print a message indicating that the year has been processed
+    print(f"Finished processing data for {year}")
+
 # Concatenate all the dataframes
 all_data = pd.concat(all_data, ignore_index=True)
 
