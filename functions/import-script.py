@@ -49,8 +49,11 @@ for index, row in df.head(30125).iterrows():  # Change this to df.iterrows() to 
     }
     grower_documents.append((row["Processed Name"], grower_data))
 
+    # Clean up the "GPC Site" value by replacing slashes with nothing
+    cleaned_site_name = str(row["GPC Site"]).replace('/', '')
+
     # Create or update contest document
-    contest_id = f'{row["GPC Site"]}_{row["Year"]}'
+    contest_id = f'{cleaned_site_name}_{str(row["Year"])}'
     contest_data = {
         "id": contest_id,
         "name": row["GPC Site"],
