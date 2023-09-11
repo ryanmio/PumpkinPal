@@ -17,85 +17,8 @@ body {
   pointer-events: none;
 }
 
-/* Desktop styles */
-@media only screen and (min-width: 600px) {
-  .nav-bar {
-    flex-direction: row;
-  }
-}
-
-.dashboard-header {
-  text-align: center;
-}
-
-.nav-link {
-  color: inherit; /* Use the color from the parent component */
-  text-decoration: none; /* Remove underline from links */
-  margin: 0 15px; /* Add some horizontal margin */
-}
-
-.nav-link:hover {
-  color: #61dafb; /* Change color on hover */
-}
-
 .logout-button {
   margin-left: 20px; /* Move logout button to the right */
-}
-
-.nav-bar {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.nav-row {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  width: 100%;
-  padding: 5px 0;
-}
-
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Dashboard styles */
-.dashboard-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  padding: 20px;
-}
-
-.dashboard-pumpkin {
-  flex-basis: 100%; /* On mobile, take full width */
-  background-color: #FFD699;
-  border-radius: 5px;
-  padding: 20px;
-  box-sizing: border-box;
-  margin-bottom: 20px;
-}
-
-.dashboard-pumpkin h3 {
-  cursor: pointer;
-  color: #36382E;
-}
-
-.dashboard-pumpkin button {
-  margin-right: 10px;
 }
 
 .pumpkin-buttons {
@@ -103,7 +26,6 @@ body {
   justify-content: space-around;
   margin-top: 20px;
 }
-
 
 /* For larger screens (tablets and desktops) */
 @media (min-width: 768px) {
@@ -118,7 +40,7 @@ body {
   width: 100%;
   padding: 10px;
   margin: 20px 0;
-  background-color: #80876E; /* Primary color for button */
+  background-color: #80876E;
   color: white;
   border: none;
   border-radius: 3px;
@@ -363,8 +285,8 @@ button.button-disabled {
 
 /* NAVBAR */
 .fixed.top-0.z-50 {
-  background-color: #80876E; /* Set the background color */
-  height: 4.5rem; /* Set the height of the navbar */
+  background-color: #80876E;
+  height: 4.5rem;
 }
 
 /* MAIN CONTENT */
