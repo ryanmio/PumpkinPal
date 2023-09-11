@@ -17,24 +17,6 @@ body {
   pointer-events: none;
 }
 
-.App-header {
-  background-color: #80876E; /* Dark color for contrast */
-  display: flex;
-  flex-direction: row; /* Align items in a row */
-  align-items: center; /* Center items vertically */
-  justify-content: space-around; /* Distribute space evenly around items */
-  padding: 10px 0; /* Add some vertical padding */
-  color: #F2EEE3; /* Light color for text and links */
-  flex-wrap: wrap; /* make the navbar responsive */
-}
-
-/* Adjust the layout when the screen size is less than a specific breakpoint */
-@media only screen and (max-width: 600px) {
-  .App-header {
-    flex-direction: column;
-  }
-}
-
 /* Desktop styles */
 @media only screen and (min-width: 600px) {
   .nav-bar {
@@ -242,10 +224,6 @@ button.button-disabled {
 .App-footer {
   background-color: #80876E;
   color: #F2EEE3;
-}
-
-.table-cell {
-  padding: 0 1rem;
 }
 
 .table-cell {
