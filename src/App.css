@@ -21,58 +21,12 @@ body {
   margin-left: 20px; /* Move logout button to the right */
 }
 
-.pumpkin-buttons {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
-}
-
-/* For larger screens (tablets and desktops) */
-@media (min-width: 768px) {
-  .dashboard-pumpkin {
-    flex-basis: calc(50% - 20px); /* Two items per row */
-  }
-}
-
-/* Button to add a pumpkin */
-.add-pumpkin-button {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  margin: 20px 0;
-  background-color: #80876E;
-  color: white;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-.add-pumpkin-button:hover {
-  background-color: #da8329; 
-}
-
-.section-break {
-  width: 100%;
-  border-bottom: 1px solid #ccc; 
-  margin: 20px 0; 
-}
-
 .green-button {
   background-color: #80876E !important;
 }
 
 .green-button:hover {
   background-color: #6c755e !important;
-}
-
-.nav-row {
-  display: flex;
-  align-items: center;
-  
-}
-
-.login-button:hover {
-  text-decoration: underline;
 }
 
 .input + .label-float {
