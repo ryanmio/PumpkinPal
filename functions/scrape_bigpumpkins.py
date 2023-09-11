@@ -1,9 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import datetime
 
-# List of years to scrape
-years = list(range(2005, 2023))
+# List of years to scrape. Note: To include 2023, the range is set to 2024 because range() excludes the end value.
+years = list(range(2005, 2024))
 
 # List to hold all the data
 all_data = []
@@ -39,8 +40,11 @@ for year in years:
     # Append the dataframe to the list
     all_data.append(df)
 
+    # Print a message indicating that the year has been processed
+    print(f"Finished processing data for {year}")
+
 # Concatenate all the dataframes
 all_data = pd.concat(all_data, ignore_index=True)
 
-# Save the dataframe to a CSV file
-all_data.to_csv('bigpumpkins_2004_2022.csv', index=False)
+# Save the dataframe to a CSV file with today's date
+all_data.to_csv(f'bigpumpkins_2004_2023_{datetime.date.today()}.csv', index=False)

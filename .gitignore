@@ -90,3 +90,4 @@ functions/pumpkinpal-b60be-firebase-adminsdk-jtia5-63bbe231d8.json
 
 .firebase/
 .vscode/settings.json
+*.csv

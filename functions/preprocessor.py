@@ -6,10 +6,14 @@ from fuzzywuzzy import fuzz
 from collections import Counter
 import re
 
+print("Starting script...")
+
 # Load the data
-pumpkins_df = pd.read_csv('bigpumpkins_2004_2022.csv')
+print("Loading data...")
+pumpkins_df = pd.read_csv('bigpumpkins_2004_2023_2023-09-10.csv')
 
 # Function to preprocess names
+print("Preprocessing names...")
 def preprocess_name(name):
     """Preprocesses a name by replacing "&" with "and", "/" with " ", removing extra spaces, and removing numbers."""
     name = name.replace("&", "and").replace("/", " ").replace("-", " ").strip()
@@ -27,6 +31,7 @@ def parse_name(name):
         return f'{human_name.last}, {human_name.first}'.strip()
 
 # Function to handle team names
+print("Handling team names...")
 def handle_team_names(name):
     """Handles team names to ensure that 'Team' is always at the beginning."""
     if "team" in name.lower():
@@ -56,9 +61,11 @@ pumpkins_df['Processed Name'] = pumpkins_df['Grower Name'].apply(preprocess_name
 pumpkins_df['Processed Name'] = pumpkins_df['Processed Name'].apply(handle_team_names)
 
 # Convert to title case
+print("Converting names to title case...")
 pumpkins_df['Processed Name'] = pumpkins_df['Processed Name'].str.title()
 
 # Split processed names into first and last names
+print("Splitting names into first and last names...")
 pumpkins_df[['Last Name', 'First Name']] = pumpkins_df['Processed Name'].apply(
     lambda name: pd.Series([name, ""]) if "Team" in name else pd.Series(name.split(',', 1))
 )
@@ -68,9 +75,11 @@ pumpkins_df['Last Name'] = pumpkins_df['Last Name'].str.strip().str.title()  # C
 pumpkins_df['First Name'] = pumpkins_df['First Name'].str.strip().str.title()  # Convert to title case
 
 # Count the frequency of each name
+print("Counting the frequency of each name...")
 name_counter = Counter(pumpkins_df['Processed Name'])
 
 # Perform fuzzy matching and store results in a dictionary
+print("Performing fuzzy matching...")
 fuzzy_matched_names = {}
 
 # Get a list of unique processed names by state/province
@@ -116,11 +125,13 @@ for name in processed_names:
         fuzzy_matched_names[most_common_name] = matches
 
 # Now we standardize the names in the original dataframe based on the fuzzy matches
+print("Standardizing names based on fuzzy matches...")
 for most_common_name, matches in fuzzy_matched_names.items():
     for match in matches:
         pumpkins_df.loc[pumpkins_df['Processed Name'] == match, 'Processed Name'] = most_common_name
 
 # Split updated processed names into first and last names again
+print("Splitting updated names into first and last names...")
 pumpkins_df[['Last Name', 'First Name']] = pumpkins_df['Processed Name'].apply(
     lambda name: pd.Series([name, ""]) if "Team" in name else pd.Series(name.split(',', 1))
 )
@@ -130,6 +141,7 @@ pumpkins_df['Last Name'] = pumpkins_df['Last Name'].str.strip().str.title()  # C
 pumpkins_df['First Name'] = pumpkins_df['First Name'].str.strip().str.title()  # Convert to title case
 
 # Save the modified dataframe to a CSV file
+print("Saving preprocessed data to CSV file...")
 pumpkins_df.to_csv('preprocessed-bigpumpkins.csv', index=False)
 
 print("Preprocessed data has been saved to preprocessed-bigpumpkins.csv.")
