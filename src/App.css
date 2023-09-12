@@ -17,140 +17,8 @@ body {
   pointer-events: none;
 }
 
-.App-header {
-  background-color: #80876E; /* Dark color for contrast */
-  display: flex;
-  flex-direction: row; /* Align items in a row */
-  align-items: center; /* Center items vertically */
-  justify-content: space-around; /* Distribute space evenly around items */
-  padding: 10px 0; /* Add some vertical padding */
-  color: #F2EEE3; /* Light color for text and links */
-  flex-wrap: wrap; /* make the navbar responsive */
-}
-
-/* Adjust the layout when the screen size is less than a specific breakpoint */
-@media only screen and (max-width: 600px) {
-  .App-header {
-    flex-direction: column;
-  }
-}
-
-/* Desktop styles */
-@media only screen and (min-width: 600px) {
-  .nav-bar {
-    flex-direction: row;
-  }
-}
-
-.dashboard-header {
-  text-align: center;
-}
-
-.nav-link {
-  color: inherit; /* Use the color from the parent component */
-  text-decoration: none; /* Remove underline from links */
-  margin: 0 15px; /* Add some horizontal margin */
-}
-
-.nav-link:hover {
-  color: #61dafb; /* Change color on hover */
-}
-
 .logout-button {
   margin-left: 20px; /* Move logout button to the right */
-}
-
-.nav-bar {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.nav-row {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  width: 100%;
-  padding: 5px 0;
-}
-
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Dashboard styles */
-.dashboard-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  padding: 20px;
-}
-
-.dashboard-pumpkin {
-  flex-basis: 100%; /* On mobile, take full width */
-  background-color: #FFD699;
-  border-radius: 5px;
-  padding: 20px;
-  box-sizing: border-box;
-  margin-bottom: 20px;
-}
-
-.dashboard-pumpkin h3 {
-  cursor: pointer;
-  color: #36382E;
-}
-
-.dashboard-pumpkin button {
-  margin-right: 10px;
-}
-
-.pumpkin-buttons {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
-}
-
-
-/* For larger screens (tablets and desktops) */
-@media (min-width: 768px) {
-  .dashboard-pumpkin {
-    flex-basis: calc(50% - 20px); /* Two items per row */
-  }
-}
-
-/* Button to add a pumpkin */
-.add-pumpkin-button {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  margin: 20px 0;
-  background-color: #80876E; /* Primary color for button */
-  color: white;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-.add-pumpkin-button:hover {
-  background-color: #da8329; 
-}
-
-.section-break {
-  width: 100%;
-  border-bottom: 1px solid #ccc; 
-  margin: 20px 0; 
 }
 
 .green-button {
@@ -159,16 +27,6 @@ body {
 
 .green-button:hover {
   background-color: #6c755e !important;
-}
-
-.nav-row {
-  display: flex;
-  align-items: center;
-  
-}
-
-.login-button:hover {
-  text-decoration: underline;
 }
 
 .input + .label-float {
@@ -242,10 +100,6 @@ button.button-disabled {
 .App-footer {
   background-color: #80876E;
   color: #F2EEE3;
-}
-
-.table-cell {
-  padding: 0 1rem;
 }
 
 .table-cell {
@@ -385,8 +239,8 @@ button.button-disabled {
 
 /* NAVBAR */
 .fixed.top-0.z-50 {
-  background-color: #80876E; /* Set the background color */
-  height: 4.5rem; /* Set the height of the navbar */
+  background-color: #80876E;
+  height: 4.5rem;
 }
 
 /* MAIN CONTENT */
