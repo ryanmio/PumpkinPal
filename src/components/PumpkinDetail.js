@@ -29,6 +29,32 @@ function PumpkinDetail() {
     }
   }, []);
 
+  // Helper function to calculate days since pollination
+const daysSincePollination = useCallback((pollinationDateString) => {
+  if(pollinationDateString) {
+    const pollinationDate = new Date(pollinationDateString);
+    const now = new Date();
+    const oneDay = 24 * 60 * 60 * 1000;
+    const diffDays = Math.round(Math.abs((now - pollinationDate) / oneDay));
+    return diffDays;
+  } else {
+    return 'Not Set';
+  }
+}, []);
+
+// Helper function to calculate days until weigh-off
+const daysUntilWeighOff = useCallback((weighOffDateString) => {
+  if(weighOffDateString) {
+    const weighOffDate = new Date(weighOffDateString);
+    const now = new Date();
+    const oneDay = 24 * 60 * 60 * 1000;
+    const diffDays = Math.round(Math.abs((weighOffDate - now) / oneDay));
+    return diffDays;
+  } else {
+    return 'Not Set';
+  }
+}, []);
+
   useEffect(() => {
   let isCancelled = false;
 
@@ -109,8 +135,8 @@ return (
             <h3 className="text-xl font-bold mb-2">Key Dates</h3>
             <p><b>Seed Started:</b> {pumpkin?.seedStarted}</p>
             <p><b>Transplant Out:</b> {pumpkin?.transplantOut}</p>
-            <p><b>Pollinated:</b> {pumpkin?.pollinated}</p>
-            <p><b>Weigh-off:</b> {pumpkin?.weighOff}</p>
+            <p><b>Pollinated:</b> {pumpkin?.pollinated} {pumpkin?.pollinated && ` (DAP ${daysSincePollination(pumpkin?.pollinated)})`}</p>
+            <p><b>Weigh-off:</b> {pumpkin?.weighOff} {pumpkin?.weighOff && ` (#${daysUntilWeighOff(pumpkin?.weighOff)} days)`}</p>
           </div>
           <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 self-end">Edit Dates</button>
         </div>
