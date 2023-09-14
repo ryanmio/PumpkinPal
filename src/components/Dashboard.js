@@ -70,13 +70,13 @@ function Dashboard() {
   });
 }
 
-  function daysSincePollination(pollinationDateStr) {
-    const pollinationDate = new Date(pollinationDateStr);
-    const oneDay = 24 * 60 * 60 * 1000;
-    const now = new Date();
-    const diffDays = Math.round(Math.abs((now - pollinationDate) / oneDay));
-    return diffDays;
-  }
+function daysSincePollination(pollinationDateStr) {
+  const pollinationDate = new Date(pollinationDateStr);
+  const oneDay = 24 * 60 * 60 * 1000;
+  const now = new Date();
+  const diffDays = Math.floor(Math.abs((now - pollinationDate) / oneDay));
+  return diffDays;
+}
 
 return (
   <div className="container mx-auto px-4 min-h-screen">
