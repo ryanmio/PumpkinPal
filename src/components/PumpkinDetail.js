@@ -48,10 +48,10 @@ const daysUntilWeighOff = useCallback((weighOffDateString) => {
     const weighOffDate = new Date(weighOffDateString);
     const now = new Date();
     const oneDay = 24 * 60 * 60 * 1000;
-    const diffDays = Math.round(Math.abs((weighOffDate - now) / oneDay));
+    const diffDays = Math.round((weighOffDate - now) / oneDay);
     return diffDays;
   } else {
-    return 'Not Set';
+    return null;
   }
 }, []);
 
