@@ -50,13 +50,13 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
-        toast.dismiss(); // Dismiss all toasts
-        toast.success("Export successful!"); // Show a success toast
+        toast.dismiss();
+        toast.success("Export successful!");
         trackUserEvent(GA_ACTIONS.EXPORT_DATA, 'MeasurementsCard - Successful Export');
       }).catch(e => {
         console.error(e);
-        toast.dismiss(); // Dismiss all toasts
-        toast.error("An error occurred during export."); // Show an error toast
+        toast.dismiss();
+        toast.error("An error occurred during export.");
         trackError(e, 'MeasurementsCard - Failed Export', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);
       });
   };
@@ -84,7 +84,7 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
             </tr>
           </thead>
           <tbody>
-            {measurements?.slice(0, isExpanded ? measurements.length : 12)?.map((measurement) => (
+            {measurements?.slice(0, isExpanded ? measurements.length : 6)?.map((measurement) => (
               <tr key={measurement.id}>
                 <td className="whitespace-nowrap table-cell">{measurement.timestamp}</td>
                 <td className="table-cell">{measurement.endToEnd}</td>
@@ -99,7 +99,7 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
           </tbody>
         </table>
         </div>
-        {measurements?.length > 12 && (
+        {measurements?.length > 6 && (
           <div className="mt-4">
             <button
               onClick={() => setIsExpanded(!isExpanded)}
