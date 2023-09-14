@@ -7,7 +7,7 @@ import { showDeleteConfirmation } from './Alert';
 import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../utilities/error-analytics';
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 
-const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
+const MeasurementsCard = ({ measurements, pumpkin, pumpkinId, pollinationDate }) => {
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
 
