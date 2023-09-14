@@ -18,16 +18,24 @@ function PumpkinDetail() {
   const [fullscreenComponent, setFullscreenComponent] = useState(null);
 
   // Helper function to format a date string as Month D, YYYY
-  const formatDate = useCallback((dateString) => {
-    if(dateString) {
-      const date = new Date(dateString);
-      const utcDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-      const options = { year: 'numeric', month: 'long', day: 'numeric' };
-      return utcDate.toLocaleDateString(undefined, options);
-    } else {
-      return 'Not Set';
-    }
-  }, []);
+const formatDate = useCallback((dateString) => {
+  const cache = formatDate.cache || (formatDate.cache = {});
+
+  if (dateString in cache) {
+    return cache[dateString];
+  }
+
+  if(dateString) {
+    const date = new Date(dateString);
+    const utcDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const result = utcDate.toLocaleDateString(undefined, options);
+    cache[dateString] = result;
+    return result;
+  } else {
+    return 'Not Set';
+  }
+}, []);
 
   useEffect(() => {
   let isCancelled = false;
