@@ -28,34 +28,38 @@ exports.exportData = functions.https.onRequest((req, res) => {
         const collection = db.collection(`Users/${uid}/Pumpkins/${pumpkinId}/Measurements`);
 
         collection.get()
-          .then((snapshot) => {
+        .then((snapshot) => {
             const data = snapshot.docs.map((doc) => {
-              const docData = doc.data();
-              // Convert the timestamp to a date string
-              const date = new Date(docData.timestamp.seconds * 1000);
-              docData.date = date.toLocaleDateString('en-US', { timeZone: req.query.timeZone });
-              return docData;
+            const docData = doc.data();
+            // Convert the timestamp to a date string
+            const measurementDate = new Date(docData.timestamp.seconds * 1000);
+            const pollinationDate = new Date(docData.pollinationDate); // Adjusted this line
+            const dap = Math.floor((measurementDate - pollinationDate) / (1000 * 60 * 60 * 24));
+            docData.date = measurementDate.toLocaleDateString('en-US', { timeZone: req.query.timeZone });
+            docData.dap = dap;
+            return docData;
             });
 
             const json2csv = new Parser({
-              fields: [
+            fields: [
                 'date',
+                'dap',
                 'estimatedWeight',
                 'circumference',
                 'endToEnd',
                 'sideToSide',
                 'measurementUnit',
-              ],
+            ],
             });
             const csv = json2csv.parse(data);
 
             res.set('Content-Type', 'text/csv');
             res.status(200).send(csv);
-          })
-          .catch((err) => {
+        })
+        .catch((err) => {
             console.error(err);
             res.status(500).send(err);
-          });
+        });
       })
       .catch((error) => {
         console.error('Error verifying Firebase ID token:', error);
