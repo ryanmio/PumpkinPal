@@ -18,20 +18,20 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
           const measurementPath = `Users/${auth.currentUser.uid}/Pumpkins/${pumpkinId}/Measurements/${measurementId}`;
           await deleteDoc(doc(db, measurementPath));
           toast.success("Measurement deleted successfully.");
-          trackUserEvent(GA_ACTIONS.DELETE_MEASUREMENT, 'MeasurementsCard - Successful Delete');  // Add this line
+          trackUserEvent(GA_ACTIONS.DELETE_MEASUREMENT, 'MeasurementsCard - Successful Delete');
         } else {
           throw new Error("Missing required parameters.");
         }
       } catch (error) {
         console.error("Error deleting measurement: ", error);
         toast.error("Failed to delete measurement. Please try again.");
-        trackError(error, 'MeasurementsCard - Failed Delete', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);  // Add this line
+        trackError(error, 'MeasurementsCard - Failed Delete', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);
       }
     });
   };
 
   const exportData = async () => {
-    toast('Exporting...', { id: 'exporting' }); // Start with an "Exporting..." toast
+    toast('Exporting...', { id: 'exporting' });
     const idToken = await auth.currentUser?.getIdToken();
 
     fetch(`https://us-central1-pumpkinpal-b60be.cloudfunctions.net/exportData?pumpkinId=${pumpkinId}&timeZone=${Intl.DateTimeFormat().resolvedOptions().timeZone}`, {
@@ -50,14 +50,14 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
-        toast.dismiss(); // Dismiss all toasts
-        toast.success("Export successful!"); // Show a success toast
-        trackUserEvent(GA_ACTIONS.EXPORT_DATA, 'MeasurementsCard - Successful Export');  // Add this line
+        toast.dismiss();
+        toast.success("Export successful!");
+        trackUserEvent(GA_ACTIONS.EXPORT_DATA, 'MeasurementsCard - Successful Export');
       }).catch(e => {
         console.error(e);
-        toast.dismiss(); // Dismiss all toasts
-        toast.error("An error occurred during export."); // Show an error toast
-        trackError(e, 'MeasurementsCard - Failed Export', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);  // Add this line
+        toast.dismiss();
+        toast.error("An error occurred during export.");
+        trackError(e, 'MeasurementsCard - Failed Export', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);
       });
   };
 
@@ -84,7 +84,7 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
             </tr>
           </thead>
           <tbody>
-            {measurements?.slice(0, isExpanded ? measurements.length : 12)?.map((measurement) => (
+            {measurements?.slice(0, isExpanded ? measurements.length : 6)?.map((measurement) => (
               <tr key={measurement.id}>
                 <td className="whitespace-nowrap table-cell">{measurement.timestamp}</td>
                 <td className="table-cell">{measurement.endToEnd}</td>
@@ -98,7 +98,8 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
             ))}
           </tbody>
         </table>
-        {measurements?.length > 12 && (
+        </div>
+        {measurements?.length > 6 && (
           <div className="mt-4">
             <button
               onClick={() => setIsExpanded(!isExpanded)}
@@ -121,7 +122,6 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
           </div>
         )}
       </div>
-    </div>
   );
 };
 

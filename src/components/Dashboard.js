@@ -74,7 +74,7 @@ function Dashboard() {
     const pollinationDate = new Date(pollinationDateStr);
     const oneDay = 24 * 60 * 60 * 1000;
     const now = new Date();
-    const diffDays = Math.round(Math.abs((now - pollinationDate) / oneDay)) - 1;
+    const diffDays = Math.round(Math.abs((now - pollinationDate) / oneDay));
     return diffDays;
   }
 
