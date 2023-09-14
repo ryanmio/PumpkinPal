@@ -100,7 +100,7 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
         </table>
         </div>
         {measurements?.length > 12 && (
-          <div className="mt-4 border-t border-gray-200 pt-4">
+          <div className="mt-4">
             <button
               onClick={() => setIsExpanded(!isExpanded)}
               className={`green-button inline-flex items-center justify-center px-4 py-1 text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 ${
