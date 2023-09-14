@@ -33,7 +33,7 @@ exports.exportData = functions.https.onRequest((req, res) => {
             const docData = doc.data();
             // Convert the timestamp to a date string
             const measurementDate = new Date(docData.timestamp.seconds * 1000);
-            const pollinationDate = new Date(docData.pollinationDate); // Adjusted this line
+            const pollinationDate = new Date(docData.pollinated); // Adjusted this line
             const dap = Math.floor((measurementDate - pollinationDate) / (1000 * 60 * 60 * 24));
             docData.date = measurementDate.toLocaleDateString('en-US', { timeZone: req.query.timeZone });
             docData.dap = dap;
