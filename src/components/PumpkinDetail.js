@@ -136,7 +136,7 @@ return (
             <p><b>Seed Started:</b> {pumpkin?.seedStarted}</p>
             <p><b>Transplant Out:</b> {pumpkin?.transplantOut}</p>
             <p><b>Pollinated:</b> {pumpkin?.pollinated} {pumpkin?.pollinated && ` (DAP ${daysSincePollination(pumpkin?.pollinated)})`}</p>
-            <p><b>Weigh-off:</b> {pumpkin?.weighOff} {pumpkin?.weighOff && ` (#${daysUntilWeighOff(pumpkin?.weighOff)} days)`}</p>
+            <p><b>Weigh-off:</b> {pumpkin?.weighOff ? `${pumpkin?.weighOff} (#${daysUntilWeighOff(pumpkin?.weighOff)} days)` : 'Not Set'}</p>
           </div>
           <button onClick={() => navigate(`/edit-pumpkin/${id}`, { state: { from: location.pathname } })} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 self-end">Edit Dates</button>
         </div>
