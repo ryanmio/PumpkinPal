@@ -87,8 +87,8 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId, pollinationDate })
           <tbody>
           {measurements?.slice(0, isExpanded ? measurements.length : 6)?.map((measurement) => {
           const measurementDate = new Date(measurement.timestamp);
-          const pollinationDate = new Date(pollinationDate);
-          const dap = Math.round((measurementDate - pollinationDate) / (1000 * 60 * 60 * 24));
+          const pollinationDateObj = new Date(pollinationDate); // Changed variable name here
+          const dap = Math.round((measurementDate - pollinationDateObj) / (1000 * 60 * 60 * 24));
           return (
               <tr key={measurement.id}>
                 <td className="whitespace-nowrap table-cell">{measurement.timestamp}</td>
@@ -102,7 +102,7 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId, pollinationDate })
                 <td><button onClick={() => deleteMeasurement(measurement.id)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Delete</button></td>
               </tr>
             );
-          })}
+        })}
           </tbody>
         </table>
         </div>
