@@ -211,14 +211,17 @@ exports.renderSharedImage = functions.https.onRequest(async (req, res) => {
         return;
       }
 
-  // Fetch the shared image data from Firestore
-  const sharedImageData = sharedImageDoc.data();
-  const sharedDate = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(sharedImageData.timestamp.toDate());
+// Fetch the shared image document from Firestore
+const sharedImageDoc = await admin.firestore().doc(`SharedImages/${sharedImageId}`).get();
 
-  if (!sharedImageDoc.exists) {
+if (!sharedImageDoc.exists) {
     res.status(404).send('Shared image not found');
     return;
-  }
+}
+
+// Fetch the shared image data from Firestore
+const sharedImageData = sharedImageDoc.data();
+const sharedDate = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(sharedImageData.timestamp.toDate());
   
   // Construct the OG tags
 const ogTitle = `${sharedImageData.pumpkinName} on PumpkinPal`;
