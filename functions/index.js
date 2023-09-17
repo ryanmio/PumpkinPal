@@ -2,6 +2,8 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const cors = require('cors')({ origin: true });
 const { Parser } = require('json2csv');
+const { JSDOM } = require('jsdom');
+const createDOMPurify = require('dompurify');
 
 admin.initializeApp();
 
@@ -28,34 +30,38 @@ exports.exportData = functions.https.onRequest((req, res) => {
         const collection = db.collection(`Users/${uid}/Pumpkins/${pumpkinId}/Measurements`);
 
         collection.get()
-          .then((snapshot) => {
+        .then((snapshot) => {
             const data = snapshot.docs.map((doc) => {
-              const docData = doc.data();
-              // Convert the timestamp to a date string
-              const date = new Date(docData.timestamp.seconds * 1000);
-              docData.date = date.toLocaleDateString('en-US', { timeZone: req.query.timeZone });
-              return docData;
+            const docData = doc.data();
+            // Convert the timestamp to a date string
+            const measurementDate = new Date(docData.timestamp.seconds * 1000);
+            const pollinationDate = new Date(docData.pollinated); // Adjusted this line
+            const dap = Math.floor((measurementDate - pollinationDate) / (1000 * 60 * 60 * 24));
+            docData.date = measurementDate.toLocaleDateString('en-US', { timeZone: req.query.timeZone });
+            docData.dap = dap;
+            return docData;
             });
 
             const json2csv = new Parser({
-              fields: [
+            fields: [
                 'date',
+                'dap',
                 'estimatedWeight',
                 'circumference',
                 'endToEnd',
                 'sideToSide',
                 'measurementUnit',
-              ],
+            ],
             });
             const csv = json2csv.parse(data);
 
             res.set('Content-Type', 'text/csv');
             res.status(200).send(csv);
-          })
-          .catch((err) => {
+        })
+        .catch((err) => {
             console.error(err);
             res.status(500).send(err);
-          });
+        });
       })
       .catch((error) => {
         console.error('Error verifying Firebase ID token:', error);
@@ -187,21 +193,27 @@ exports.countMeasurementOnDelete = functions.firestore.document('Users/{userId}/
     return counterRef.set({ measurementCount: Math.max(measurementCount - 1, 0) }, { merge: true });
 });
 
-
+/* -----------------------------------------------
+ * Share image handling
+ * -----------------------------------------------
+ */
 // Share image handling
 exports.renderSharedImage = functions.https.onRequest(async (req, res) => {
-  const sharedImageId = req.path.split('/').pop();
-  console.log("req.path:", req.path); // Log the request path
-  console.log("sharedImageId:", sharedImageId); // Log the extracted sharedImageId
-
-  if (!sharedImageId) {
-    res.status(400).send('Bad Request: Missing shared image ID'); // Return an error if sharedImageId is missing
-    return;
-  }
+    const window = new JSDOM('').window;
+    const DOMPurify = createDOMPurify(window);
+  
+    const sharedImageId = req.path.split('/').pop();
+    console.log("req.path:", req.path);
+    console.log("sharedImageId:", sharedImageId);
+  
+    if (!sharedImageDoc.exists) {
+        res.status(404).send('Shared image not found');
+        return;
+      }
 
   // Fetch the shared image data from Firestore
-  const sharedImageRef = admin.firestore().collection('SharedImages').doc(sharedImageId);
-  const sharedImageDoc = await sharedImageRef.get();
+  const sharedImageData = sharedImageDoc.data();
+  const sharedDate = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(sharedImageData.timestamp.toDate());
 
   if (!sharedImageDoc.exists) {
     res.status(404).send('Shared image not found');
@@ -216,10 +228,14 @@ const sharedDate = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numer
   // Construct the OG tags
 const ogTitle = `${sharedImageData.pumpkinName} on PumpkinPal`;
 let ogDescription = `Check out my pumpkin on PumpkinPal, the open-source companion app for pumpkin growers. Shared on ${sharedDate}.`;
-if (sharedImageData.latestWeight != null && sharedImageData.daysAfterPollination != null) {
-  ogDescription = `Days after Pollination: ${sharedImageData.daysAfterPollination}`;
-}
-const ogImage = sharedImageData.image;
+if (sharedImageData.latestWeight !== null && sharedImageData.daysAfterPollination !== null) {
+    ogDescription = `Days after Pollination: ${sharedImageData.daysAfterPollination}`;
+  }
+  const ogImage = sharedImageData.image;
+
+  const sanitizedOgTitle = DOMPurify.sanitize(ogTitle);
+  const sanitizedOgDescription = DOMPurify.sanitize(ogDescription);
+  const sanitizedOgImage = DOMPurify.sanitize(ogImage);
 
   // Respond with the HTML containing the OG tags
   res.send(`
@@ -227,9 +243,9 @@ const ogImage = sharedImageData.image;
     <html lang="en">
     <head>
       <meta charset="UTF-8">
-      <meta property="og:title" content="${ogTitle}">
-      <meta property="og:description" content="${ogDescription}">
-      <meta property="og:image" content="${ogImage}">
+      <meta property="og:title" content="${sanitizedOgTitle}">
+      <meta property="og:description" content="${sanitizedOgDescription}">
+      <meta property="og:image" content="${sanitizedOgImage}">
       <meta property="og:url" content="${req.url}">
       <link rel="icon" href="https://pumpkinpal.app/favicon.ico" />
       <title>${ogTitle}</title>
@@ -253,9 +269,9 @@ const ogImage = sharedImageData.image;
       </style>
     </head>
     <body>
-      <h1>${ogTitle}</h1>
-      <p>Shared on ${sharedDate}</p>
-      <img src="${ogImage}" alt="${ogTitle}">
+    <h1>${sanitizedOgTitle}</h1>
+    <p>Shared on ${sharedDate}</p>
+    <img src="${sanitizedOgImage}" alt="${sanitizedOgTitle}">
     </body>
     </html>
 `);

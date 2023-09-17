@@ -7,7 +7,7 @@ import { showDeleteConfirmation } from './Alert';
 import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../utilities/error-analytics';
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 
-const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
+const MeasurementsCard = ({ measurements, pumpkin, pumpkinId, pollinationDate }) => {
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -74,6 +74,7 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
           <thead>
             <tr>
               <th className="whitespace-nowrap min-w-max w-[100px] table-cell">Date</th>
+              <th className="table-cell">DAP</th>
               <th className="table-cell">End to End</th>
               <th className="table-cell">Side to Side</th>
               <th className="table-cell">Circ.</th>
@@ -84,9 +85,14 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
             </tr>
           </thead>
           <tbody>
-            {measurements?.slice(0, isExpanded ? measurements.length : 6)?.map((measurement) => (
+          {measurements?.slice(0, isExpanded ? measurements.length : 6)?.map((measurement) => {
+          const measurementDate = new Date(measurement.timestamp);
+          const pollinationDateObj = new Date(pollinationDate); // Changed variable name here
+          const dap = Math.round((measurementDate - pollinationDateObj) / (1000 * 60 * 60 * 24));
+          return (
               <tr key={measurement.id}>
                 <td className="whitespace-nowrap table-cell">{measurement.timestamp}</td>
+                <td className="table-cell">{dap}</td>
                 <td className="table-cell">{measurement.endToEnd}</td>
                 <td className="table-cell">{measurement.sideToSide}</td>
                 <td className="table-cell">{measurement.circumference}</td>
@@ -95,7 +101,8 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId }) => {
                 <td><button onClick={() => navigate(`/edit-measurement/${pumpkinId}/${measurement.id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Edit</button></td>
                 <td><button onClick={() => deleteMeasurement(measurement.id)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Delete</button></td>
               </tr>
-            ))}
+            );
+        })}
           </tbody>
         </table>
         </div>
