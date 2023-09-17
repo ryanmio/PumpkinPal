@@ -219,12 +219,7 @@ exports.renderSharedImage = functions.https.onRequest(async (req, res) => {
     res.status(404).send('Shared image not found');
     return;
   }
-
-  const sharedImageData = sharedImageDoc.data();
-    
-    // Format the timestamp as a friendly-looking date string
-const sharedDate = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(sharedImageData.timestamp.toDate());
-
+  
   // Construct the OG tags
 const ogTitle = `${sharedImageData.pumpkinName} on PumpkinPal`;
 let ogDescription = `Check out my pumpkin on PumpkinPal, the open-source companion app for pumpkin growers. Shared on ${sharedDate}.`;
