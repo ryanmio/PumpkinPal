@@ -51,7 +51,6 @@ export const UserProvider = ({ children }) => {
       }
     });
 
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
     

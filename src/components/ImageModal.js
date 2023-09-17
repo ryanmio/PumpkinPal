@@ -24,7 +24,6 @@ React.useEffect(() => {
   return () => document.removeEventListener("fullscreenchange", changeHandler);
 }, []);
 
-  
   const calculateLatestWeight = async () => {
     const pumpkinDoc = await getDoc(doc(db, 'Users', user.uid, 'Pumpkins', pumpkinId));
     const pumpkinData = pumpkinDoc.data();

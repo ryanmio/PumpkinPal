@@ -10,8 +10,6 @@ const uploadImage = async (file, pumpkinId, userId, db, storage) => {
     const storageRef = ref(storage, storagePath);
     const metadata = { contentType: file.type };
     const uploadTask = uploadBytesResumable(storageRef, file, metadata);
-
-    // Toast for upload started
     const uploadToastId = toast.loading('Uploading image...');
 
     return new Promise((resolve, reject) => {

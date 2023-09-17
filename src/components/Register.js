@@ -113,7 +113,6 @@ function Register() {
                       <FaGoogle className="google-logo" />
                       <span className="px-2">Sign Up with Google</span>
                     </button>
-
                   </Form>
                   <div className="d-flex justify-content-center align-items-center mt-4">
                     <span className="fw-normal">
