@@ -14,7 +14,6 @@ jest.mock('react-ga4', () => ({
   send: jest.fn(),
 }));
 
-
 test('renders without crashing', () => {
   render(<App />);
 });

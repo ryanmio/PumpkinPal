@@ -11,7 +11,7 @@ function MeasurementInput({ id, value, onChange, placeholder, min, max }) {
         onChange={onChange}
         min={min}
         max={max}
-        step="0.5" // This line allows 0.5 increments
+        step="0.5"
         required
         pattern="\d*(\.\d+)?"
         inputMode="numeric"

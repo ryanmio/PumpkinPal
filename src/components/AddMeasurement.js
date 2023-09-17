@@ -172,7 +172,6 @@ const addMeasurement = async (e) => {
             Save Measurement (OTT: {calculateOTT()})
           </Button>
         </div>
-
         </form>
       </div>
     </div>

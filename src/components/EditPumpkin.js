@@ -21,7 +21,7 @@ function EditPumpkin() {
         } catch (error) {
           toast.error("Failed to load pumpkin. Please try again.");
           console.error("Error loading pumpkin: ", error);
-          trackError(error, 'EditPumpkin - Failed Fetch', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);  // Add this line
+          trackError(error, 'EditPumpkin - Failed Fetch', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);
         }
       };
       fetchPumpkin();
@@ -30,7 +30,6 @@ function EditPumpkin() {
       
   return () => unsubscribe();
 }, [id]);
-
 
   const handleChange = (e) => {
     setPumpkin({ ...pumpkin, [e.target.name]: e.target.value });

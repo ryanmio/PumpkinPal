@@ -18,7 +18,7 @@ body {
 }
 
 .logout-button {
-  margin-left: 20px; /* Move logout button to the right */
+  margin-left: 20px;
 }
 
 .green-button {
@@ -248,19 +248,17 @@ button.button-disabled {
   padding-top: 4rem; /* Add padding equal to the height of the navbar */
 }
 
-/* Remove underline from links */
 a, .link {
   text-decoration: none;
 }
 
-/* Define icon color and hover effect */
 .icon-hover {
-  fill: #80876E; /* Set the default color */
-  transition: fill 0.3s ease; /* Transition effect */
+  fill: #80876E;
+  transition: fill 0.3s ease;
 }
 
 .link:hover .icon-hover {
-  fill: #6A705C; /* Set the hover color */
+  fill: #6A705C;
 }
 
 /* Styles for tablet and above */
@@ -270,7 +268,7 @@ a, .link {
     transform: translateX(0);
   }
   .main-content.open {
-    margin-left: 14rem; /* Adjust this value based on the new width of your sidebar */
+    margin-left: 14rem; 
   }
 
   /* Styles when sidebar is closed on tablet and above */
