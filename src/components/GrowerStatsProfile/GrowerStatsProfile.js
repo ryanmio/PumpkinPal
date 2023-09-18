@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, lazy, Suspense } from 'react';
 import { GrowerContext } from '../../contexts/GrowerContext';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { UserContext } from '../../contexts/UserContext';
 const Header = lazy(() => import('./Header'));
 const SummarySection = lazy(() => import('./SummarySection'));
 const TableSection = lazy(() => import('./TableSection'));
+
 
 const GrowerStatsProfile = () => {
   const { setGrowerName, growerData, pumpkins, loading, error } = useContext(GrowerContext);
