@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, lazy, Suspense } from 'react';
 import { GrowerContext } from '../../contexts/GrowerContext';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 const Header = lazy(() => import('./Header'));
