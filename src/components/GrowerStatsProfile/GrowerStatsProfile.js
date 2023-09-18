@@ -4,7 +4,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import Header from './Header';
 import SummarySection from './SummarySection';
 import TableSection from './TableSection';
-import { UserContext } from '../../contexts/UserContext'; // Import UserContext
+import { UserContext } from '../../contexts/UserContext';
 
 const GrowerStatsProfile = () => {
   const { setGrowerName, growerData, pumpkins, loading, error } = useContext(GrowerContext);
