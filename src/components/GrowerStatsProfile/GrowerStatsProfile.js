@@ -1,9 +1,9 @@
 import { useContext, useEffect } from 'react';
 import { GrowerContext } from '../../contexts/GrowerContext';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import Header from './Header';
-import SummarySection from './SummarySection';
-import TableSection from './TableSection';
+const Header = lazy(() => import('./Header'));
+const SummarySection = lazy(() => import('./SummarySection'));
+const TableSection = lazy(() => import('./TableSection'));
 import { UserContext } from '../../contexts/UserContext';
 
 const GrowerStatsProfile = () => {
@@ -56,17 +56,23 @@ const GrowerStatsProfile = () => {
 
 
 
-  return (
+return (
   <div className="min-h-screen flex justify-start flex-col container mx-auto px-4 pt-2 space-y-4">
     <div className="mt-3 flex">
-        {user && ( // Conditionally render back button based on user
+        {user && (
           <button onClick={() => navigate(-1)} className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">← Back</button>
         )}
       </div>
-    <Header data={growerData} />
-    <SummarySection data={growerData} />
+    <Suspense fallback={<div>Loading Header...</div>}>
+      <Header data={growerData} />
+    </Suspense>
+    <Suspense fallback={<div>Loading Summary...</div>}>
+      <SummarySection data={growerData} />
+    </Suspense>
     {pumpkins && pumpkins.length > 0 && (
-      <TableSection data={pumpkins} columns={pumpkinColumns} />
+      <Suspense fallback={<div>Loading Table...</div>}>
+        <TableSection data={pumpkins} columns={pumpkinColumns} />
+      </Suspense>
     )}
   </div>
 );
