@@ -7,7 +7,7 @@
   --color-footer-text: #F2EEE3;
 }
 
-[data-color-mode="dark"] {
+[data-theme="dark"] {
   --color-background: #36382E;
   --color-text: #F2EEE3;
   --color-button: #6c755e;
