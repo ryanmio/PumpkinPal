@@ -234,44 +234,45 @@ if (sharedImageData.latestWeight !== null && sharedImageData.daysAfterPollinatio
   const sanitizedOgTitle = DOMPurify.sanitize(ogTitle);
   const sanitizedOgDescription = DOMPurify.sanitize(ogDescription);
   const sanitizedOgImage = DOMPurify.sanitize(ogImage);
+  const sanitizedReqUrl = DOMPurify.sanitize(req.url);
 
   // Respond with the HTML containing the OG tags
-  res.send(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta property="og:title" content="${sanitizedOgTitle}">
-      <meta property="og:description" content="${sanitizedOgDescription}">
-      <meta property="og:image" content="${sanitizedOgImage}">
-      <meta property="og:url" content="${req.url}">
-      <link rel="icon" href="https://pumpkinpal.app/favicon.ico" />
-      <title>${ogTitle}</title>
-      <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
-      <style>
-        body {
-          font-family: 'Lato', sans-serif;
-        }
-        h1 {
-          font-size: 24px;
-          color: #333;
-        }
-        p {
-          font-size: 18px;
-          line-height: 1.5;
-          color: #666;
-        }
-        img {
-          max-width: 100%;
-        }
-      </style>
-    </head>
-    <body>
-    <h1>${sanitizedOgTitle}</h1>
-    <p>Shared on ${sharedDate}</p>
-    <img src="${sanitizedOgImage}" alt="${sanitizedOgTitle}">
-    </body>
-    </html>
+res.send(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta property="og:title" content="${sanitizedOgTitle}">
+  <meta property="og:description" content="${sanitizedOgDescription}">
+  <meta property="og:image" content="${sanitizedOgImage}">
+  <meta property="og:url" content="${sanitizedReqUrl}">
+  <link rel="icon" href="https://pumpkinpal.app/favicon.ico" />
+  <title>${ogTitle}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Lato', sans-serif;
+    }
+    h1 {
+      font-size: 24px;
+      color: #333;
+    }
+    p {
+      font-size: 18px;
+      line-height: 1.5;
+      color: #666;
+    }
+    img {
+      max-width: 100%;
+    }
+  </style>
+</head>
+<body>
+<h1>${sanitizedOgTitle}</h1>
+<p>Shared on ${sharedDate}</p>
+<img src="${sanitizedOgImage}" alt="${sanitizedOgTitle}">
+</body>
+</html>
 `);
 });
 

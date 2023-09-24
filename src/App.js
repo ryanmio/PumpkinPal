@@ -28,6 +28,7 @@ import SiteProfile from './components/GrowerStatsProfile/SiteProfile';
 import ImageDisplay from './components/ImageDisplay';
 import ShareRedirect from './components/ShareRedirect';
 import Sidebar from './components/Sidebar';
+import { DarkModeProvider } from './contexts/DarkModeContext';
 
 // GA Initialization in a useEffect with an empty dependency array to prevent initializing more than once
 function InitializeGA() {
@@ -64,6 +65,7 @@ function App() {
   };
 
   return (
+    <DarkModeProvider>
     <div className={`App font-lato flex flex-col min-h-screen ${isSidebarOpen ? '' : 'closed'}`}>
       <Router>
         <UserProvider value={{ user: currentUser }}>
@@ -99,6 +101,7 @@ function App() {
         </UserProvider>
       </Router>
     </div>
+    </DarkModeProvider>
   );
 }
 

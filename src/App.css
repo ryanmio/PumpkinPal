@@ -1,3 +1,21 @@
+:root {
+  --color-background: #F2EEE3;
+  --color-text: #36382E;
+  --color-button: #80876E;
+  --color-button-hover: #6c755e;
+  --color-footer: #80876E;
+  --color-footer-text: #F2EEE3;
+}
+
+[data-theme="dark"] {
+  --color-background: #36382E;
+  --color-text: #F2EEE3;
+  --color-button: #6c755e;
+  --color-button-hover: #80876E;
+  --color-footer: #F2EEE3;
+  --color-footer-text: #80876E;
+}
+
 body {
   overflow-x: hidden;
 }
@@ -8,8 +26,8 @@ body {
 
 .App {
   text-align: center;
-  background-color: #F2EEE3;
-  color: #36382E;
+  background-color: var(--color-background);
+  color: var(--color-text);
 }
 
 .App-logo {
@@ -22,11 +40,11 @@ body {
 }
 
 .green-button {
-  background-color: #80876E !important;
+  background-color: var(--color-button) !important;
 }
 
 .green-button:hover {
-  background-color: #6c755e !important;
+  background-color: var(--color-button-hover) !important;
 }
 
 .input + .label-float {
@@ -98,8 +116,8 @@ button.button-disabled {
 }
 
 .App-footer {
-  background-color: #80876E;
-  color: #F2EEE3;
+  background-color: var(--color-footer);
+  color: var(--color-footer-text);
 }
 
 .table-cell {
@@ -239,7 +257,7 @@ button.button-disabled {
 
 /* NAVBAR */
 .fixed.top-0.z-50 {
-  background-color: #80876E;
+  background-color: var(--color-button);
   height: 4.5rem;
 }
 
@@ -253,12 +271,12 @@ a, .link {
 }
 
 .icon-hover {
-  fill: #80876E;
+  fill: var(--color-button);
   transition: fill 0.3s ease;
 }
 
 .link:hover .icon-hover {
-  fill: #6A705C;
+  fill: var(--color-button-hover);
 }
 
 /* Styles for tablet and above */
@@ -301,5 +319,5 @@ a, .link {
   width: 100%;
   height: 100%;
   z-index: 9999;
-  background: white;
+  background: var(--color-background);
 }
