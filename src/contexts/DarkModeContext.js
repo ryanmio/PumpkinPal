@@ -16,7 +16,7 @@ export function DarkModeProvider({ children }) {
         localStorage.setItem('color-mode', newValue);
 
         // Set CSS variable
-        root.style.setProperty('--initial-color-mode', newValue);
+       // root.style.setProperty('--initial-color-mode', newValue);
 
         // Set data-theme attribute
         root.setAttribute('data-theme', newValue);
