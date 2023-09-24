@@ -28,6 +28,7 @@ import SiteProfile from './components/GrowerStatsProfile/SiteProfile';
 import ImageDisplay from './components/ImageDisplay';
 import ShareRedirect from './components/ShareRedirect';
 import Sidebar from './components/Sidebar';
+import { DarkModeProvider } from './contexts/DarkModeContext';
 
 
 // Initialize GA once when the App.js module is loaded
@@ -59,6 +60,7 @@ function App() {
   };
 
   return (
+    <DarkModeProvider>
     <div className={`App font-lato flex flex-col min-h-screen ${isSidebarOpen ? '' : 'closed'}`}>
       <Router>
         <UserProvider value={{ user: currentUser }}>
@@ -93,6 +95,7 @@ function App() {
         </UserProvider>
       </Router>
     </div>
+    </DarkModeProvider>
   );
 }
 
