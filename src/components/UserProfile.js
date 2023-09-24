@@ -5,6 +5,7 @@ import { signOut, reauthenticateWithCredential, EmailAuthProvider, updatePasswor
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { GA_ACTIONS, trackUserEvent, trackError } from '../utilities/error-analytics';
+import { useDarkMode } from '../contexts/DarkModeContext';
 
 function UserProfile() {
   const [loading, setLoading] = useState(true);
