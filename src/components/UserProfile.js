@@ -15,7 +15,7 @@ function UserProfile() {
   const [preferredUnit, setPreferredUnit] = useState('in');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
-  const [colorMode, setColorMode] = useState(localStorage.getItem('color-mode') || 'light');
+  const { colorMode, setColorMode } = useDarkMode();
 
   useEffect(() => {
     console.log('Color mode:', colorMode);
