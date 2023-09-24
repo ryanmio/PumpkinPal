@@ -29,9 +29,14 @@ import ImageDisplay from './components/ImageDisplay';
 import ShareRedirect from './components/ShareRedirect';
 import Sidebar from './components/Sidebar';
 
-
-// Initialize GA once when the App.js module is loaded
-ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
+// GA Initialization in a useEffect with an empty dependency array to prevent initializing more than once
+function InitializeGA() {
+  useEffect(() => {
+    ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
+  }, []);
+  
+  return null;
+}
 
 function TrackPageViews() {
   const location = useLocation();
@@ -63,6 +68,7 @@ function App() {
       <Router>
         <UserProvider value={{ user: currentUser }}>
           <GrowerContextProvider>
+          <InitializeGA />
             <TrackPageViews />
             <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
             <div className={`main-content flex-grow ${isSidebarOpen ? 'open' : 'closed'}`} onClick={() => setIsSidebarOpen(false)}>
