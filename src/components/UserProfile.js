@@ -197,14 +197,6 @@ const handleLogout = () => {
             <option value="in">in</option>
           </select>
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Dark Mode
-          </label>
-          <button onClick={() => setColorMode(colorMode === 'dark' ? 'light' : 'dark')}>
-            Toggle color mode
-          </button>
-        </div>
         <div className="text-right">
           <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-1 border text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Save</button>
         </div>
