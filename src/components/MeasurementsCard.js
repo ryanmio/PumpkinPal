@@ -89,6 +89,12 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId, pollinationDate })
           const measurementDate = new Date(measurement.timestamp);
           const pollinationDateObj = pollinationDate ? new Date(pollinationDate) : null; // Check if pollinationDate is set
           const dap = pollinationDateObj ? Math.round((measurementDate - pollinationDateObj) / (1000 * 60 * 60 * 24)) : '-'; // If pollinationDate is not set, dap is '-'
+          
+          // Debugging
+          console.log("pollinationDate: ", pollinationDate);
+          console.log("pollinationDateObj: ", pollinationDateObj);
+          console.log("dap: ", dap);
+          
           return (
               <tr key={measurement.id}>
                 <td className="whitespace-nowrap table-cell">{measurement.timestamp}</td>
