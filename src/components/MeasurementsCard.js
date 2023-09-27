@@ -87,8 +87,8 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId, pollinationDate })
           <tbody>
           {measurements?.slice(0, isExpanded ? measurements.length : 6)?.map((measurement) => {
           const measurementDate = new Date(measurement.timestamp);
-          const pollinationDateObj = pollinationDate ? new Date(pollinationDate) : null; // Check if pollinationDate is set
-          const dap = pollinationDateObj ? Math.round((measurementDate - pollinationDateObj) / (1000 * 60 * 60 * 24)) : '-'; // If pollinationDate is not set, dap is '-'
+          const pollinationDateObj = pollinationDate && pollinationDate !== "Not Set" ? new Date(pollinationDate) : null; // Check if pollinationDate is set and not "Not Set"
+          const dap = pollinationDateObj ? Math.round((measurementDate - pollinationDateObj) / (1000 * 60 * 60 * 24)) : '-'; // If pollinationDate is not set or "Not Set", dap is '-'
           
           // Debugging
           console.log("pollinationDate: ", pollinationDate);
