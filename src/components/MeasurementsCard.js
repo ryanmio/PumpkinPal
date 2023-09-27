@@ -87,8 +87,8 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId, pollinationDate })
           <tbody>
           {measurements?.slice(0, isExpanded ? measurements.length : 6)?.map((measurement) => {
           const measurementDate = new Date(measurement.timestamp);
-          const pollinationDateObj = new Date(pollinationDate); // Changed variable name here
-          const dap = Math.round((measurementDate - pollinationDateObj) / (1000 * 60 * 60 * 24));
+          const pollinationDateObj = pollinationDate ? new Date(pollinationDate) : null; // Check if pollinationDate is set
+          const dap = pollinationDateObj ? Math.round((measurementDate - pollinationDateObj) / (1000 * 60 * 60 * 24)) : '-'; // If pollinationDate is not set, dap is '-'
           return (
               <tr key={measurement.id}>
                 <td className="whitespace-nowrap table-cell">{measurement.timestamp}</td>
