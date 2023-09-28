@@ -70,10 +70,17 @@ function Dashboard() {
   });
 }
 
-function daysSincePollination(pollinationDateStr) {
+function daysSincePollination(pollinationDateStr, weighOffDateStr) {
   const pollinationDate = new Date(pollinationDateStr);
+  const weighOffDate = new Date(weighOffDateStr);
   const oneDay = 24 * 60 * 60 * 1000;
-  const now = new Date();
+  let now = new Date();
+
+  // If the current date is after the weigh off date, use the weigh off date for calculation
+  if (now > weighOffDate) {
+    now = weighOffDate;
+  }
+
   const diffDays = Math.floor(Math.abs((now - pollinationDate) / oneDay));
   return diffDays;
 }
