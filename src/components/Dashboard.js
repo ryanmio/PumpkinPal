@@ -118,7 +118,7 @@ return (
                         <h3 className="text-lg leading-6 font-medium text-gray-900" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
                         <p className="max-w-2xl text-sm text-gray-500">{pumpkin.description}</p>
                         {pumpkin.latestMeasurement && <p className="max-w-2xl text-sm text-gray-500">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
-                        {pumpkin.pollinated && <p className="max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
+                        {pumpkin.pollinated && pumpkin.weighOff && <p className="max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated, pumpkin.weighOff)} days</p>}
                       </div>
                       <Dropdown 
                         onAddMeasurement={() => navigate(`/add-measurement/${pumpkin.id}`)} 
