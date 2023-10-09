@@ -70,10 +70,17 @@ function Dashboard() {
   });
 }
 
-function daysSincePollination(pollinationDateStr) {
+function daysSincePollination(pollinationDateStr, weighOffDateStr) {
   const pollinationDate = new Date(pollinationDateStr);
+  const weighOffDate = new Date(weighOffDateStr);
   const oneDay = 24 * 60 * 60 * 1000;
-  const now = new Date();
+  let now = new Date();
+
+  // If the current date is after the weigh off date, use the weigh off date for calculation
+  if (now > weighOffDate) {
+    now = weighOffDate;
+  }
+
   const diffDays = Math.floor(Math.abs((now - pollinationDate) / oneDay));
   return diffDays;
 }
@@ -111,7 +118,7 @@ return (
                         <h3 className="text-lg leading-6 font-medium text-gray-900" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
                         <p className="max-w-2xl text-sm text-gray-500">{pumpkin.description}</p>
                         {pumpkin.latestMeasurement && <p className="max-w-2xl text-sm text-gray-500">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
-                        {pumpkin.pollinated && <p className="max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated)} days</p>}
+                        {pumpkin.pollinated && pumpkin.weighOff && <p className="max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated, pumpkin.weighOff)} days</p>}
                       </div>
                       <Dropdown 
                         onAddMeasurement={() => navigate(`/add-measurement/${pumpkin.id}`)} 
