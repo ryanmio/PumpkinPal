@@ -25,6 +25,11 @@ function PumpkinForm() {
       return;
     }
     try {
+      // Extract year from the earliest date available
+      const dates = [seedStarted, transplantOut, pollinated, weighOff].filter(Boolean);
+      const earliestDate = dates.sort()[0];
+      const season = earliestDate ? new Date(earliestDate).getFullYear() : new Date().getFullYear();
+  
       await addDoc(collection(db, 'Users', user.uid, 'Pumpkins'), {
         name,
         description,
@@ -33,7 +38,8 @@ function PumpkinForm() {
         seedStarted,
         transplantOut,
         pollinated,
-        weighOff
+        weighOff,
+        season // Add season field
       });
       trackUserEvent('Added Pumpkin', 'PumpkinForm.addPumpkin');
       navigate('/dashboard');

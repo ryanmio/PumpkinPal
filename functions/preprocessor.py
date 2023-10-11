@@ -10,7 +10,7 @@ print("Starting script...")
 
 # Load the data
 print("Loading data...")
-pumpkins_df = pd.read_csv('bigpumpkins_2004_2023_2023-09-10.csv')
+pumpkins_df = pd.read_csv('bigpumpkins_2004_2023_2023-10-11.csv')
 
 # Function to preprocess names
 print("Preprocessing names...")
