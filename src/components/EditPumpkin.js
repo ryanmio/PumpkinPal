@@ -36,20 +36,28 @@ function EditPumpkin() {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (auth.currentUser) {
-    try {
-      await updateDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id), pumpkin);
-      toast.success('Pumpkin updated successfully!');
-      trackUserEvent(GA_ACTIONS.EDIT_PUMPKIN, 'EditPumpkin - Successful');
-      navigate(`/dashboard`);
-    } catch (error) {
-      toast.error("Failed to update pumpkin. Please try again.");
-      console.error("Error updating pumpkin: ", error);
-      trackError(error, 'EditPumpkin - Failed', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);
+    e.preventDefault();
+    if (auth.currentUser) {
+      try {
+        // Extract year from the earliest date available
+        const dates = [pumpkin.seedStarted, pumpkin.transplantOut, pumpkin.pollinated, pumpkin.weighOff].filter(Boolean);
+        const earliestDate = dates.sort()[0];
+        const season = earliestDate ? new Date(earliestDate).getFullYear() : new Date().getFullYear();
+  
+        await updateDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id), {
+          ...pumpkin,
+          season // Update season field
+        });
+        toast.success('Pumpkin updated successfully!');
+        trackUserEvent(GA_ACTIONS.EDIT_PUMPKIN, 'EditPumpkin - Successful');
+        navigate(`/dashboard`);
+      } catch (error) {
+        toast.error("Failed to update pumpkin. Please try again.");
+        console.error("Error updating pumpkin: ", error);
+        trackError(error, 'EditPumpkin - Failed', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);
+      }
     }
-  }
-};
+  };
 
   if (!pumpkin) return 'Loading...';
 

@@ -976,3 +976,24 @@ exports.calculateSiteStats = functions.https.onRequest(async (req, res) => {
     await calculateSiteStats();
     res.send('Site stats calculation completed.');
 });
+
+
+
+// Add pumpkin season to database
+exports.addSeasonToPumpkins = functions.https.onRequest(async (req, res) => {
+    const db = admin.firestore();
+    const snapshot = await db.collectionGroup('Pumpkins').get();
+  
+    console.log(`Found ${snapshot.size} pumpkins.`); // Log the number of pumpkins found
+  
+    const updates = snapshot.docs.map(doc => {
+      console.log(`Updating pumpkin ${doc.id}`); // Log each pumpkin being updated
+      return doc.ref.update({ season: new Date().getFullYear() });
+    });
+  
+    await Promise.all(updates);
+  
+    console.log('Finished updating pumpkins.'); // Log when all updates are done
+  
+    res.send('Season added to all pumpkins');
+  });
