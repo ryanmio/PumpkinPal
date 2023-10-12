@@ -16,13 +16,30 @@ function Dashboard() {
   const { user: currentUser, loading: userLoading } = useContext(UserContext);
   const [pumpkins, setPumpkins] = useState([]);
   const [pumpkinsLoading, setPumpkinsLoading] = useState(true);
+  const [selectedSeason, setSelectedSeason] = useState('');
+  const [seasons, setSeasons] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (currentUser) {
+      const fetchSeasons = async () => {
+        const q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
+        const snapshot = await getDocs(q);
+        const seasons = [...new Set(snapshot.docs.map(doc => doc.data().season))];
+        setSeasons(seasons);
+      };
+      fetchSeasons();
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     if (currentUser) {
       const fetchData = async () => {
         try {
-          const q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
+          let q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
+          if (selectedSeason) {
+            q = query(q, where('season', '==', selectedSeason));
+          }
           const snapshot = await getDocs(q);
           let pumpkinsData = [];
 
@@ -49,7 +66,7 @@ function Dashboard() {
       };
       fetchData();
     }
-  }, [currentUser]);
+  }, [currentUser, selectedSeason]);
 
   async function deletePumpkin(id) {
   showDeleteConfirmation('Are you sure you want to delete this pumpkin?', "You won't be able to undo this.", async () => {
@@ -91,6 +108,12 @@ return (
       <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
       {!currentUser && <Login />}
       {currentUser && <p className="mb-4">Logged in as {currentUser.email}</p>}
+      <select value={selectedSeason} onChange={e => setSelectedSeason(e.target.value)}>
+        <option value="">All Seasons</option>
+        {seasons.map(season => (
+          <option key={season} value={season}>{season}</option>
+        ))}
+      </select>
     </div>
     {currentUser && (
       <>
