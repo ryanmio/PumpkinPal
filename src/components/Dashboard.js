@@ -38,7 +38,7 @@ function Dashboard() {
         try {
           let q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
           if (selectedSeason) {
-            q = query(q, where('season', '==', selectedSeason));
+            q = query(q, where('season', '==', Number(selectedSeason)));
           }
           const snapshot = await getDocs(q);
           let pumpkinsData = [];
