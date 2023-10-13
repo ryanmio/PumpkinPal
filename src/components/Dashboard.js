@@ -108,12 +108,18 @@ return (
       <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
       {!currentUser && <Login />}
       {currentUser && <p className="mb-4">Logged in as {currentUser.email}</p>}
-      <select value={selectedSeason} onChange={e => setSelectedSeason(e.target.value)}>
+      
+      <select 
+        value={selectedSeason} 
+        onChange={e => setSelectedSeason(e.target.value)}
+        className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+      >
         <option value="">All Seasons</option>
         {seasons.map(season => (
           <option key={season} value={season}>{season}</option>
         ))}
       </select>
+
     </div>
     {currentUser && (
       <>
