@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { auth, db, query, orderBy, limit, setDoc, doc } from '../firebase';
+import { auth, db, query, orderBy, limit } from '../firebase';
 import { useNavigate } from 'react-router-dom';
-import { collection, getDocs, deleteDoc, where } from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, where, doc, setDoc, query, orderBy, limit } from 'firebase/firestore';
 import Dropdown from './Dropdown';
 import Spinner from './Spinner';
 import PlusIcon from './icons/PlusIcon';
