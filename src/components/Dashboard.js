@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { auth, db, query, orderBy, limit } from '../firebase';
 import { useNavigate } from 'react-router-dom';
-import { collection, getDocs, deleteDoc, where, doc, setDoc } from 'firebase/firestore';
+import { collection, getDoc, deleteDoc, where, doc, setDoc } from 'firebase/firestore';
 import Dropdown from './Dropdown';
 import Spinner from './Spinner';
 import PlusIcon from './icons/PlusIcon';
@@ -20,23 +20,23 @@ function Dashboard() {
   const [seasons, setSeasons] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (currentUser) {
-      const fetchSeasonsAndPreferences = async () => {
-        const q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
-        const userDoc = doc(db, 'Users', currentUser.uid);
-  
-        const [snapshot, userSnapshot] = await Promise.all([getDocs(q), getDocs(userDoc)]);
-  
-        const seasons = [...new Set(snapshot.docs.map(doc => doc.data().season))];
-        setSeasons(seasons);
-  
-        const userData = userSnapshot.data();
-        setSelectedSeason(userData.selectedSeason || '');
-      };
-      fetchSeasonsAndPreferences();
-    }
-  }, [currentUser]);
+useEffect(() => {
+  if (currentUser) {
+    const fetchSeasonsAndPreferences = async () => {
+      const q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
+      const userDoc = doc(db, 'Users', currentUser.uid);
+
+      const [snapshot, userSnapshot] = await Promise.all([getDocs(q), getDoc(userDoc)]); // Use getDoc for userSnapshot
+
+      const seasons = [...new Set(snapshot.docs.map(doc => doc.data().season))];
+      setSeasons(seasons);
+
+      const userData = userSnapshot.data();
+      setSelectedSeason(userData.selectedSeason || '');
+    };
+    fetchSeasonsAndPreferences();
+  }
+}, [currentUser]);
 
   const handleSeasonChange = async (e) => {
     setSelectedSeason(e.target.value);
