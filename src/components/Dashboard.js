@@ -22,25 +22,19 @@ function Dashboard() {
 
   useEffect(() => {
     if (currentUser) {
-      const fetchSeasons = async () => {
+      const fetchSeasonsAndPreferences = async () => {
         const q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
-        const snapshot = await getDocs(q);
+        const userDoc = doc(db, 'Users', currentUser.uid);
+  
+        const [snapshot, userSnapshot] = await Promise.all([getDocs(q), getDocs(userDoc)]);
+  
         const seasons = [...new Set(snapshot.docs.map(doc => doc.data().season))];
         setSeasons(seasons);
-      };
-      fetchSeasons();
-    }
-  }, [currentUser]);
-
-  useEffect(() => {
-    if (currentUser) {
-      const fetchUserPreferences = async () => {
-        const userDoc = doc(db, 'Users', currentUser.uid);
-        const userSnapshot = await getDocs(userDoc);
+  
         const userData = userSnapshot.data();
         setSelectedSeason(userData.selectedSeason || '');
       };
-      fetchUserPreferences();
+      fetchSeasonsAndPreferences();
     }
   }, [currentUser]);
 
