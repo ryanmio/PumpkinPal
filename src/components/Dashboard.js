@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { auth, db, query, orderBy, limit } from '../firebase';
 import { useNavigate } from 'react-router-dom';
-import { collection, doc, getDocs, deleteDoc, where } from 'firebase/firestore';
+import { collection, doc, getDocs, deleteDoc, where, setDoc, doc  } from 'firebase/firestore';
 import Dropdown from './Dropdown';
 import Spinner from './Spinner';
 import PlusIcon from './icons/PlusIcon';
@@ -22,15 +22,23 @@ function Dashboard() {
 
   useEffect(() => {
     if (currentUser) {
-      const fetchSeasons = async () => {
-        const q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
-        const snapshot = await getDocs(q);
-        const seasons = [...new Set(snapshot.docs.map(doc => doc.data().season))];
-        setSeasons(seasons);
+      const fetchUserPreferences = async () => {
+        const userDoc = doc(db, 'Users', currentUser.uid);
+        const userSnapshot = await getDocs(userDoc);
+        const userData = userSnapshot.data();
+        setSelectedSeason(userData.selectedSeason || '');
       };
-      fetchSeasons();
+      fetchUserPreferences();
     }
   }, [currentUser]);
+
+  const handleSeasonChange = async (e) => {
+    setSelectedSeason(e.target.value);
+    if (currentUser) {
+      const userDoc = doc(db, 'Users', currentUser.uid);
+      await setDoc(userDoc, { selectedSeason: e.target.value }, { merge: true });
+    }
+  };
 
   useEffect(() => {
     if (currentUser) {
@@ -110,15 +118,15 @@ return (
       {currentUser && <p className="mb-4">Logged in as {currentUser.email}</p>}
       
       <select 
-        value={selectedSeason} 
-        onChange={e => setSelectedSeason(e.target.value)}
-        className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-      >
-        <option value="">All Seasons</option>
-        {seasons.map(season => (
-          <option key={season} value={season}>{season}</option>
-        ))}
-      </select>
+          value={selectedSeason} 
+          onChange={handleSeasonChange}
+          className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        >
+          <option value="">All Seasons</option>
+          {seasons.map(season => (
+            <option key={season} value={season}>{season}</option>
+          ))}
+        </select>
 
     </div>
     {currentUser && (
