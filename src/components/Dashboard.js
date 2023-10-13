@@ -22,6 +22,18 @@ function Dashboard() {
 
   useEffect(() => {
     if (currentUser) {
+      const fetchSeasons = async () => {
+        const q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
+        const snapshot = await getDocs(q);
+        const seasons = [...new Set(snapshot.docs.map(doc => doc.data().season))];
+        setSeasons(seasons);
+      };
+      fetchSeasons();
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (currentUser) {
       const fetchUserPreferences = async () => {
         const userDoc = doc(db, 'Users', currentUser.uid);
         const userSnapshot = await getDocs(userDoc);
