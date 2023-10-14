@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { auth, db, query, orderBy, limit } from '../firebase';
 import { useNavigate } from 'react-router-dom';
-import { collection, doc, getDocs, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, where, doc, setDoc, getDoc } from 'firebase/firestore';
 import Dropdown from './Dropdown';
 import Spinner from './Spinner';
 import PlusIcon from './icons/PlusIcon';
@@ -16,13 +16,44 @@ function Dashboard() {
   const { user: currentUser, loading: userLoading } = useContext(UserContext);
   const [pumpkins, setPumpkins] = useState([]);
   const [pumpkinsLoading, setPumpkinsLoading] = useState(true);
+  const [selectedSeason, setSelectedSeason] = useState('');
+  const [seasons, setSeasons] = useState([]);
   const navigate = useNavigate();
+
+useEffect(() => {
+  if (currentUser) {
+    const fetchSeasonsAndPreferences = async () => {
+      const q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
+      const userDoc = doc(db, 'Users', currentUser.uid);
+
+      const [snapshot, userSnapshot] = await Promise.all([getDocs(q), getDoc(userDoc)]); // Use getDoc for userSnapshot
+
+      const seasons = [...new Set(snapshot.docs.map(doc => doc.data().season))];
+      setSeasons(seasons);
+
+      const userData = userSnapshot.data();
+      setSelectedSeason(userData.selectedSeason || '');
+    };
+    fetchSeasonsAndPreferences();
+  }
+}, [currentUser]);
+
+  const handleSeasonChange = async (e) => {
+    setSelectedSeason(e.target.value);
+    if (currentUser) {
+      const userDoc = doc(db, 'Users', currentUser.uid);
+      await setDoc(userDoc, { selectedSeason: e.target.value }, { merge: true });
+    }
+  };
 
   useEffect(() => {
     if (currentUser) {
       const fetchData = async () => {
         try {
-          const q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
+          let q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
+          if (selectedSeason) {
+            q = query(q, where('season', '==', Number(selectedSeason)));
+          }
           const snapshot = await getDocs(q);
           let pumpkinsData = [];
 
@@ -49,7 +80,7 @@ function Dashboard() {
       };
       fetchData();
     }
-  }, [currentUser]);
+  }, [currentUser, selectedSeason]);
 
   async function deletePumpkin(id) {
   showDeleteConfirmation('Are you sure you want to delete this pumpkin?', "You won't be able to undo this.", async () => {
@@ -91,6 +122,18 @@ return (
       <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
       {!currentUser && <Login />}
       {currentUser && <p className="mb-4">Logged in as {currentUser.email}</p>}
+      
+      <select 
+          value={selectedSeason} 
+          onChange={handleSeasonChange}
+          className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        >
+          <option value="">All Seasons</option>
+          {seasons.map(season => (
+            <option key={season} value={season}>{season}</option>
+          ))}
+        </select>
+
     </div>
     {currentUser && (
       <>
