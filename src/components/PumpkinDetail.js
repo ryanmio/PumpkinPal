@@ -104,7 +104,7 @@ return (
         <div className="mb-auto">
           <h3 className="text-xl font-bold mb-2">Basic Info</h3>
           <p><b>Name:</b> {pumpkin?.name}</p>
-          <p><b>Description:</b> {pumpkin?.description}</p>
+          <p className="description-text"><b>Description:</b> {pumpkin?.description}</p>
           <p><b>Seed:</b> {pumpkin?.maternalLineage || 'Not Set'}</p>
           <p><b>Cross:</b> {pumpkin?.paternalLineage || 'Not Set'}</p>
         </div>

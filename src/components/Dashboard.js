@@ -159,7 +159,7 @@ return (
                     <div className="flex justify-between items-start">
                       <div className="flex-grow text-left">
                         <h3 className="text-lg leading-6 font-medium text-gray-900" onClick={() => navigate(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
-                        <p className="max-w-2xl text-sm text-gray-500">{pumpkin.description}</p>
+                        <p className="max-w-2xl text-sm text-gray-500 description-text">{pumpkin.description}</p>
                         {pumpkin.latestMeasurement && <p className="max-w-2xl text-sm text-gray-500">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
                         {pumpkin.pollinated && pumpkin.weighOff && <p className="max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated, pumpkin.weighOff)} days</p>}
                       </div>
@@ -207,3 +207,4 @@ return (
 }
 
 export default Dashboard;
+

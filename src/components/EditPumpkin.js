@@ -39,6 +39,27 @@ function EditPumpkin() {
     e.preventDefault();
     if (auth.currentUser) {
       try {
+        // Validate dates
+        const seedStartedDate = new Date(pumpkin.seedStarted);
+        const transplantOutDate = new Date(pumpkin.transplantOut);
+        const pollinatedDate = pumpkin.pollinated ? new Date(pumpkin.pollinated) : null;
+        const weighOffDate = pumpkin.weighOff ? new Date(pumpkin.weighOff) : null;
+
+        if (transplantOutDate < seedStartedDate) {
+          toast.error("Transplant out date cannot be earlier than seed started date.");
+          return; // Stop the form submission
+        }
+
+        if (pollinatedDate && transplantOutDate > pollinatedDate) {
+          toast.error("Pollinated date cannot be earlier than transplant out date.");
+          return; // Stop the form submission
+        }
+
+        if (weighOffDate && pollinatedDate && weighOffDate < pollinatedDate) {
+          toast.error("Weigh off date cannot be earlier than pollinated date.");
+          return; // Stop the form submission
+        }
+
         // Extract year from the earliest date available
         const dates = [pumpkin.seedStarted, pumpkin.transplantOut, pumpkin.pollinated, pumpkin.weighOff].filter(Boolean);
         const earliestDate = dates.sort()[0];
@@ -73,7 +94,7 @@ function EditPumpkin() {
           
           <div className="field space-y-1">
             <label className="block text-left">Description:</label>
-            <textarea name="description" value={pumpkin.description} onChange={handleChange} className="w-full p-2 border-2 border-gray-300 rounded" />
+            <textarea name="description" value={pumpkin.description} onChange={handleChange} maxLength="90" className="w-full p-2 border-2 border-gray-300 rounded" />
           </div>
           
           <div className="field space-y-1">
