@@ -1,5 +1,9 @@
+// app/layout.js
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { GrowerContextProvider } from '../contexts/GrowerContext'; // Adjust the path as necessary
+import { UserProvider } from '../contexts/UserContext'; // Adjust the path as necessary
+import { DarkModeProvider } from '../contexts/DarkModeContext'; // Adjust the path as necessary
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,7 +15,14 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <DarkModeProvider>
+        {/* <UserProvider> */}
+          <GrowerContextProvider>
+            <body className={inter.className}>{children}</body>
+          </GrowerContextProvider>
+        {/* </UserProvider> */}
+      </DarkModeProvider>
     </html>
   );
 }
+
