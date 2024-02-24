@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { auth, db } from '../firebase';
+import { auth, db } from '../../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { signOut, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
-import { GA_ACTIONS, trackUserEvent, trackError } from '../utilities/error-analytics';
+import { GA_ACTIONS, trackUserEvent, trackError } from '../../app/utilities/error-analytics';
 
 function UserProfile() {
   const [loading, setLoading] = useState(true);

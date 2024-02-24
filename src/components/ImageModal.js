@@ -1,10 +1,10 @@
 /* global FB */
 import React, { useRef } from 'react';
 import Modal from 'react-modal';
-import Button from '../utilities/Button';
+import Button from '../../app/utilities/Button';
 import Spinner from '../components/Spinner';
 import { toast } from 'react-hot-toast';
-import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../utilities/error-analytics';
+import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../app/utilities/error-analytics';
 import { showDeleteConfirmation } from '../components/Alert';
 import { addDoc, collection, updateDoc, getDoc, doc } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';

@@ -2,8 +2,8 @@ import React, { useContext } from 'react';
 import algoliasearch from 'algoliasearch/lite';
 import { InstantSearch, SearchBox, Hits } from 'react-instantsearch';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { GrowerContext } from '../../contexts/GrowerContext';
-import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../utilities/error-analytics';
+import { GrowerContext } from '../../../contexts/GrowerContext';
+import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../../app/utilities/error-analytics';
 
 const searchClient = algoliasearch('SPV52PLJT9', process.env.REACT_APP_ALGOLIA_API_KEY);
 

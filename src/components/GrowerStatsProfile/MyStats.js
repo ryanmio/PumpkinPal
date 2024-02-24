@@ -1,16 +1,16 @@
 import React, { useContext, useState } from 'react';
 import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
-import { UserContext } from '../../contexts/UserContext';
+import { db } from '../../../firebase';
+import { UserContext } from '../../../contexts/UserContext';
 import Header from './Header';
 import SummarySection from './SummarySection';
 import TableSection from './TableSection';
 import GrowerSearch from './GrowerSearch';
 import Spinner from '../Spinner';
-import useGrowerData from '../../utilities/useGrowerDataHook';
+import useGrowerData from '../../../app/utilities/useGrowerDataHook';
 import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
-import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../utilities/error-analytics';
+import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../../app/utilities/error-analytics';
 
 const MyStats = () => {
   const { user, growerId, setGrowerId } = useContext(UserContext);

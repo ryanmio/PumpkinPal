@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { auth, googleAuthProvider } from '../firebase';
+import { auth, googleAuthProvider } from '../../firebase';
 import { signInWithEmailAndPassword, signInWithPopup, sendPasswordResetEmail } from "firebase/auth";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
 import { Col, Row, Form, Card, Container, InputGroup, FormCheck } from '@themesberg/react-bootstrap';
 import { FaGoogle } from 'react-icons/fa';
-import { GA_CATEGORIES, GA_ACTIONS, trackUserEvent, trackError } from '../utilities/error-analytics';
+import { GA_CATEGORIES, GA_ACTIONS, trackUserEvent, trackError } from '../../app/utilities/error-analytics';
 
 const authErrorMap = {
   "auth/invalid-email": "Invalid email format",

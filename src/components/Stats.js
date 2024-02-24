@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BsPeopleFill, BsClipboardData } from 'react-icons/bs';
 import { GiPumpkin } from 'react-icons/gi';
-import { db } from '../firebase';
+import { db } from '../../firebase';
 import { doc, getDoc } from "firebase/firestore";
 import { IconContext } from "react-icons";
 

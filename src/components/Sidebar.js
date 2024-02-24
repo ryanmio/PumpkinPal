@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { UserContext } from '../contexts/UserContext';
+import { UserContext } from '../../contexts/UserContext';
 import Logout from './Logout';
 import MenuIcon from './icons/MenuIcon';
 import SignInButton from './SignInButton';
