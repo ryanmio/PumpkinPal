@@ -1,7 +1,9 @@
 module.exports = {
   content: [
-    './src/**/*.{js,jsx,ts,tsx}',
-    './public/index.html',
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    './public/index.html', // Keeping the public index.html for global styles
     'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}', // Flowbite source paths
   ],
   theme: {
@@ -73,10 +75,12 @@ module.exports = {
           900: '#f9dfd8'
         }
       },
+      backgroundImage: {
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+        "gradient-conic":
+          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      },
     },
-  },
-  variants: {
-    extend: {},
   },
   plugins: [
     require('flowbite/plugin'), // Adding Flowbite as a plugin
