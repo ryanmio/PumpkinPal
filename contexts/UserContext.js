@@ -1,8 +1,8 @@
 'use client';
 import React, { createContext, useState, useEffect, useMemo } from 'react';
-import { auth, db } from '../firebase'; // Adjust the path as necessary
+import { auth, db } from '../firebase'; 
 import { doc, onSnapshot } from 'firebase/firestore';
-import Spinner from '../src/components/Spinner'; // Adjust the path as necessary
+import Spinner from '../src/components/Spinner';
 
 export const UserContext = createContext();
 
