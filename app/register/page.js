@@ -119,7 +119,7 @@ function RegisterPage() {
                     <div className="d-flex justify-content-center align-items-center mt-4">
                       <span className="fw-normal">
                         Already have an account?&nbsp;
-                        <Card.Link onClick={() => navigate('/login')} className="fw-bold">
+                        <Card.Link onClick={() => router.push('/login')} className="fw-bold">
                           {`Login here `}
                         </Card.Link>
                       </span>

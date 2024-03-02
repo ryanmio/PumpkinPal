@@ -15,14 +15,16 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <DarkModeProvider>
-        {/* <UserProvider> */}
-          <GrowerContextProvider>
-            <body className={inter.className}>{children}</body>
-          </GrowerContextProvider>
-        {/* </UserProvider> */}
-      </DarkModeProvider>
+      <head />
+      <body className={inter.className}>
+        <DarkModeProvider>
+          <UserProvider>
+            <GrowerContextProvider>
+              {children}
+            </GrowerContextProvider>
+          </UserProvider>
+        </DarkModeProvider>
+      </body>
     </html>
   );
 }
-
