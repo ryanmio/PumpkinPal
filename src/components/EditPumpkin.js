@@ -1,8 +1,9 @@
+// src/components/EditPumpkin.js
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { auth, db } from '../firebase';
+import { auth, db } from '../../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../utilities/error-analytics';
+import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../app/utilities/error-analytics';
 import { toast } from 'react-hot-toast';
 
 function EditPumpkin() {
