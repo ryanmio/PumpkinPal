@@ -1,15 +1,15 @@
 import React from 'react';
 import { auth } from '../../firebase';
 import { signOut } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router'; // Import useRouter from next/router
 
 function Logout() {
-  const navigate = useNavigate();
+  const router = useRouter(); // Use useRouter hook instead of useNavigate
 
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      navigate('/login');
+      router.push('/login'); // Use router.push to navigate
     } catch (error) {
       console.error("Error signing out:", error);
     }

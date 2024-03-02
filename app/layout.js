@@ -1,21 +1,17 @@
 // app/layout.js
-import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { GrowerContextProvider } from '../contexts/GrowerContext';
 import { UserProvider } from '../contexts/UserContext';
 import { DarkModeProvider } from '../contexts/DarkModeContext';
-import Sidebar from '../components/Sidebar'; // Adjust the import path as necessary
+
+// Dynamically import the Sidebar component with SSR disabled
+const Sidebar = dynamic(() => import('../src/components/Sidebar'), { ssr: false });
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
   return (
     <html lang="en">
       <head />
@@ -23,8 +19,8 @@ export default function RootLayout({ children }) {
         <DarkModeProvider>
           <UserProvider>
             <GrowerContextProvider>
-              <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-              <div className={`main-content flex-grow ${isSidebarOpen ? 'open' : 'closed'}`} onClick={() => setIsSidebarOpen(false)}>
+              <Sidebar /> {/* Sidebar now manages its own open/close state */}
+              <div className="main-content flex-grow">
                 {children}
               </div>
             </GrowerContextProvider>
