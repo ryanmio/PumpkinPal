@@ -10,8 +10,8 @@ import SignInButton from './SignInButton';
 const links = [
   { href: '/dashboard', label: 'Dashboard', Icon: require('./icons/DashboardIcon').default },
   { href: '/add-pumpkin', label: 'New Pumpkin', Icon: require('./icons/AddPumpkinIcon').default },
-  // Note: Dynamic routes in Next.js are handled differently. You might need to adjust how you handle dynamic segments like :id
-  { href: '/add-measurement/[id]', label: 'New Measurement', Icon: require('./icons/AddMeasurementIcon').default },
+  // Temporarily commented out due to dynamic routing issue in /app directory. TODO: Fix once route is created in folder structure.
+  // { href: '/add-measurement/[id]', label: 'New Measurement', Icon: require('./icons/AddMeasurementIcon').default },
   { href: '/search', label: 'Search', Icon: require('./icons/SearchIcon').default },
   { href: '/my-stats', label: 'My Stats', Icon: require('./icons/MyStatsIcon').default },
   { href: '/user-profile', label: 'User Settings', Icon: require('./icons/SettingsIcon').default }
@@ -80,3 +80,4 @@ function Sidebar() {
 }
 
 export default Sidebar;
+
