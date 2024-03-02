@@ -1,11 +1,11 @@
+'use client' // Ensures this component is treated as a Client Component
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 
 function SignInButton() {
-  const navigate = useNavigate();
 
   const handleSignIn = () => {
-    navigate('/login');
+    // Directly navigate to the login page without using the useNavigation hook
+    window.location.href = '/login';
   };
 
   return (
