@@ -14,83 +14,83 @@ import Login from '../../src/components/Login';
 import { db, auth } from '../../firebase';
 
 function Dashboard() {
-  const { user: currentUser, loading: userLoading } = useContext(UserContext);
-  const [pumpkins, setPumpkins] = useState([]);
-  const [pumpkinsLoading, setPumpkinsLoading] = useState(true);
-  const [selectedSeason, setSelectedSeason] = useState('');
-  const [seasons, setSeasons] = useState([]);
-  const router = useRouter();
-
+    const { user: currentUser, loading: userLoading } = useContext(UserContext);
+    const [pumpkins, setPumpkins] = useState([]);
+    const [pumpkinsLoading, setPumpkinsLoading] = useState(true);
+    const [selectedSeason, setSelectedSeason] = useState('');
+    const [seasons, setSeasons] = useState([]);
+    const router = useRouter();
+  
   useEffect(() => {
     if (currentUser) {
       const fetchSeasonsAndPreferences = async () => {
         const q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
         const userDoc = doc(db, 'Users', currentUser.uid);
-
-        const [snapshot, userSnapshot] = await Promise.all([getDocs(q), getDoc(userDoc)]);
-
+  
+        const [snapshot, userSnapshot] = await Promise.all([getDocs(q), getDoc(userDoc)]); // Use getDoc for userSnapshot
+  
         const seasons = [...new Set(snapshot.docs.map(doc => doc.data().season))];
         setSeasons(seasons);
-
+  
         const userData = userSnapshot.data();
         setSelectedSeason(userData.selectedSeason || '');
       };
       fetchSeasonsAndPreferences();
     }
   }, [currentUser]);
-
-  const handleSeasonChange = async (e) => {
-    setSelectedSeason(e.target.value);
-    if (currentUser) {
-      const userDoc = doc(db, 'Users', currentUser.uid);
-      await setDoc(userDoc, { selectedSeason: e.target.value }, { merge: true });
-    }
-  };
-
-  useEffect(() => {
-    if (currentUser && selectedSeason) {
-      const fetchData = async () => {
-        try {
-          let q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
-          if (selectedSeason) {
-            q = query(q, where('season', '==', Number(selectedSeason)));
+  
+    const handleSeasonChange = async (e) => {
+      setSelectedSeason(e.target.value);
+      if (currentUser) {
+        const userDoc = doc(db, 'Users', currentUser.uid);
+        await setDoc(userDoc, { selectedSeason: e.target.value }, { merge: true });
+      }
+    };
+  
+    useEffect(() => {
+      if (currentUser) {
+        const fetchData = async () => {
+          try {
+            let q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
+            if (selectedSeason) {
+              q = query(q, where('season', '==', Number(selectedSeason)));
+            }
+            const snapshot = await getDocs(q);
+            let pumpkinsData = [];
+  
+            for (let pumpkinDoc of snapshot.docs) {
+              let pumpkinData = pumpkinDoc.data();
+  
+              const measurementsCollection = collection(db, 'Users', currentUser.uid, 'Pumpkins', pumpkinDoc.id, 'Measurements');
+              const measurementsQuery = query(measurementsCollection, orderBy('timestamp', 'desc'), limit(1));
+              const measurementSnapshot = await getDocs(measurementsQuery);
+  
+              const latestMeasurement = measurementSnapshot.docs[0]?.data() || null;
+  
+              pumpkinData.latestMeasurement = latestMeasurement;
+              pumpkinsData.push({ ...pumpkinData, id: pumpkinDoc.id });
+            }
+  
+            setPumpkins(pumpkinsData);
+            setPumpkinsLoading(false);
+          } catch (error) {
+            toast.error("Error fetching pumpkins");
+            console.error("Error fetching pumpkins: ", error);
+            trackError(error, 'Fetching Pumpkins', GA_CATEGORIES.SYSTEM, GA_ACTIONS.ERROR);
           }
-          const snapshot = await getDocs(q);
-          let pumpkinsData = [];
-
-          for (let pumpkinDoc of snapshot.docs) {
-            let pumpkinData = pumpkinDoc.data();
-
-            const measurementsCollection = collection(db, 'Users', currentUser.uid, 'Pumpkins', pumpkinDoc.id, 'Measurements');
-            const measurementsQuery = query(measurementsCollection, orderBy('timestamp', 'desc'), limit(1));
-            const measurementSnapshot = await getDocs(measurementsQuery);
-
-            const latestMeasurement = measurementSnapshot.docs[0]?.data() || null;
-
-            pumpkinData.latestMeasurement = latestMeasurement;
-            pumpkinsData.push({ ...pumpkinData, id: pumpkinDoc.id });
-          }
-
-          setPumpkins(pumpkinsData);
-          setPumpkinsLoading(false);
-        } catch (error) {
-          toast.error("Error fetching pumpkins");
-          console.error("Error fetching pumpkins: ", error);
-          trackError(error, 'Fetching Pumpkins', GA_CATEGORIES.SYSTEM, GA_ACTIONS.ERROR);
-        }
-      };
-      fetchData();
-    }
-  }, [currentUser, selectedSeason]);
-
-  async function deletePumpkin(id) {
+        };
+        fetchData();
+      }
+    }, [currentUser, selectedSeason]);
+  
+    async function deletePumpkin(id) {
     showDeleteConfirmation('Are you sure you want to delete this pumpkin?', "You won't be able to undo this.", async () => {
       try {
         if (currentUser && currentUser.uid && id) {
           await deleteDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', id));
           setPumpkins(pumpkins.filter(pumpkin => pumpkin.id !== id));
           toast.success('Deleted successfully!');
-          trackUserEvent(GA_CATEGORIES.USER, GA_ACTIONS.DELETE_PUMPKIN, 'Dashboard - Successful');
+          trackUserEvent(GA_ACTIONS.DELETE_PUMPKIN, 'Dashboard - Successful');
         } else {
           throw new Error("Missing required parameters.");
         }
@@ -101,7 +101,22 @@ function Dashboard() {
       }
     });
   }
-
+  
+  function daysSincePollination(pollinationDateStr, weighOffDateStr) {
+    const pollinationDate = new Date(pollinationDateStr);
+    const weighOffDate = new Date(weighOffDateStr);
+    const oneDay = 24 * 60 * 60 * 1000;
+    let now = new Date();
+  
+    // If the current date is after the weigh off date, use the weigh off date for calculation
+    if (now > weighOffDate) {
+      now = weighOffDate;
+    }
+  
+    const diffDays = Math.floor(Math.abs((now - pollinationDate) / oneDay));
+    return diffDays;
+  }
+  
   return (
     <div className="container mx-auto px-4 min-h-screen">
       <div className="my-8">
@@ -119,6 +134,7 @@ function Dashboard() {
               <option key={season} value={season}>{season}</option>
             ))}
           </select>
+  
       </div>
       {currentUser && (
         <>
@@ -189,21 +205,6 @@ function Dashboard() {
       )}
     </div>
   );
-}
-
-export default Dashboard;
-
-function daysSincePollination(pollinationDateStr, weighOffDateStr) {
-  const pollinationDate = new Date(pollinationDateStr);
-  const weighOffDate = new Date(weighOffDateStr);
-  const oneDay = 24 * 60 * 60 * 1000;
-  let now = new Date();
-
-  // If the current date is after the weigh off date, use the weigh off date for calculation
-  if (now > weighOffDate) {
-    now = weighOffDate;
   }
-
-  const diffDays = Math.floor(Math.abs((now - pollinationDate) / oneDay));
-  return diffDays;
-}
+  
+  export default Dashboard;  
