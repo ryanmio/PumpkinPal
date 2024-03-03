@@ -1,5 +1,4 @@
 'use client'
-// app/edit-pumpkin/[id]/page.js
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { db, auth } from '../../../firebase';
@@ -9,7 +8,7 @@ import { toast } from 'react-hot-toast';
 
 function EditPumpkin() {
   const router = useRouter();
-  const { id } = router.query; // Use useRouter to access the dynamic route parameter
+  const { id } = router.isReady ? router.query : { id: null };
   const [pumpkin, setPumpkin] = useState(null);
 
   useEffect(() => {
@@ -30,8 +29,10 @@ function EditPumpkin() {
       }
     };
 
-    fetchPumpkin();
-  }, [id, router]);
+    if (router.isReady) {
+      fetchPumpkin();
+    }
+  }, [router, router.isReady, id]); // Add router.isReady as a dependency
 
   const handleChange = (e) => {
     setPumpkin({ ...pumpkin, [e.target.name]: e.target.value });
