@@ -295,13 +295,14 @@ button.button-disabled {
 }
 
 /* Styles when sidebar is open */
-#logo-sidebar.open {
+body.sidebar-open #logo-sidebar {
   display: block; /* Show when open */
   transform: translateX(0);
 }
 
 .main-content {
   margin-left: 0;
+  transition: margin-left 0.3s ease; /* Smooth transition for margin changes */
 }
 
 /* NAVBAR */
@@ -331,18 +332,18 @@ a, .link {
 /* Styles for tablet and above */
 @media (min-width: 768px) {
   #logo-sidebar {
-    display: block; /* Show by default on tablet and above */
+    display: block; /* Adjust this if you want the sidebar always visible on tablet and above */
     transform: translateX(0);
   }
-  .main-content.open {
-    margin-left: 14rem; 
+  body.sidebar-open .main-content {
+    margin-left: 14rem; /* Adjust based on your sidebar width */
   }
 
-  /* Styles when sidebar is closed on tablet and above */
-  #logo-sidebar.closed {
+  /* Adjust or remove if you're handling the sidebar visibility purely through JavaScript */
+  body:not(.sidebar-open) #logo-sidebar {
     display: none;
   }
-  .main-content.closed {
+  body:not(.sidebar-open) .main-content {
     margin-left: 0;
   }
 }
@@ -380,5 +381,3 @@ a, .link {
   margin-bottom: 1em; /* Adjust as needed for your design */
   line-height: 1.5; /* Adjust as needed for your design */
 }
-
-

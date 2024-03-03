@@ -23,6 +23,7 @@ function Sidebar() {
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
+    document.body.classList.toggle('sidebar-open', isOpen);
   };
 
   return <>
@@ -80,4 +81,3 @@ function Sidebar() {
 }
 
 export default Sidebar;
-
