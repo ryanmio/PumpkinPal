@@ -11,6 +11,8 @@ import { deleteObject, ref } from 'firebase/storage';
 import { differenceInDays } from 'date-fns';
 import FullscreenIcon from './icons/FullscreenIcon';
 
+Modal.setAppElement('body');
+
 const ImageModal = ({ isOpen, closeModal, selectedImage, isLoading, images, pumpkinId, user, pumpkinName, db, storage, updateImages }) => {
   const modalRef = useRef(null);
   const [isFullscreen, setIsFullscreen] = React.useState(false);
