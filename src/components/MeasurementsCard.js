@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation'; // Updated import for useRouter
 import { doc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../../firebase';
 import { toast, Toaster } from 'react-hot-toast';
@@ -8,7 +8,7 @@ import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../app
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 
 const MeasurementsCard = ({ measurements, pumpkin, pumpkinId, pollinationDate }) => {
-  const navigate = useNavigate();
+  const router = useRouter(); // Updated to use useRouter
   const [isExpanded, setIsExpanded] = useState(false);
 
   const deleteMeasurement = async (measurementId) => {
@@ -66,7 +66,7 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId, pollinationDate })
       <Toaster />
       <h3 className="text-xl font-bold mb-2">Measurements</h3>
       <div className="flex space-x-4 justify-center">
-        <button onClick={() => navigate(`/add-measurement/${pumpkinId}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Add Measurement</button>
+        <button onClick={() => router.push(`/add-measurement/${pumpkinId}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Add Measurement</button>
         <button onClick={exportData} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export Data</button>
       </div>
       <div className="overflow-x-auto">
@@ -90,10 +90,10 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId, pollinationDate })
           const pollinationDateObj = pollinationDate && pollinationDate !== "Not Set" ? new Date(pollinationDate) : null; // Check if pollinationDate is set and not "Not Set"
           const dap = pollinationDateObj ? Math.round((measurementDate - pollinationDateObj) / (1000 * 60 * 60 * 24)) : '-'; // If pollinationDate is not set or "Not Set", dap is '-'
           
-          // Debugging
+          /* // Debugging
           console.log("pollinationDate: ", pollinationDate);
           console.log("pollinationDateObj: ", pollinationDateObj);
-          console.log("dap: ", dap);
+          console.log("dap: ", dap); */
           
           return (
               <tr key={measurement.id}>
@@ -104,7 +104,7 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId, pollinationDate })
                 <td className="table-cell">{measurement.circumference}</td>
                 <td className="table-cell">{measurement.measurementUnit}</td>
                 <td className="table-cell">{measurement.estimatedWeight}</td>
-                <td><button onClick={() => navigate(`/edit-measurement/${pumpkinId}/${measurement.id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Edit</button></td>
+                <td><button onClick={() => router.push(`/edit-measurement/${pumpkinId}/${measurement.id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Edit</button></td>
                 <td><button onClick={() => deleteMeasurement(measurement.id)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Delete</button></td>
               </tr>
             );
