@@ -19,18 +19,24 @@ const TableSection = ({ data, columns }) => {
       <h2 className="text-xl font-bold mb-2">Weigh-Off History</h2>
       <table {...getTableProps()} className="w-full table-fixed">
         <thead>
-          {headerGroups.map(headerGroup => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())} className={`whitespace-nowrap table-cell ${column.id === 'contestName' ? 'w-[200px]' : column.id === 'year' ? 'w-[75px]' : 'w-[100px]'}`}>
-                  {column.render('Header')}
-                  <span>
-                    {column.isSorted ? (column.isSortedDesc ? ' ▾' : ' ▴') : ''}
-                  </span>
-                </th>
-              ))}
-            </tr>
-          ))}
+          {headerGroups.map(headerGroup => {
+            const { key, ...restHeaderGroupProps } = headerGroup.getHeaderGroupProps();
+            return (
+              <tr key={key} {...restHeaderGroupProps}>
+                {headerGroup.headers.map(column => {
+                  const { key, ...restHeaderProps } = column.getHeaderProps(column.getSortByToggleProps());
+                  return (
+                    <th key={key} {...restHeaderProps} className={`whitespace-nowrap table-cell ${column.id === 'contestName' ? 'w-[200px]' : column.id === 'year' ? 'w-[75px]' : 'w-[100px]'}`}>
+                      {column.render('Header')}
+                      <span>
+                        {column.isSorted ? (column.isSortedDesc ? ' ▾' : ' ▴') : ''}
+                      </span>
+                    </th>
+                  );
+                })}
+              </tr>
+            );
+          })}
         </thead>
         <tbody {...getTableBodyProps()}>
           {rows.map(row => {
