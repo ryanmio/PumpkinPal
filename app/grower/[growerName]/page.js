@@ -3,6 +3,7 @@
 import React, { useContext, useEffect, lazy, Suspense } from 'react';
 import { GrowerContext } from '../../../contexts/GrowerContext';
 import { useRouter, useParams } from 'next/navigation';
+import Link from 'next/link';
 import { UserContext } from '../../../contexts/UserContext';
 const Header = lazy(() => import('../../../src/components/GrowerStatsProfile/Header'));
 const SummarySection = lazy(() => import('../../../src/components/GrowerStatsProfile/SummarySection'));
@@ -16,7 +17,8 @@ const GrowerStatsProfile = () => {
   const { user } = useContext(UserContext);
 
   useEffect(() => {
-    setGrowerName(growerNameFromUrl);
+    const decodedGrowerName = decodeURIComponent(growerNameFromUrl);
+    setGrowerName(decodedGrowerName);
   }, [growerNameFromUrl, setGrowerName]);
 
   if (loading) {
