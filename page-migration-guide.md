@@ -54,6 +54,13 @@ const router = useRouter();
 router.push('/dashboard');
 ```
 
+## Handling URL Parameters
+
+When migrating routes that include dynamic URL parameters, it's important to decode these parameters if they might include encoded characters. In Next.js, you can use `useParams` from `next/navigation` to access the parameters, and then decode them using `decodeURIComponent`.
+
+For example, to handle a route like `/pumpkin-details/:id` where `id` might include spaces or other characters that are encoded in URLs:
+
+
 ## Conclusion
 
 Migrating from CRA to Next.js involves adapting to Next.js's routing and data fetching paradigms. By making these changes, we leverage Next.js's powerful features like server-side rendering, static generation, and built-in optimization for performance and SEO.
