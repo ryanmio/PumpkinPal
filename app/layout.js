@@ -18,6 +18,7 @@ export default function RootLayout({ children }) {
         <head />
         <body className={inter.className}>
           <DarkModeProvider>
+          <div className={`App font-lato flex flex-col min-h-screen`}>
             <UserProvider>
               <GrowerContextProvider>
                 <Sidebar /> {/* Sidebar manages its own open/close state */}
@@ -26,6 +27,7 @@ export default function RootLayout({ children }) {
                 </div>
               </GrowerContextProvider>
             </UserProvider>
+          </div>
           </DarkModeProvider>
         </body>
       </html>
