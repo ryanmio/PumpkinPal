@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
           <div className={`App font-lato flex flex-col min-h-screen`}>
             <UserProvider>
               <GrowerContextProvider>
-                <Sidebar /> {/* Sidebar manages its own open/close state */}
+                <Sidebar />
                 <div className="main-content flex-grow">
                   {children}
                 </div>
