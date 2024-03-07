@@ -2,14 +2,14 @@
 // app/add-measurement/[id]/page.js
 import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { auth, db, Timestamp, onAuthStateChanged } from '../../../firebase';
+import { auth, db, Timestamp, onAuthStateChanged } from '../../firebase';
 import { doc, getDoc, setDoc, collection, getDocs, orderBy, limit, query } from 'firebase/firestore';
 import "react-datepicker/dist/react-datepicker.css";
-import MeasurementInput from '../../../src/components/MeasurementInput';
-import DateInput from '../../../src/components/DateInput';
+import MeasurementInput from '../../src/components/MeasurementInput';
+import DateInput from '../../src/components/DateInput';
 import toast, { Toaster } from 'react-hot-toast';
-import { GA_ACTIONS, trackUserEvent, trackError } from '../../../app/utilities/error-analytics';
-import Button from '../../../app/utilities/Button';
+import { GA_ACTIONS, trackUserEvent, trackError } from '../utilities/error-analytics';
+import Button from '../utilities/Button';
 
 function AddMeasurement() {
   const { id } = useParams();
