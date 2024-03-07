@@ -7,7 +7,6 @@ import { UserProvider } from '../contexts/UserContext';
 import { DarkModeProvider } from '../contexts/DarkModeContext';
 import { GoogleAnalytics } from '@next/third-parties/google';
 
-// Dynamically import the Sidebar component with SSR disabled
 const Sidebar = dynamic(() => import('../src/components/Sidebar'), { ssr: false });
 const inter = Inter({ subsets: ["latin"] });
 
