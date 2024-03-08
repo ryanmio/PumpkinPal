@@ -9,7 +9,7 @@ import { showDeleteConfirmation } from '../components/Alert';
 import { addDoc, collection, updateDoc, getDoc, doc } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 import { differenceInDays } from 'date-fns';
-import FullscreenIcon from './icons/FullscreenIcon';
+import FullscreenIcon from '../../public/icons/FullscreenIcon';
 
 Modal.setAppElement('body');
 

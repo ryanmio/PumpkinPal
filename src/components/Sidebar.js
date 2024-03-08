@@ -4,16 +4,16 @@ import Link from 'next/link';
 import { UserContext } from '../../contexts/UserContext';
 import dynamic from 'next/dynamic'; // Dynamically import the Logout component with SSR disabled
 const Logout = dynamic(() => import('./Logout'), { ssr: false });
-import MenuIcon from './icons/MenuIcon';
+import MenuIcon from '../../public/icons/MenuIcon';
 import SignInButton from './SignInButton';
 
 const links = [
-  { href: '/dashboard', label: 'Dashboard', Icon: require('./icons/DashboardIcon').default },
-  { href: '/add-pumpkin', label: 'New Pumpkin', Icon: require('./icons/AddPumpkinIcon').default },
-  { href: '/add-measurement', label: 'Add Measurement', Icon: require('./icons/AddMeasurementIcon').default },
-  { href: '/search', label: 'Search', Icon: require('./icons/SearchIcon').default },
-  { href: '/my-stats', label: 'My Stats', Icon: require('./icons/MyStatsIcon').default },
-  { href: '/user-profile', label: 'User Settings', Icon: require('./icons/SettingsIcon').default }
+  { href: '/dashboard', label: 'Dashboard', Icon: require('../../public/icons/DashboardIcon').default },
+  { href: '/add-pumpkin', label: 'New Pumpkin', Icon: require('../../public/icons/AddPumpkinIcon').default },
+  { href: '/add-measurement', label: 'Add Measurement', Icon: require('../../public/icons/AddMeasurementIcon').default },
+  { href: '/search', label: 'Search', Icon: require('../../public/icons/SearchIcon').default },
+  { href: '/my-stats', label: 'My Stats', Icon: require('../../public/icons/MyStatsIcon').default },
+  { href: '/user-profile', label: 'User Settings', Icon: require('../../public/icons/SettingsIcon').default }
 ];
 
 function Sidebar() {
