@@ -5,8 +5,8 @@ import { collection, getDocs, deleteDoc, where, doc, setDoc, getDoc, query, orde
 import { toast } from 'react-hot-toast';
 import Dropdown from '../../src/components/Dropdown';
 import Spinner from '../../src/components/Spinner';
-import PlusIcon from '../../src/components/icons/PlusIcon';
-import TableCellsIcon from '../../src/components/icons/TableCellsIcon';
+import PlusIcon from '../../public/icons/PlusIcon';
+import TableCellsIcon from '../../public/icons/TableCellsIcon';
 import { showDeleteConfirmation } from '../../src/components/Alert';
 import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../app/utilities/error-analytics';
 import { UserContext } from '../../contexts/UserContext';
