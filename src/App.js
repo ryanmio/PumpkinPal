@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import 'chart.js/auto';
+// import 'chart.js/auto';
 // import './App.css';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { auth } from './firebase';

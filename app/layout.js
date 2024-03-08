@@ -1,6 +1,7 @@
 // app/layout.js
 import dynamic from 'next/dynamic';
 import { Inter } from "next/font/google";
+import 'chart.js/auto';
 import "./globals.css";
 import './App.css';
 import { GrowerContextProvider } from '../contexts/GrowerContext';
