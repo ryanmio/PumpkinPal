@@ -248,12 +248,14 @@ button.button-disabled {
   transform: translateX(-100%);
   top: 3rem;
   width: 14rem;
+  padding-top: 2rem;
 }
 
 /* Styles when sidebar is open */
 #logo-sidebar.open {
   display: block; /* Show when open */
   transform: translateX(0);
+  top: 3rem;
 }
 
 .main-content {
