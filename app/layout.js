@@ -8,6 +8,7 @@ import { UserProvider } from '../contexts/UserContext';
 import { DarkModeProvider } from '../contexts/DarkModeContext';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { Toaster } from 'react-hot-toast';
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 // Dynamic import for Sidebar
 const Sidebar = dynamic(() => import('../src/components/Sidebar'), { ssr: false });
@@ -70,6 +71,7 @@ export default function RootLayout({ children }) {
             </div>
           </DarkModeProvider>
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_TRACKING_ID} />
+        <SpeedInsights />
       </body>
     </html>
   );
