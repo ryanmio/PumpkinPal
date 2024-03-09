@@ -152,14 +152,13 @@ const exportAllData = async () => {
     });
   };
 
-const handleLogout = () => {
-    signOut(auth)
-      .then(() => {
-        router.push('/');
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
+const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      router.push('/login');
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   const handleDeleteAccount = () => {
@@ -182,7 +181,7 @@ const handleLogout = () => {
           <label className="block text-sm font-medium text-gray-700">
             Email
           </label>
-          <input type="email" value={auth.currentUser.email} readOnly className="mt-1 w-full p-2 border-2 border-gray-300 bg-gray-100 rounded" />
+          <input type="email" value={auth.currentUser ? auth.currentUser.email : ''} readOnly className="mt-1 w-full p-2 border-2 border-gray-300 bg-gray-100 rounded" />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">

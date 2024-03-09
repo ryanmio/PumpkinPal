@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { auth, db } from '../../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { signOut, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import toast, { Toaster } from 'react-hot-toast';
 import { GA_ACTIONS, trackUserEvent, trackError } from '../../app/utilities/error-analytics';
 
@@ -13,7 +13,7 @@ function UserProfile() {
   const [currentPassword, setCurrentPassword] = useState('');
   const [preferredUnit, setPreferredUnit] = useState('in');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const navigate = useNavigate();
+  const router = useRouter();
     
     const confirmDeleteAccount = async () => {
     try {
@@ -150,14 +150,14 @@ const exportAllData = async () => {
     });
   };
 
-const handleLogout = () => {
-    signOut(auth)
-      .then(() => {
-        navigate('/');
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
+const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      // Use router.push to navigate
+      router.push('/');
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   const handleDeleteAccount = () => {
