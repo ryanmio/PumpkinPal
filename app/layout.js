@@ -1,6 +1,6 @@
 // app/layout.js
 import dynamic from 'next/dynamic';
-import { Inter } from "next/font/google";
+import { Inter as FontSans } from "next/font/google"; 
 import 'chart.js/auto';
 import "./globals.css";
 import { GrowerContextProvider } from '../contexts/GrowerContext';
@@ -20,7 +20,10 @@ const initFacebookSdk = dynamic(
 );
 
 // Google font
-const inter = Inter({ subsets: ["latin"] });
+const fontSans = FontSans({
+  subsets: ["latin"],
+  display: "swap",
+});
 
 // Metadata for the page, to be managed with the Metadata API
 export const metadata = {
@@ -43,7 +46,7 @@ export default function RootLayout({ children }) {
   initFacebookSdk();
 
   return (
-    <html lang="en">
+    <html lang="en" className={fontSans.className}>
       <head>
         <meta charSet="utf-8" />
         <link rel="icon" href="/favicon.ico" />
@@ -51,14 +54,13 @@ export default function RootLayout({ children }) {
         <meta name="theme-color" content="#80876E" />
         <link rel="apple-touch-icon" href="/logo192.png" />
         <link rel="manifest" href="/manifest.json" />
-        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
         <title>{metadata.title}</title>
         {/* Metadata API can be used here for dynamic metadata */}
       </head>
-      <body className={inter.className}>
+      <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
         <DarkModeProvider>
-            <div className={`App font-lato flex flex-col min-h-screen`}>
+            <div className={`App flex flex-col min-h-screen`}>
               <UserProvider>
                 <GrowerContextProvider>
                   <Sidebar />
