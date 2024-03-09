@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { auth, googleAuthProvider } from '../../firebase';
 import { signInWithEmailAndPassword, signInWithPopup, sendPasswordResetEmail } from "firebase/auth";
-// Replace useNavigate and useLocation with useRouter from next/navigation
 import { useRouter } from 'next/navigation';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
