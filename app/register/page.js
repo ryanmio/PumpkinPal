@@ -5,11 +5,12 @@ import { auth, db, googleAuthProvider } from '../../firebase';
 import { signInWithPopup, createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useRouter } from 'next/navigation';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
-import { Col, Row, Form, Card, Container, InputGroup } from '@themesberg/react-bootstrap';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import Link from "next/link";
 import { FaGoogle } from 'react-icons/fa';
 import { GA_ACTIONS, trackUserEvent, trackError } from '../utilities/error-analytics';
+import toast from 'react-hot-toast';
 
 const authErrorMap = {
   "auth/invalid-email": "Invalid email format.",
@@ -25,19 +26,18 @@ function RegisterPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState('');
     const router = useRouter();
 
     const register = e => {
     e.preventDefault();
 
     if(email.trim() === '' || password.trim() === '' || confirmPassword.trim() === ''){
-        setError('All fields are required');
+        toast.error('All fields are required');
         return;
     }
 
     if(password !== confirmPassword) {
-        setError('Passwords do not match');
+        toast.error('Passwords do not match');
         return;
     }
 
@@ -51,7 +51,7 @@ function RegisterPage() {
         })
         .catch((error) => {
             const friendlyErrorMsg = authErrorMap[error.code] || "An unknown error occurred.";
-            setError(friendlyErrorMsg);
+            toast.error(friendlyErrorMsg);
             trackError(GA_ACTIONS.ERROR, "Email & Password");
         });
     }
@@ -67,71 +67,49 @@ function RegisterPage() {
         })
         .catch((error) => {
             const friendlyErrorMsg = authErrorMap[error.code] || "An unknown error occurred.";
-            setError(friendlyErrorMsg);
+            toast.error(friendlyErrorMsg);
             trackError(GA_ACTIONS.ERROR, "Google");
         });
     }
 
     return (
-        <main style={{ minHeight: "100vh", paddingBottom: "1rem" }}>
-          <section className="d-flex align-items-center my-5 mt-lg-6 mb-lg-5">
-            <Container>
-              <Row className="justify-content-center">
-                <Col xs={12} className="d-flex align-items-center justify-content-center">
-                 <div className="bg-white shadow-soft border border-light rounded p-4 p-lg-5 w-100" style={{ maxWidth: '600px' }}>
-                    <div className="text-center text-md-center mb-4 mt-md-0">
-                      <h3 className="mb-0">Create an account</h3>
-                      {error && <p className="text-danger">{error}</p>}
-                    </div>
-                    <Form className="mt-4" onSubmit={register}>
-                      <Form.Group id="email" className="mb-4">
-                        <InputGroup>
-                          <InputGroup.Text>
-                            <FontAwesomeIcon icon={faEnvelope} />
-                          </InputGroup.Text>
-                          <Form.Control autoFocus required type="email" placeholder="Enter Email" onChange={(e) => setEmail(e.target.value)} />
-                        </InputGroup>
-                      </Form.Group>
-                      <Form.Group id="password" className="mb-4">
-                        <InputGroup>
-                          <InputGroup.Text>
-                            <FontAwesomeIcon icon={faUnlockAlt} />
-                          </InputGroup.Text>
-                          <Form.Control required type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
-                        </InputGroup>
-                      </Form.Group>
-                      <Form.Group id="confirmPassword" className="mb-4">
-                        <InputGroup>
-                          <InputGroup.Text>
-                            <FontAwesomeIcon icon={faUnlockAlt} />
-                          </InputGroup.Text>
-                          <Form.Control required type="password" placeholder="Confirm Password" onChange={(e) => setConfirmPassword(e.target.value)} />
-                        </InputGroup>
-                      </Form.Group>
-                      <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-100 mt-3">
-                        Sign Up
-                      </button>
-                      <button onClick={signInWithGoogle} className="green-button inline-flex items-center justify-center px-2 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-100 mt-3">
-                        <FaGoogle className="google-logo" />
-                        <span className="px-2">Sign Up with Google</span>
-                      </button>
-                    </Form>
-                    <div className="d-flex justify-content-center align-items-center mt-4">
-                      <span className="fw-normal">
-                        Already have an account?&nbsp;
-                        <Card.Link onClick={() => router.push('/login')} className="fw-bold">
-                          {`Login here `}
-                        </Card.Link>
-                      </span>
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-            </Container>
-          </section>
-        </main>
+        <div className="min-h-screen flex">
+          <div className="w-1/2 p-12" style={{ background: `url('/images/background-tiles.png') center center / 800px 800px repeat`, opacity: '0.9' }}>
+          </div>
+          <div className="w-1/2 flex flex-col justify-center p-12">
+            <div className="mt-6 w-full max-w-md mx-auto">
+              <h2 className="text-2xl font-bold">Create an account</h2>
+              <p className="mt-2 text-sm">Enter your details below to create your account</p>
+              <form className="mt-4" onSubmit={register}>
+                <Input autoFocus required placeholder="Enter Email" type="email" onChange={(e) => setEmail(e.target.value)} className="mb-4 w-full" />
+                <Input required type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} className="mb-4 w-full" />
+                <Input required type="password" placeholder="Confirm Password" onChange={(e) => setConfirmPassword(e.target.value)} className="mb-4 w-full" />
+                <Button type="submit" className="w-full mb-2">Continue</Button>
+                <div className="my-4 flex items-center justify-center">
+                  <div className="flex-grow border-t border-gray-300" />
+                  <span className="mx-4 text-sm text-gray-600">OR CONTINUE WITH</span>
+                  <div className="flex-grow border-t border-gray-300" />
+                </div>
+                <Button onClick={signInWithGoogle} className="w-full mb-4 bg-[#80876E] text-white hover:bg-[#6e7360]">
+                  <FaGoogle className="mr-2" />
+                  Google
+                </Button>
+                {/* to add: facebook login */}
+              </form>
+              <p className="mt-4 text-xs text-center">
+                By clicking continue, you agree to our
+                <Link href="/terms" legacyBehavior>
+                  <span className="text-blue-600"> Terms of Service</span>
+                </Link>
+                &nbsp;and
+                <Link href="/privacy" legacyBehavior>
+                  <span className="text-blue-600"> Privacy Policy</span>
+                </Link>.
+              </p>
+            </div>
+          </div>
+        </div>
       );
-  }
+}
 
 export default RegisterPage;
-
