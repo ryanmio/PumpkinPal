@@ -4,7 +4,7 @@ TO DO:
 - [x] Fix logout button style and flash of login component
 - [x] add error boundary
 - [x] add custom 404
-- [ ] convert background image tile from png to webp
+- [x] convert background image tile from png to webp
 - [ ] Fix formating bugs in charts
 - [ ] replace hot toast with custom toast component
 - [ ] re-do homepage
