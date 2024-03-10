@@ -10,7 +10,6 @@ import TableCellsIcon from '../../public/icons/TableCellsIcon';
 import { showDeleteConfirmation } from '../../src/components/Alert';
 import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../app/utilities/error-analytics';
 import { UserContext } from '../../contexts/UserContext';
-import Login from '../../src/components/Login';
 import { db, auth } from '../../firebase';
 
 function Dashboard() {
@@ -21,6 +20,12 @@ function Dashboard() {
     const [seasons, setSeasons] = useState([]);
     const router = useRouter();
   
+  useEffect(() => {
+    if (!currentUser && !userLoading) {
+      router.push('/login');
+    }
+  }, [currentUser, userLoading, router]);
+
   useEffect(() => {
     if (currentUser) {
       const fetchSeasonsAndPreferences = async () => {
@@ -121,7 +126,6 @@ function Dashboard() {
     <div className="container mx-auto px-4 min-h-screen">
       <div className="my-8">
         <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
-        {!currentUser && <Login />}
         {currentUser && <p className="mb-4">Logged in as {currentUser.email}</p>}
         
         <select 
