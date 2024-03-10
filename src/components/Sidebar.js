@@ -48,7 +48,7 @@ function Sidebar() {
         </div>
         <div className="flex items-center">
           {currentUser ? (
-            <Logout className="logout-button" />
+            <Logout />
           ) : (
             <SignInButton />
           )}
