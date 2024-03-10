@@ -11,8 +11,8 @@ const links = [
   { href: '/dashboard', label: 'Dashboard', Icon: require('../../public/icons/DashboardIcon').default },
   { href: '/add-pumpkin', label: 'New Pumpkin', Icon: require('../../public/icons/AddPumpkinIcon').default },
   { href: '/add-measurement', label: 'Add Measurement', Icon: require('../../public/icons/AddMeasurementIcon').default },
-  { href: '/search', label: 'Search', Icon: require('../../public/icons/SearchIcon').default },
-  { href: '/my-stats', label: 'My Stats', Icon: require('../../public/icons/MyStatsIcon').default },
+  { href: '/search', label: 'GPC Search', Icon: require('../../public/icons/SearchIcon').default },
+  { href: '/my-stats', label: 'GPC Profile', Icon: require('../../public/icons/MyStatsIcon').default },
   { href: '/user-profile', label: 'User Settings', Icon: require('../../public/icons/SettingsIcon').default }
 ];
 
