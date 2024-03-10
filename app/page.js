@@ -8,7 +8,10 @@ export default function Home() {
             {/* Hero Section */}
             <div className="flex flex-col md:flex-row items-center justify-center w-full h-auto py-10 md:py-20 md:pr-10">
                 <div className="relative mx-auto w-1/2 md:w-[294px] md:h-[588px]">
-                    <Image src="/images/screenmock-details-mobile.webp" alt="App mockup" style={{ objectFit: 'cover', position: 'absolute' }} width={736} height={1500} />
+                    <Image src="/images/screenmock-details-mobile.webp" alt="App mockup" style={{ objectFit: 'cover', position: 'absolute' }} width={736} height={1500} className="hidden md:block" />
+                    <div className="md:hidden w-full h-auto">
+                        <Image src="/images/screenmock-details-mobile.webp" alt="App mockup" layout="responsive" width={736} height={1500} />
+                    </div>
                 </div>
                 <div className="mt-10 md:mt-0 md:ml-10 text-center md:text-left md:w-[294px] mx-auto">
                     <h1 className="text-4xl font-bold mb-4">PumpkinPal</h1>
