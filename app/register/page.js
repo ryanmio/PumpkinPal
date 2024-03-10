@@ -73,10 +73,10 @@ function RegisterPage() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col md:flex-row">
-          <div className="hidden md:block md:w-1/2 p-12" style={{ background: `url('/images/background-tiles.png') center center / 800px 800px repeat`, opacity: '0.9' }}>
+        <div className="flex flex-col md:flex-row">
+          <div className="hidden md:block md:w-1/2 p-12" style={{ background: `url('/images/background-tiles.png') center center / 800px 800px repeat`, opacity: '0.9', minHeight: 'calc(100vh - 4rem)' }}>
           </div>
-          <div className="w-full md:w-1/2 flex flex-col justify-center p-12">
+          <div className="w-full md:w-1/2 flex flex-col justify-center p-12" style={{ minHeight: 'calc(100vh - 4rem)' }}>
             <div className="mt-6 w-full max-w-md mx-auto -mt-10">
               <h2 className="text-2xl font-bold">Create an account</h2>
               <p className="mt-2 text-sm">Enter your details below to create your account</p>
