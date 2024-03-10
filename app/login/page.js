@@ -1,14 +1,14 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import { auth, googleAuthProvider } from '../../firebase';
-import { signInWithEmailAndPassword, signInWithPopup, sendPasswordResetEmail } from "firebase/auth";
-import { useRouter } from 'next/navigation'; // Corrected import for App Directory
-import { useSearchParams } from 'next/navigation'; // Added useSearchParams
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
-import { Col, Row, Form, Card, Container, InputGroup, FormCheck } from '@themesberg/react-bootstrap';
-import { FaGoogle } from 'react-icons/fa';
-import { GA_CATEGORIES, GA_ACTIONS, trackUserEvent, trackError } from '../../app/utilities/error-analytics';
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { useRouter } from 'next/navigation'; // Adjusted import for useRouter
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import Link from "next/link";
+import { FaGoogle, FaEnvelope, FaUnlockAlt } from 'react-icons/fa';
+import { GA_ACTIONS, trackUserEvent, trackError } from '../../app/utilities/error-analytics';
+import toast from 'react-hot-toast';
 
 const authErrorMap = {
   "auth/invalid-email": "Invalid email format",
@@ -21,38 +21,25 @@ const authErrorMap = {
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [remember, setRemember] = useState(true);
-  const [error, setError] = useState('');
-  const router = useRouter(); // Use this for navigation
-  const [searchParams] = useSearchParams(); // Use the hook to get searchParams
+  const router = useRouter();
 
+  // Use useEffect to check for 'demo' query parameter using window.location.search
   useEffect(() => {
-    // Directly parse query parameters from window.location.search
     const queryString = window.location.search;
-    console.log("QueryString:", queryString);
-
-    // Use URLSearchParams to parse the query string
     const urlParams = new URLSearchParams(queryString);
     const demoMode = urlParams.get('demo');
-    console.log("Demo mode value from URLSearchParams:", demoMode);
 
     if (demoMode === 'true') {
-        const demoEmail = 'demo@account.com';
-        const demoPassword = 'pumpkinpal';
-        console.log("Setting demo credentials with workaround:", demoEmail, demoPassword);
-        setEmail(demoEmail);
-        setPassword(demoPassword);
+      setEmail('demo@account.com');
+      setPassword('pumpkinpal');
     }
-}, []);
-
-  console.log("Current email:", email); // Log the current state of email
-  console.log("Current password:", password); // Log the current state of password
+  }, []);
 
   const login = e => {
     e.preventDefault();
 
-    if(email.trim() === '' || password.trim() === ''){
-      setError('All fields are required');
+    if (email.trim() === '' || password.trim() === '') {
+      toast.error('All fields are required');
       return;
     }
 
@@ -63,11 +50,11 @@ function LoginPage() {
       })
       .catch((error) => {
         const friendlyErrorMsg = authErrorMap[error.code] || "An error occurred during login";
-        setError(friendlyErrorMsg);
+        toast.error(friendlyErrorMsg);
         trackError(error, 'Login.js', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);
       });
   };
-    
+
   const signInWithGoogle = () => {
     signInWithPopup(auth, googleAuthProvider)
       .then((result) => {
@@ -76,94 +63,46 @@ function LoginPage() {
       })
       .catch((error) => {
         const friendlyErrorMsg = authErrorMap[error.code] || "An unknown error occurred.";
-        setError(friendlyErrorMsg);
+        toast.error(friendlyErrorMsg);
         trackError(error, 'Login.js', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);
       });
   }
 
-  const handleForgotPassword = (e) => {
-    e.preventDefault();
-    if(email.trim() === ''){
-      setError('Please input your email');
-      return;
-    }
-    sendPasswordResetEmail(auth, email)
-      .then(() => {
-        alert('Password reset email sent to ' + email);
-      })
-      .catch((error) => {
-        const friendlyErrorMsg = authErrorMap[error.code] || "An error occurred when resetting password";
-        setError(friendlyErrorMsg);
-      });
-  }
-
   return (
-    <main style={{ minHeight: "100vh", paddingBottom: "1rem" }}>
-      <section className="d-flex align-items-center my-5 mt-lg-6 mb-lg-5">
-        <Container>
-          <Row className="justify-content-center">
-            <Col xs={12} className="d-flex align-items-center justify-content-center">
-              <div className="bg-white shadow-soft border border-light rounded p-4 p-lg-5 w-100 fmxw-500" style={{ maxWidth: '600px' }}>
-                <div className="text-center text-md-center mb-4 mt-md-0">
-                  <h3 className="mb-0">Sign in</h3>
-                  {error && <p className="text-danger">{error}</p>}
-                </div>
-                <Form className="mt-4" onSubmit={login}>
-                  <Form.Group id="email" className="mb-4">
-                    <InputGroup>
-                      <InputGroup.Text>
-                        <FontAwesomeIcon icon={faEnvelope} />
-                      </InputGroup.Text>
-                      <Form.Control autoFocus required type="email" placeholder="Enter Email" onChange={(e) => setEmail(e.target.value)} value={email} />
-                    </InputGroup>
-                  </Form.Group>
-                  <Form.Group id="password" className="mb-4">
-                    <InputGroup>
-                      <InputGroup.Text>
-                        <FontAwesomeIcon icon={faUnlockAlt} />
-                      </InputGroup.Text>
-                      <Form.Control required type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} value={password} />
-                    </InputGroup>
-                  </Form.Group>
-                  <Row className="align-items-center">
-                    <Col xs={6} style={{ display: 'flex', alignItems: 'center' }}>
-                      <FormCheck 
-                        type="checkbox" 
-                        id="rememberMeCheck" 
-                        checked={remember} 
-                        onChange={e => setRemember(e.target.checked)}
-                        style={{ marginRight: '0.5rem' }}
-                      />
-                      <FormCheck.Label htmlFor="rememberMeCheck">Remember me</FormCheck.Label>
-                    </Col>
-                    <Col xs={6} className="text-right">
-                      <Card.Link onClick={handleForgotPassword} className="fw-bold">
-                        Forgot Password?
-                      </Card.Link>
-                    </Col>
-                  </Row>
-                  <button type="submit" className="green-button inline-flex items-center justify-center px-2 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-100 mt-3">
-                    Sign in
-                  </button>
-                  <button onClick={signInWithGoogle} className="green-button inline-flex items-center justify-center px-2 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-100 mt-3">
-                    <FaGoogle className="google-logo" />
-                    <span className="px-2">Sign In with Google</span>
-                  </button>
-                </Form>
-                <div className="d-flex justify-content-center align-items-center mt-4">
-                  <span className="fw-normal">
-                    Not registered?&nbsp;
-                    <Card.Link onClick={() => router.push('/register')} className="fw-bold">
-                      Create account
-                    </Card.Link>
-                  </span>
-                </div>
-              </div>
-            </Col>
-          </Row>
-        </Container>
-      </section>
-    </main>
+    <div className="flex flex-col md:flex-row">
+      <div className="hidden md:block md:w-1/2 p-12" style={{ background: `url('/images/background-tiles.png') center center / 800px 800px repeat`, opacity: '0.9', minHeight: 'calc(100vh - 4.5rem)' }}>
+      </div>
+      <div className="w-full md:w-1/2 flex flex-col justify-center p-12" style={{ minHeight: 'calc(100vh - 4.5rem)' }}>
+        <div className="mt-6 w-full max-w-md mx-auto -mt-10">
+          <h2 className="text-2xl font-bold">Sign in to your account</h2>
+          <p className="mt-2 text-sm">Enter your details below</p>
+          <form className="mt-4" onSubmit={login}>
+            <Input autoFocus required icon={FaEnvelope} placeholder="Enter Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mb-4 w-full" />
+            <Input required icon={FaUnlockAlt} type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="mb-4 w-full" />
+            <Button type="submit" className="w-full mb-2">Sign In</Button>
+            <div className="my-4 flex items-center justify-center">
+              <div className="flex-grow border-t border-gray-300" />
+              <span className="mx-4 text-sm text-gray-600">OR SIGN IN WITH</span>
+              <div className="flex-grow border-t border-gray-300" />
+            </div>
+            <Button onClick={signInWithGoogle} className="w-full mb-4 bg-[#80876E] text-white hover:bg-[#6e7360] flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm">
+              <FaGoogle className="mr-2" />Sign in with Google
+            </Button>
+            <div className="mt-4 text-center">
+              <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
+                Forgot password?
+              </Link>
+            </div>
+            <div className="mt-4 text-center">
+              <span className="text-sm text-gray-600">Don't have an account? </span>
+              <Link href="/register" className="text-sm text-blue-600 hover:underline">
+                Register
+              </Link>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   );
 }
 
