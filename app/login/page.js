@@ -34,7 +34,7 @@ function LoginPage() {
     }
   }, []);
 
-  const login = e => {
+  const login = async (e) => {
     e.preventDefault();
 
     if (email.trim() === '' || password.trim() === '') {
@@ -42,29 +42,29 @@ function LoginPage() {
       return;
     }
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        router.push('/dashboard');
-        trackUserEvent(GA_ACTIONS.EMAIL_LOGIN, 'Login.handleEmailLogin');
-      })
-      .catch((error) => {
-        const friendlyErrorMsg = authErrorMap[error.code] || "An error occurred during login";
-        toast.error(friendlyErrorMsg);
-        trackError(error, 'Login.js', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);
-      });
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      // No need to check router.isReady because we're directly using await on push
+      await router.push('/dashboard');
+      trackUserEvent(GA_ACTIONS.EMAIL_LOGIN, 'Login.handleEmailLogin');
+    } catch (error) {
+      const friendlyErrorMsg = authErrorMap[error.code] || "An error occurred during login";
+      toast.error(friendlyErrorMsg);
+      trackError(error, 'Login.js', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);
+    }
   };
 
-  const signInWithGoogle = () => {
-    signInWithPopup(auth, googleAuthProvider)
-      .then((result) => {
-        router.push('/dashboard');
-        trackUserEvent(GA_ACTIONS.GOOGLE_LOGIN, 'Login.handleGoogleLogin');
-      })
-      .catch((error) => {
-        const friendlyErrorMsg = authErrorMap[error.code] || "An unknown error occurred.";
-        toast.error(friendlyErrorMsg);
-        trackError(error, 'Login.js', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);
-      });
+  const signInWithGoogle = async () => {
+    try {
+      await signInWithPopup(auth, googleAuthProvider);
+      // Directly await the push to ensure it's completed before moving on
+      await router.push('/dashboard');
+      trackUserEvent(GA_ACTIONS.GOOGLE_LOGIN, 'Login.handleGoogleLogin');
+    } catch (error) {
+      const friendlyErrorMsg = authErrorMap[error.code] || "An unknown error occurred.";
+      toast.error(friendlyErrorMsg);
+      trackError(error, 'Login.js', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);
+    }
   }
 
   return (
