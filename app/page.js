@@ -1,24 +1,35 @@
 // app/page.js
 import Image from 'next/image';
 import Link from 'next/link';
+import { Suspense } from 'react';
+import OTTWeightTracking from '../components/OTTWeightTracking';
+
 
 export default function Home() {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-200">
             {/* Hero Section */}
-            <div className="flex flex-col md:flex-row items-center justify-center w-full h-auto py-10 md:py-20 md:pr-10">
-                <div className="relative mx-auto w-1/2 md:w-[294px] md:h-[588px]">
-                    <Image src="/images/screenmock-details-mobile.webp" alt="App mockup" style={{ objectFit: 'cover', position: 'absolute' }} width={736} height={1500} className="hidden md:block" />
-                    <div className="md:hidden w-full h-auto">
-                        <Image src="/images/screenmock-details-mobile.webp" alt="App mockup" layout="responsive" width={736} height={1500} />
+            <section className="w-full py-6 md:py-12 lg:py-16 xl:py-20">
+                <div className="container flex flex-col items-center justify-center gap-4 px-4 text-center md:px-6">
+                    <div className="space-y-3">
+                        <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">Grow a record pumpkin</h1>
+                        <div className="mx-auto max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
+                            <p>PumpkinPal is the all-in-one companion app for pumpkin growers.</p>
+                        </div>
                     </div>
+                    <Image
+                        src="/images/graphdemo.gif"
+                        alt="Hero"
+                        className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center"
+                        width={550}
+                        height={310}
+                    />
                 </div>
-                <div className="mt-10 md:mt-0 md:ml-10 text-center md:text-left md:w-[294px] mx-auto">
-                    <h1 className="text-4xl font-bold mb-4">PumpkinPal</h1>
-                    <p className="text-xl mb-6 px-2">An open-source companion app for pumpkin growers</p>
-                    <Link href="/register" className="px-4 py-2 md:px-8 md:py-4 green-button rounded text-white text-lg md:text-xl">Create Account</Link>
-                </div>
-            </div>
+            </section>
+
+            <Suspense fallback={<p>Loading OTT Weight Tracking...</p>}>
+                <OTTWeightTracking />
+            </Suspense>
 
             {/* Mission Statement Section */}
             <div className="w-full px-8 py-8">
