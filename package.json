@@ -67,7 +67,6 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:export": "next build && next export",
     "start": "next start",
     "lint": "next lint"
   },
