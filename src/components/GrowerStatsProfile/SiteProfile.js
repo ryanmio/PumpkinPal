@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { db } from '../../../firebase';
 import Spinner from '../Spinner';
 import { Line } from 'react-chartjs-2';
-import { UserContext } from '../../contexts/UserContext';
+import { UserContext } from '../../../contexts/UserContext';
 
 // Component for displaying site details
 const SiteDetailsCard = ({ data, popularityData, weightData }) => {

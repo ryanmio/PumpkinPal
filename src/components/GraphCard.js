@@ -1,7 +1,10 @@
 import React, { useMemo, useRef } from 'react';
 import { Line } from 'react-chartjs-2';
 import 'chartjs-adapter-date-fns';
-import FullscreenIcon from './icons/FullscreenIcon';
+import { Chart, registerables } from 'chart.js';
+import FullscreenIcon from '../../public/icons/FullscreenIcon';
+
+Chart.register(...registerables);
 
 const GraphCard = ({ measurements, pumpkinName, setFullscreen, isFullscreen }) => {
   const graphCardRef = useRef(null);

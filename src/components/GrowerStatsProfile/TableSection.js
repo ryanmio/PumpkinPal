@@ -1,5 +1,5 @@
 import { useTable, useSortBy } from 'react-table';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 const TableSection = ({ data, columns }) => {
   const {
@@ -19,30 +19,38 @@ const TableSection = ({ data, columns }) => {
       <h2 className="text-xl font-bold mb-2">Weigh-Off History</h2>
       <table {...getTableProps()} className="w-full table-fixed">
         <thead>
-          {headerGroups.map(headerGroup => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())} className={`whitespace-nowrap table-cell ${column.id === 'contestName' ? 'w-[200px]' : column.id === 'year' ? 'w-[75px]' : 'w-[100px]'}`}>
-                  {column.render('Header')}
-                  <span>
-                    {column.isSorted ? (column.isSortedDesc ? ' ▾' : ' ▴') : ''}
-                  </span>
-                </th>
-              ))}
-            </tr>
-          ))}
+          {headerGroups.map(headerGroup => {
+            const { key, ...restHeaderGroupProps } = headerGroup.getHeaderGroupProps();
+            return (
+              <tr key={key} {...restHeaderGroupProps}>
+                {headerGroup.headers.map(column => {
+                  const { key: headerKey, ...restHeaderProps } = column.getHeaderProps(column.getSortByToggleProps());
+                  return (
+                    <th key={headerKey} {...restHeaderProps} className={`whitespace-nowrap table-cell ${column.id === 'contestName' ? 'w-[200px]' : column.id === 'year' ? 'w-[75px]' : 'w-[100px]'}`}>
+                      {column.render('Header')}
+                      <span>
+                        {column.isSorted ? (column.isSortedDesc ? ' ▾' : ' ▴') : ''}
+                      </span>
+                    </th>
+                  );
+                })}
+              </tr>
+            );
+          })}
         </thead>
         <tbody {...getTableBodyProps()}>
           {rows.map(row => {
             prepareRow(row);
+            const { key, ...restRowProps } = row.getRowProps();
             return (
-              <tr {...row.getRowProps()}>
+              <tr key={key} {...restRowProps}>
                 {row.cells.map(cell => {
   if (cell.column.id === 'contestName') {
+    const { key: cellKey, ...restCellProps } = cell.getCellProps();
     return (
-      <td {...cell.getCellProps()} className={`table-cell truncate overflow-hidden w-[200px]`}>
+      <td key={cellKey} {...restCellProps} className={`table-cell truncate overflow-hidden w-[200px]`}>
         <div className={`w-full`} title={cell.value}>
-          <Link to={`/site-profile/${row.original.contestName.replace(/ /g, '_')}`} className="text-current hover:text-current no-underline hover:underline">
+          <Link href={`/site-profile/${encodeURIComponent(row.original.contestName)}`} className="text-current hover:text-current no-underline hover:underline">
             {cell.render('Cell')}
           </Link>
         </div>
@@ -50,8 +58,9 @@ const TableSection = ({ data, columns }) => {
     );
   }
 
+                  const { key: cellKey, ...restCellProps } = cell.getCellProps();
                   return (
-                    <td {...cell.getCellProps()} className={`table-cell truncate overflow-hidden ${cell.column.id === 'year' ? 'w-[75px]' : 'w-[100px]'}`}>
+                    <td key={cellKey} {...restCellProps} className={`table-cell truncate overflow-hidden ${cell.column.id === 'year' ? 'w-[75px]' : 'w-[100px]'}`}>
                       <div className={`w-full`} title={cell.value}>
                         {cell.render('Cell')}
                       </div>

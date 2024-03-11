@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { auth, googleAuthProvider } from '../firebase';
+import { auth, googleAuthProvider } from '../../firebase';
 import { signInWithEmailAndPassword, signInWithPopup, sendPasswordResetEmail } from "firebase/auth";
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
 import { Col, Row, Form, Card, Container, InputGroup, FormCheck } from '@themesberg/react-bootstrap';
 import { FaGoogle } from 'react-icons/fa';
-import { GA_CATEGORIES, GA_ACTIONS, trackUserEvent, trackError } from '../utilities/error-analytics';
+import { GA_CATEGORIES, GA_ACTIONS, trackUserEvent, trackError } from '../../app/utilities/error-analytics';
 
 const authErrorMap = {
   "auth/invalid-email": "Invalid email format",
@@ -21,11 +21,12 @@ function Login() {
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(true);
   const [error, setError] = useState('');
-  const navigate = useNavigate();
-  const location = useLocation();
+  // Replace useNavigate with useRouter
+  const router = useRouter();
 
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
+    // Adapted to use useRouter
+    const queryParams = new URLSearchParams(window.location.search);
   
     if (queryParams.get('demo') === 'true') {
       const demoEmail = 'demo@account.com';
@@ -34,7 +35,7 @@ function Login() {
       setEmail(demoEmail);
       setPassword(demoPassword);
     }
-  }, [location]);
+  }, []);
 
   const login = e => {
     e.preventDefault();
@@ -46,7 +47,7 @@ function Login() {
 
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        navigate('/dashboard');
+        router.push('/dashboard');
         trackUserEvent(GA_ACTIONS.EMAIL_LOGIN, 'Login.handleEmailLogin');
       })
       .catch((error) => {
@@ -59,7 +60,7 @@ function Login() {
   const signInWithGoogle = () => {
     signInWithPopup(auth, googleAuthProvider)
       .then((result) => {
-        navigate('/dashboard');
+        router.push('/dashboard');
         trackUserEvent(GA_ACTIONS.GOOGLE_LOGIN, 'Login.handleGoogleLogin');
       })
       .catch((error) => {
@@ -141,7 +142,7 @@ function Login() {
                 <div className="d-flex justify-content-center align-items-center mt-4">
                   <span className="fw-normal">
                     Not registered?&nbsp;
-                    <Card.Link onClick={() => navigate('/register')} className="fw-bold">
+                    <Card.Link onClick={() => router.push('/register')} className="fw-bold">
                       {`Create account `}
                     </Card.Link>
                   </span>

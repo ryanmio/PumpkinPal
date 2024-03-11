@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { forwardRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import { toast } from 'react-hot-toast';
 
-function CustomInput({ value, onClick, className, onBlur, onChange }) {
+const CustomInput = forwardRef(({ value, onClick, className, onBlur, onChange }, ref) => {
   const id = "custom-date-input";
   
   return (
     <div className="relative">
       <input 
+        ref={ref} // Use the forwarded ref here
         id={id}
         className={`text-center text-xl w-full p-2 border-2 border-gray-300 rounded ${value ? 'text-80876E' : 'text-gray-600'}`}
         onClick={onClick}
@@ -21,8 +22,8 @@ function CustomInput({ value, onClick, className, onBlur, onChange }) {
         {"Date"}
       </label>
     </div>
-  )
-}
+  );
+});
 
 function DateInput({ selected, onChange }) {
   const [inputValue, setInputValue] = useState(moment(selected).format("MM/DD/YYYY"));

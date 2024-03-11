@@ -1,3 +1,4 @@
+// src/components/Register.js
 import React, { useState } from 'react';
 import { auth, db, googleAuthProvider } from '../firebase';
 import { signInWithPopup, createUserWithEmailAndPassword } from "firebase/auth";
@@ -7,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
 import { Col, Row, Form, Card, Container, InputGroup } from '@themesberg/react-bootstrap';
 import { FaGoogle } from 'react-icons/fa';
-import { GA_ACTIONS, trackUserEvent, trackError } from '../utilities/error-analytics';
+import { GA_ACTIONS, trackUserEvent, trackError } from '../../app/utilities/error-analytics';
 
 const authErrorMap = {
   "auth/invalid-email": "Invalid email format.",

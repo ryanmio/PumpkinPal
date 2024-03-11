@@ -33,18 +33,22 @@ bower_components
 # node-waf configuration
 .lock-wscript
 
-# Compiled binary addons (https://nodejs.org/api/addons.html)
-build/Release
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
 
 # Dependency directories
 node_modules/
 jspm_packages/
 
-# TypeScript v1 declaration files
-typings/
+# next.js
+/.next/
+/out/
 
-# Optional npm cache directory
-.npm
+# production
+/build
 
 # Optional eslint cache
 .eslintcache
@@ -74,11 +78,13 @@ typings/
 # vuepress build output
 .vuepress/dist
 
-# Serverless directories
-.serverless/
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# FuseBox cache
-.fusebox/
+# local env files
+.env*.local
 
 # DynamoDB Local files
 .dynamodb/

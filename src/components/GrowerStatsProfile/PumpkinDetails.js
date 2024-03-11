@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { db } from '../../../firebase';
 import Spinner from '../Spinner';
-import { UserContext } from '../../contexts/UserContext';
+import { UserContext } from '../../../contexts/UserContext';
 
 const Field = ({ label, value, link }) => value && (
   <p><b>{label}:</b> {link ? <Link to={link} className="text-current no-underline hover:underline">{value}</Link> : value}</p>

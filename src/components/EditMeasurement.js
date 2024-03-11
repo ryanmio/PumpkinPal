@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { auth, db, Timestamp } from '../firebase';
+import { auth, db, Timestamp } from '../../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import "react-datepicker/dist/react-datepicker.css";
 import MeasurementInput from './MeasurementInput';

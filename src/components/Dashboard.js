@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { auth, db, query, orderBy, limit } from '../firebase';
+import { auth, db, query, orderBy, limit } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
 import { collection, getDocs, deleteDoc, where, doc, setDoc, getDoc } from 'firebase/firestore';
 import Dropdown from './Dropdown';
 import Spinner from './Spinner';
-import PlusIcon from './icons/PlusIcon';
-import TableCellsIcon from './icons/TableCellsIcon';
+import PlusIcon from '../../public/icons/PlusIcon';
+import TableCellsIcon from '../../public/icons/TableCellsIcon';
 import { toast } from 'react-hot-toast';
 import { showDeleteConfirmation } from './Alert';
-import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../utilities/error-analytics';
-import { UserContext } from '../contexts/UserContext';
+import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../app/utilities/error-analytics';
+import { UserContext } from '../../contexts/UserContext';
 import Login from './Login';
 
 function Dashboard() {
