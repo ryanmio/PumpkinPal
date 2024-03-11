@@ -19,12 +19,6 @@ function Dashboard() {
     const [selectedSeason, setSelectedSeason] = useState('');
     const [seasons, setSeasons] = useState([]);
     const router = useRouter();
-  
-  useEffect(() => {
-    if (!currentUser && !userLoading) {
-      router.push('/login');
-    }
-  }, [currentUser, userLoading, router]);
 
   useEffect(() => {
     if (currentUser) {
