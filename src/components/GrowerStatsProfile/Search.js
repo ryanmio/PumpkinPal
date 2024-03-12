@@ -1,16 +1,18 @@
+'use client'
 import React, { useContext } from 'react';
 import algoliasearch from 'algoliasearch/lite';
-import { InstantSearch, SearchBox, Hits } from 'react-instantsearch';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { InstantSearch, SearchBox, Hits } from 'react-instantsearch-dom';
+import { useRouter } from 'next/navigation';
 import { GrowerContext } from '../../../contexts/GrowerContext';
 import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../../app/utilities/error-analytics';
+import { Input } from "@/components/ui/input"; 
+import { Button } from "@/components/ui/button";
 
-const searchClient = algoliasearch('SPV52PLJT9', process.env.REACT_APP_ALGOLIA_API_KEY);
+const searchClient = algoliasearch('SPV52PLJT9', process.env.NEXT_PUBLIC_ALGOLIA_API_KEY);
 
 const Hit = ({ hit }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { setGrowerName } = useContext(GrowerContext);
-  const location = useLocation(); // Import useLocation
 
   const handleHitClick = () => {
     trackUserEvent(GA_ACTIONS.SEARCH_CLICK, GA_CATEGORIES.SEARCH);
@@ -19,15 +21,15 @@ const Hit = ({ hit }) => {
     switch (collectionType) {
       case 'Stats_Growers':
         setGrowerName(hit.objectID);
-        navigate(`/grower/${encodeURIComponent(hit.objectID)}`, {
-          state: { from: location.pathname } // Pass the current pathname
+        router.push(`/grower/${encodeURIComponent(hit.objectID)}`, undefined, {
+          state: { from: router.pathname } // Pass the current pathname
         });
         break;
       case 'Stats_Pumpkins':
-        navigate(`/pumpkin-details/${encodeURIComponent(hit.objectID)}`);
+        router.push(`/pumpkin-details/${encodeURIComponent(hit.objectID)}`);
         break;
       case 'Stats_Sites':
-        navigate(`/site-profile/${encodeURIComponent(hit.objectID)}`);
+        router.push(`/site-profile/${encodeURIComponent(hit.objectID)}`);
         break;
       default:
       const errorMsg = 'Unknown collection type: ' + collectionType;
