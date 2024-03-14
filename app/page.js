@@ -3,13 +3,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import OTTWeightTracking from '../components/OTTWeightTracking';
+import Search from '../src/components/GrowerStatsProfile/Search';
 
+// Placeholder component for the Suspense fallback
+const LoadingSearch = () => <div>Loading search...</div>; 
 
 export default function Home() {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-200">
             {/* Hero Section */}
-            <section className="w-full py-6 md:py-12 lg:py-16 xl:py-20">
+            <section className="flex justify-center items-center w-full py-6 md:py-12 lg:py-16 xl:py-20">
                 <div className="container flex flex-col items-center justify-center gap-4 px-4 text-center md:px-6">
                     <div className="space-y-3">
                         <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">Grow a record pumpkin</h1>
@@ -30,6 +33,25 @@ export default function Home() {
             <Suspense fallback={<p>Loading OTT Weight Tracking...</p>}>
                 <OTTWeightTracking />
             </Suspense>
+
+
+            {/* GPC Search Section with Suspense */}
+            <section className="flex justify-center items-center w-full py-12 md:py-24 lg:py-32">
+                <div className="container px-4 md:px-6">
+                    <div className="flex flex-col justify-center space-y-4">
+                        <div className="space-y-2">
+                            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center">GPC Search</h2>
+                            <p className="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400 text-center mx-auto">
+                                Find any grower, pumpkin, or site and get a comprehensive overview, rankings, and stats for each search result.
+                            </p>
+                        </div>
+                        {/* Wrap the Search Component with Suspense */}
+                        <Suspense fallback={<LoadingSearch />}>
+                            <Search />
+                        </Suspense>
+                    </div>
+                </div>
+            </section>
 
             {/* Mission Statement Section */}
             <div className="w-full px-8 py-8">
