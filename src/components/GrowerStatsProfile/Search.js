@@ -92,36 +92,48 @@ const Hit = ({ hit }) => {
   };
 
   const renderDetails = () => {
-  const collectionType = hit.path.split('/')[0];
-  switch (collectionType) {
-    case 'Stats_Sites':
-      return (
-        <>
-          <div className="text-sm">Site Record: {hit['Site Record']} lbs</div>
-          <div className="text-sm">Total Entries: {hit['Total Entries']}</div>
-        </>
-      );
-    case 'Stats_Pumpkins':
-      return (
-        <>
-          <div className="text-sm">Year: {hit['year']}</div>
-          <div className="text-sm">Grower: {hit['grower']}</div>
-        </>
-      );
-    case 'Stats_Growers':
-      return (
-        <>
-          <div className="text-sm">Lifetime Max Weight: {hit['LifetimeMaxWeight']} lbs</div>
-          <div className="text-sm">Number Of Entries: {hit['NumberOfEntries']}</div>
-        </>
-      );
-    default:
-      const errorMsg = 'Unknown collection type: ' + collectionType;
-      console.error(errorMsg);
-      trackError(errorMsg, GA_CATEGORIES.SEARCH, 'Search', GA_ACTIONS.SEARCH_CLICK);
-      break;
-  }
-};
+    const collectionType = hit.path.split('/')[0];
+    switch (collectionType) {
+      case 'Stats_Sites':
+        return (
+          <>
+            <div className="text-sm text-gray-600">
+              <span className="font-semibold">Site Record:</span> {hit['Site Record']} lbs
+            </div>
+            <div className="text-sm text-gray-600">
+              <span className="font-semibold">Total Entries:</span> {hit['Total Entries']}
+            </div>
+          </>
+        );
+      case 'Stats_Pumpkins':
+        return (
+          <>
+            <div className="text-sm text-gray-600">
+              <span className="font-semibold">Year:</span> {hit['year']}
+            </div>
+            <div className="text-sm text-gray-600">
+              <span className="font-semibold">Grower:</span> {hit['grower']}
+            </div>
+          </>
+        );
+      case 'Stats_Growers':
+        return (
+          <>
+            <div className="text-sm text-gray-600">
+              <span className="font-semibold">Lifetime Max Weight:</span> {hit['LifetimeMaxWeight']} lbs
+            </div>
+            <div className="text-sm text-gray-600">
+              <span className="font-semibold">Number Of Entries:</span> {hit['NumberOfEntries']}
+            </div>
+          </>
+        );
+      default:
+        const errorMsg = 'Unknown collection type: ' + collectionType;
+        console.error(errorMsg);
+        trackError(errorMsg, GA_CATEGORIES.SEARCH, 'Search', GA_ACTIONS.SEARCH_CLICK);
+        break;
+    }
+  };
 
   // Function to select the correct icon based on the collection type
   const getIcon = (collectionType) => {
