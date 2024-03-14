@@ -1,13 +1,32 @@
 'use client'
 import React, { useContext } from 'react';
 import algoliasearch from 'algoliasearch/lite';
-import { InstantSearch, SearchBox, Hits } from 'react-instantsearch-dom';
+import { InstantSearch, Hits, connectSearchBox } from 'react-instantsearch-dom';
 import { useRouter } from 'next/navigation';
 import { GrowerContext } from '../../../contexts/GrowerContext';
 import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../../app/utilities/error-analytics';
 
+// Initialize Algolia search client
 const searchClient = algoliasearch('SPV52PLJT9', process.env.NEXT_PUBLIC_ALGOLIA_API_KEY);
 
+// Custom Search Box component
+const SearchInput = ({ currentRefinement, refine }) => (
+  <div className="p-4 flex items-center">
+    <input
+      type="search"
+      value={currentRefinement}
+      onChange={(event) => refine(event.currentTarget.value)}
+      placeholder="Search for growers, pumpkins, or sites..."
+      className="w-full rounded-md border border-gray-300 text-xl"
+    />
+    {/* Add any icons or additional elements here */}
+  </div>
+);
+
+// Connect the custom SearchInput component to Algolia's search state
+const CustomSearchBox = connectSearchBox(SearchInput);
+
+// Component to render each hit
 const Hit = ({ hit }) => {
   const router = useRouter();
   const { setGrowerName } = useContext(GrowerContext);
@@ -20,7 +39,7 @@ const Hit = ({ hit }) => {
       case 'Stats_Growers':
         setGrowerName(hit.objectID);
         router.push(`/grower/${encodeURIComponent(hit.objectID)}`, undefined, {
-          state: { from: router.pathname } // Pass the current pathname
+          state: { from: router.pathname }
         });
         break;
       case 'Stats_Pumpkins':
@@ -30,10 +49,10 @@ const Hit = ({ hit }) => {
         router.push(`/site-profile/${encodeURIComponent(hit.objectID)}`);
         break;
       default:
-      const errorMsg = 'Unknown collection type: ' + collectionType;
-      console.error(errorMsg);
-      trackError(errorMsg, GA_CATEGORIES.SEARCH, 'Search', GA_ACTIONS.SEARCH_CLICK);
-      break;
+        const errorMsg = 'Unknown collection type: ' + collectionType;
+        console.error(errorMsg);
+        trackError(errorMsg, GA_CATEGORIES.SEARCH, 'Search', GA_ACTIONS.SEARCH_CLICK);
+        break;
     }
   };
 
@@ -77,33 +96,18 @@ const Hit = ({ hit }) => {
   );
 };
 
-const NoIcon = () => null;
-
+// Main Search component
 const Search = () => {
-  const handleSearch = (event) => {
-    trackUserEvent(GA_ACTIONS.PERFORM_SEARCH, GA_CATEGORIES.SEARCH);
-  };
 
   return (
     <div className="bg-f2eee3 text-36382e">
       <InstantSearch searchClient={searchClient} indexName="AllTypes">
-        <div className="p-4 flex items-center">
-          <SearchBox
-            onSearchChange={handleSearch}
-            placeholder="Search for growers, pumpkins, or sites..."
-            className="w-full rounded-md border border-gray-300 text-xl"
-            submitIconComponent={NoIcon}
-            resetIconComponent={() => <></>}
-          />
-        </div>
-        <Hits
-          hitComponent={Hit}
-          classNames={{
-            root: 'MyCustomHits',
-            list: 'MyCustomHitsList MyCustomHitsList--subclass',
-            item: 'MyCustomHitItem'
-          }}
-        />
+        <CustomSearchBox />
+        <Hits hitComponent={Hit} classNames={{
+          root: 'MyCustomHits',
+          list: 'MyCustomHitsList MyCustomHitsList--subclass',
+          item: 'MyCustomHitItem'
+        }} />
       </InstantSearch>
     </div>
   );
