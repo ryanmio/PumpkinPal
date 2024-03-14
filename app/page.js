@@ -54,12 +54,35 @@ export default function Home() {
             </section>
 
             {/* Mission Statement Section */}
-            <div className="w-full px-8 py-8">
-                <h2 className="text-2xl font-bold mb-2">🌱 Our Mission</h2>
-                <p className="text-lg mb-6">Our mission is to empower the pumpkin growing community by providing tools that make the hobby more accessible and enjoyable. We envision a future where every weigh-off is crowded with more and heavier pumpkins, and we're committed to making that vision a reality through the continuous development and improvement of PumpkinPal.</p>
-                <h2 className="text-2xl font-bold mb-2">💸 Always Free</h2>
-                <p className="text-lg mb-6">PumpkinPal is committed to remaining free for all users. We believe in the power of community and the spirit of sharing knowledge and resources. As such, we pledge to keep PumpkinPal free to use, now and always.</p>
-            </div>
+            <section className="w-full py-12 md:py-24 lg:py-32 flex justify-center">
+                <div className="container px-4 md:px-6">
+                    <div className="flex flex-col items-center space-y-4 text-center">
+                        <div className="space-y-2">
+                            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">🌱 Our Mission</h2>
+                            <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+                                Our mission is to empower the pumpkin growing community by providing tools that make the hobby more
+                                accessible and enjoyable. We envision a future where every weigh-off is crowded with more and heavier
+                                pumpkins. We're committed to making that vision a reality through the continuous development and improvement
+                                of PumpkinPal.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Commitment Section */}
+            <section className="w-full py-12 md:py-24 lg:py-32 flex justify-center">
+                <div className="container px-4 md:px-6">
+                    <div className="flex flex-col items-center space-y-4 text-center">
+                        <div className="space-y-2">
+                            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">💸 Always Free</h2>
+                            <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+                                PumpkinPal is committed to remaining free for all users. We believe in the power of community and the spirit of sharing knowledge and resources. As such, we pledge to keep PumpkinPal free to use, now and always.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             {/* Features Section */}
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full px-4 sm:px-6 -mx-4 sm:-mx-8 mb-8">
