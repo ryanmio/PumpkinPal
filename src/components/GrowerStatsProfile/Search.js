@@ -103,7 +103,7 @@ const Hit = ({ hit }) => {
 return (
   <div
     onClick={handleHitClick}
-    className="p-4 bg-white rounded shadow hover:shadow-md transition-shadow cursor-pointer mb-4 mx-auto max-w-md flex items-center"
+    className="p-4 bg-white rounded shadow hover:shadow-md transition-shadow cursor-pointer mb-4 mx-auto max-w-md md:max-w-lg md:max-w-xl flex items-center"
   >
     <div className="flex-grow">
       <h3 className="text-lg font-semibold">{hit.objectID}</h3>
