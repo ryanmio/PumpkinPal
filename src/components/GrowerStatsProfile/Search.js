@@ -88,25 +88,27 @@ const Hit = ({ hit }) => {
   }
 };
 
-  return (
-    <div onClick={handleHitClick}>
-      <h3 className="text-lg font-semibold cursor-pointer">{hit.objectID}</h3>
-      {renderDetails()}
-    </div>
-  );
+return (
+  <div
+    onClick={handleHitClick}
+    className="p-4 bg-white rounded shadow hover:shadow-md transition-shadow cursor-pointer mb-4"
+  >
+    <h3 className="text-lg font-semibold">{hit.objectID}</h3>
+    {renderDetails()}
+  </div>
+);
 };
 
 // Main Search component
 const Search = () => {
-
   return (
     <div className="bg-f2eee3 text-36382e">
       <InstantSearch searchClient={searchClient} indexName="AllTypes">
         <CustomSearchBox />
         <Hits hitComponent={Hit} classNames={{
-          root: 'MyCustomHits',
-          list: 'MyCustomHitsList MyCustomHitsList--subclass',
-          item: 'MyCustomHitItem'
+          root: 'p-5',
+          list: 'flex flex-col',
+          item: 'mb-4'
         }} />
       </InstantSearch>
     </div>

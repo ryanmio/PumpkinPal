@@ -214,35 +214,6 @@ button.button-disabled {
   max-width: 200px;
 }
 
-.ais-SearchBox-input {
-  width: 100%;
-  padding: 10px;
-  font-size: 20px;
-}
-
-.MyCustomHits {
-  padding: 20px;
-}
-
-.MyCustomHitsList {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-
-.MyCustomHitItem {
-  background-color: white;
-  border-radius: 5px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-  box-sizing: border-box;
-  transition: box-shadow 0.3s ease;
-}
-
-.MyCustomHitItem:hover {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
 
 /* SIDEBAR AND NAV */
 
