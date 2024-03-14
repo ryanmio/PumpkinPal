@@ -1,6 +1,5 @@
-'use client'
+'use client';
 import { ResponsiveLine } from "@nivo/line";
-import React from "react";
 
 function LineChart(props) {
     return (
@@ -76,7 +75,7 @@ function LineChart(props) {
 
 export default function OTTWeightTracking() {
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32 bg-[#f2f2f2] dark:bg-[#333]">
+    <section className="flex justify-center items-center w-full py-12 md:py-24 lg:py-32 bg-[#f2f2f2] dark:bg-[#333]">
       <div className="container px-4 md:px-6">
         <div className="flex flex-col justify-center space-y-4">
           <div className="space-y-2">
