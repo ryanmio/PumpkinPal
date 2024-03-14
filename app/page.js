@@ -54,7 +54,7 @@ export default function Home() {
             </section>
 
             {/* Mission Statement Section */}
-            <section className="w-full py-12 md:py-24 lg:py-32 flex justify-center">
+            <section className="w-full py-12 md:py-24 lg:py-32 flex justify-center bg-[#f2f2f2] dark:bg-[#333]">
                 <div className="container px-4 md:px-6">
                     <div className="flex flex-col items-center space-y-4 text-center">
                         <div className="space-y-2">
@@ -85,7 +85,7 @@ export default function Home() {
             </section>
 
             {/* Features Section */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full px-4 sm:px-6 -mx-4 sm:-mx-8 mb-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full px-4 py-24 sm:px-6 -mx-4 sm:-mx-8 mb-8 bg-[#f2f2f2] dark:bg-[#333]">
                 {[
                     { title: "Pumpkin Dashboard", description: "A central hub for growers to keep track of all their growing pumpkins." },
                     { title: "OTT Weight Tracking", description: "Allows for in-field estimation of pumpkin weight using the Over The Top (OTT) formula, tracking these measurements over time." },
