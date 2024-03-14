@@ -9,17 +9,16 @@ import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../../
 // Initialize Algolia search client
 const searchClient = algoliasearch('SPV52PLJT9', process.env.NEXT_PUBLIC_ALGOLIA_API_KEY);
 
-// Custom Search Box component
+// Custom Search Box component optimized for mobile and desktop
 const SearchInput = ({ currentRefinement, refine }) => (
-  <div className="p-4 flex items-center">
+  <div className="p-2 sm:p-4 flex items-center">
     <input
       type="search"
       value={currentRefinement}
       onChange={(event) => refine(event.currentTarget.value)}
       placeholder="Search for growers, pumpkins, or sites..."
-      className="w-full rounded-md border border-gray-300 text-xl"
+      className="w-full sm:w-1/2 md:w-1/2 mx-auto rounded-md border border-gray-300 text-base sm:text-xl"
     />
-    {/* Add any icons or additional elements here */}
   </div>
 );
 
