@@ -25,6 +25,19 @@ const SearchInput = ({ currentRefinement, refine }) => (
 // Connect the custom SearchInput component to Algolia's search state
 const CustomSearchBox = connectSearchBox(SearchInput);
 
+// Right arrow SVG component (or you can use an icon from a library like Heroicons)
+const RightArrowIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-6 w-6 text-gray-400 ml-auto" // Tailwind classes for size and color
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+  </svg>
+);
+
 // Component to render each hit
 const Hit = ({ hit }) => {
   const router = useRouter();
@@ -90,10 +103,13 @@ const Hit = ({ hit }) => {
 return (
   <div
     onClick={handleHitClick}
-    className="p-4 bg-white rounded shadow hover:shadow-md transition-shadow cursor-pointer mb-4"
+    className="p-4 bg-white rounded shadow hover:shadow-md transition-shadow cursor-pointer mb-4 mx-auto max-w-md flex items-center"
   >
-    <h3 className="text-lg font-semibold">{hit.objectID}</h3>
-    {renderDetails()}
+    <div className="flex-grow">
+      <h3 className="text-lg font-semibold">{hit.objectID}</h3>
+      {renderDetails()}
+    </div>
+    <RightArrowIcon />
   </div>
 );
 };
