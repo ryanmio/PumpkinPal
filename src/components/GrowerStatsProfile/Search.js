@@ -11,13 +11,13 @@ const searchClient = algoliasearch('SPV52PLJT9', process.env.NEXT_PUBLIC_ALGOLIA
 
 // Custom Search Box component optimized for mobile and desktop
 const SearchInput = ({ currentRefinement, refine }) => (
-  <div className="p-2 sm:p-4 flex items-center">
+  <div className="flex justify-center p-2 sm:p-4">
     <input
       type="search"
       value={currentRefinement}
       onChange={(event) => refine(event.currentTarget.value)}
       placeholder="Search for growers, pumpkins, or sites..."
-      className="w-full sm:w-1/2 md:w-1/2 mx-auto rounded-md border border-gray-300 text-base sm:text-xl"
+      className="w-full max-w-lg rounded-md border border-gray-300 text-base sm:text-xl p-2"
     />
   </div>
 );
@@ -103,7 +103,7 @@ const Hit = ({ hit }) => {
 return (
   <div
     onClick={handleHitClick}
-    className="p-4 bg-white rounded shadow hover:shadow-md transition-shadow cursor-pointer mb-4 mx-auto max-w-md md:max-w-lg md:max-w-xl flex items-center"
+    className="p-4 bg-white rounded shadow hover:shadow-md transition-shadow cursor-pointer mb-4 mx-auto max-w-lg flex items-center"
   >
     <div className="flex-grow">
       <h3 className="text-lg font-semibold">{hit.objectID}</h3>
