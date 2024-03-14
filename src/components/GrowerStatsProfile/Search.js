@@ -9,6 +9,29 @@ import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../../
 // Initialize Algolia search client
 const searchClient = algoliasearch('SPV52PLJT9', process.env.NEXT_PUBLIC_ALGOLIA_API_KEY);
 
+// Placeholder SVG icons for each type
+const SiteIcon = () => (
+  <svg className="h-6 w-6 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    {/* SVG path for 'Site' icon */}
+    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+  </svg>
+);
+
+const PumpkinIcon = () => (
+  <svg className="h-6 w-6 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    {/* SVG path for 'Pumpkin' icon */}
+    <path d="M19 17a7.5 7.5 0 110-10M5 17a7.5 7.5 0 100-10" />
+    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+  </svg>
+);
+
+const GrowerIcon = () => (
+  <svg className="h-6 w-6 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    {/* SVG path for 'Grower' icon */}
+    <path d="M12 2l2 7h-4l2-7zM5.5 10h13l-1.5 5h-10l-1.5-5zM2 20h20" />
+  </svg>
+);
+
 // Custom Search Box component optimized for mobile and desktop
 const SearchInput = ({ currentRefinement, refine }) => (
   <div className="flex justify-center p-2 sm:p-4">
@@ -100,18 +123,38 @@ const Hit = ({ hit }) => {
   }
 };
 
-return (
-  <div
-    onClick={handleHitClick}
-    className="p-4 bg-white rounded shadow hover:shadow-md transition-shadow cursor-pointer mb-4 mx-auto max-w-lg flex items-center"
-  >
-    <div className="flex-grow">
-      <h3 className="text-lg font-semibold">{hit.objectID}</h3>
-      {renderDetails()}
+  // Function to select the correct icon based on the collection type
+  const getIcon = (collectionType) => {
+    switch (collectionType) {
+      case 'Stats_Sites':
+        return <SiteIcon />;
+      case 'Stats_Pumpkins':
+        return <PumpkinIcon />;
+      case 'Stats_Growers':
+        return <GrowerIcon />;
+      default:
+        return null; // Or a default icon if you have one
+    }
+  };
+
+  const collectionType = hit.path.split('/')[0];
+  const Icon = getIcon(collectionType);
+
+  return (
+    <div
+      onClick={handleHitClick}
+      className="p-4 bg-white rounded shadow hover:shadow-md transition-shadow cursor-pointer mb-4 mx-auto max-w-lg flex items-center"
+    >
+      <div className="flex-shrink-0 mr-4">
+        {Icon}
+      </div>
+      <div className="flex-grow">
+        <h3 className="text-lg font-semibold">{hit.objectID}</h3>
+        {renderDetails()}
+      </div>
+      <RightArrowIcon />
     </div>
-    <RightArrowIcon />
-  </div>
-);
+  );
 };
 
 // Main Search component
