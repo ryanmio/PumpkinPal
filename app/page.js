@@ -85,24 +85,37 @@ export default function Home() {
             </section>
 
             {/* Features Section */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full px-4 py-24 sm:px-6 -mx-4 sm:-mx-8 mb-8 bg-[#f2f2f2] dark:bg-[#333]">
-                {[
-                    { title: "Pumpkin Dashboard", description: "A central hub for growers to keep track of all their growing pumpkins." },
-                    { title: "OTT Weight Tracking", description: "Allows for in-field estimation of pumpkin weight using the Over The Top (OTT) formula, tracking these measurements over time." },
-                    { title: "Image Gallery", description: "Growers can take photos with the app or upload them, associating each image with the relevant pumpkin and its stats like DAP and date." },
-                    { title: "PumpkinPal Database", description: "The custom-built PumpkinPal Database enables the calculation of rankings and stats for growers, pumpkins, and GPC sites." },
-                    { title: "Weigh-Off Stats", description: "Provides a personal grower profile for users who have competed in GPC sanctioned weigh-offs." },
-                    { title: "GPC Search", description: "Enables users to find any grower, pumpkin, or site and see a comprehensive overview, rankings, and stats." },
-                    { title: "User Data Export", description: "Users can export their data for further analysis or record-keeping." },
-                    { title: "Field-Friendly Interface", description: "Large, easy-to-tap buttons and simple forms make it easy to enter data even with gloves on." },
-                ].map((feature, i) => (
-                    <div className="flex flex-col items-center bg-white px-3 py-4 sm:p-4 rounded" key={i}>
-                        <Image src="/logo192.webp" alt="Feature" width={192} height={192} className="w-6/12 h-auto sm:w-1/4 lg:w-3/8" />
-                        <h2 className="text-xl mt-4 mb-2">{feature.title}</h2>
-                        <p className="text-sm sm:text-base">{feature.description}</p>
+            <section className="w-full py-12 md:py-24 lg:py-32 flex justify-center bg-[#f2f2f2] dark:bg-[#333]">
+                <div className="container space-y-12 px-4 md:px-6">
+                    <div className="flex flex-col items-center justify-center space-y-4 text-center">
+                        <div className="space-y-2">
+                            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">All-in-One</h2>
+                            <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400 mx-auto">
+                                A digital Swiss Army knife for growing giant pumpkins.
+                            </p>
+                        </div>
                     </div>
-                ))}
-            </div>
+                    <div className="mx-auto grid max-w-sm items-start gap-8 sm:max-w-4xl sm:grid-cols-2 md:gap-12 lg:max-w-5xl lg:grid-cols-3">
+                        {[
+                            { title: "Pumpkin Dashboard", description: "A central hub for growers to keep track of all their growing pumpkins." },
+                            { title: "OTT Weight Tracking", description: "Allows for in-field estimation of pumpkin weight using the Over The Top (OTT) formula, tracking these measurements over time." },
+                            { title: "Image Gallery", description: "Growers can take photos with the app or upload them, associating each image with the relevant pumpkin and its stats like DAP and date." },
+                            { title: "PumpkinPal Database", description: "The custom-built PumpkinPal Database enables the calculation of rankings and stats for growers, pumpkins, and GPC sites." },
+                            { title: "Weigh-Off Stats", description: "Provides a personal grower profile for users who have competed in GPC sanctioned weigh-offs." },
+                            { title: "GPC Search", description: "Enables users to find any grower, pumpkin, or site and see a comprehensive overview, rankings, and stats." },
+                            { title: "User Data Export", description: "Users can export their data for further analysis or record-keeping." },
+                            { title: "Field-Friendly Interface", description: "Large, easy-to-tap buttons and simple forms make it easy to enter data even with gloves on." },
+                        ].map((feature, i) => (
+                            <div className="grid gap-1" key={i}>
+                                <h3 className="text-lg font-bold">{feature.title}</h3>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                    {feature.description}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
 
             {/* Call to Action Section */}
             <div className="w-full p-8">
