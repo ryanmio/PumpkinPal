@@ -315,3 +315,20 @@ a, .link {
 }
 
  
+.ais-SearchBox {
+  width: 100%; /* Full width */
+}
+
+.ais-SearchBox-input {
+  box-shadow: none;
+  background: white;
+  border: none;
+  padding: 0.5rem;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.ais-SearchBox-submit,
+.ais-SearchBox-reset {
+  display: none;
+}

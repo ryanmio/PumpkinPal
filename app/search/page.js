@@ -144,8 +144,6 @@ const Hit = ({ hit }) => {
   );
 };
 
-const NoIcon = () => null;
-
 const SearchPage = () => {
   const router = useRouter();
   // State to hold the search query
@@ -166,32 +164,18 @@ const SearchPage = () => {
       <InstantSearchNext
         searchClient={searchClient}
         indexName="AllTypes"
-        // Use the searchQuery state as the initial search state
         searchState={{ query: searchQuery }}
         routing
       >
-        <Configure hitsPerPage={10} /> {/* Added Configure component to set hitsPerPage to 20 */}
-        <div className="p-4 flex justify-center"> {/* Adjusted padding and centering */}
-          <div className="flex items-center bg-white rounded-lg shadow-md p-2 mx-auto max-w-lg w-full"> {/* Set max width and centering to match hits, ensure full width */}
-            <svg
-              className="h-6 w-6 text-[#ff6d00]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-            <input
-              className="flex-1 ml-4 outline-none border-none" // Removed border and adjusted margin
-              placeholder="Search for a pumpkin grower..."
-              type="text"
-              style={{ boxShadow: 'none', background: 'white' }} // Inline style to remove any default browser styles and set background to white
+        <Configure hitsPerPage={10} />
+        <div className="p-4 flex justify-center">
+          <div className="flex items-center bg-white rounded-lg shadow-md p-2 mx-auto max-w-lg w-full">
+            <SearchBox
+              translations={{
+                placeholder: 'Search for a pumpkin grower...',
+              }}
+              submit={<></>}
+              reset={<></>}
             />
           </div>
         </div>
