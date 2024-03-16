@@ -1,5 +1,5 @@
 'use client'
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import algoliasearch from 'algoliasearch/lite';
 import { InstantSearch, Hits, connectSearchBox } from 'react-instantsearch-dom';
 import { useRouter } from 'next/navigation';
@@ -171,15 +171,49 @@ const Hit = ({ hit }) => {
 
 // Main Search component
 const Search = () => {
+  const router = useRouter();
+  const [searchState, setSearchState] = useState('');
+
+  // Function to handle search state changes
+  const onSearchStateChange = ({ query }) => {
+    setSearchState(query);
+  };
+
+ // Function to navigate to the full results page with search terms
+const viewFullResults = () => {
+  if (typeof searchState === 'string' && searchState.trim() !== '') {
+    // Construct the URL using the default Algolia InstantSearch URL scheme
+    const searchURL = `/search?AllTypes%5Bquery%5D=${encodeURIComponent(searchState)}`;
+    router.push(searchURL);
+  } else {
+    console.error('Search state is not a string or is empty:', searchState);
+  }
+};
+
   return (
     <div className="bg-f2eee3 text-36382e">
-      <InstantSearch searchClient={searchClient} indexName="AllTypes">
+      <InstantSearch
+        searchClient={searchClient}
+        indexName="AllTypes"
+        onSearchStateChange={onSearchStateChange} // Listen for changes in the search state
+      >
         <CustomSearchBox />
         <Hits hitComponent={Hit} classNames={{
           root: 'p-5',
           list: 'flex flex-col',
           item: 'mb-4'
         }} />
+        {/* Add a button or link for full results */}
+        {searchState && (
+          <div className="flex justify-center mt-4">
+            <button
+              onClick={viewFullResults}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              View Full Results
+            </button>
+          </div>
+        )}
       </InstantSearch>
     </div>
   );
