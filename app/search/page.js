@@ -130,7 +130,7 @@ const Hit = ({ hit }) => {
   return (
     <div
       onClick={handleHitClick}
-      className="p-4 bg-white rounded shadow hover:shadow-md transition-shadow cursor-pointer mb-4 flex items-center"
+      className="p-4 bg-white rounded shadow hover:shadow-md transition-shadow cursor-pointer mb-4 flex items-center mx-auto max-w-lg"
     >
       <div className="flex-shrink-0 mr-4">
         {Icon}
@@ -139,7 +139,7 @@ const Hit = ({ hit }) => {
         <h3 className="text-lg font-semibold">{hit.objectID}</h3>
         {renderDetails()}
       </div>
-      <RightArrowIcon /> {/* Include the Right Arrow Icon here */}
+      <RightArrowIcon />
     </div>
   );
 };
