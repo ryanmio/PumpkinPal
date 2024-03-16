@@ -172,7 +172,7 @@ const SearchPage = () => {
       >
         <Configure hitsPerPage={10} /> {/* Added Configure component to set hitsPerPage to 20 */}
         <div className="p-4 flex justify-center"> {/* Adjusted padding and centering */}
-          <div className="flex items-center bg-white rounded-lg shadow-md p-2 mx-auto max-w-lg"> {/* Set max width and centering to match hits */}
+          <div className="flex items-center bg-white rounded-lg shadow-md p-2 mx-auto max-w-lg w-full"> {/* Set max width and centering to match hits, ensure full width */}
             <svg
               className="h-6 w-6 text-[#ff6d00]"
               fill="none"
