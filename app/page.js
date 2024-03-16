@@ -129,10 +129,13 @@ export default function Home() {
             {/* Footer Section */}
             <div className="App-footer w-full py-8 px-4 md:px-8 lg:px-16">
                 <p className="mb-2">This project is open source. Check it out on 
-                    <a href="https://github.com/ryanmio/PumpkinPal" target="_blank" rel="noopener noreferrer" className="text-blue-500" style={{ marginLeft: '5px' }}>GitHub</a>.
+                    <Link href="https://github.com/ryanmio/PumpkinPal" passHref>
+                        <a target="_blank" rel="noopener noreferrer" className="text-blue-500" style={{ marginLeft: '5px' }}>GitHub</a>
+                    </Link>.
                 </p>
-                <p className="mb-2">© 2023 PumpkinPal.</p>
+                <p className="text-xs text-gray-200">© 2023 PumpkinPal.</p>
             </div>
         </div>
     );
 }
+
