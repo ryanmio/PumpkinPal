@@ -161,7 +161,7 @@ const SearchPage = () => {
   }, [router.isReady, router.query]);
 
   return (
-    <div className="bg-f2eee3 text-36382e">
+    <div className="bg-f2eee3 text-36382e pt-8">
       <InstantSearchNext
         searchClient={searchClient}
         indexName="AllTypes"
