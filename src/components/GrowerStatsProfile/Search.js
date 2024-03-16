@@ -1,7 +1,7 @@
 'use client'
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import algoliasearch from 'algoliasearch/lite';
-import { InstantSearch, Hits, connectSearchBox } from 'react-instantsearch-dom';
+import { InstantSearch, Hits, connectSearchBox, Configure } from 'react-instantsearch-dom';
 import { useRouter } from 'next/navigation';
 import { GrowerContext } from '../../../contexts/GrowerContext';
 import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../../app/utilities/error-analytics';
@@ -170,9 +170,28 @@ const Hit = ({ hit }) => {
 };
 
 // Main Search component
-const Search = () => {
+const Search = ({ hitsPerPage = 3, useURLParameters = false }) => {
   const router = useRouter();
   const [searchState, setSearchState] = useState('');
+
+  useEffect(() => {
+    if (useURLParameters && router.isReady) {
+      const query = router.query['AllTypes[query]']; // Adjusted to correctly read the URL parameter
+      if (query) {
+        setSearchState(query);
+      }
+    }
+  }, [router.isReady, router.query, useURLParameters]);
+
+  useEffect(() => {
+    if (useURLParameters && searchState) {
+      const nextUrl = {
+        pathname: router.pathname,
+        query: { ...router.query, 'AllTypes[query]': searchState }, // Adjusted to correctly update the URL parameter
+      };
+      router.push(nextUrl, undefined, { shallow: true });
+    }
+  }, [searchState, useURLParameters, router]);
 
   // Function to handle search state changes
   const onSearchStateChange = ({ query }) => {
@@ -195,8 +214,10 @@ const viewFullResults = () => {
       <InstantSearch
         searchClient={searchClient}
         indexName="AllTypes"
-        onSearchStateChange={onSearchStateChange} // Listen for changes in the search state
+        onSearchStateChange={onSearchStateChange}
+        searchState={{ query: searchState }}
       >
+        <Configure hitsPerPage={hitsPerPage} />
         <CustomSearchBox />
         <Hits hitComponent={Hit} classNames={{
           root: 'p-5',
