@@ -118,13 +118,26 @@ export default function Home() {
             </section>
 
             {/* Call to Action Section */}
-            <div className="w-full p-8">
-                <p className="mb-6">We respect your privacy and will never share your information. Pumpkin data is encrypted and stored separately from user data so that your pumpkin measurements are always secure.</p>
-                <Link href="/register" className="px-8 py-2 mb-8 green-button rounded text-white text-xl hover:text-white focus:outline-none focus:ring-0 underline-none no-underline font-bold">Sign Up</Link>
-                <p className="mt-3">Already signed up? 
-                    <Link href="/login" className="text-blue-500">Login here</Link>
-                </p>
-            </div>
+            <section className="py-24">
+                <div className="mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-6">
+                    <div className="space-y-2">
+                        <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Data Security</h2>
+                        <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+                            Rest easy, your pumpkin data is locked up tighter than your diary. 
+                            Imagine a vault within a vault, that's the level of security we're talking about.
+                        </p>
+                    </div>
+                    </div>
+                    <div className="flex flex-col items-center justify-center space-y-4">
+                        <Link href="/register" className="px-8 py-2 green-button rounded text-white text-lg hover:text-white focus:outline-none focus:ring-0 underline-none no-underline">Join Now</Link>
+                        <p className="text-base text-gray-600">
+                            Already on board?
+                            <Link href="/login" className="text-[#6c755e] hover:text-[#80876E]"> Sign in</Link>
+                        </p>
+                    </div>
+                </div>
+            </section>
 
             {/* Footer Section */}
             <div className="App-footer w-full py-8 px-4 md:px-8 lg:px-16">
