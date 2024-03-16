@@ -46,22 +46,34 @@ const Hit = ({ hit }) => {
       case 'Stats_Sites':
         return (
           <>
-            <div className="text-sm">Site Record: {hit['Site Record']} lbs</div>
-            <div className="text-sm">Total Entries: {hit['Total Entries']}</div>
+            <div className="text-sm text-gray-600">
+              <span className="font-semibold">Site Record:</span> {hit['Site Record']} lbs
+            </div>
+            <div className="text-sm text-gray-600">
+              <span className="font-semibold">Total Entries:</span> {hit['Total Entries']}
+            </div>
           </>
         );
       case 'Stats_Pumpkins':
         return (
           <>
-            <div className="text-sm">Year: {hit['year']}</div>
-            <div className="text-sm">Grower: {hit['grower']}</div>
+            <div className="text-sm text-gray-600">
+              <span className="font-semibold">Year:</span> {hit['year']}
+            </div>
+            <div className="text-sm text-gray-600">
+              <span className="font-semibold">Grower:</span> {hit['grower']}
+            </div>
           </>
         );
       case 'Stats_Growers':
         return (
           <>
-            <div className="text-sm">Lifetime Max Weight: {hit['LifetimeMaxWeight']} lbs</div>
-            <div className="text-sm">Number Of Entries: {hit['NumberOfEntries']}</div>
+            <div className="text-sm text-gray-600">
+              <span className="font-semibold">Lifetime Max Weight:</span> {hit['LifetimeMaxWeight']} lbs
+            </div>
+            <div className="text-sm text-gray-600">
+              <span className="font-semibold">Number Of Entries:</span> {hit['NumberOfEntries']}
+            </div>
           </>
         );
       default:
@@ -73,9 +85,14 @@ const Hit = ({ hit }) => {
   };
 
   return (
-    <div onClick={handleHitClick}>
-      <h3 className="text-lg font-semibold cursor-pointer">{hit.objectID}</h3>
-      {renderDetails()}
+    <div
+      onClick={handleHitClick}
+      className="p-4 bg-white rounded shadow hover:shadow-md transition-shadow cursor-pointer mb-4 flex items-center"
+    >
+      <div className="flex-grow">
+        <h3 className="text-lg font-semibold">{hit.objectID}</h3>
+        {renderDetails()}
+      </div>
     </div>
   );
 };
@@ -115,17 +132,15 @@ const SearchPage = () => {
             resetIconComponent={() => <></>}
           />
         </div>
-        <Hits
-          hitComponent={Hit}
-          classNames={{
-            root: 'MyCustomHits',
-            list: 'MyCustomHitsList MyCustomHitsList--subclass',
-            item: 'MyCustomHitItem'
-          }}
-        />
+        <Hits hitComponent={Hit} classNames={{
+          root: 'p-5',
+          list: 'flex flex-col',
+          item: 'mb-4'
+        }} />
       </InstantSearchNext>
     </div>
   );
 };
 
 export default SearchPage;
+
