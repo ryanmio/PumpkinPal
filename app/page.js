@@ -134,7 +134,7 @@ export default function Home() {
                         passHref
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-500"
+                        className="underline text-gray-200"
                         style={{ marginLeft: '5px' }}>
                         GitHub
                     </Link>.
