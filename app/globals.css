@@ -332,3 +332,7 @@ a, .link {
 .ais-SearchBox-reset {
   display: none;
 }
+
+.ais-SearchBox-input::placeholder {
+  color: #a0aec0; /* Placeholder text color, choose a color that is visible on white background */
+}
