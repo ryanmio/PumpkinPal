@@ -2,7 +2,7 @@
 // app/search/page.js
 import React, { useContext, useEffect, useState } from 'react';
 import algoliasearch from 'algoliasearch/lite';
-import { InstantSearch, SearchBox, Hits, Configure } from 'react-instantsearch-dom'; // Added Configure import
+import { InstantSearch, SearchBox, Hits, Configure } from 'react-instantsearch'; // Updated import for v7
 import { useRouter } from 'next/navigation';
 import { GrowerContext } from '../../contexts/GrowerContext';
 import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../app/utilities/error-analytics';
