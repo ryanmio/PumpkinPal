@@ -10,9 +10,49 @@ import { InstantSearchNext } from 'react-instantsearch-nextjs';
 
 const searchClient = algoliasearch('SPV52PLJT9', process.env.NEXT_PUBLIC_ALGOLIA_API_KEY);
 
+// Define the icon components
+const SiteIcon = () => (
+  <svg className="h-6 w-6 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+  </svg>
+);
+
+const PumpkinIcon = () => (
+  <svg className="h-6 w-6 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M19 17a7.5 7.5 0 110-10M5 17a7.5 7.5 0 100-10" />
+    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+  </svg>
+);
+
+const GrowerIcon = () => (
+  <svg className="h-6 w-6 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M12 2l2 7h-4l2-7zM5.5 10h13l-1.5 5h-10l-1.5-5zM2 20h20" />
+  </svg>
+);
+
+// Define the Right Arrow Icon Component
+const RightArrowIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+  </svg>
+);
+
 const Hit = ({ hit }) => {
   const router = useRouter();
   const { setGrowerName } = useContext(GrowerContext);
+
+  const getIcon = (collectionType) => {
+    switch (collectionType) {
+      case 'Stats_Sites':
+        return <SiteIcon />;
+      case 'Stats_Pumpkins':
+        return <PumpkinIcon />;
+      case 'Stats_Growers':
+        return <GrowerIcon />;
+      default:
+        return null; // Or a default icon if you have one
+    }
+  };
 
   const handleHitClick = () => {
     trackUserEvent(GA_ACTIONS.SEARCH_CLICK, GA_CATEGORIES.SEARCH);
@@ -84,15 +124,22 @@ const Hit = ({ hit }) => {
     }
   };
 
+  const collectionType = hit.path.split('/')[0];
+  const Icon = getIcon(collectionType);
+
   return (
     <div
       onClick={handleHitClick}
       className="p-4 bg-white rounded shadow hover:shadow-md transition-shadow cursor-pointer mb-4 flex items-center"
     >
+      <div className="flex-shrink-0 mr-4">
+        {Icon}
+      </div>
       <div className="flex-grow">
         <h3 className="text-lg font-semibold">{hit.objectID}</h3>
         {renderDetails()}
       </div>
+      <RightArrowIcon /> {/* Include the Right Arrow Icon here */}
     </div>
   );
 };
@@ -142,5 +189,4 @@ const SearchPage = () => {
   );
 };
 
-export default SearchPage;
-
+export default SearchPage
