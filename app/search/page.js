@@ -104,6 +104,7 @@ const SearchPage = () => {
         indexName="AllTypes"
         // Use the searchQuery state as the initial search state
         searchState={{ query: searchQuery }}
+        routing
       >
         <Configure hitsPerPage={10} /> {/* Added Configure component to set hitsPerPage to 20 */}
         <div className="p-4 flex items-center">
