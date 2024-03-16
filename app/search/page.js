@@ -172,7 +172,7 @@ const SearchPage = () => {
         <div className="p-4 flex justify-center">
           <div className="flex items-center bg-white rounded-lg shadow-md p-2 mx-auto max-w-lg w-full">
             <svg
-              className="h-6 w-6 text-gray-500 ml-4"
+              className="h-6 w-6 text-gray-500 ml-2"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -193,7 +193,7 @@ const SearchPage = () => {
         <Hits hitComponent={Hit} classNames={{
           root: 'p-5',
           list: 'flex flex-col',
-          item: 'mb-4'
+          item: 'mb-2'
         }} />
       </InstantSearchNext>
     </div>
