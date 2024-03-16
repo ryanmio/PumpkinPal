@@ -2,10 +2,11 @@
 // app/search/page.js
 import React, { useContext, useEffect, useState } from 'react';
 import algoliasearch from 'algoliasearch/lite';
-import { InstantSearch, SearchBox, Hits, Configure } from 'react-instantsearch'; // Updated import for v7
+import { SearchBox, Hits, Configure } from 'react-instantsearch'; 
 import { useRouter } from 'next/navigation';
 import { GrowerContext } from '../../contexts/GrowerContext';
 import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../app/utilities/error-analytics';
+import { InstantSearchNext } from 'react-instantsearch-nextjs';
 
 const searchClient = algoliasearch('SPV52PLJT9', process.env.NEXT_PUBLIC_ALGOLIA_API_KEY);
 
@@ -98,7 +99,7 @@ const SearchPage = () => {
 
   return (
     <div className="bg-f2eee3 text-36382e">
-      <InstantSearch
+      <InstantSearchNext
         searchClient={searchClient}
         indexName="AllTypes"
         // Use the searchQuery state as the initial search state
@@ -121,7 +122,7 @@ const SearchPage = () => {
             item: 'MyCustomHitItem'
           }}
         />
-      </InstantSearch>
+      </InstantSearchNext>
     </div>
   );
 };
