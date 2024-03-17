@@ -22,7 +22,7 @@ const PumpkinDetailsCard = ({ data }) => (
     <Field label="Pollinator" value={data.pollinator} />
     <Field label="Year" value={data.year} />
     <Field label="State" value={data.state} />
-    <Field label="Site" value={data.contestName} link={`/site-profile/${data.contestName.replace(/ /g, '_')}`} />
+    <Field label="Site" value={data.contestName} link={`/site-profile/${encodeURIComponent(data.contestName)}`} />
   </div>
 );
 
