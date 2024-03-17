@@ -60,7 +60,7 @@ const GrowerStatsProfile = () => {
 ];
 
 return (
-  <div className="min-h-screen flex justify-start flex-col container mx-auto px-4 pt-2 space-y-4">
+  <div className="min-h-screen flex justify-start flex-col container mx-auto px-4 pt-2 space-y-4 mb-12">
     <div className="mt-3 flex">
         {user && (
           <button onClick={() => router.back()} className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">← Back</button>

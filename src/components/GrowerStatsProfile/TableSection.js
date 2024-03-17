@@ -48,7 +48,7 @@ const TableSection = ({ data, columns }) => {
   if (cell.column.id === 'contestName') {
     const { key: cellKey, ...restCellProps } = cell.getCellProps();
     return (
-      <td key={cellKey} {...restCellProps} className={`table-cell truncate overflow-hidden w-[200px]`}>
+      <td key={cellKey} {...restCellProps} className={`table-cell-spacing w-[200px]`}>
         <div className={`w-full`} title={cell.value}>
           <Link href={`/site-profile/${encodeURIComponent(row.original.contestName)}`} className="text-current hover:text-current no-underline hover:underline">
             {cell.render('Cell')}
@@ -60,7 +60,7 @@ const TableSection = ({ data, columns }) => {
 
                   const { key: cellKey, ...restCellProps } = cell.getCellProps();
                   return (
-                    <td key={cellKey} {...restCellProps} className={`table-cell truncate overflow-hidden ${cell.column.id === 'year' ? 'w-[75px]' : 'w-[100px]'}`}>
+                    <td key={cellKey} {...restCellProps} className={`table-cell-spacing ${cell.column.id === 'year' ? 'w-[75px]' : 'w-[100px]'}`}>
                       <div className={`w-full`} title={cell.value}>
                         {cell.render('Cell')}
                       </div>

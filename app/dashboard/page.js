@@ -163,7 +163,7 @@ function Dashboard() {
                           {pumpkin.pollinated && pumpkin.weighOff && <p className="max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated, pumpkin.weighOff)} days</p>}
                         </div>
                         <Dropdown 
-                          onAddMeasurement={() => router.push(`/add-measurement/${pumpkin.id}`)} 
+                          onAddMeasurement={() => router.push('/add-measurement')} 
                           onEdit={() => router.push(`/edit-pumpkin/${pumpkin.id}`)} 
                           onDetailedView={() => router.push(`/pumpkin/${pumpkin.id}`)} 
                           onDelete={() => deletePumpkin(pumpkin.id)} 
@@ -175,7 +175,7 @@ function Dashboard() {
                      <div className="w-full grid grid-cols-2 gap-2">
                         <button 
                           className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                          onClick={() => router.push(`/add-measurement/${pumpkin.id}`)}
+                          onClick={() => router.push('/add-measurement')}
                         >
                           <PlusIcon className="w-4 h-4 mr-2" />
                           Add Measurement

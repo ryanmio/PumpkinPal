@@ -1,69 +1,160 @@
 // app/page.js
 import Image from 'next/image';
 import Link from 'next/link';
+import { Suspense } from 'react';
+import OTTWeightTracking from '../components/OTTWeightTracking';
+import Search from '../src/components/GrowerStatsProfile/Search';
+
+// Placeholder component for the Suspense fallback
+const LoadingSearch = () => <div>Loading search...</div>;
 
 export default function Home() {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-200">
             {/* Hero Section */}
-            <div className="flex flex-col md:flex-row items-center justify-center w-full h-auto py-10 md:py-20 md:pr-10">
-                <div className="relative mx-auto w-1/2 md:w-[294px] md:h-[588px]">
-                    <Image src="/images/screenmock-details-mobile.webp" alt="App mockup" style={{ objectFit: 'cover', position: 'absolute' }} width={736} height={1500} className="hidden md:block" />
-                    <div className="md:hidden w-full h-auto">
-                        <Image src="/images/screenmock-details-mobile.webp" alt="App mockup" layout="responsive" width={736} height={1500} />
+            <section className="flex justify-center items-center w-full py-6 md:py-12 lg:py-16 xl:py-20">
+                <div className="container flex flex-col items-center justify-center gap-4 px-4 text-center md:px-6">
+                    <div className="space-y-3">
+                        <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">Grow a record pumpkin</h1>
+                        <div className="mx-auto max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
+                            <p>PumpkinPal is the all-in-one companion app for pumpkin growers.</p>
+                        </div>
+                    </div>
+                    <video
+                        src="/images/v1desktopdemo.mp4"
+                        alt="Demo"
+                        className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center"
+                        width={550}
+                        height={310}
+                        autoPlay
+                        loop
+                        muted
+                    />
+                </div>
+            </section>
+
+            <Suspense fallback={<p>Loading OTT Weight Tracking...</p>}>
+                <OTTWeightTracking />
+            </Suspense>
+
+
+            {/* GPC Search Section with Suspense */}
+            <section className="flex justify-center items-center w-full py-12 md:py-24 lg:py-32">
+                <div className="container px-4 md:px-6">
+                    <div className="flex flex-col justify-center space-y-4">
+                        <div className="space-y-2">
+                            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center">GPC Search</h2>
+                            <p className="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400 text-center mx-auto">
+                                Find any grower, pumpkin, or site and get a comprehensive overview, rankings, and stats for each search result.
+                            </p>
+                        </div>
+                        <Suspense fallback={<LoadingSearch />}>
+                            <Search />
+                        </Suspense>
                     </div>
                 </div>
-                <div className="mt-10 md:mt-0 md:ml-10 text-center md:text-left md:w-[294px] mx-auto">
-                    <h1 className="text-4xl font-bold mb-4">PumpkinPal</h1>
-                    <p className="text-xl mb-6 px-2">An open-source companion app for pumpkin growers</p>
-                    <Link href="/register" className="px-4 py-2 md:px-8 md:py-4 green-button rounded text-white text-lg md:text-xl">Create Account</Link>
-                </div>
-            </div>
+            </section>
 
             {/* Mission Statement Section */}
-            <div className="w-full px-8 py-8">
-                <h2 className="text-2xl font-bold mb-2">🌱 Our Mission</h2>
-                <p className="text-lg mb-6">Our mission is to empower the pumpkin growing community by providing tools that make the hobby more accessible and enjoyable. We envision a future where every weigh-off is crowded with more and heavier pumpkins, and we're committed to making that vision a reality through the continuous development and improvement of PumpkinPal.</p>
-                <h2 className="text-2xl font-bold mb-2">💸 Always Free</h2>
-                <p className="text-lg mb-6">PumpkinPal is committed to remaining free for all users. We believe in the power of community and the spirit of sharing knowledge and resources. As such, we pledge to keep PumpkinPal free to use, now and always.</p>
-            </div>
+            <section className="w-full py-12 md:py-24 lg:py-32 flex justify-center bg-[#f2f2f2] dark:bg-[#333]">
+                <div className="container px-4 md:px-6">
+                    <div className="flex flex-col items-center space-y-4 text-center">
+                        <div className="space-y-2">
+                            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">🌱 Our Mission</h2>
+                            <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+                                Our mission is to provide tools that make the hobby more accessible and enjoyable. We envision a future where every weigh-off is crowded with more and heavier
+                                pumpkins, and we're committed to making that vision a reality through the continuous development of the platform.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Commitment Section */}
+            <section className="w-full py-12 md:py-24 lg:py-32 flex justify-center">
+                <div className="container px-4 md:px-6">
+                    <div className="flex flex-col items-center space-y-4 text-center">
+                        <div className="space-y-2">
+                            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">💸 Always Free</h2>
+                            <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+                                PumpkinPal is committed to remaining free for all users, now and always. No hidden fees, no "pro" features, and no ads.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             {/* Features Section */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full px-4 sm:px-6 -mx-4 sm:-mx-8 mb-8">
-                {[
-                    { title: "Pumpkin Dashboard", description: "A central hub for growers to keep track of all their growing pumpkins." },
-                    { title: "OTT Weight Tracking", description: "Allows for in-field estimation of pumpkin weight using the Over The Top (OTT) formula, tracking these measurements over time." },
-                    { title: "Image Gallery", description: "Growers can take photos with the app or upload them, associating each image with the relevant pumpkin and its stats like DAP and date." },
-                    { title: "PumpkinPal Database", description: "The custom-built PumpkinPal Database enables the calculation of rankings and stats for growers, pumpkins, and GPC sites." },
-                    { title: "Weigh-Off Stats", description: "Provides a personal grower profile for users who have competed in GPC sanctioned weigh-offs." },
-                    { title: "GPC Search", description: "Enables users to find any grower, pumpkin, or site and see a comprehensive overview, rankings, and stats." },
-                    { title: "User Data Export", description: "Users can export their data for further analysis or record-keeping." },
-                    { title: "Field-Friendly Interface", description: "Large, easy-to-tap buttons and simple forms make it easy to enter data even with gloves on." },
-                ].map((feature, i) => (
-                    <div className="flex flex-col items-center bg-white px-3 py-4 sm:p-4 rounded" key={i}>
-                        <Image src="/logo192.webp" alt="Feature" width={192} height={192} className="w-6/12 h-auto sm:w-1/4 lg:w-3/8" />
-                        <h2 className="text-xl mt-4 mb-2">{feature.title}</h2>
-                        <p className="text-sm sm:text-base">{feature.description}</p>
+            <section className="w-full py-12 md:py-24 lg:py-32 flex justify-center bg-[#f2f2f2] dark:bg-[#333]">
+                <div className="container space-y-12 px-4 md:px-6">
+                    <div className="flex flex-col items-center justify-center space-y-4 text-center">
+                        <div className="space-y-2">
+                            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">All-in-One</h2>
+                            <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400 mx-auto">
+                                A digital Swiss Army knife for growing giant pumpkins.
+                            </p>
+                        </div>
                     </div>
-                ))}
-            </div>
+                    <div className="mx-auto grid max-w-sm items-start gap-8 sm:max-w-4xl sm:grid-cols-2 md:gap-12 lg:max-w-5xl lg:grid-cols-3 justify-content-center">
+                        {[
+                            { title: "OTT Weight Tracking", description: "Instant in-field weight estimates and growth tracking with visual graphs, perfect for monitoring your pumpkin's progress throughout the season." },
+                            { title: "Field-Friendly Interface", description: "Designed with the grower in mind, large buttons and minimal UI allow for easy data entry, even while wearing gloves in the field." },
+                            { title: "PumpkinPal Database", description: "Dive into the most comprehensive pumpkin database ever built, drawing from all available GPC results on BigPumpkins.com." },
+                            { title: "GPC Search", description: "Search the Giant Pumpkin Commonwealth's vast database. Find any grower, pumpkin, or site for historical data, rankings, and stats." },
+                            { title: "Weigh-Off Stats", description: "Your personalized grower profile with detailed performance overviews from GPC sanctioned weigh-offs, all in one place." },
+                            { title: "Image Gallery", description: "Take photos with the app or upload them, associating each image with the relevant pumpkin and its stats like DAP and date." },
+                            { title: "Data Export", description: "With just a few taps, it's straightforward and easy to export all of your pumpkin data for further analysis or record-keeping." },
+                            { title: "Cloud Storage Backups", description: "Rest easy with automatic cloud backup, safeguarding your data against loss and ensuring high availability." },
+                        ].map((feature, i) => (
+                            <div className="grid gap-1 justify-self-center" key={i}>
+                                <h3 className="text-lg font-bold">{feature.title}</h3>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                    {feature.description}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
 
             {/* Call to Action Section */}
-            <div className="w-full p-8">
-                <p className="mb-6">We respect your privacy and will never share your information. Pumpkin data is encrypted and stored separately from user data so that your pumpkin measurements are always secure.</p>
-                <Link href="/register" className="px-8 py-2 mb-8 green-button rounded text-white text-xl hover:text-white focus:outline-none focus:ring-0 underline-none no-underline font-bold">Sign Up</Link>
-                <p className="mt-3">Already signed up? 
-                    <Link href="/login" className="text-blue-500">Login here</Link>
-                </p>
-            </div>
+            <section className="py-24">
+                <div className="mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-6">
+                        <div className="space-y-2">
+                            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Private & Secure</h2>
+                            <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+                                Rest easy, your pumpkin data is locked up tighter than your diary.
+                                Imagine a vault within a vault, that's the level of security we're talking about.
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex flex-col items-center justify-center space-y-4">
+                        <Link href="/register" className="px-8 py-2 green-button rounded text-white text-lg hover:text-white focus:outline-none focus:ring-0 underline-none no-underline">Join Now</Link>
+                        <p className="text-base text-gray-600">
+                            Already on board?
+                            <Link href="/login" className="text-[#6c755e] hover:text-[#80876E]"> Sign in</Link>
+                        </p>
+                    </div>
+                </div>
+            </section>
 
             {/* Footer Section */}
-            <div className="App-footer w-full py-8 px-4 md:px-8 lg:px-16">
-                <p className="mb-2">This project is open source. Check it out on 
-                    <a href="https://github.com/ryanmio/PumpkinPal" target="_blank" rel="noopener noreferrer" className="text-blue-500" style={{ marginLeft: '5px' }}>GitHub</a>.
+            <div className="App-footer w-full py-12 px-4 md:px-8 lg:px-16">
+                <p className="mb-2">This project is open source. Check it out on
+                    <Link
+                        href="https://github.com/ryanmio/PumpkinPal"
+                        passHref
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline text-gray-200"
+                        style={{ marginLeft: '5px' }}>
+                        GitHub
+                    </Link>.
                 </p>
-                <p className="mb-2">© 2023 PumpkinPal.</p>
+                <p className="text-xs text-gray-200">© 2023 PumpkinPal.</p>
             </div>
         </div>
     );
 }
+

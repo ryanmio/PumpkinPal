@@ -1,5 +1,5 @@
 'use client'
-// app/add-measurement/[id]/page.js
+// app/add-measurement/page.js
 import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { auth, db, Timestamp, onAuthStateChanged } from '../../firebase';

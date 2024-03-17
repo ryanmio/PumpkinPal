@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation'; // Updated import for useRouter
+import { useRouter } from 'next/navigation';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../../firebase';
 import { toast, Toaster } from 'react-hot-toast';
@@ -8,7 +8,7 @@ import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../app
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 
 const MeasurementsCard = ({ measurements, pumpkin, pumpkinId, pollinationDate }) => {
-  const router = useRouter(); // Updated to use useRouter
+  const router = useRouter(); 
   const [isExpanded, setIsExpanded] = useState(false);
 
   const deleteMeasurement = async (measurementId) => {
@@ -66,7 +66,7 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId, pollinationDate })
       <Toaster />
       <h3 className="text-xl font-bold mb-2">Measurements</h3>
       <div className="flex space-x-4 justify-center">
-        <button onClick={() => router.push(`/add-measurement/${pumpkinId}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Add Measurement</button>
+        <button onClick={() => router.push(`/add-measurement`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Add Measurement</button>
         <button onClick={exportData} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export Data</button>
       </div>
       <div className="overflow-x-auto">

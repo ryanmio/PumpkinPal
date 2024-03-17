@@ -8,3 +8,6 @@ TO DO:
 - [ ] replace hot toast with custom toast component
 - [ ] re-do homepage
 - [ ] Add protected route strategy
+- [ ] SEO
+- [ ] Suspense and loading states
+- [ ] Sidebar should close with clicks outside of sidebar

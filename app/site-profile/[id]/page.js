@@ -6,6 +6,16 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import Spinner from '../../../src/components/Spinner';
 import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, } from 'chart.js';
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 import { UserContext } from '../../../contexts/UserContext';
 import Link from 'next/link';
 
