@@ -4,7 +4,7 @@ import { auth, db, Timestamp } from '../../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import "react-datepicker/dist/react-datepicker.css";
 import MeasurementInput from '../../app/add-measurement/[id]/MeasurementInput';
-import DateInput from './DateInput';
+import DateInput from '../../components/ui/DateInput';
 
 function EditMeasurement() {
   const { pumpkinId, measurementId } = useParams();

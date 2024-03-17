@@ -6,7 +6,7 @@ import { auth, db, Timestamp, onAuthStateChanged } from '../../firebase';
 import { doc, getDoc, setDoc, collection, getDocs, orderBy, limit, query } from 'firebase/firestore';
 import "react-datepicker/dist/react-datepicker.css";
 import MeasurementInput from './[id]/MeasurementInput';
-import DateInput from '../../src/components/DateInput';
+import DateInput from '../../components/ui/DateInput';
 import toast, { Toaster } from 'react-hot-toast';
 import { GA_ACTIONS, trackUserEvent, trackError } from '../utilities/error-analytics';
 import Button from '../utilities/Button';
