@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { storage, db } from '../../firebase';
+import { storage, db } from '../../../firebase';
 import { toast } from 'react-hot-toast';
-import { UserContext } from '../../contexts/UserContext';
+import { UserContext } from '../../../contexts/UserContext';
 import { collection, doc, getDoc } from 'firebase/firestore';
-import uploadImage from '../../app/utilities/uploadImage';
-import ImageGallery from './ImageGallery';
-import ImageModal from './ImageModal';
+import uploadImage from '../../utilities/uploadImage';
+import ImageGallery from '../../../src/components/ImageGallery';
+import ImageModal from '../../../src/components/ImageModal';
 
 const ImageCard = ({ pumpkinId, pumpkinName }) => {
   const [images, setImages] = useState([]);

@@ -7,7 +7,7 @@ import GraphCard from '../../app/pumpkin/[id]/GraphCard';
 import { toast } from 'react-hot-toast';
 import Spinner from '../../components/ui/Spinner';
 
-const LazyImageCard = lazy(() => import('./ImageCard'));
+const LazyImageCard = lazy(() => import('../../app/pumpkin/[id]/ImageCard'));
 
 function PumpkinDetail() {
   const { id } = useParams();

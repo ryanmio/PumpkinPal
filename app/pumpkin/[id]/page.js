@@ -10,7 +10,7 @@ import { toast } from 'react-hot-toast';
 import Spinner from '../../../components/ui/Spinner';
 import Link from 'next/link';
 
-const LazyImageCard = lazy(() => import('../../../src/components/ImageCard'));
+const LazyImageCard = lazy(() => import('./ImageCard'));
 
 function PumpkinDetail() {
     const router = useRouter();
