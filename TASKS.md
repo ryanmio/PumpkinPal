@@ -11,3 +11,4 @@ TO DO:
 - [ ] SEO
 - [ ] Suspense and loading states
 - [ ] Sidebar should close with clicks outside of sidebar
+- [ ] Update readme - especially noting the chagne to nextjs
