@@ -103,7 +103,7 @@ function LineChart(props) {
               tickValues: 5,
               tickPadding: 16,
             }}
-            colors={["#2563eb", "#e11d48"]}
+            colors={["#FB9336", "#FFC670"]}
             pointSize={6}
             useMesh={true}
             gridYValues={6}
