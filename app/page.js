@@ -60,10 +60,8 @@ export default function Home() {
                         <div className="space-y-2">
                             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">🌱 Our Mission</h2>
                             <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
-                                Our mission is to empower the pumpkin growing community by providing tools that make the hobby more
-                                accessible and enjoyable. We envision a future where every weigh-off is crowded with more and heavier
-                                pumpkins. We're committed to making that vision a reality through the continuous development and improvement
-                                of PumpkinPal.
+                                Our mission is to provide tools that make the hobby more accessible and enjoyable. We envision a future where every weigh-off is crowded with more and heavier
+                                pumpkins, and we're committed to making that vision a reality through the continuous development of the platform.
                             </p>
                         </div>
                     </div>
@@ -77,7 +75,7 @@ export default function Home() {
                         <div className="space-y-2">
                             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">💸 Always Free</h2>
                             <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
-                                PumpkinPal is committed to remaining free for all users. We believe in the power of community and the spirit of sharing knowledge and resources. As such, we pledge to keep PumpkinPal free to use, now and always.
+                                PumpkinPal is committed to remaining free for all users, now and always. No hidden fees, no "pro" features, and no ads.
                             </p>
                         </div>
                     </div>
@@ -122,7 +120,7 @@ export default function Home() {
                 <div className="mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-6">
                     <div className="space-y-2">
-                        <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Data Security</h2>
+                        <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Private & Secure</h2>
                         <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
                             Rest easy, your pumpkin data is locked up tighter than your diary. 
                             Imagine a vault within a vault, that's the level of security we're talking about.
