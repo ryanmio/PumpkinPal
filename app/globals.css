@@ -306,17 +306,17 @@ a, .link {
 
 
 .description-text {
-  white-space: pre-wrap; /* Allows text to wrap and preserves whitespace */
-  word-wrap: break-word; /* Breaks long words if necessary to fit within the container */
-  overflow-wrap: break-word; /* Similar to word-wrap, ensures the text breaks to prevent overflow */
-  max-width: 100%; /* Ensures the text does not exceed the width of its container */
-  margin-bottom: 1em; /* Adjust as needed for your design */
-  line-height: 1.5; /* Adjust as needed for your design */
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  margin-bottom: 1em;
+  line-height: 1.5;
 }
 
  
 .ais-SearchBox {
-  width: 100%; /* Full width */
+  width: 100%; 
 }
 
 .ais-SearchBox-input {
@@ -331,10 +331,6 @@ a, .link {
 .ais-SearchBox-submit,
 .ais-SearchBox-reset {
   display: none;
-}
-
-.ais-SearchBox-input::placeholder {
-  color: #a0aec0; /* Placeholder text color, choose a color that is visible on white background */
 }
 
 /* Used for Grower Table */

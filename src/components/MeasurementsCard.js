@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation'; // Updated import for useRouter
+import { useRouter } from 'next/navigation';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../../firebase';
 import { toast, Toaster } from 'react-hot-toast';
@@ -8,7 +8,7 @@ import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../app
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 
 const MeasurementsCard = ({ measurements, pumpkin, pumpkinId, pollinationDate }) => {
-  const router = useRouter(); // Updated to use useRouter
+  const router = useRouter(); 
   const [isExpanded, setIsExpanded] = useState(false);
 
   const deleteMeasurement = async (measurementId) => {

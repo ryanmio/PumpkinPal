@@ -38,11 +38,11 @@ const SearchInput = ({ currentRefinement, refine }) => (
 // Connect the custom SearchInput component to Algolia's search state
 const CustomSearchBox = connectSearchBox(SearchInput);
 
-// Right arrow SVG component (or you can use an icon from a library like Heroicons)
+// Right arrow SVG component
 const RightArrowIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className="h-6 w-6 ml-auto" // Tailwind classes for size and color
+    className="h-6 w-6 ml-auto"
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
@@ -135,7 +135,7 @@ const Hit = ({ hit }) => {
       case 'Stats_Growers':
         return <GrowerIcon />;
       default:
-        return null; // Or a default icon if you have one
+        return null;
     }
   };
 
@@ -193,7 +193,6 @@ const viewFullResults = () => {
           list: 'flex flex-col',
           item: 'mb-4'
         }} />
-        {/* Add a button or link for full results */}
         {searchState && (
           <div className="flex justify-center mt-4">
             <button

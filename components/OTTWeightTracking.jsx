@@ -10,7 +10,7 @@ const CustomTooltip = ({ point }) => {
         background: 'white',
         padding: '9px 12px',
         border: '1px solid #ccc',
-        boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.1)', // Optional: added for a subtle shadow effect
+        boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.1)', 
       }}
     >
       <div style={{ fontStyle: 'italic', color: '#666' }}>
@@ -83,7 +83,7 @@ function LineChart(props) {
                 ],
               },
             ]}
-            margin={{ top: 10, right: 10, bottom: 50, left: 40 }} // Increased bottom margin for mobile
+            margin={{ top: 10, right: 10, bottom: 50, left: 40 }}
             xScale={{
               type: "point",
             }}

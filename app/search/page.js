@@ -23,7 +23,6 @@ const GrowerIcon = () => (
   <img src="/icons/grower_icon.svg" className="h-9 w-9" alt="Grower Icon" />
 );
 
-// Define the Right Arrow Icon Component
 const RightArrowIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -44,7 +43,7 @@ const Hit = ({ hit }) => {
       case 'Stats_Growers':
         return <GrowerIcon />;
       default:
-        return null; // Or a default icon if you have one
+        return null;
     }
   };
 
