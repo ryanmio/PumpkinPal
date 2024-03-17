@@ -2,9 +2,9 @@ import React, { useContext, useEffect, lazy, Suspense } from 'react';
 import { GrowerContext } from '../../../contexts/GrowerContext';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { UserContext } from '../../../contexts/UserContext';
-const Header = lazy(() => import('./Header'));
-const SummarySection = lazy(() => import('./SummarySection'));
-const TableSection = lazy(() => import('./TableSection'));
+const Header = lazy(() => import('../../../app/grower/[growerName]/Header'));
+const SummarySection = lazy(() => import('../../../app/grower/[growerName]/SummarySection'));
+const TableSection = lazy(() => import('../../../app/grower/[growerName]/TableSection'));
 
 
 const GrowerStatsProfile = () => {
