@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import { collection, getDocs, deleteDoc, where, doc, setDoc, getDoc, query, orderBy, limit } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
-import Dropdown from '../../src/components/Dropdown';
+import Dropdown from '../../components/ui/Dropdown';
 import Spinner from '../../components/ui/Spinner';
 import PlusIcon from '../../public/icons/PlusIcon';
 import TableCellsIcon from '../../public/icons/TableCellsIcon';

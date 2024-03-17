@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { auth, db, query, orderBy, limit } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
 import { collection, getDocs, deleteDoc, where, doc, setDoc, getDoc } from 'firebase/firestore';
-import Dropdown from './Dropdown';
+import Dropdown from '../../components/ui/Dropdown';
 import Spinner from '../../components/ui/Spinner';
 import PlusIcon from '../../public/icons/PlusIcon';
 import TableCellsIcon from '../../public/icons/TableCellsIcon';
