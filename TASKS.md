@@ -6,10 +6,25 @@ TO DO:
 - [x] convert background image tile from png to webp
 - [x] re-do homepage
 - [x] Fix formating bugs in charts
-- [ ] replace hot toast with custom toast component
-- [ ] Add protected route strategy
 - [ ] SEO
+    - [ ] Use Metadata API for SEO Optimization
+        - Add page titles and descriptions
+        - Include other relevant metadata (canonical URLs, social media tags)
+    - [ ] Generate Open Graph (OG) Images
+        - Create and configure OG images for social sharing
+    - [ ] Create Sitemaps and Robots.txt
+        - Generate sitemap.xml
+        - Configure robots.txt
+    - [ ] Implement Structured Data (Schema Markup)
+    - [ ] Optimize URLs and Link Structure
+    - [ ] Improve Page Load Performance
+    - [ ] Ensure Mobile Responsiveness
+    - [ ] Accessibility Enhancements
+    - [ ] Local SEO (if applicable)
+- [ ] Replace the alert modal and sweetalert2
+- [ ] replace hot toast with custom toast component
 - [ ] Suspense and loading states
 - [ ] Sidebar should close with clicks outside of sidebar
+- [ ] Add protected route strategy
 - [ ] Update readme - especially noting the chagne to nextjs
-- [ ] Replace the alert modal and sweetalert2
+
