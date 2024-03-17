@@ -4,9 +4,9 @@ TO DO:
 - [x] add error boundary
 - [x] add custom 404
 - [x] convert background image tile from png to webp
-- [ ] Fix formating bugs in charts
+- [x] re-do homepage
+- [x] Fix formating bugs in charts
 - [ ] replace hot toast with custom toast component
-- [ ] re-do homepage
 - [ ] Add protected route strategy
 - [ ] SEO
 - [ ] Suspense and loading states
