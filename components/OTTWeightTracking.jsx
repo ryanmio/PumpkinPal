@@ -1,13 +1,34 @@
 'use client';
 import { ResponsiveLine } from "@nivo/line";
 
+// Custom tooltip component
+const CustomTooltip = ({ point }) => {
+  return (
+    <div
+      style={{
+        background: 'white',
+        padding: '9px 12px',
+        border: '1px solid #ccc',
+        boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.1)', // Optional: added for a subtle shadow effect
+      }}
+    >
+      <div style={{ fontStyle: 'italic', color: '#666' }}>
+        {point.serieId}
+      </div>
+      <div>
+         {point.data.xFormatted}: <strong>{point.data.yFormatted}</strong> OTT
+      </div>
+    </div>
+  );
+};
+
 function LineChart(props) {
     return (
       (<div {...props}>
         <ResponsiveLine
           data={[
             {
-              id: "Desktop",
+              id: "Primary",
               data: [
                 { x: "DAP 10", y: 43 },
                 { x: "DAP 20", y: 95 },
@@ -21,7 +42,7 @@ function LineChart(props) {
               ],
             },
             {
-              id: "Mobile",
+              id: "Backup",
               data: [
                 { x: "DAP 10", y: 39 },
                 { x: "DAP 20", y: 87 },
@@ -74,6 +95,7 @@ function LineChart(props) {
               },
             },
           }}
+          tooltip={({ point }) => <CustomTooltip point={point} />}
           role="application" />
       </div>)
     );
