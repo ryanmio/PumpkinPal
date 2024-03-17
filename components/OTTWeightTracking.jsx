@@ -27,80 +27,82 @@ function LineChart(props) {
     const xDataPoints = ["DAP 10", "DAP 20", "DAP 30", "DAP 40", "DAP 50", "DAP 60", "DAP 70", "DAP 80", "DAP 90"];
 
     return (
-      (<div {...props}>
-        <ResponsiveLine
-          data={[
-            {
-              id: "Primary",
-              data: [
-                { x: "DAP 10", y: 43 },
-                { x: "DAP 20", y: 95 },
-                { x: "DAP 30", y: 137 },
-                { x: "DAP 40", y: 161 },
-                { x: "DAP 50", y: 182 },
-                { x: "DAP 60", y: 195 },
-                { x: "DAP 70", y: 204 },
-                { x: "DAP 80", y: 208 },
-                { x: "DAP 90", y: 211 },
-              ],
-            },
-            {
-              id: "Backup",
-              data: [
-                { x: "DAP 10", y: 39 },
-                { x: "DAP 20", y: 87 },
-                { x: "DAP 30", y: 127 },
-                { x: "DAP 40", y: 144 },
-                { x: "DAP 50", y: 163 },
-                { x: "DAP 60", y: 171 },
-                { x: "DAP 70", y: 182 },
-                { x: "DAP 80", y: 185 },
-                { x: "DAP 90", y: 190 },
-              ],
-            },
-          ]}
-          margin={{ top: 10, right: 10, bottom: 40, left: 40 }}
-          xScale={{
-            type: "point",
-          }}
-          yScale={{
-            type: "linear",
-          }}
-          axisTop={null}
-          axisRight={null}
-          axisBottom={{
-            tickSize: 0,
-            tickPadding: 16,
-            tickValues: xDataPoints.slice(0, -1), // Exclude the last tick value
-          }}
-          axisLeft={{
-            tickSize: 0,
-            tickValues: 5,
-            tickPadding: 16,
-          }}
-          colors={["#2563eb", "#e11d48"]}
-          pointSize={6}
-          useMesh={true}
-          gridYValues={6}
-          theme={{
-            tooltip: {
-              chip: {
-                borderRadius: "9999px",
+      (<div {...props} style={{ height: '0', paddingBottom: '56.25%', position: 'relative' }}>
+        <div style={{ height: '100%', width: '100%', position: 'absolute' }}>
+          <ResponsiveLine
+            data={[
+              {
+                id: "Primary",
+                data: [
+                  { x: "DAP 10", y: 43 },
+                  { x: "DAP 20", y: 95 },
+                  { x: "DAP 30", y: 137 },
+                  { x: "DAP 40", y: 161 },
+                  { x: "DAP 50", y: 182 },
+                  { x: "DAP 60", y: 195 },
+                  { x: "DAP 70", y: 204 },
+                  { x: "DAP 80", y: 208 },
+                  { x: "DAP 90", y: 211 },
+                ],
               },
-              container: {
-                fontSize: "12px",
-                textTransform: "capitalize",
-                borderRadius: "6px",
+              {
+                id: "Backup",
+                data: [
+                  { x: "DAP 10", y: 39 },
+                  { x: "DAP 20", y: 87 },
+                  { x: "DAP 30", y: 127 },
+                  { x: "DAP 40", y: 144 },
+                  { x: "DAP 50", y: 163 },
+                  { x: "DAP 60", y: 171 },
+                  { x: "DAP 70", y: 182 },
+                  { x: "DAP 80", y: 185 },
+                  { x: "DAP 90", y: 190 },
+                ],
               },
-            },
-            grid: {
-              line: {
-                stroke: "#f3f4f6",
+            ]}
+            margin={{ top: 10, right: 10, bottom: 40, left: 40 }}
+            xScale={{
+              type: "point",
+            }}
+            yScale={{
+              type: "linear",
+            }}
+            axisTop={null}
+            axisRight={null}
+            axisBottom={{
+              tickSize: 0,
+              tickPadding: 16,
+              tickValues: xDataPoints.slice(0, -1), // Exclude the last tick value
+            }}
+            axisLeft={{
+              tickSize: 0,
+              tickValues: 5,
+              tickPadding: 16,
+            }}
+            colors={["#2563eb", "#e11d48"]}
+            pointSize={6}
+            useMesh={true}
+            gridYValues={6}
+            theme={{
+              tooltip: {
+                chip: {
+                  borderRadius: "9999px",
+                },
+                container: {
+                  fontSize: "12px",
+                  textTransform: "capitalize",
+                  borderRadius: "6px",
+                },
               },
-            },
-          }}
-          tooltip={({ point }) => <CustomTooltip point={point} />}
-          role="application" />
+              grid: {
+                line: {
+                  stroke: "#f3f4f6",
+                },
+              },
+            }}
+            tooltip={({ point }) => <CustomTooltip point={point} />}
+            role="application" />
+        </div>
       </div>)
     );
   }
@@ -122,3 +124,4 @@ export default function OTTWeightTracking() {
     </section>
   );
 }
+
