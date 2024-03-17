@@ -1,7 +1,7 @@
 import React from 'react';
 import { auth } from '../../firebase';
 import { signOut } from 'firebase/auth';
-import { Button } from '../../components/ui/button'; // Adjust the import path as necessary
+import { Button } from './button'; // Adjust the import path as necessary
 import { useRouter } from 'next/navigation'; // Import useRouter from next/navigation
 
 function Logout() {

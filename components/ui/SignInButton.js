@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '../../components/ui/button';
+import { Button } from './button';
 
 function SignInButton() {
   const router = useRouter(); // Use the useRouter hook

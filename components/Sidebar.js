@@ -3,9 +3,9 @@ import React, { useContext, useState } from 'react'; // Add useState to the impo
 import Link from 'next/link';
 import { UserContext } from '../contexts/UserContext';
 import dynamic from 'next/dynamic'; // Dynamically import the Logout component with SSR disabled
-const Logout = dynamic(() => import('../src/components/Logout'), { ssr: false });
+const Logout = dynamic(() => import('./ui/Logout'), { ssr: false });
 import MenuIcon from '../public/icons/MenuIcon';
-import SignInButton from '../src/components/SignInButton';
+import SignInButton from './ui/SignInButton';
 
 const links = [
   { href: '/dashboard', label: 'Dashboard', Icon: require('../public/icons/DashboardIcon').default },
