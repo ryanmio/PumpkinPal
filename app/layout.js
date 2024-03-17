@@ -11,7 +11,7 @@ import { Toaster } from 'react-hot-toast';
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
 // Dynamic import for Sidebar
-const Sidebar = dynamic(() => import('../src/components/Sidebar'), { ssr: false });
+const Sidebar = dynamic(() => import('../components/Sidebar'), { ssr: false });
 
 // Dynamically import the initFacebookSdk function for client-side execution
 const initFacebookSdk = dynamic(

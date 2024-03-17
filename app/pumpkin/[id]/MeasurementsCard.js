@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../../../firebase';
 import { toast, Toaster } from 'react-hot-toast';
-import { showDeleteConfirmation } from '../../../src/components/Alert';
+import { showDeleteConfirmation } from '../../../components/ui/Alert';
 import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../utilities/error-analytics';
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 

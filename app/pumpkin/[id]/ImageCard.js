@@ -4,8 +4,8 @@ import { toast } from 'react-hot-toast';
 import { UserContext } from '../../../contexts/UserContext';
 import { collection, doc, getDoc } from 'firebase/firestore';
 import uploadImage from '../../utilities/uploadImage';
-import ImageGallery from '../../../src/components/ImageGallery';
-import ImageModal from '../../../src/components/ImageModal';
+import ImageGallery from './ImageGallery';
+import ImageModal from './ImageModal';
 
 const ImageCard = ({ pumpkinId, pumpkinName }) => {
   const [images, setImages] = useState([]);

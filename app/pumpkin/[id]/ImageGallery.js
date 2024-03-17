@@ -1,5 +1,5 @@
 import React from 'react';
-import PlusIcon from '../../public/icons/PlusIcon';
+import PlusIcon from '../../../public/icons/PlusIcon';
 import { useDropzone } from 'react-dropzone';
 
 const ImageGallery = ({ images, openModal, handleUpload }) => {

@@ -7,7 +7,7 @@ import Dropdown from '../../components/ui/Dropdown';
 import Spinner from '../../components/ui/Spinner';
 import PlusIcon from '../../public/icons/PlusIcon';
 import TableCellsIcon from '../../public/icons/TableCellsIcon';
-import { showDeleteConfirmation } from '../../src/components/Alert';
+import { showDeleteConfirmation } from '../../components/ui/Alert';
 import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../app/utilities/error-analytics';
 import { UserContext } from '../../contexts/UserContext';
 import { db, auth } from '../../firebase';
