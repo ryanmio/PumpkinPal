@@ -23,6 +23,9 @@ const CustomTooltip = ({ point }) => {
 };
 
 function LineChart(props) {
+    // Assuming your x-axis data points are like this:
+    const xDataPoints = ["DAP 10", "DAP 20", "DAP 30", "DAP 40", "DAP 50", "DAP 60", "DAP 70", "DAP 80", "DAP 90"];
+
     return (
       (<div {...props}>
         <ResponsiveLine
@@ -68,6 +71,7 @@ function LineChart(props) {
           axisBottom={{
             tickSize: 0,
             tickPadding: 16,
+            tickValues: xDataPoints.slice(0, -1), // Exclude the last tick value
           }}
           axisLeft={{
             tickSize: 0,
