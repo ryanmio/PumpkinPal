@@ -336,3 +336,8 @@ a, .link {
 .ais-SearchBox-input::placeholder {
   color: #a0aec0; /* Placeholder text color, choose a color that is visible on white background */
 }
+
+/* Used for Grower Table */
+.table-cell-spacing {
+  border-bottom: 6px solid transparent;
+}
