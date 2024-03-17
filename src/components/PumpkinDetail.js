@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { auth, db } from '../../firebase';
 import { collection, doc, getDoc, orderBy, onSnapshot, query } from 'firebase/firestore';
 import MeasurementsCard from '../../app/pumpkin/[id]/MeasurementsCard';
-import GraphCard from './GraphCard';
+import GraphCard from '../../app/pumpkin/[id]/GraphCard';
 import { toast } from 'react-hot-toast';
 import Spinner from '../../components/ui/Spinner';
 

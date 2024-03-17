@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { auth, db } from '../../../firebase';
 import { collection, doc, getDoc, orderBy, onSnapshot, query } from 'firebase/firestore';
 import MeasurementsCard from './MeasurementsCard';
-import GraphCard from '../../../src/components/GraphCard';
+import GraphCard from './GraphCard';
 import { toast } from 'react-hot-toast';
 import Spinner from '../../../components/ui/Spinner';
 import Link from 'next/link';
