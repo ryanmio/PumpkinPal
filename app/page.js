@@ -20,12 +20,15 @@ export default function Home() {
                             <p>PumpkinPal is the all-in-one companion app for pumpkin growers.</p>
                         </div>
                     </div>
-                    <Image
-                        src="/images/graphdemo.gif"
-                        alt="Hero"
+                    <video
+                        src="/images/v1desktopdemo.mp4"
+                        alt="Demo"
                         className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center"
                         width={550}
                         height={310}
+                        autoPlay
+                        loop
+                        muted
                     />
                 </div>
             </section>
