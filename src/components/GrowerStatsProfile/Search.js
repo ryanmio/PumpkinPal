@@ -42,7 +42,7 @@ const CustomSearchBox = connectSearchBox(SearchInput);
 const RightArrowIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className="h-6 w-6 text-gray-400 ml-auto" // Tailwind classes for size and color
+    className="h-6 w-6 ml-auto" // Tailwind classes for size and color
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
@@ -87,10 +87,10 @@ const Hit = ({ hit }) => {
       case 'Stats_Sites':
         return (
           <>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600" style={{marginLeft: '-1.5rem'}}>
               <span className="font-semibold">Site Record:</span> {hit['Site Record']} lbs
             </div>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600" style={{marginLeft: '-1.5rem'}}>
               <span className="font-semibold">Total Entries:</span> {hit['Total Entries']}
             </div>
           </>
@@ -98,10 +98,10 @@ const Hit = ({ hit }) => {
       case 'Stats_Pumpkins':
         return (
           <>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600" style={{marginLeft: '-1.5rem'}}>
               <span className="font-semibold">Year:</span> {hit['year']}
             </div>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600" style={{marginLeft: '-1.5rem'}}>
               <span className="font-semibold">Grower:</span> {hit['grower']}
             </div>
           </>
@@ -109,10 +109,10 @@ const Hit = ({ hit }) => {
       case 'Stats_Growers':
         return (
           <>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600" style={{marginLeft: '-1.5rem'}}>
               <span className="font-semibold">Lifetime Max Weight:</span> {hit['LifetimeMaxWeight']} lbs
             </div>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600" style={{marginLeft: '-1.5rem'}}>
               <span className="font-semibold">Number Of Entries:</span> {hit['NumberOfEntries']}
             </div>
           </>
@@ -151,7 +151,7 @@ const Hit = ({ hit }) => {
         {Icon}
       </div>
       <div className="flex-grow">
-        <h3 className="text-lg font-semibold">{hit.objectID}</h3>
+        <h3 className="text-lg font-semibold" style={{marginLeft: '-1.5rem'}}>{hit.objectID}</h3>
         {renderDetails()}
       </div>
       <RightArrowIcon />

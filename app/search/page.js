@@ -80,10 +80,10 @@ const Hit = ({ hit }) => {
       case 'Stats_Sites':
         return (
           <>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600" style={{marginLeft: '-4.5rem'}}>
               <span className="font-semibold">Site Record:</span> {hit['Site Record']} lbs
             </div>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600" style={{marginLeft: '-4.5rem'}}>
               <span className="font-semibold">Total Entries:</span> {hit['Total Entries']}
             </div>
           </>
@@ -91,10 +91,10 @@ const Hit = ({ hit }) => {
       case 'Stats_Pumpkins':
         return (
           <>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600" style={{marginLeft: '-4.5rem'}}>
               <span className="font-semibold">Year:</span> {hit['year']}
             </div>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600" style={{marginLeft: '-4.5rem'}}>
               <span className="font-semibold">Grower:</span> {hit['grower']}
             </div>
           </>
@@ -102,10 +102,10 @@ const Hit = ({ hit }) => {
       case 'Stats_Growers':
         return (
           <>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600" style={{marginLeft: '-4.5rem'}}>
               <span className="font-semibold">Lifetime Max Weight:</span> {hit['LifetimeMaxWeight']} lbs
             </div>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600" style={{marginLeft: '-4.5rem'}}>
               <span className="font-semibold">Number Of Entries:</span> {hit['NumberOfEntries']}
             </div>
           </>
