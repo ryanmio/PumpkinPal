@@ -1,5 +1,6 @@
 'use client';
 import { ResponsiveLine } from "@nivo/line";
+import { useState, useEffect } from 'react';
 
 // Custom tooltip component
 const CustomTooltip = ({ point }) => {
@@ -25,6 +26,24 @@ const CustomTooltip = ({ point }) => {
 function LineChart(props) {
     // Assuming your x-axis data points are like this:
     const xDataPoints = ["DAP 10", "DAP 20", "DAP 30", "DAP 40", "DAP 50", "DAP 60", "DAP 70", "DAP 80", "DAP 90"];
+
+    const [tickRotation, setTickRotation] = useState(0);
+
+    useEffect(() => {
+      const updateTickRotation = () => {
+        const screenWidth = window.innerWidth;
+        if (screenWidth < 550) { // Assuming 768px is the breakpoint for mobile devices
+          setTickRotation(-45);
+        } else {
+          setTickRotation(0);
+        }
+      };
+
+      window.addEventListener('resize', updateTickRotation);
+      updateTickRotation(); // Initial check
+
+      return () => window.removeEventListener('resize', updateTickRotation);
+    }, []);
 
     return (
       (<div {...props} style={{ height: '0', paddingBottom: '56.25%', position: 'relative' }}>
@@ -60,7 +79,7 @@ function LineChart(props) {
                 ],
               },
             ]}
-            margin={{ top: 10, right: 10, bottom: 40, left: 40 }}
+            margin={{ top: 10, right: 10, bottom: 50, left: 40 }} // Increased bottom margin for mobile
             xScale={{
               type: "point",
             }}
@@ -73,6 +92,7 @@ function LineChart(props) {
               tickSize: 0,
               tickPadding: 16,
               tickValues: xDataPoints.slice(0, -1), // Exclude the last tick value
+              tickRotation: tickRotation,
             }}
             axisLeft={{
               tickSize: 0,
