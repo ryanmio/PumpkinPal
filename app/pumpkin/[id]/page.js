@@ -1,5 +1,5 @@
 'use client'
-// app/pumpkin/[id]/page.js
+// app/pumpkin/[id]/page.js AKA the pumpkin detail page
 import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { auth, db } from '../../../firebase';
