@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { doc, deleteDoc } from 'firebase/firestore';
-import { auth, db } from '../../firebase';
+import { auth, db } from '../../../firebase';
 import { toast, Toaster } from 'react-hot-toast';
-import { showDeleteConfirmation } from './Alert';
-import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../app/utilities/error-analytics';
+import { showDeleteConfirmation } from '../../../src/components/Alert';
+import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../utilities/error-analytics';
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 
 const MeasurementsCard = ({ measurements, pumpkin, pumpkinId, pollinationDate }) => {
