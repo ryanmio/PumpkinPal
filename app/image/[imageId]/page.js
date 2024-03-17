@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { db } from '../../../firebase';
-import Spinner from '../../../src/components/Spinner';
+import Spinner from '../../../components/ui/Spinner';
 import { doc, getDoc } from 'firebase/firestore';
 import Head from 'next/head';
 import sanitizeHtml from 'sanitize-html';

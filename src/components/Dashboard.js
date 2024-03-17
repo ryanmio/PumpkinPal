@@ -3,7 +3,7 @@ import { auth, db, query, orderBy, limit } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
 import { collection, getDocs, deleteDoc, where, doc, setDoc, getDoc } from 'firebase/firestore';
 import Dropdown from './Dropdown';
-import Spinner from './Spinner';
+import Spinner from '../../components/ui/Spinner';
 import PlusIcon from '../../public/icons/PlusIcon';
 import TableCellsIcon from '../../public/icons/TableCellsIcon';
 import { toast } from 'react-hot-toast';

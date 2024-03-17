@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebase';
-import Spinner from '../Spinner';
+import Spinner from '../../../components/ui/Spinner';
 import { UserContext } from '../../../contexts/UserContext';
 
 const Field = ({ label, value, link }) => value && (

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { collection, getDocs, deleteDoc, where, doc, setDoc, getDoc, query, orderBy, limit } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
 import Dropdown from '../../src/components/Dropdown';
-import Spinner from '../../src/components/Spinner';
+import Spinner from '../../components/ui/Spinner';
 import PlusIcon from '../../public/icons/PlusIcon';
 import TableCellsIcon from '../../public/icons/TableCellsIcon';
 import { showDeleteConfirmation } from '../../src/components/Alert';

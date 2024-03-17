@@ -2,7 +2,7 @@
 import React, { useRef } from 'react';
 import Modal from 'react-modal';
 import Button from '../../app/utilities/Button';
-import Spinner from '../components/Spinner';
+import Spinner from '../../components/ui/Spinner';
 import { toast } from 'react-hot-toast';
 import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../app/utilities/error-analytics';
 import { showDeleteConfirmation } from '../components/Alert';
