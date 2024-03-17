@@ -28,6 +28,8 @@ export default function Home() {
                         height={310}
                         autoPlay
                         loop
+                        preload="metadata"
+                        playsInline
                         muted
                     />
                 </div>
