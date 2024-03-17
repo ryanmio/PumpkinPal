@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { auth, db, Timestamp, onAuthStateChanged } from '../../firebase';
 import { doc, getDoc, setDoc, collection, getDocs, orderBy, limit, query } from 'firebase/firestore';
 import "react-datepicker/dist/react-datepicker.css";
-import MeasurementInput from './MeasurementInput';
+import MeasurementInput from '../../app/add-measurement/[id]/MeasurementInput';
 import DateInput from './DateInput';
 import toast, { Toaster } from 'react-hot-toast';
 import { GA_ACTIONS, trackUserEvent, trackError } from '../../app/utilities/error-analytics';
