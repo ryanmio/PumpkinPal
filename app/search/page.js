@@ -12,20 +12,20 @@ const searchClient = algoliasearch('SPV52PLJT9', process.env.NEXT_PUBLIC_ALGOLIA
 
 // Define the icon components
 const SiteIcon = () => (
-  <img src="/icons/site_icon.svg" className="h-9 w-9 text-gray-500" alt="Site Icon" />
+  <img src="/icons/site_icon.svg" className="h-9 w-9" alt="Site Icon" />
 );
 
 const PumpkinIcon = () => (
-  <img src="/icons/entry_icon.svg" className="h-9 w-9 text-gray-500" alt="Pumpkin Icon" />
+  <img src="/icons/entry_icon.svg" className="h-9 w-9" alt="Pumpkin Icon" />
 );
 
 const GrowerIcon = () => (
-  <img src="/icons/grower_icon.svg" className="h-9 w-9 text-gray-500" alt="Grower Icon" />
+  <img src="/icons/grower_icon.svg" className="h-9 w-9" alt="Grower Icon" />
 );
 
 // Define the Right Arrow Icon Component
 const RightArrowIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
   </svg>
 );
