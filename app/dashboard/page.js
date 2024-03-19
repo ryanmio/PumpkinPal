@@ -125,11 +125,11 @@ function Dashboard() {
         <select 
             value={selectedSeason} 
             onChange={handleSeasonChange}
-            className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="mt-1 block w-[180px] py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-center"
           >
-            <option value="">All Seasons</option>
+            <option value="" className="text-center">All Seasons</option>
             {seasons.map(season => (
-              <option key={season} value={season}>{season}</option>
+              <option key={season} value={season} className="text-center">{season}</option>
             ))}
           </select>
   
