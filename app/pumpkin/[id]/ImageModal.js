@@ -1,15 +1,15 @@
 /* global FB */
 import React, { useRef } from 'react';
 import Modal from 'react-modal';
-import Button from '../../app/utilities/Button';
-import Spinner from '../components/Spinner';
+import Button from '../../utilities/Button';
+import Spinner from '../../../components/ui/Spinner';
 import { toast } from 'react-hot-toast';
-import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../app/utilities/error-analytics';
-import { showDeleteConfirmation } from '../components/Alert';
+import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../utilities/error-analytics';
+import { showDeleteConfirmation } from '../../../components/ui/Alert';
 import { addDoc, collection, updateDoc, getDoc, doc } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 import { differenceInDays } from 'date-fns';
-import FullscreenIcon from '../../public/icons/FullscreenIcon';
+import FullscreenIcon from '../../../public/icons/FullscreenIcon';
 
 Modal.setAppElement('body');
 

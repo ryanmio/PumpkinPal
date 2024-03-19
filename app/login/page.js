@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { auth, googleAuthProvider } from '../../firebase';
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { useRouter } from 'next/navigation'; // Adjusted import for useRouter
+import { useRouter } from 'next/navigation';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import Link from "next/link";

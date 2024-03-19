@@ -1,3 +1,4 @@
+// app/grower/[growerName]/TableSection.js
 import { useTable, useSortBy } from 'react-table';
 import Link from 'next/link';
 
@@ -8,9 +9,9 @@ const TableSection = ({ data, columns }) => {
     headerGroups,
     rows,
     prepareRow,
-  } = useTable({ 
-    columns, 
-    data, 
+  } = useTable({
+    columns,
+    data,
     initialState: { sortBy: [{ id: 'weight', desc: true }] }
   }, useSortBy);
 
@@ -45,18 +46,18 @@ const TableSection = ({ data, columns }) => {
             return (
               <tr key={key} {...restRowProps}>
                 {row.cells.map(cell => {
-  if (cell.column.id === 'contestName') {
-    const { key: cellKey, ...restCellProps } = cell.getCellProps();
-    return (
-      <td key={cellKey} {...restCellProps} className={`table-cell-spacing w-[200px]`}>
-        <div className={`w-full`} title={cell.value}>
-          <Link href={`/site-profile/${encodeURIComponent(row.original.contestName)}`} className="text-current hover:text-current no-underline hover:underline">
-            {cell.render('Cell')}
-          </Link>
-        </div>
-      </td>
-    );
-  }
+                  if (cell.column.id === 'contestName') {
+                    const { key: cellKey, ...restCellProps } = cell.getCellProps();
+                    return (
+                      <td key={cellKey} {...restCellProps} className={`table-cell-spacing w-[200px]`}>
+                        <div className={`w-full`} title={cell.value}>
+                          <Link href={`/site-profile/${encodeURIComponent(row.original.contestName)}`} className="text-current hover:text-current no-underline hover:underline">
+                            {cell.render('Cell')}
+                          </Link>
+                        </div>
+                      </td>
+                    );
+                  }
 
                   const { key: cellKey, ...restCellProps } = cell.getCellProps();
                   return (
@@ -70,7 +71,7 @@ const TableSection = ({ data, columns }) => {
               </tr>
             );
           })}
-                </tbody>
+        </tbody>
       </table>
     </div>
   );

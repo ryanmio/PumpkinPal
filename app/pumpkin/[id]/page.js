@@ -1,16 +1,16 @@
 'use client'
-// app/pumpkin/[id]/page.js
+// app/pumpkin/[id]/page.js AKA the pumpkin detail page
 import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { auth, db } from '../../../firebase';
 import { collection, doc, getDoc, orderBy, onSnapshot, query } from 'firebase/firestore';
-import MeasurementsCard from '../../../src/components/MeasurementsCard';
-import GraphCard from '../../../src/components/GraphCard';
+import MeasurementsCard from './MeasurementsCard';
+import GraphCard from './GraphCard';
 import { toast } from 'react-hot-toast';
-import Spinner from '../../../src/components/Spinner';
+import Spinner from '../../../components/ui/Spinner';
 import Link from 'next/link';
 
-const LazyImageCard = lazy(() => import('../../../src/components/ImageCard'));
+const LazyImageCard = lazy(() => import('./ImageCard'));
 
 function PumpkinDetail() {
     const router = useRouter();

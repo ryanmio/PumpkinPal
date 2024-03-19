@@ -4,7 +4,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebase';
-import Spinner from '../../../src/components/Spinner';
+import Spinner from '../../../components/ui/Spinner';
 import { UserContext } from '../../../contexts/UserContext';
 import Link from 'next/link';
 

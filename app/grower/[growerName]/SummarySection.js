@@ -1,3 +1,4 @@
+// app/grower/[growerName]/SummarySection.js
 const SummarySection = ({ data }) => (
   <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col">
     <h2 className="text-xl font-bold mb-2">Lifetime Stats</h2>

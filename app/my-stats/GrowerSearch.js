@@ -1,9 +1,9 @@
 import React, { useReducer, useEffect } from 'react';
-import getGrowerSuggestions from '../../../app/utilities/getGrowerSuggestions';
-import fetchPumpkins from '../../../app/utilities/fetchPumpkins';
+import getGrowerSuggestions from '../utilities/getGrowerSuggestions';
+import fetchPumpkins from '../utilities/fetchPumpkins';
 import { toast } from 'react-hot-toast';
-import TableSection from './TableSection';
-import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../../../app/utilities/error-analytics';
+import TableSection from '../grower/[growerName]/TableSection';
+import { trackUserEvent, trackError, GA_ACTIONS, GA_CATEGORIES } from '../utilities/error-analytics';
 
 // Function to convert a string to title case
 function toTitleCase(str) {

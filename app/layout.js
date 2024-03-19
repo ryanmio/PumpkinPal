@@ -9,9 +9,10 @@ import { DarkModeProvider } from '../contexts/DarkModeContext';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { Toaster } from 'react-hot-toast';
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { generateMetadata } from './utilities/generateMetadata'; // Updated import path
 
 // Dynamic import for Sidebar
-const Sidebar = dynamic(() => import('../src/components/Sidebar'), { ssr: false });
+const Sidebar = dynamic(() => import('../components/Sidebar'), { ssr: false });
 
 // Dynamically import the initFacebookSdk function for client-side execution
 const initFacebookSdk = dynamic(
@@ -26,20 +27,7 @@ const fontSans = FontSans({
 });
 
 // Metadata for the page, to be managed with the Metadata API
-export const metadata = {
-  title: 'PumpkinPal: Your Pumpkin Growing Companion App',
-  description: 'PumpkinPal is a user-friendly, open-source application designed for serious pumpkin growers. Calculate and track the weight of your pumpkins using the OTT method, manage your pumpkins and measurements, and view detailed data all in one place.',
-  keywords: 'PumpkinPal, Pumpkin Growing, OTT Weight Calculation, Pumpkin Management, Measurement Management, Pumpkin Detail View, User Profile, Real-Time Updates, Data Backup',
-  og: {
-    title: 'PumpkinPal: Your Pumpkin Growing Companion',
-    description: 'PumpkinPal is a user-friendly, open-source application designed for serious pumpkin growers. Calculate and track the weight of your pumpkins using the OTT method, manage your pumpkins and measurements, and view detailed data all in one place.',
-    image: '/images/metashare.png',
-    url: 'https://pumpkinpal.app'
-  },
-  twitter: {
-    card: 'summary_large_image'
-  }
-};
+export const metadata = generateMetadata('Home'); // Example usage, you can customize the parameter based on the page
 
 export default function RootLayout({ children }) {
   // Execute the Facebook SDK initialization function on the client side
@@ -47,16 +35,6 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en" className={fontSans.className}>
-      <head>
-        <meta charSet="utf-8" />
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="canonical" href="https://pumpkinpal.app" />
-        <meta name="theme-color" content="#80876E" />
-        <link rel="apple-touch-icon" href="/logo192.png" />
-        <link rel="manifest" href="/manifest.json" />
-        <title>{metadata.title}</title>
-        {/* Metadata API can be used here for dynamic metadata */}
-      </head>
       <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
         <DarkModeProvider>

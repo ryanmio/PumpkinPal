@@ -1,9 +1,8 @@
 // app/page.js
-import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import OTTWeightTracking from '../components/OTTWeightTracking';
-import Search from '../src/components/GrowerStatsProfile/Search';
+import Search from '../components/Search';
 
 // Placeholder component for the Suspense fallback
 const LoadingSearch = () => <div>Loading search...</div>;

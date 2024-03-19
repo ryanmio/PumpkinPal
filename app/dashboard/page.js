@@ -3,11 +3,11 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import { collection, getDocs, deleteDoc, where, doc, setDoc, getDoc, query, orderBy, limit } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
-import Dropdown from '../../src/components/Dropdown';
-import Spinner from '../../src/components/Spinner';
+import Dropdown from '../../components/ui/Dropdown';
+import Spinner from '../../components/ui/Spinner';
 import PlusIcon from '../../public/icons/PlusIcon';
 import TableCellsIcon from '../../public/icons/TableCellsIcon';
-import { showDeleteConfirmation } from '../../src/components/Alert';
+import { showDeleteConfirmation } from '../../components/ui/Alert';
 import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../app/utilities/error-analytics';
 import { UserContext } from '../../contexts/UserContext';
 import { db, auth } from '../../firebase';
@@ -125,11 +125,11 @@ function Dashboard() {
         <select 
             value={selectedSeason} 
             onChange={handleSeasonChange}
-            className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="mt-1 block w-[180px] py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-center"
           >
-            <option value="">All Seasons</option>
+            <SelectItem value="" className="text-center">All Seasons</SelectItem>
             {seasons.map(season => (
-              <option key={season} value={season}>{season}</option>
+              <SelectItem key={season} value={season} className="text-center">{season}</SelectItem>
             ))}
           </select>
   

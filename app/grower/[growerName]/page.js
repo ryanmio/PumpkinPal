@@ -5,9 +5,9 @@ import { GrowerContext } from '../../../contexts/GrowerContext';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { UserContext } from '../../../contexts/UserContext';
-const Header = lazy(() => import('../../../src/components/GrowerStatsProfile/Header'));
-const SummarySection = lazy(() => import('../../../src/components/GrowerStatsProfile/SummarySection'));
-const TableSection = lazy(() => import('../../../src/components/GrowerStatsProfile/TableSection'));
+const Header = lazy(() => import('./Header'));
+const SummarySection = lazy(() => import('./SummarySection'));
+const TableSection = lazy(() => import('./TableSection'));
 
 
 const GrowerStatsProfile = () => {

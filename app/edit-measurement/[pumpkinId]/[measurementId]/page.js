@@ -5,8 +5,8 @@ import { useRouter, useParams } from 'next/navigation';
 import { auth, db, Timestamp } from '../../../../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import "react-datepicker/dist/react-datepicker.css";
-import MeasurementInput from '../../../../src/components/MeasurementInput';
-import DateInput from '../../../../src/components/DateInput';
+import MeasurementInput from '../../../add-measurement/MeasurementInput';
+import DateInput from '../../../../components/ui/DateInput';
 
 export default function EditMeasurement() {
   const router = useRouter();
