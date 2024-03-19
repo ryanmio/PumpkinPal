@@ -1,3 +1,4 @@
+// app/pumpkin/[id]/GraphCard.js
 import React, { useMemo, useRef } from 'react';
 import { Line } from 'react-chartjs-2';
 import 'chartjs-adapter-date-fns';

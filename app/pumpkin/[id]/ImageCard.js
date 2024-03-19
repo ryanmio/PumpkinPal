@@ -1,3 +1,4 @@
+// app/pumpkin/[id]/ImageCard.js
 import React, { useState, useEffect, useContext } from 'react';
 import { storage, db } from '../../../firebase';
 import { toast } from 'react-hot-toast';

@@ -1,3 +1,4 @@
+// app/grower/[growerName]/Header.js
 const Header = ({ data }) => {
   const strippedRanking = data.globalRanking.replace('Global: ', '');
 
