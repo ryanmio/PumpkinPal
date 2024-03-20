@@ -1,84 +1,55 @@
-'use client'
-// app/grower/[growerName]/page.js
-import React, { useContext, useEffect, lazy, Suspense } from 'react';
-import { GrowerContext } from '../../../contexts/GrowerContext';
-import { useRouter, useParams } from 'next/navigation';
+'use server'
+// app/grower/[growerName]/page.server.js
+import React, { lazy, Suspense } from 'react';
 import Link from 'next/link';
-import { UserContext } from '../../../contexts/UserContext';
+import admin from '../../../lib/firebaseAdmin'; // Adjust the import path as necessary
+import fetchPumpkins from '../../utilities/fetchPumpkins';
+
 const Header = lazy(() => import('./Header'));
 const SummarySection = lazy(() => import('./SummarySection'));
 const TableSection = lazy(() => import('./TableSection'));
 
+export default async function GrowerStatsProfile({ params }) {
+  // Decode the growerName parameter
+  const growerName = decodeURIComponent(params.growerName);
+  console.log('Decoded growerName:', growerName);
+  const db = admin.firestore();
 
-const GrowerStatsProfile = () => {
-  const { setGrowerName, growerData, pumpkins, loading, error } = useContext(GrowerContext);
-  const { growerName: growerNameFromUrl } = useParams();
-  const router = useRouter();
-  const { user } = useContext(UserContext);
+  let growerData = {};
+  let pumpkins = [];
 
-  useEffect(() => {
-    const decodedGrowerName = decodeURIComponent(growerNameFromUrl);
-    setGrowerName(decodedGrowerName);
-  }, [growerNameFromUrl, setGrowerName]);
+  try {
+    const growerDoc = await db.collection('Stats_Growers').doc(growerName).get();
+    console.log(`Received growerDoc for ${growerName}:`, growerDoc.exists);
+    if (growerDoc.exists) {
+      growerData = growerDoc.data();
+      console.log(`growerData for ${growerName}:`, growerData);
+    }
 
-  if (loading) {
-    return <div>Loading...</div>;
+    console.log(`Querying Firestore for growerDoc at path: Stats_Growers/${growerName}`);
+    pumpkins = await fetchPumpkins(growerName);
+    console.log(`pumpkins data for ${growerName}:`, pumpkins);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    // Handle error appropriately
   }
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  console.log(`Rendering GrowerStatsProfile with growerData:`, growerData);
+  console.log(`Rendering GrowerStatsProfile with pumpkins:`, pumpkins);
 
-  if (!growerData) {
-    return <div>No data found for this grower</div>;
-  }
-
-  // Define columns for the table
-  const pumpkinColumns = [
-  {
-    Header: 'Weight',
-    accessor: 'weight',
-    Cell: ({ value, row: { original } }) => (
-      <Link href={`/pumpkin-details/${original.id}`} className="text-current no-underline hover:underline">
-        {value} lbs
-      </Link>
-    ),
-  },
-  { Header: 'Year', accessor: 'year' },
-  { Header: 'Contest', accessor: 'contestName' },
-  {
-    Header: 'Details',
-    id: 'details', // we use 'id' because we are not using an accessor
-    Cell: ({ row: { original } }) => ( // use the row's original data
-      <Link href={`/pumpkin-details/${original.id}`} className="no-underline">
-        <button className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-          Details
-        </button>
-      </Link>
-    ),
-  },
-];
-
-return (
-  <div className="min-h-screen flex justify-start flex-col container mx-auto px-4 pt-2 space-y-4 mb-12">
-    <div className="mt-3 flex">
-        {user && (
-          <button onClick={() => router.back()} className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out">← Back</button>
-        )}
-      </div>
-    <Suspense fallback={<div>Loading Header...</div>}>
-      <Header data={growerData} />
-    </Suspense>
-    <Suspense fallback={<div>Loading Summary...</div>}>
-      <SummarySection data={growerData} />
-    </Suspense>
-    {pumpkins && pumpkins.length > 0 && (
-      <Suspense fallback={<div>Loading Table...</div>}>
-        <TableSection data={pumpkins} columns={pumpkinColumns} />
+  return (
+    <div className="min-h-screen flex justify-start flex-col container mx-auto px-4 pt-2 space-y-4 mb-12">
+      <Suspense fallback={<div>Loading Header...</div>}>
+        <Header data={growerData} />
       </Suspense>
-    )}
-  </div>
-);
-};
-
-export default GrowerStatsProfile;
+      <Suspense fallback={<div>Loading Summary...</div>}>
+        <SummarySection data={growerData} />
+      </Suspense>
+      {pumpkins && pumpkins.length > 0 && (
+        <Suspense fallback={<div>Loading Table...</div>}>
+          <TableSection data={pumpkins} />
+        </Suspense>
+      )}
+    </div>
+  );
+}

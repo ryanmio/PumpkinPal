@@ -1,8 +1,36 @@
+'use client'
 // app/grower/[growerName]/TableSection.js
 import { useTable, useSortBy } from 'react-table';
 import Link from 'next/link';
 
-const TableSection = ({ data, columns }) => {
+// Define columns inside TableSection.js
+const columns = [
+  {
+    Header: 'Weight',
+    accessor: 'weight',
+    Cell: ({ value, row: { original } }) => (
+      <Link href={`/pumpkin-details/${original.id}`} className="text-current no-underline hover:underline">
+        {value} lbs
+      </Link>
+    ),
+  },
+  { Header: 'Year', accessor: 'year' },
+  { Header: 'Contest', accessor: 'contestName' },
+  {
+    Header: 'Details',
+    id: 'details',
+    Cell: ({ row: { original } }) => (
+      <Link href={`/pumpkin-details/${original.id}`} className="no-underline">
+        <button className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+          Details
+        </button>
+      </Link>
+    ),
+  },
+];
+
+const TableSection = ({ data }) => {
+  // Use the columns defined above
   const {
     getTableProps,
     getTableBodyProps,
