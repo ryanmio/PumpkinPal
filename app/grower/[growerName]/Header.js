@@ -1,6 +1,7 @@
 // app/grower/[growerName]/Header.js
 const Header = ({ data }) => {
-  const strippedRanking = data.globalRanking.replace('Global: ', '');
+  // Ensure globalRanking is defined before calling replace
+  const strippedRanking = data.globalRanking ? data.globalRanking.replace('Global: ', '') : '';
 
   return (
     <div className="bg-white shadow rounded-lg p-4">
