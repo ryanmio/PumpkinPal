@@ -11,6 +11,7 @@ import { showDeleteConfirmation } from '../../components/ui/Alert';
 import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../app/utilities/error-analytics';
 import { UserContext } from '../../contexts/UserContext';
 import { db, auth } from '../../firebase';
+import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from '../../components/ui/card';
 
 function Dashboard() {
     const { user: currentUser, loading: userLoading } = useContext(UserContext);
@@ -127,9 +128,9 @@ function Dashboard() {
             onChange={handleSeasonChange}
             className="mt-1 block w-[180px] py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-center"
           >
-            <SelectItem value="" className="text-center">All Seasons</SelectItem>
+            <option value="" className="text-center">All Seasons</option>
             {seasons.map(season => (
-              <SelectItem key={season} value={season} className="text-center">{season}</SelectItem>
+              <option key={season} value={season} className="text-center">{season}</option>
             ))}
           </select>
   
@@ -144,23 +145,27 @@ function Dashboard() {
             ) : (
               pumpkins.length === 0 ? (
                 <div className="flex justify-center md:col-span-2">
-                  <div className="bg-gray-100 shadow overflow-hidden rounded-lg p-6 mb-4 flex flex-col items-center justify-center text-center">
+                  <Card className="mb-4 flex flex-col items-center justify-center text-center">
                     <img src="/images/addpumpkinicon.webp" alt="No pumpkin" className="mb-4 w-24 h-24" />
-                    <h3 className="text-lg leading-6 font-medium text-gray-900 mb-2">Add your first pumpkin</h3>
-                    <p className="max-w-md text-sm text-gray-500 mb-4">You don't have any pumpkins in your dashboard. Click the button below to add your first pumpkin.</p>
-                    <button onClick={() => router.push('/add-pumpkin')} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-full">Add Your First Pumpkin</button>
-                  </div>
+                    <CardHeader>
+                      <CardTitle>Add your first pumpkin</CardTitle>
+                      <CardDescription>You don't have any pumpkins in your dashboard. Click the button below to add your first pumpkin.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <button onClick={() => router.push('/add-pumpkin')} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-full">Add Your First Pumpkin</button>
+                    </CardContent>
+                  </Card>
                 </div>
               ) : (
                 pumpkins.map(pumpkin => (
-                  <div className="bg-white shadow overflow-hidden rounded-lg mb-4 flex flex-col" key={pumpkin.id}>
-                    <div className="pt-4 pr-4 pl-4 flex-grow">
+                  <Card className="mb-4 flex flex-col" key={pumpkin.id}>
+                    <CardHeader>
                       <div className="flex justify-between items-start">
                         <div className="flex-grow text-left">
-                          <h3 className="text-lg leading-6 font-medium text-gray-900" onClick={() => router.push(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</h3>
-                          <p className="max-w-2xl text-sm text-gray-500 description-text">{pumpkin.description}</p>
-                          {pumpkin.latestMeasurement && <p className="max-w-2xl text-sm text-gray-500">Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
-                          {pumpkin.pollinated && pumpkin.weighOff && <p className="max-w-2xl text-sm text-gray-500">Days After Pollination: {daysSincePollination(pumpkin.pollinated, pumpkin.weighOff)} days</p>}
+                          <CardTitle onClick={() => router.push(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</CardTitle>
+                          <CardDescription>{pumpkin.description}</CardDescription>
+                          {pumpkin.latestMeasurement && <CardDescription>Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</CardDescription>}
+                          {pumpkin.pollinated && pumpkin.weighOff && <CardDescription>Days After Pollination: {daysSincePollination(pumpkin.pollinated, pumpkin.weighOff)} days</CardDescription>}
                         </div>
                         <Dropdown 
                           onAddMeasurement={() => router.push('/add-measurement')} 
@@ -170,8 +175,8 @@ function Dashboard() {
                           className="pr-0" 
                         />
                       </div>
-                    </div>
-                    <div className="p-4">
+                    </CardHeader>
+                    <CardFooter>
                      <div className="w-full grid grid-cols-2 gap-2">
                         <button 
                           className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
@@ -188,8 +193,8 @@ function Dashboard() {
                           Detailed View
                         </button>
                       </div>
-                    </div>
-                  </div>
+                    </CardFooter>
+                  </Card>
                 ))
               )
             )}
