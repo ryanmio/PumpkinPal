@@ -20,10 +20,10 @@ export async function generateMetadata({ params }) {
       const growerData = growerDoc.data();
       const strippedRanking = growerData.globalRanking ? growerData.globalRanking.replace('Global: ', '') : '';
       metadata = {
-        title: `${growerData.firstName} ${growerData.lastName} - #${strippedRanking} Global - Profile`,
+        title: `${growerData.firstName} ${growerData.lastName} - ${strippedRanking} Global - Stats on PumpkinPal`,
         description: `${growerData.firstName} ${growerData.lastName} GPC weigh-off history on PumpkinPal`,
         openGraph: {
-          title: `${growerData.firstName} ${growerData.lastName} - #${strippedRanking} Global - Profile`,
+          title: `${growerData.firstName} ${growerData.lastName} - ${strippedRanking} Global - Stats on PumpkinPal`,
           description: `${growerData.firstName} ${growerData.lastName} GPC weigh-off history on PumpkinPal`,
           images: [
             {
@@ -31,6 +31,8 @@ export async function generateMetadata({ params }) {
               width: 1200,
               height: 630,
               alt: `${growerData.firstName} ${growerData.lastName} Profile`,
+              'og:image:width': '1200',
+              'og:image:height': '630',
             },
           ],
         },
@@ -50,6 +52,8 @@ export async function generateMetadata({ params }) {
             width: 1200,
             height: 630,
             alt: 'PumpkinPal Grower Profile',
+            'og:image:width': '1200',
+            'og:image:height': '630',
           },
         ],
       },
