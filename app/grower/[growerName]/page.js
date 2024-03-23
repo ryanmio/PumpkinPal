@@ -18,6 +18,10 @@ export async function generateMetadata({ params }) {
       const growerData = growerDoc.data();
       const strippedRanking = growerData.globalRanking ? growerData.globalRanking.replace('Global: ', '') : '';
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL; // Access the environment variable
+      
+      // Construct the dynamic OG image URL
+      const ogImageUrl = `${baseUrl}/api/og?title=${encodeURIComponent(`${growerData.firstName} ${growerData.lastName} - ${strippedRanking}`)}`;
+
       metadata = {
         title: `${growerData.firstName} ${growerData.lastName} - ${strippedRanking} Global Grower - Stats on PumpkinPal`,
         description: `${growerData.firstName} ${growerData.lastName} GPC weigh-off history on PumpkinPal`,
@@ -26,7 +30,7 @@ export async function generateMetadata({ params }) {
           description: `${growerData.firstName} ${growerData.lastName} GPC weigh-off history on PumpkinPal`,
           images: [
             {
-              url: `${baseUrl}/images/metashare.png`,
+              url: ogImageUrl,
               width: 1200,
               height: 630,
               alt: `${growerData.firstName} ${growerData.lastName} Profile`,
@@ -49,7 +53,7 @@ export async function generateMetadata({ params }) {
         description: 'Explore competitive pumpkin grower profiles on PumpkinPal',
         images: [
           {
-            url: '${baseUrl}/images/metashare.png',
+            url: `${baseUrl}/images/metashare.png`, // Fallback image
             width: 1200,
             height: 630,
             alt: 'PumpkinPal Grower Profile',
@@ -110,3 +114,4 @@ export default async function GrowerStatsProfile({ params }) {
     </div>
   );
 }
+
