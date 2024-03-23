@@ -1,12 +1,10 @@
 'use server'
 // app/grower/[growerName]/page.js
 import React, { lazy, Suspense } from 'react';
-import Link from 'next/link';
 import admin from '../../../lib/firebaseAdmin';
 import fetchPumpkins from '../../utilities/fetchPumpkins';
-
-const Header = lazy(() => import('./Header'));
-const SummarySection = lazy(() => import('./SummarySection'));
+import Header from './Header';
+import SummarySection from './SummarySection';
 const TableSection = lazy(() => import('./TableSection'));
 
 export async function generateMetadata({ params }) {
@@ -19,6 +17,7 @@ export async function generateMetadata({ params }) {
     if (growerDoc.exists) {
       const growerData = growerDoc.data();
       const strippedRanking = growerData.globalRanking ? growerData.globalRanking.replace('Global: ', '') : '';
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL; // Access the environment variable
       metadata = {
         title: `${growerData.firstName} ${growerData.lastName} - ${strippedRanking} Global - Stats on PumpkinPal`,
         description: `${growerData.firstName} ${growerData.lastName} GPC weigh-off history on PumpkinPal`,
@@ -27,7 +26,7 @@ export async function generateMetadata({ params }) {
           description: `${growerData.firstName} ${growerData.lastName} GPC weigh-off history on PumpkinPal`,
           images: [
             {
-              url: '%PUBLIC_URL%/images/metashare.png',
+              url: `${baseUrl}/images/metashare.png`,
               width: 1200,
               height: 630,
               alt: `${growerData.firstName} ${growerData.lastName} Profile`,
@@ -48,7 +47,7 @@ export async function generateMetadata({ params }) {
         description: 'Explore competitive pumpkin grower profiles on PumpkinPal',
         images: [
           {
-            url: '%PUBLIC_URL%/images/metashare.png',
+            url: '${baseUrl}/images/metashare.png',
             width: 1200,
             height: 630,
             alt: 'PumpkinPal Grower Profile',
@@ -66,7 +65,6 @@ export async function generateMetadata({ params }) {
 export default async function GrowerStatsProfile({ params }) {
   // Decode the growerName parameter
   const growerName = decodeURIComponent(params.growerName);
-  console.log('Decoded growerName:', growerName);
   const db = admin.firestore();
 
   let growerData = {};
@@ -74,31 +72,34 @@ export default async function GrowerStatsProfile({ params }) {
 
   try {
     const growerDoc = await db.collection('Stats_Growers').doc(growerName).get();
-    console.log(`Received growerDoc for ${growerName}:`, growerDoc.exists);
     if (growerDoc.exists) {
       growerData = growerDoc.data();
-      console.log(`growerData for ${growerName}:`, growerData);
+      // Convert Timestamp to a serializable format
+      if (growerData.timestamp) {
+        growerData.timestamp = growerData.timestamp.toMillis(); // Convert to UNIX timestamp in milliseconds
+      }
     }
 
-    console.log(`Querying Firestore for growerDoc at path: Stats_Growers/${growerName}`);
     pumpkins = await fetchPumpkins(growerName);
-    console.log(`pumpkins data for ${growerName}:`, pumpkins);
+    // Convert each pumpkin's Timestamp to a serializable format
+    pumpkins = pumpkins.map(pumpkin => {
+      if (pumpkin.timestamp) {
+        return {
+          ...pumpkin,
+          timestamp: pumpkin.timestamp.toMillis(), // Convert to UNIX timestamp in milliseconds
+        };
+      }
+      return pumpkin;
+    });
   } catch (error) {
     console.error('Error fetching data:', error);
     // Handle error appropriately
   }
 
-  console.log(`Rendering GrowerStatsProfile with growerData:`, growerData);
-  console.log(`Rendering GrowerStatsProfile with pumpkins:`, pumpkins);
-
   return (
-    <div className="min-h-screen flex justify-start flex-col container mx-auto px-4 pt-2 space-y-4 mb-12">
-      <Suspense fallback={<div>Loading Header...</div>}>
-        <Header data={growerData} />
-      </Suspense>
-      <Suspense fallback={<div>Loading Summary...</div>}>
-        <SummarySection data={growerData} />
-      </Suspense>
+    <div className="min-h-screen flex justify-start flex-col container mx-auto px-4 pt-8 space-y-4 mb-12">
+      <Header data={growerData} />
+      <SummarySection data={growerData} />
       {pumpkins && pumpkins.length > 0 && (
         <Suspense fallback={<div>Loading Table...</div>}>
           <TableSection data={pumpkins} />
