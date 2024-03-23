@@ -9,7 +9,7 @@ import { DarkModeProvider } from '../contexts/DarkModeContext';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { Toaster } from 'react-hot-toast';
 import { SpeedInsights } from "@vercel/speed-insights/next"
-import { generateMetadata } from './utilities/generateMetadata'; // Updated import path
+import { generateMetadata } from './utilities/generateMetadata';
 
 // Dynamic import for Sidebar
 const Sidebar = dynamic(() => import('../components/Sidebar'), { ssr: false });
