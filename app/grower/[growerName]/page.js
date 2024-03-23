@@ -66,7 +66,6 @@ export async function generateMetadata({ params }) {
 export default async function GrowerStatsProfile({ params }) {
   // Decode the growerName parameter
   const growerName = decodeURIComponent(params.growerName);
-  console.log('Decoded growerName:', growerName);
   const db = admin.firestore();
 
   let growerData = {};
@@ -74,25 +73,32 @@ export default async function GrowerStatsProfile({ params }) {
 
   try {
     const growerDoc = await db.collection('Stats_Growers').doc(growerName).get();
-    console.log(`Received growerDoc for ${growerName}:`, growerDoc.exists);
     if (growerDoc.exists) {
       growerData = growerDoc.data();
-      console.log(`growerData for ${growerName}:`, growerData);
+      // Convert Timestamp to a serializable format
+      if (growerData.timestamp) {
+        growerData.timestamp = growerData.timestamp.toMillis(); // Convert to UNIX timestamp in milliseconds
+      }
     }
 
-    console.log(`Querying Firestore for growerDoc at path: Stats_Growers/${growerName}`);
     pumpkins = await fetchPumpkins(growerName);
-    console.log(`pumpkins data for ${growerName}:`, pumpkins);
+    // Convert each pumpkin's Timestamp to a serializable format
+    pumpkins = pumpkins.map(pumpkin => {
+      if (pumpkin.timestamp) {
+        return {
+          ...pumpkin,
+          timestamp: pumpkin.timestamp.toMillis(), // Convert to UNIX timestamp in milliseconds
+        };
+      }
+      return pumpkin;
+    });
   } catch (error) {
     console.error('Error fetching data:', error);
     // Handle error appropriately
   }
 
-  console.log(`Rendering GrowerStatsProfile with growerData:`, growerData);
-  console.log(`Rendering GrowerStatsProfile with pumpkins:`, pumpkins);
-
   return (
-    <div className="min-h-screen flex justify-start flex-col container mx-auto px-4 pt-2 space-y-4 mb-12">
+    <div className="min-h-screen flex justify-start flex-col container mx-auto px-4 pt-8 space-y-4 mb-12">
       <Suspense fallback={<div>Loading Header...</div>}>
         <Header data={growerData} />
       </Suspense>
@@ -107,3 +113,4 @@ export default async function GrowerStatsProfile({ params }) {
     </div>
   );
 }
+
