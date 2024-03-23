@@ -1,9 +1,8 @@
 // app/api/og/route.js
 import { ImageResponse } from '@vercel/og';
 
-export const config = {
-  runtime: 'edge',
-};
+// Replace the config object with direct export of runtime
+export const runtime = 'edge';
 
 export const GET = async (request) => {
   const { searchParams } = new URL(request.url);
