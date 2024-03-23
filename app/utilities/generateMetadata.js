@@ -20,7 +20,7 @@ export const generateMetadata = (page, additionalData = {}) => {
       card: 'summary_large_image'
     },
     fb: {
-      app_id: process.env.NEXT_PUBLIC_FB_APP_ID, // Your Facebook app ID
+      app_id: process.env.NEXT_PUBLIC_FB_APP_ID,
     }
   };
 
