@@ -1,13 +1,11 @@
 'use server'
 // app/grower/[growerName]/page.js
 import React, { lazy, Suspense } from 'react';
-import Link from 'next/link';
 import admin from '../../../lib/firebaseAdmin';
 import fetchPumpkins from '../../utilities/fetchPumpkins';
-
-const Header = lazy(() => import('./Header'));
-const SummarySection = lazy(() => import('./SummarySection'));
-const TableSection = lazy(() => import('./TableSection'));
+import Header from './Header'; // Imported normally
+import SummarySection from './SummarySection'; // Imported normally
+const TableSection = lazy(() => import('./TableSection')); // Continue lazy loading
 
 export async function generateMetadata({ params }) {
   const growerName = decodeURIComponent(params.growerName);
@@ -99,12 +97,8 @@ export default async function GrowerStatsProfile({ params }) {
 
   return (
     <div className="min-h-screen flex justify-start flex-col container mx-auto px-4 pt-8 space-y-4 mb-12">
-      <Suspense fallback={<div>Loading Header...</div>}>
-        <Header data={growerData} />
-      </Suspense>
-      <Suspense fallback={<div>Loading Summary...</div>}>
-        <SummarySection data={growerData} />
-      </Suspense>
+      <Header data={growerData} />
+      <SummarySection data={growerData} />
       {pumpkins && pumpkins.length > 0 && (
         <Suspense fallback={<div>Loading Table...</div>}>
           <TableSection data={pumpkins} />
@@ -113,4 +107,3 @@ export default async function GrowerStatsProfile({ params }) {
     </div>
   );
 }
-
