@@ -3,9 +3,9 @@
 import React, { lazy, Suspense } from 'react';
 import admin from '../../../lib/firebaseAdmin';
 import fetchPumpkins from '../../utilities/fetchPumpkins';
-import Header from './Header'; // Imported normally
-import SummarySection from './SummarySection'; // Imported normally
-const TableSection = lazy(() => import('./TableSection')); // Continue lazy loading
+import Header from './Header';
+import SummarySection from './SummarySection';
+const TableSection = lazy(() => import('./TableSection'));
 
 export async function generateMetadata({ params }) {
   const growerName = decodeURIComponent(params.growerName);
