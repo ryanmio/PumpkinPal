@@ -19,8 +19,10 @@ export async function generateMetadata({ params }) {
       const strippedRanking = growerData.globalRanking ? growerData.globalRanking.replace('Global: ', '') : '';
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL; // Access the environment variable
       
-      // Construct the dynamic OG image URL
-      const ogImageUrl = `${baseUrl}/api/og?title=${encodeURIComponent(`${growerData.firstName} ${growerData.lastName} - ${strippedRanking}`)}`;
+      // Construct the dynamic OG image URL with separate title and rank parameters
+      const title = `${growerData.firstName} ${growerData.lastName}`;
+      const rank = `${strippedRanking}`; // Assuming strippedRanking is just the rank number
+      const ogImageUrl = `${baseUrl}/api/og?title=${encodeURIComponent(title)}&rank=${encodeURIComponent(rank)}`;
 
       metadata = {
         title: `${growerData.firstName} ${growerData.lastName} - ${strippedRanking} Global Grower - Stats on PumpkinPal`,
@@ -114,4 +116,3 @@ export default async function GrowerStatsProfile({ params }) {
     </div>
   );
 }
-

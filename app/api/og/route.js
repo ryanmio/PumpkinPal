@@ -1,19 +1,17 @@
-// app/og.jsx
+// app/api/og/route.js
 import { ImageResponse } from '@vercel/og';
 
 export const config = {
   runtime: 'edge',
 };
 
-const font = fetch(new URL('../../assets/Lato-Bold.ttf', import.meta.url)).then(
-  (res) => res.arrayBuffer(),
-);
-
-export default async function handler(request) {
+export const GET = async (request) => {
   const { searchParams } = new URL(request.url);
   const title = searchParams.get('title');
+  const rank = searchParams.get('rank');
 
-  const fontData = await font;
+  // Load the Lato font
+  const font = await fetch(new URL('/assets/Lato-Bold.ttf', request.url)).then(res => res.arrayBuffer());
 
   return new ImageResponse(
     (
@@ -25,29 +23,32 @@ export default async function handler(request) {
           justifyContent: 'center',
           width: '100%',
           height: '100%',
-          backgroundColor: 'white',
-          fontFamily: 'Lato',
+          backgroundColor: '#80876E',
+          color: 'white',
         }}
       >
         <img
-          src="https://pumpkinpal.app/images/logo512.png"
+          src="https://pumpkinpal.app/logowide.png"
           alt="PumpkinPal Logo"
-          width={200}
-          height={200}
-          style={{ marginBottom: 40 }}
+          width={400}
+          height={128}
+          style={{ marginBottom: 20 }}
         />
         <h1
           style={{
-            fontSize: 48,
-            fontWeight: 700,
+            fontSize: 72,
+            fontFamily: 'Lato', // Specify the Lato font here
+            fontWeight: 'bold',
             textAlign: 'center',
-            marginBottom: 16,
-            color: '#FF6600',
+            marginBottom: 8,
           }}
         >
           {title}
         </h1>
-        <p style={{ fontSize: 24, textAlign: 'center', color: '#333333' }}>
+        <p style={{ fontSize: 30, textAlign: 'center' }}>
+          Global Rank: {rank}
+        </p>
+        <p style={{ fontSize: 24, textAlign: 'center', marginTop: 16 }}>
           GPC weigh-off history on PumpkinPal
         </p>
       </div>
@@ -58,10 +59,10 @@ export default async function handler(request) {
       fonts: [
         {
           name: 'Lato',
-          data: fontData,
+          data: font,
           style: 'normal',
         },
       ],
     },
   );
-}
+};
