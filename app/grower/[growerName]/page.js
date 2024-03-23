@@ -19,10 +19,10 @@ export async function generateMetadata({ params }) {
       const strippedRanking = growerData.globalRanking ? growerData.globalRanking.replace('Global: ', '') : '';
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL; // Access the environment variable
       metadata = {
-        title: `${growerData.firstName} ${growerData.lastName} - ${strippedRanking} Global - Stats on PumpkinPal`,
+        title: `${growerData.firstName} ${growerData.lastName} - ${strippedRanking} Global Grower - Stats on PumpkinPal`,
         description: `${growerData.firstName} ${growerData.lastName} GPC weigh-off history on PumpkinPal`,
         openGraph: {
-          title: `${growerData.firstName} ${growerData.lastName} - ${strippedRanking} Global - Stats on PumpkinPal`,
+          title: `${growerData.firstName} ${growerData.lastName} - ${strippedRanking} Global Grower - Stats on PumpkinPal`,
           description: `${growerData.firstName} ${growerData.lastName} GPC weigh-off history on PumpkinPal`,
           images: [
             {
@@ -35,6 +35,8 @@ export async function generateMetadata({ params }) {
             },
           ],
         },
+        'og:url': `${baseUrl}/grower/${encodeURIComponent(growerName)}`,
+        'og:type': 'profile',
       };
     }
   } catch (error) {
