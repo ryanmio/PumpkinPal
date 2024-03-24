@@ -14,6 +14,10 @@ import AddPumpkinCard from './AddPumpkinCard';
 import { Button } from '../../components/ui/button';
 import Link from 'next/link';
 import { Separator } from '../../components/ui/separator';
+import { Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar} from '../../components/ui/calendar';
+import { format } from 'date-fns';
+import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
 
 function Dashboard() {
     const { user: currentUser, loading: userLoading } = useContext(UserContext);
@@ -22,6 +26,13 @@ function Dashboard() {
     const [selectedSeason, setSelectedSeason] = useState('');
     const [seasons, setSeasons] = useState([]);
     const router = useRouter();
+
+  // Function to handle date selection
+  const handleDateSelect = (pumpkinId, date) => {
+    // Logic to save the selected date for the specific pumpkin
+    console.log(`Date for pumpkin ${pumpkinId} set to:`, date);
+    // Update the state or database with the new pollination date
+  };
 
   useEffect(() => {
     if (currentUser) {
@@ -122,7 +133,7 @@ function Dashboard() {
   return (
     <div className="container mx-auto px-4 min-h-screen">
       <div className="my-8 text-left flex flex-col items-start">
-        <h1 className="text-2xl font-semibold">Welcome to your Dashboard</h1>
+        <h1 className="text-3xl font-semibold">Welcome to your Dashboard</h1>
         <p className="text-sm text-gray-600">Logged in as {currentUser.email}</p>
         </div>
         <select 
@@ -197,14 +208,32 @@ function Dashboard() {
                               <div className="my-2">
                                 <Separator orientation="horizontal" className="bg-gray-200" />
                               </div>
-                              {pumpkin.pollinated && pumpkin.weighOff && (
-                                <div className="flex items-center justify-between">
-                                  <p>Days After Pollination:</p>
+                              <div className="flex items-center justify-between">
+                                <p className="font-normal">Days After Pollination:</p>
+                                {pumpkin.pollinated && pumpkin.weighOff ? (
                                   <Link href={`/pumpkin/${pumpkin.id}`} className="text-[#404337] hover:underline">
                                     {daysSincePollination(pumpkin.pollinated, pumpkin.weighOff)} days
                                   </Link>
-                                </div>
-                              )}
+                                ) : (
+                                  <Popover className="inline-block">
+                                    <PopoverTrigger asChild>
+                                      <Button
+                                        variant="outline"
+                                        className="text-[#404337] hover:underline text-sm py-1 px-2"
+                                      >
+                                        Set Pollination Date
+                                      </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0">
+                                      <Calendar
+                                        mode="single"
+                                        onSelect={(date) => handleDateSelect(pumpkin.id, date)}
+                                        initialFocus
+                                      />
+                                    </PopoverContent>
+                                  </Popover>
+                                )}
+                              </div>
                             </>
                           )}
                         </CardContent>
@@ -233,3 +262,4 @@ function Dashboard() {
   }
   
   export default Dashboard;  
+
