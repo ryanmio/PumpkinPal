@@ -5,14 +5,13 @@ import { collection, getDocs, deleteDoc, where, doc, setDoc, getDoc, query, orde
 import { toast } from 'react-hot-toast';
 import Dropdown from '../../components/ui/Dropdown';
 import Spinner from '../../components/ui/Spinner';
-import PlusIcon from '../../public/icons/PlusIcon';
-import TableCellsIcon from '../../public/icons/TableCellsIcon';
 import { showDeleteConfirmation } from '../../components/ui/Alert';
 import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../app/utilities/error-analytics';
 import { UserContext } from '../../contexts/UserContext';
 import { db, auth } from '../../firebase';
 import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from '../../components/ui/card';
 import AddPumpkinCard from './AddPumpkinCard';
+import { Button } from '../../components/ui/button';
 
 function Dashboard() {
     const { user: currentUser, loading: userLoading } = useContext(UserContext);
@@ -182,21 +181,13 @@ function Dashboard() {
                         </CardContent>
                       </div>
                       <CardFooter>
-                        <div className="w-full grid grid-cols-2 gap-2">
-                          <button 
-                            className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                            onClick={() => router.push('/add-measurement')}
-                          >
-                            <PlusIcon className="w-4 h-4 mr-2" />
+                        <div className="w-full flex justify-between">
+                          <Button variant="outline" className="bg-reseda_green hover:bg-reseda_green-hover text-white py-2 px-4 rounded" onClick={() => router.push('/add-measurement')}>
                             Add Measurement
-                          </button>
-                          <button 
-                            className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                            onClick={() => router.push(`/pumpkin/${pumpkin.id}`)}
-                          >
-                            <TableCellsIcon className="w-4 h-4 mr-2" />
+                          </Button>
+                          <Button variant="ghost" onClick={() => router.push(`/pumpkin/${pumpkin.id}`)}>
                             Detailed View
-                          </button>
+                          </Button>
                         </div>
                       </CardFooter>
                     </Card>
