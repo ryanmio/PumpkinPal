@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';
-import { collection, getDocs, deleteDoc, where, doc, setDoc, getDoc, query, orderBy, limit } from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, where, doc, setDoc, getDoc, query, orderBy, limit, updateDoc } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
 import Dropdown from '../../components/ui/Dropdown';
 import Spinner from '../../components/ui/Spinner';
@@ -14,7 +14,6 @@ import AddPumpkinCard from './AddPumpkinCard';
 import { Button } from '../../components/ui/button';
 import Link from 'next/link';
 import { Separator } from '../../components/ui/separator';
-import { Calendar as CalendarIcon } from 'lucide-react';
 import { Calendar} from '../../components/ui/calendar';
 import { format } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
@@ -28,10 +27,27 @@ function Dashboard() {
     const router = useRouter();
 
   // Function to handle date selection
-  const handleDateSelect = (pumpkinId, date) => {
-    // Logic to save the selected date for the specific pumpkin
-    console.log(`Date for pumpkin ${pumpkinId} set to:`, date);
-    // Update the state or database with the new pollination date
+  const handleDateSelect = async (pumpkinId, date) => {
+    try {
+      const formattedDate = format(date, 'yyyy-MM-dd'); // Using date-fns to format the date
+
+      await updateDoc(doc(db, 'Users', auth.currentUser.uid, 'Pumpkins', pumpkinId), {
+        pollinated: formattedDate
+      });
+
+      setPumpkins(pumpkins.map(p => {
+        if (p.id === pumpkinId) {
+          return { ...p, pollinated: formattedDate };
+        }
+        return p;
+      }));
+
+      toast.success('Pollination date updated successfully!');
+    } catch (error) {
+      toast.error('Failed to update pollination date. Please try again.');
+      console.error('Error updating pollination date: ', error);
+      trackError(error, 'Dashboard - Failed to update pollination date', GA_CATEGORIES.USER, GA_ACTIONS.ERROR);
+    }
   };
 
   useEffect(() => {
@@ -117,16 +133,18 @@ function Dashboard() {
   
   function daysSincePollination(pollinationDateStr, weighOffDateStr) {
     const pollinationDate = new Date(pollinationDateStr);
-    const weighOffDate = new Date(weighOffDateStr);
-    const oneDay = 24 * 60 * 60 * 1000;
     let now = new Date();
-  
-    // If the current date is after the weigh off date, use the weigh off date for calculation
-    if (now > weighOffDate) {
-      now = weighOffDate;
+
+    if (weighOffDateStr) {
+      const weighOffDate = new Date(weighOffDateStr);
+      // If the current date is after the weigh-off date, use the weigh-off date for calculation
+      if (now > weighOffDate) {
+        now = weighOffDate;
+      }
     }
-  
-    const diffDays = Math.floor(Math.abs((now - pollinationDate) / oneDay));
+
+    const oneDay = 24 * 60 * 60 * 1000;
+    const diffDays = Math.floor((now - pollinationDate) / oneDay);
     return diffDays;
   }
   
@@ -210,7 +228,7 @@ function Dashboard() {
                               </div>
                               <div className="flex items-center justify-between">
                                 <p className="font-normal">Days After Pollination:</p>
-                                {pumpkin.pollinated && pumpkin.weighOff ? (
+                                {pumpkin.pollinated ? (
                                   <Link href={`/pumpkin/${pumpkin.id}`} className="text-[#404337] hover:underline">
                                     {daysSincePollination(pumpkin.pollinated, pumpkin.weighOff)} days
                                   </Link>
@@ -262,4 +280,3 @@ function Dashboard() {
   }
   
   export default Dashboard;  
-
