@@ -165,8 +165,6 @@ function Dashboard() {
                           <div className="flex-grow text-left">
                             <CardTitle onClick={() => router.push(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</CardTitle>
                             <CardDescription>{pumpkin.description}</CardDescription>
-                            {pumpkin.latestMeasurement && <CardDescription>Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</CardDescription>}
-                            {pumpkin.pollinated && pumpkin.weighOff && <CardDescription>Days After Pollination: {daysSincePollination(pumpkin.pollinated, pumpkin.weighOff)} days</CardDescription>}
                           </div>
                           <Dropdown 
                             onAddMeasurement={() => router.push('/add-measurement')} 
@@ -177,8 +175,12 @@ function Dashboard() {
                           />
                         </div>
                       </CardHeader>
+                      <CardContent>
+                        {pumpkin.latestMeasurement && <p>Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
+                        {pumpkin.pollinated && pumpkin.weighOff && <p>Days After Pollination: {daysSincePollination(pumpkin.pollinated, pumpkin.weighOff)} days</p>}
+                      </CardContent>
                       <CardFooter>
-                       <div className="w-full grid grid-cols-2 gap-2">
+                        <div className="w-full grid grid-cols-2 gap-2">
                           <button 
                             className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                             onClick={() => router.push('/add-measurement')}
@@ -209,4 +211,3 @@ function Dashboard() {
   }
   
   export default Dashboard;  
-
