@@ -155,7 +155,8 @@ function Dashboard() {
     <div className="container mx-auto px-4 min-h-screen">
       <div className="my-8 text-left flex flex-col items-start">
         <h1 className="text-2xl font-semibold">Welcome to your Dashboard</h1>
-        <p className="text-sm text-gray-600">Logged in as {currentUser.email}</p>
+        {/* Check if currentUser exists before trying to access its properties */}
+        <p className="text-sm text-gray-600">Logged in as {currentUser?.email}</p>
       </div>
       <div className="flex flex-row justify-between items-center gap-4 mb-6">
         <select 
