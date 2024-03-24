@@ -120,10 +120,11 @@ function Dashboard() {
   
   return (
     <div className="container mx-auto px-4 min-h-screen">
-      <div className="my-8">
-        <h2 className="text-2xl font-bold mb-2">Welcome to your Dashboard</h2>
-        {currentUser && <p className="mb-4">Logged in as {currentUser.email}</p>}
-        
+      {/* Add flex and items-start to ensure content is left-aligned */}
+      <div className="my-8 text-left flex flex-col items-start">
+        <h1 className="text-2xl font-semibold">Welcome to your Dashboard</h1>
+        <p className="text-sm text-gray-600">Logged in as {currentUser.email}</p>
+        </div>
         <select 
             value={selectedSeason} 
             onChange={handleSeasonChange}
@@ -133,9 +134,7 @@ function Dashboard() {
             {seasons.map(season => (
               <option key={season} value={season} >{season}</option>
             ))}
-          </select>
-  
-      </div>
+          </select>      
       {currentUser && (
         <>
           <div className="my-8 md:grid md:grid-cols-2 sm:gap-4">
@@ -210,3 +209,4 @@ function Dashboard() {
   }
   
   export default Dashboard;  
+
