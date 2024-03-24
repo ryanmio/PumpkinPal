@@ -12,6 +12,8 @@ import { db, auth } from '../../firebase';
 import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from '../../components/ui/card';
 import AddPumpkinCard from './AddPumpkinCard';
 import { Button } from '../../components/ui/button';
+import Link from 'next/link';
+import { Separator } from '../../components/ui/separator';
 
 function Dashboard() {
     const { user: currentUser, loading: userLoading } = useContext(UserContext);
@@ -119,9 +121,8 @@ function Dashboard() {
   
   return (
     <div className="container mx-auto px-4 min-h-screen">
-      {/* Add flex and items-start to ensure content is left-aligned */}
       <div className="my-8 text-left flex flex-col items-start">
-        <h1 className="text-2xl font-semibold">Welcome to your Dashboard</h1>
+        <h1 className="text-3xl font-semibold">Welcome to your Dashboard</h1>
         <p className="text-sm text-gray-600">Logged in as {currentUser.email}</p>
         </div>
         <select 
@@ -176,8 +177,32 @@ function Dashboard() {
                           </div>
                         </CardHeader>
                         <CardContent className="text-left">
-                          {pumpkin.latestMeasurement && <p>Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
-                          {pumpkin.pollinated && pumpkin.weighOff && <p>Days After Pollination: {daysSincePollination(pumpkin.pollinated, pumpkin.weighOff)} days</p>}
+                          {pumpkin.latestMeasurement && (
+                            <>
+                              <div className="flex items-center justify-between">
+                                <p className="">Latest Weight:</p>
+                                <Link href={`/pumpkin/${pumpkin.id}`} className="text-blue-500 hover:text-blue-600 transition duration-150 ease-in-out">{pumpkin.latestMeasurement.estimatedWeight} lbs</Link>
+                              </div>
+                              <div className="my-2">
+                                <Separator orientation="horizontal" className="bg-gray-200" />
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <p className="">Latest OTT:</p>
+                                <Link href={`/pumpkin/${pumpkin.id}`} className="text-blue-500 hover:text-blue-600 transition duration-150 ease-in-out">
+                                  {pumpkin.latestMeasurement.circumference + pumpkin.latestMeasurement.endToEnd + pumpkin.latestMeasurement.sideToSide} {pumpkin.latestMeasurement.measurementUnit}
+                                </Link>
+                              </div>
+                              <div className="my-2">
+                                <Separator orientation="horizontal" className="bg-gray-200" />
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <p className="">Days After Pollination:</p>
+                                <p className="text-blue-500 hover:text-blue-600 transition duration-150 ease-in-out">
+                                  {pumpkin.pollinated && pumpkin.weighOff ? daysSincePollination(pumpkin.pollinated, pumpkin.weighOff) : 'N/A'} days
+                                </p>
+                              </div>
+                            </>
+                          )}
                         </CardContent>
                       </div>
                       <CardFooter>
@@ -204,4 +229,3 @@ function Dashboard() {
   }
   
   export default Dashboard;  
-
