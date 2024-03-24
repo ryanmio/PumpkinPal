@@ -25,6 +25,7 @@ function Dashboard() {
     const [selectedSeason, setSelectedSeason] = useState('');
     const [seasons, setSeasons] = useState([]);
     const router = useRouter();
+    const [showComparePopover, setShowComparePopover] = useState(false);
 
   // Function to handle date selection
   const handleDateSelect = async (pumpkinId, date) => {
@@ -154,16 +155,31 @@ function Dashboard() {
         <h1 className="text-3xl font-semibold">Welcome to your Dashboard</h1>
         <p className="text-sm text-gray-600">Logged in as {currentUser.email}</p>
         </div>
-        <select 
-            value={selectedSeason} 
-            onChange={handleSeasonChange}
-            className="mt-1 block w-[180px] py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          >
-            <option value="" >All Years</option>
-            {seasons.map(season => (
-              <option key={season} value={season} >{season}</option>
-            ))}
-          </select>      
+        <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
+          <select 
+              value={selectedSeason} 
+              onChange={handleSeasonChange}
+              className="mt-1 block w-[180px] py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            >
+              <option value="" >All Years</option>
+              {seasons.map(season => (
+                <option key={season} value={season} >{season}</option>
+              ))}
+            </select>
+          <div className="ml-auto">
+            <Button 
+              onClick={() => setShowComparePopover(!showComparePopover)} 
+              className="bg-reseda_green hover:bg-reseda_green-hover text-white py-2 px-4 rounded"
+            >
+              Compare
+            </Button>
+            {showComparePopover && (
+              <div className="absolute mt-2 py-2 px-4 bg-white rounded-md">
+                Coming soon.
+              </div>
+            )}
+          </div>
+        </div>
       {currentUser && (
         <>
           <div className="my-8 md:grid md:grid-cols-2 sm:gap-4">
@@ -280,3 +296,5 @@ function Dashboard() {
   }
   
   export default Dashboard;  
+
+
