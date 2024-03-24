@@ -17,6 +17,7 @@ import { Separator } from '../../components/ui/separator';
 import { Calendar} from '../../components/ui/calendar';
 import { format } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
 
 function Dashboard() {
     const { user: currentUser, loading: userLoading } = useContext(UserContext);
@@ -152,7 +153,7 @@ function Dashboard() {
   return (
     <div className="container mx-auto px-4 min-h-screen">
       <div className="my-8 text-left flex flex-col items-start">
-        <h1 className="text-3xl font-semibold">Welcome to your Dashboard</h1>
+        <h1 className="text-2xl font-semibold">Welcome to your Dashboard</h1>
         <p className="text-sm text-gray-600">Logged in as {currentUser.email}</p>
         </div>
         <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
@@ -166,18 +167,33 @@ function Dashboard() {
                 <option key={season} value={season} >{season}</option>
               ))}
             </select>
-          <div className="ml-auto">
-            <Button 
+          <div className="ml-auto flex items-center space-x-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="bg-reseda_green hover:bg-reseda_green-hover text-white py-2 px-4 rounded">
+                  New
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onSelect={() => router.push('/add-measurement')} className="hover:bg-gray-100">
+                  New Measurement
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => router.push('/add-pumpkin')} className="hover:bg-gray-100">
+                  New Pumpkin
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            {/* <Button 
               onClick={() => setShowComparePopover(!showComparePopover)} 
               className="bg-reseda_green hover:bg-reseda_green-hover text-white py-2 px-4 rounded"
             >
               Compare
             </Button>
             {showComparePopover && (
-              <div className="absolute mt-2 py-2 px-4 bg-white rounded-md">
-                Coming soon.
+              <div className="absolute mt-24 py-2 px-4 bg-white rounded-md shadow-lg">
+                Feature coming soon.
               </div>
-            )}
+            )} */}
           </div>
         </div>
       {currentUser && (
@@ -212,13 +228,22 @@ function Dashboard() {
                               <CardTitle>{pumpkin.name}</CardTitle>
                               <CardDescription>{pumpkin.description}</CardDescription>
                             </div>
-                            <Dropdown 
-                              onAddMeasurement={() => router.push('/add-measurement')} 
-                              onEdit={() => router.push(`/edit-pumpkin/${pumpkin.id}`)} 
-                              onDetailedView={() => router.push(`/pumpkin/${pumpkin.id}`)} 
-                              onDelete={() => deletePumpkin(pumpkin.id)} 
-                              className="pr-0" 
-                            />
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button className="text-lg">...</Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent>
+                                <DropdownMenuItem onSelect={() => router.push(`/edit-pumpkin/${pumpkin.id}`)} className="hover:bg-gray-100">
+                                  Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onSelect={() => router.push(`/pumpkin/${pumpkin.id}`)} className="hover:bg-gray-100">
+                                  Detailed View
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onSelect={() => deletePumpkin(pumpkin.id)} className="hover:bg-gray-100">
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </div>
                         </CardHeader>
                         <CardContent className="text-left">
@@ -296,5 +321,3 @@ function Dashboard() {
   }
   
   export default Dashboard;  
-
-
