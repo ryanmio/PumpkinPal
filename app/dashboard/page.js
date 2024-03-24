@@ -121,7 +121,7 @@ function Dashboard() {
     <div className="container mx-auto px-4 min-h-screen">
       {/* Add flex and items-start to ensure content is left-aligned */}
       <div className="my-8 text-left flex flex-col items-start">
-        <h1 className="text-3xl font-semibold">Welcome to your Dashboard</h1>
+        <h1 className="text-2xl font-semibold">Welcome to your Dashboard</h1>
         <p className="text-sm text-gray-600">Logged in as {currentUser.email}</p>
         </div>
         <select 
@@ -163,7 +163,7 @@ function Dashboard() {
                         <CardHeader>
                           <div className="flex justify-between items-start">
                             <div className="flex-grow text-left">
-                              <CardTitle onClick={() => router.push(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</CardTitle>
+                              <CardTitle>{pumpkin.name}</CardTitle>
                               <CardDescription>{pumpkin.description}</CardDescription>
                             </div>
                             <Dropdown 
@@ -204,3 +204,4 @@ function Dashboard() {
   }
   
   export default Dashboard;  
+
