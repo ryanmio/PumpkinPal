@@ -122,7 +122,7 @@ function Dashboard() {
   return (
     <div className="container mx-auto px-4 min-h-screen">
       <div className="my-8 text-left flex flex-col items-start">
-        <h1 className="text-3xl font-semibold">Welcome to your Dashboard</h1>
+        <h1 className="text-2xl font-semibold">Welcome to your Dashboard</h1>
         <p className="text-sm text-gray-600">Logged in as {currentUser.email}</p>
         </div>
         <select 
@@ -180,27 +180,31 @@ function Dashboard() {
                           {pumpkin.latestMeasurement && (
                             <>
                               <div className="flex items-center justify-between">
-                                <p className="">Latest Weight:</p>
-                                <Link href={`/pumpkin/${pumpkin.id}`} className="text-blue-500 hover:text-blue-600 transition duration-150 ease-in-out">{pumpkin.latestMeasurement.estimatedWeight} lbs</Link>
-                              </div>
-                              <div className="my-2">
-                                <Separator orientation="horizontal" className="bg-gray-200" />
-                              </div>
-                              <div className="flex items-center justify-between">
-                                <p className="">Latest OTT:</p>
-                                <Link href={`/pumpkin/${pumpkin.id}`} className="text-blue-500 hover:text-blue-600 transition duration-150 ease-in-out">
-                                  {pumpkin.latestMeasurement.circumference + pumpkin.latestMeasurement.endToEnd + pumpkin.latestMeasurement.sideToSide} {pumpkin.latestMeasurement.measurementUnit}
+                                <p>Latest Weight:</p>
+                                <Link href={`/pumpkin/${pumpkin.id}`} className="text-[#404337] hover:underline">
+                                  {Math.round(pumpkin.latestMeasurement.estimatedWeight)} lbs
                                 </Link>
                               </div>
                               <div className="my-2">
                                 <Separator orientation="horizontal" className="bg-gray-200" />
                               </div>
                               <div className="flex items-center justify-between">
-                                <p className="">Days After Pollination:</p>
-                                <p className="text-blue-500 hover:text-blue-600 transition duration-150 ease-in-out">
-                                  {pumpkin.pollinated && pumpkin.weighOff ? daysSincePollination(pumpkin.pollinated, pumpkin.weighOff) : 'N/A'} days
-                                </p>
+                                <p>Latest OTT:</p>
+                                <Link href={`/pumpkin/${pumpkin.id}`} className="text-[#404337] hover:underline">
+                                  {pumpkin.latestMeasurement.circumference + pumpkin.latestMeasurement.endToEnd + pumpkin.latestMeasurement.sideToSide} {pumpkin.latestMeasurement.measurementUnit}
+                                </Link>
                               </div>
+                              <div className="my-2">
+                                <Separator orientation="horizontal" className="bg-gray-200" />
+                              </div>
+                              {pumpkin.pollinated && pumpkin.weighOff && (
+                                <div className="flex items-center justify-between">
+                                  <p>Days After Pollination:</p>
+                                  <Link href={`/pumpkin/${pumpkin.id}`} className="text-[#404337] hover:underline">
+                                    {daysSincePollination(pumpkin.pollinated, pumpkin.weighOff)} days
+                                  </Link>
+                                </div>
+                              )}
                             </>
                           )}
                         </CardContent>
