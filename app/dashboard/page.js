@@ -122,7 +122,7 @@ function Dashboard() {
     <div className="container mx-auto px-4 min-h-screen">
       {/* Add flex and items-start to ensure content is left-aligned */}
       <div className="my-8 text-left flex flex-col items-start">
-        <h1 className="text-2xl font-semibold">Welcome to your Dashboard</h1>
+        <h1 className="text-3xl font-semibold">Welcome to your Dashboard</h1>
         <p className="text-sm text-gray-600">Logged in as {currentUser.email}</p>
         </div>
         <select 
@@ -159,26 +159,28 @@ function Dashboard() {
               ) : (
                 <>
                   {pumpkins.map(pumpkin => (
-                    <Card className="mb-4 flex flex-col" key={pumpkin.id}>
-                      <CardHeader>
-                        <div className="flex justify-between items-start">
-                          <div className="flex-grow text-left">
-                            <CardTitle onClick={() => router.push(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</CardTitle>
-                            <CardDescription>{pumpkin.description}</CardDescription>
+                    <Card className="mb-4 flex flex-col h-full justify-between" key={pumpkin.id}>
+                      <div>
+                        <CardHeader>
+                          <div className="flex justify-between items-start">
+                            <div className="flex-grow text-left">
+                              <CardTitle onClick={() => router.push(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</CardTitle>
+                              <CardDescription>{pumpkin.description}</CardDescription>
+                            </div>
+                            <Dropdown 
+                              onAddMeasurement={() => router.push('/add-measurement')} 
+                              onEdit={() => router.push(`/edit-pumpkin/${pumpkin.id}`)} 
+                              onDetailedView={() => router.push(`/pumpkin/${pumpkin.id}`)} 
+                              onDelete={() => deletePumpkin(pumpkin.id)} 
+                              className="pr-0" 
+                            />
                           </div>
-                          <Dropdown 
-                            onAddMeasurement={() => router.push('/add-measurement')} 
-                            onEdit={() => router.push(`/edit-pumpkin/${pumpkin.id}`)} 
-                            onDetailedView={() => router.push(`/pumpkin/${pumpkin.id}`)} 
-                            onDelete={() => deletePumpkin(pumpkin.id)} 
-                            className="pr-0" 
-                          />
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        {pumpkin.latestMeasurement && <p>Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
-                        {pumpkin.pollinated && pumpkin.weighOff && <p>Days After Pollination: {daysSincePollination(pumpkin.pollinated, pumpkin.weighOff)} days</p>}
-                      </CardContent>
+                        </CardHeader>
+                        <CardContent className="text-left">
+                          {pumpkin.latestMeasurement && <p>Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</p>}
+                          {pumpkin.pollinated && pumpkin.weighOff && <p>Days After Pollination: {daysSincePollination(pumpkin.pollinated, pumpkin.weighOff)} days</p>}
+                        </CardContent>
+                      </div>
                       <CardFooter>
                         <div className="w-full grid grid-cols-2 gap-2">
                           <button 
