@@ -154,7 +154,7 @@ function Dashboard() {
   return (
     <div className="container mx-auto px-4 min-h-screen">
       <div className="my-8 text-left flex flex-col items-start">
-        <h1 className="text-3xl font-semibold">Welcome to your Dashboard</h1>
+        <h1 className="text-2xl font-semibold">Welcome to your Dashboard</h1>
         <p className="text-sm text-gray-600">Logged in as {currentUser.email}</p>
       </div>
       <div className="flex flex-row justify-between items-center gap-4 mb-6">
@@ -169,9 +169,9 @@ function Dashboard() {
             ))}
           </select>
         <div className="ml-auto flex items-center space-x-4">
-          <Button 
+          {/* <Button 
             onClick={() => setShowComparePopover(!showComparePopover)} 
-            className="bg-reseda_green hover:bg-reseda_green-hover text-white py-2 px-4 rounded"
+            className="bg-green-button hover:bg-green-button-hover text-white py-2 px-4 rounded"
           >
             Compare
           </Button>
@@ -181,10 +181,10 @@ function Dashboard() {
                 Feature coming soon.
               </PopoverContent>
             </Popover>
-          )}
+          )} */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className="bg-reseda_green hover:bg-reseda_green-hover text-white py-2 px-4 rounded">
+            <Button className="bg-green-button hover:bg-green-button-hover text-white py-2 px-4 rounded">
                 New
               </Button>
             </DropdownMenuTrigger>
@@ -304,7 +304,7 @@ function Dashboard() {
                       </div>
                       <CardFooter>
                         <div className="w-full flex justify-between">
-                          <Button variant="outline" className="bg-reseda_green hover:bg-reseda_green-hover text-white py-2 px-4 rounded" onClick={() => router.push('/add-measurement')}>
+                          <Button variant="outline" className="bg-green-button hover:bg-green-button-hover text-white py-2 px-4 rounded" onClick={() => router.push('/add-measurement')}>
                             Add Measurement
                           </Button>
                           <Button variant="ghost" onClick={() => router.push(`/pumpkin/${pumpkin.id}`)}>
@@ -326,4 +326,5 @@ function Dashboard() {
   }
   
   export default Dashboard;  
+
 
