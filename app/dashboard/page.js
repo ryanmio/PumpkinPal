@@ -3,7 +3,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import { collection, getDocs, deleteDoc, where, doc, setDoc, getDoc, query, orderBy, limit, updateDoc } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
-import Dropdown from '../../components/ui/Dropdown';
 import Spinner from '../../components/ui/Spinner';
 import { showDeleteConfirmation } from '../../components/ui/Alert';
 import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../app/utilities/error-analytics';
@@ -155,47 +154,49 @@ function Dashboard() {
       <div className="my-8 text-left flex flex-col items-start">
         <h1 className="text-2xl font-semibold">Welcome to your Dashboard</h1>
         <p className="text-sm text-gray-600">Logged in as {currentUser.email}</p>
-        </div>
-        <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
-          <select 
-              value={selectedSeason} 
-              onChange={handleSeasonChange}
-              className="mt-1 block w-[180px] py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            >
-              <option value="" >All Years</option>
-              {seasons.map(season => (
-                <option key={season} value={season} >{season}</option>
-              ))}
-            </select>
-          <div className="ml-auto flex items-center space-x-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="bg-reseda_green hover:bg-reseda_green-hover text-white py-2 px-4 rounded">
-                  New
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onSelect={() => router.push('/add-measurement')} className="hover:bg-gray-100">
-                  New Measurement
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => router.push('/add-pumpkin')} className="hover:bg-gray-100">
-                  New Pumpkin
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            {/* <Button 
-              onClick={() => setShowComparePopover(!showComparePopover)} 
-              className="bg-reseda_green hover:bg-reseda_green-hover text-white py-2 px-4 rounded"
-            >
-              Compare
-            </Button>
-            {showComparePopover && (
-              <div className="absolute mt-24 py-2 px-4 bg-white rounded-md shadow-lg">
+      </div>
+      <div className="flex flex-row justify-between items-center gap-4 mb-6">
+        <select 
+            value={selectedSeason} 
+            onChange={handleSeasonChange}
+            className="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          >
+            <option value="" >All Years</option>
+            {seasons.map(season => (
+              <option key={season} value={season} >{season}</option>
+            ))}
+          </select>
+        <div className="ml-auto flex items-center space-x-4">
+          {/* <Button 
+            onClick={() => setShowComparePopover(!showComparePopover)} 
+            className="bg-reseda_green hover:bg-reseda_green-hover text-white py-2 px-4 rounded"
+          >
+            Compare
+          </Button>
+          {showComparePopover && (
+            <Popover className="absolute -mt-24 -ml-40 py-2 px-4 bg-white rounded-md shadow-lg">
+              <PopoverContent>
                 Feature coming soon.
-              </div>
-            )} */}
-          </div>
+              </PopoverContent>
+            </Popover>
+          )} */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="bg-reseda_green hover:bg-reseda_green-hover text-white py-2 px-4 rounded">
+                New
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onSelect={() => router.push('/add-measurement')} className="hover:bg-gray-100">
+                New Measurement
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => router.push('/add-pumpkin')} className="hover:bg-gray-100">
+                New Pumpkin
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
+      </div>
       {currentUser && (
         <>
           <div className="my-8 md:grid md:grid-cols-2 sm:gap-4">
@@ -224,7 +225,7 @@ function Dashboard() {
                       <div>
                         <CardHeader>
                           <div className="flex justify-between items-start">
-                            <div className="flex-grow text-left">
+                            <div className="flex-grow text-left space-y-2">
                               <CardTitle>{pumpkin.name}</CardTitle>
                               <CardDescription>{pumpkin.description}</CardDescription>
                             </div>
