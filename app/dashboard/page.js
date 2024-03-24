@@ -12,6 +12,7 @@ import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../app
 import { UserContext } from '../../contexts/UserContext';
 import { db, auth } from '../../firebase';
 import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from '../../components/ui/card';
+import AddPumpkinCard from './AddPumpkinCard';
 
 function Dashboard() {
     const { user: currentUser, loading: userLoading } = useContext(UserContext);
@@ -126,11 +127,11 @@ function Dashboard() {
         <select 
             value={selectedSeason} 
             onChange={handleSeasonChange}
-            className="mt-1 block w-[180px] py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-center"
+            className="mt-1 block w-[180px] py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           >
-            <option value="" className="text-center">All Seasons</option>
+            <option value="" >All Years</option>
             {seasons.map(season => (
-              <option key={season} value={season} className="text-center">{season}</option>
+              <option key={season} value={season} >{season}</option>
             ))}
           </select>
   
@@ -157,53 +158,51 @@ function Dashboard() {
                   </Card>
                 </div>
               ) : (
-                pumpkins.map(pumpkin => (
-                  <Card className="mb-4 flex flex-col" key={pumpkin.id}>
-                    <CardHeader>
-                      <div className="flex justify-between items-start">
-                        <div className="flex-grow text-left">
-                          <CardTitle onClick={() => router.push(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</CardTitle>
-                          <CardDescription>{pumpkin.description}</CardDescription>
-                          {pumpkin.latestMeasurement && <CardDescription>Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</CardDescription>}
-                          {pumpkin.pollinated && pumpkin.weighOff && <CardDescription>Days After Pollination: {daysSincePollination(pumpkin.pollinated, pumpkin.weighOff)} days</CardDescription>}
+                <>
+                  {pumpkins.map(pumpkin => (
+                    <Card className="mb-4 flex flex-col" key={pumpkin.id}>
+                      <CardHeader>
+                        <div className="flex justify-between items-start">
+                          <div className="flex-grow text-left">
+                            <CardTitle onClick={() => router.push(`/pumpkin/${pumpkin.id}`)}>{pumpkin.name}</CardTitle>
+                            <CardDescription>{pumpkin.description}</CardDescription>
+                            {pumpkin.latestMeasurement && <CardDescription>Latest Weight: {pumpkin.latestMeasurement.estimatedWeight} lbs</CardDescription>}
+                            {pumpkin.pollinated && pumpkin.weighOff && <CardDescription>Days After Pollination: {daysSincePollination(pumpkin.pollinated, pumpkin.weighOff)} days</CardDescription>}
+                          </div>
+                          <Dropdown 
+                            onAddMeasurement={() => router.push('/add-measurement')} 
+                            onEdit={() => router.push(`/edit-pumpkin/${pumpkin.id}`)} 
+                            onDetailedView={() => router.push(`/pumpkin/${pumpkin.id}`)} 
+                            onDelete={() => deletePumpkin(pumpkin.id)} 
+                            className="pr-0" 
+                          />
                         </div>
-                        <Dropdown 
-                          onAddMeasurement={() => router.push('/add-measurement')} 
-                          onEdit={() => router.push(`/edit-pumpkin/${pumpkin.id}`)} 
-                          onDetailedView={() => router.push(`/pumpkin/${pumpkin.id}`)} 
-                          onDelete={() => deletePumpkin(pumpkin.id)} 
-                          className="pr-0" 
-                        />
-                      </div>
-                    </CardHeader>
-                    <CardFooter>
-                     <div className="w-full grid grid-cols-2 gap-2">
-                        <button 
-                          className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                          onClick={() => router.push('/add-measurement')}
-                        >
-                          <PlusIcon className="w-4 h-4 mr-2" />
-                          Add Measurement
-                        </button>
-                        <button 
-                          className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                          onClick={() => router.push(`/pumpkin/${pumpkin.id}`)}
-                        >
-                          <TableCellsIcon className="w-4 h-4 mr-2" />
-                          Detailed View
-                        </button>
-                      </div>
-                    </CardFooter>
-                  </Card>
-                ))
+                      </CardHeader>
+                      <CardFooter>
+                       <div className="w-full grid grid-cols-2 gap-2">
+                          <button 
+                            className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                            onClick={() => router.push('/add-measurement')}
+                          >
+                            <PlusIcon className="w-4 h-4 mr-2" />
+                            Add Measurement
+                          </button>
+                          <button 
+                            className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                            onClick={() => router.push(`/pumpkin/${pumpkin.id}`)}
+                          >
+                            <TableCellsIcon className="w-4 h-4 mr-2" />
+                            Detailed View
+                          </button>
+                        </div>
+                      </CardFooter>
+                    </Card>
+                  ))}
+                  <AddPumpkinCard />
+                </>
               )
             )}
           </div>
-          {pumpkins.length !== 0 && (
-            <div className="my-8">
-              <button className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-1/2 mx-auto mb-4" onClick={() => router.push('/add-pumpkin')}>Add Pumpkin</button>
-            </div>
-          )}
         </>
       )}
     </div>
