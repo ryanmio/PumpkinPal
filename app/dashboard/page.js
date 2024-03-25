@@ -11,7 +11,6 @@ import { db, auth } from '../../firebase';
 import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from '../../components/ui/card';
 import AddPumpkinCard from './AddPumpkinCard';
 import { Button } from '../../components/ui/button';
-import MenuIcon from '../../public/icons/MenuIcon';
 import Link from 'next/link';
 import { Separator } from '../../components/ui/separator';
 import { Calendar} from '../../components/ui/calendar';
