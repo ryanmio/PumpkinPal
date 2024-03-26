@@ -53,6 +53,36 @@ function Dashboard() {
   };
 
   useEffect(() => {
+    if (!currentUser && !userLoading) {
+      // If the user is not logged in and not loading, redirect to the login page after a timeout
+      const timeout = setTimeout(() => {
+        router.push('/login');
+      }, 3000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [currentUser, userLoading, router]);
+
+  if (userLoading) {
+    // Display a loading spinner while the user state is loading
+    return (
+      <div className="container mx-auto px-4 min-h-screen flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (!currentUser) {
+    // If the user is not logged in, display a message and redirect to the login page
+    return (
+      <div className="container mx-auto px-4 min-h-screen flex flex-col items-center justify-center">
+        <p className="text-xl font-semibold mb-4">Please log in to access your dashboard.</p>
+        <p className="text-gray-600">Redirecting to the login page...</p>
+      </div>
+    );
+  }
+
+  useEffect(() => {
     if (currentUser) {
       const fetchSeasonsAndPreferences = async () => {
         const q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
@@ -169,19 +199,6 @@ function Dashboard() {
             ))}
           </select>
         <div className="ml-auto flex items-center space-x-4">
-          {/* <Button 
-            onClick={() => setShowComparePopover(!showComparePopover)} 
-            className="bg-green-button hover:bg-green-button-hover text-white py-2 px-4 rounded"
-          >
-            Compare
-          </Button>
-          {showComparePopover && (
-            <Popover className="absolute -mt-24 -ml-40 py-2 px-4 bg-white rounded-md shadow-lg">
-              <PopoverContent>
-                Feature coming soon.
-              </PopoverContent>
-            </Popover>
-          )} */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
             <Button className="bg-green-button hover:bg-green-button-hover text-white py-2 px-4 rounded">
@@ -326,5 +343,3 @@ function Dashboard() {
   }
   
   export default Dashboard;  
-
-
