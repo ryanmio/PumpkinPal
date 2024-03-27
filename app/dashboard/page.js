@@ -27,8 +27,77 @@ function Dashboard() {
     const [seasons, setSeasons] = useState([]);
     const router = useRouter();
     const [showComparePopover, setShowComparePopover] = useState(false);
-
-  // Function to handle date selection
+    
+    useEffect(() => {
+      if (!currentUser && !userLoading) {
+        // If the user is not logged in and not loading, redirect to the login page immediately
+        router.push('/login');
+      }
+    }, [currentUser, userLoading, router]);
+    
+    useEffect(() => {
+      if (currentUser) {
+        const fetchSeasonsAndPreferences = async () => {
+          const q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
+          const userDoc = doc(db, 'Users', currentUser.uid);
+    
+          const [snapshot, userSnapshot] = await Promise.all([getDocs(q), getDoc(userDoc)]); // Use getDoc for userSnapshot
+    
+          const seasons = [...new Set(snapshot.docs.map(doc => doc.data().season))];
+          setSeasons(seasons);
+    
+          const userData = userSnapshot.data();
+          setSelectedSeason(userData.selectedSeason || '');
+        };
+        fetchSeasonsAndPreferences();
+      }
+    }, [currentUser]);
+    
+      const handleSeasonChange = async (e) => {
+        setSelectedSeason(e.target.value);
+        if (currentUser) {
+          const userDoc = doc(db, 'Users', currentUser.uid);
+          await setDoc(userDoc, { selectedSeason: e.target.value }, { merge: true });
+        }
+      };
+    
+      useEffect(() => {
+        if (currentUser) {
+          const fetchData = async () => {
+            try {
+              let q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
+              if (selectedSeason) {
+                q = query(q, where('season', '==', Number(selectedSeason)));
+              }
+              const snapshot = await getDocs(q);
+              let pumpkinsData = [];
+    
+              for (let pumpkinDoc of snapshot.docs) {
+                let pumpkinData = pumpkinDoc.data();
+    
+                const measurementsCollection = collection(db, 'Users', currentUser.uid, 'Pumpkins', pumpkinDoc.id, 'Measurements');
+                const measurementsQuery = query(measurementsCollection, orderBy('timestamp', 'desc'), limit(1));
+                const measurementSnapshot = await getDocs(measurementsQuery);
+    
+                const latestMeasurement = measurementSnapshot.docs[0]?.data() || null;
+    
+                pumpkinData.latestMeasurement = latestMeasurement;
+                pumpkinsData.push({ ...pumpkinData, id: pumpkinDoc.id });
+              }
+    
+              setPumpkins(pumpkinsData);
+              setPumpkinsLoading(false);
+            } catch (error) {
+              toast.error("Error fetching pumpkins");
+              console.error("Error fetching pumpkins: ", error);
+              trackError(error, 'Fetching Pumpkins', GA_CATEGORIES.SYSTEM, GA_ACTIONS.ERROR);
+            }
+          };
+          fetchData();
+        }
+      }, [currentUser, selectedSeason]);
+      
+    // Function to handle date selection
   const handleDateSelect = async (pumpkinId, date) => {
     try {
       const formattedDate = format(date, 'yyyy-MM-dd'); // Using date-fns to format the date
@@ -52,18 +121,8 @@ function Dashboard() {
     }
   };
 
-  useEffect(() => {
-    if (!currentUser && !userLoading) {
-      // If the user is not logged in and not loading, redirect to the login page after a timeout
-      const timeout = setTimeout(() => {
-        router.push('/login');
-      }, 3000);
 
-      return () => clearTimeout(timeout);
-    }
-  }, [currentUser, userLoading, router]);
-
-  if (userLoading || !currentUser) {
+  if (userLoading) {
     // Display a loading spinner while the user state is loading
     return (
       <div className="container mx-auto px-4 min-h-screen flex items-center justify-center">
@@ -73,76 +132,10 @@ function Dashboard() {
   }
 
   if (!currentUser) {
-    // If the user is not logged in, display a message and redirect to the login page
-    return (
-      <div className="container mx-auto px-4 min-h-screen flex flex-col items-center justify-center">
-        <p className="text-xl font-semibold mb-4">Please log in to access your dashboard.</p>
-        <p className="text-gray-600">Redirecting to the login page...</p>
-      </div>
-    );
+    // If the user is not logged in, don't render the dashboard
+    return null;
   }
 
-  useEffect(() => {
-    if (currentUser) {
-      const fetchSeasonsAndPreferences = async () => {
-        const q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
-        const userDoc = doc(db, 'Users', currentUser.uid);
-  
-        const [snapshot, userSnapshot] = await Promise.all([getDocs(q), getDoc(userDoc)]); // Use getDoc for userSnapshot
-  
-        const seasons = [...new Set(snapshot.docs.map(doc => doc.data().season))];
-        setSeasons(seasons);
-  
-        const userData = userSnapshot.data();
-        setSelectedSeason(userData.selectedSeason || '');
-      };
-      fetchSeasonsAndPreferences();
-    }
-  }, [currentUser]);
-  
-    const handleSeasonChange = async (e) => {
-      setSelectedSeason(e.target.value);
-      if (currentUser) {
-        const userDoc = doc(db, 'Users', currentUser.uid);
-        await setDoc(userDoc, { selectedSeason: e.target.value }, { merge: true });
-      }
-    };
-  
-    useEffect(() => {
-      if (currentUser) {
-        const fetchData = async () => {
-          try {
-            let q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
-            if (selectedSeason) {
-              q = query(q, where('season', '==', Number(selectedSeason)));
-            }
-            const snapshot = await getDocs(q);
-            let pumpkinsData = [];
-  
-            for (let pumpkinDoc of snapshot.docs) {
-              let pumpkinData = pumpkinDoc.data();
-  
-              const measurementsCollection = collection(db, 'Users', currentUser.uid, 'Pumpkins', pumpkinDoc.id, 'Measurements');
-              const measurementsQuery = query(measurementsCollection, orderBy('timestamp', 'desc'), limit(1));
-              const measurementSnapshot = await getDocs(measurementsQuery);
-  
-              const latestMeasurement = measurementSnapshot.docs[0]?.data() || null;
-  
-              pumpkinData.latestMeasurement = latestMeasurement;
-              pumpkinsData.push({ ...pumpkinData, id: pumpkinDoc.id });
-            }
-  
-            setPumpkins(pumpkinsData);
-            setPumpkinsLoading(false);
-          } catch (error) {
-            toast.error("Error fetching pumpkins");
-            console.error("Error fetching pumpkins: ", error);
-            trackError(error, 'Fetching Pumpkins', GA_CATEGORIES.SYSTEM, GA_ACTIONS.ERROR);
-          }
-        };
-        fetchData();
-      }
-    }, [currentUser, selectedSeason]);
   
     async function deletePumpkin(id) {
     showDeleteConfirmation('Are you sure you want to delete this pumpkin?', "You won't be able to undo this.", async () => {
@@ -343,3 +336,5 @@ function Dashboard() {
   }
   
   export default Dashboard;  
+
+
