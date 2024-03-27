@@ -63,7 +63,7 @@ function Dashboard() {
     }
   }, [currentUser, userLoading, router]);
 
-  if (userLoading) {
+  if (userLoading || !currentUser) {
     // Display a loading spinner while the user state is loading
     return (
       <div className="container mx-auto px-4 min-h-screen flex items-center justify-center">
