@@ -1,6 +1,6 @@
 'use client'
 // app/pumpkin/[id]/page.js AKA the pumpkin detail page
-import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useCallback, Suspense, lazy, useContext } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { auth, db } from '../../../firebase';
 import { collection, doc, getDoc, orderBy, onSnapshot, query } from 'firebase/firestore';
@@ -9,15 +9,24 @@ import GraphCard from './GraphCard';
 import { toast } from 'react-hot-toast';
 import Spinner from '../../../components/ui/Spinner';
 import Link from 'next/link';
+import { UserContext } from '../../../contexts/UserContext'; // Adjust the path as necessary
 
 const LazyImageCard = lazy(() => import('./ImageCard'));
 
 function PumpkinDetail() {
+    const { user, loading } = useContext(UserContext);
     const router = useRouter();
     const { id } = useParams();
     const [pumpkin, setPumpkin] = useState(null);
     const [measurements, setMeasurements] = useState([]);
     const [fullscreenComponent, setFullscreenComponent] = useState(null);
+
+    useEffect(() => {
+        if (!user && !loading) {
+            // Redirect to login if user is not logged in and not loading
+            router.push('/login');
+        }
+    }, [user, loading, router]);
 
     // Helper function to format a date string as Month D, YYYY
     const formatDate = useCallback((dateString) => {
