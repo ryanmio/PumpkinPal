@@ -27,4 +27,4 @@ TO DO:
 - [ ] Sidebar should close with clicks outside of sidebar
 - [ ] Add protected route strategy
 - [ ] Update readme - especially noting the chagne to nextjs
-
+- [ ] Fix date validation for edit pumpkin form 

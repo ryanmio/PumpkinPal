@@ -9,9 +9,10 @@ function Logout() {
 
   const handleLogout = async () => {
     try {
+      // Sign out the user
       await signOut(auth);
       console.log('Successfully signed out');
-      // Use the router to navigate to the login page after successful sign out
+      // Redirect to the login page after successful sign out
       router.push('/login');
     } catch (error) {
       console.error("Error signing out:", error);
