@@ -1,7 +1,7 @@
 'use client';
 import React, { createContext, useState, useEffect, useMemo } from 'react';
-import { auth, db } from '../firebase'; 
-import { doc, onSnapshot } from 'firebase/firestore';
+import { auth, db } from '../firebase';
+import { doc, getDoc } from 'firebase/firestore';
 import Spinner from '../components/ui/Spinner';
 
 export const UserContext = createContext();
@@ -12,28 +12,23 @@ export const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((userAuth) => {
+    const unsubscribe = auth.onAuthStateChanged(async (userAuth) => {
       if (userAuth) {
-        onSnapshot(doc(db, 'Users', userAuth.uid), (docSnap) => {
-          if (docSnap.exists()) {
-            setUser(userAuth);
-            setGrowerId(docSnap.data().growerId);
-          } else {
-            setUser(userAuth);
-            setGrowerId(null);
-          }
-          setLoading(false);
-        });
+        setUser(userAuth);
+        const userDoc = await getDoc(doc(db, 'Users', userAuth.uid));
+        if (userDoc.exists()) {
+          setGrowerId(userDoc.data().growerId);
+        }
       } else {
         setUser(null);
         setGrowerId(null);
-        setLoading(false);
       }
+      setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
-    
+
   const contextValue = useMemo(() => ({ user, growerId, setGrowerId, loading }), [user, growerId, loading]);
 
   if (loading) {
