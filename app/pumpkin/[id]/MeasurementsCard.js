@@ -1,15 +1,72 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useReactTable, getCoreRowModel, flexRender } from '@tanstack/react-table';
 import { useRouter } from 'next/navigation';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../../../firebase';
 import { toast, Toaster } from 'react-hot-toast';
 import { showDeleteConfirmation } from '../../../components/ui/Alert';
 import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../utilities/error-analytics';
-import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 
-const MeasurementsCard = ({ measurements, pumpkin, pumpkinId, pollinationDate }) => {
-  const router = useRouter(); 
-  const [isExpanded, setIsExpanded] = useState(false);
+const MeasurementsCard = ({ measurements, pumpkinId }) => {
+  const router = useRouter(); // Call useRouter at the top level
+
+  // Define columns inside the component to access `router`
+  const columns = [
+    {
+      accessorKey: 'timestamp',
+      header: 'Date',
+    },
+    {
+      accessorKey: 'dap',
+      header: 'DAP',
+    },
+    {
+      accessorKey: 'endToEnd',
+      header: 'End to End',
+    },
+    {
+      accessorKey: 'sideToSide',
+      header: 'Side to Side',
+    },
+    {
+      accessorKey: 'circumference',
+      header: 'Circumference',
+    },
+    {
+      accessorKey: 'measurementUnit',
+      header: 'Units',
+    },
+    {
+      accessorKey: 'estimatedWeight',
+      header: 'OTT Weight',
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => (
+        <div className="flex justify-center gap-2">
+          <button
+            onClick={() => router.push(`/edit-measurement/${row.original.pumpkinId}/${row.original.id}`)}
+            className="px-4 py-2 text-sm text-white bg-blue-500 rounded hover:bg-blue-700"
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => deleteMeasurement(row.original.id)}
+            className="px-4 py-2 text-sm text-white bg-red-500 rounded hover:bg-red-700"
+          >
+            Delete
+          </button>
+        </div>
+      ),
+    },
+  ];
+
+  const table = useReactTable({
+    data: measurements,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
 
   const deleteMeasurement = async (measurementId) => {
     showDeleteConfirmation('Are you sure you want to delete this measurement?', "You won't be able to undo this.", async () => {
@@ -62,79 +119,46 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId, pollinationDate })
   };
 
   return (
-    <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto">
+    <div className="overflow-x-auto">
       <Toaster />
-      <h3 className="text-xl font-bold mb-2">Measurements</h3>
-      <div className="flex space-x-4 justify-center">
+      <div className="flex space-x-4 justify-center mb-4">
         <button onClick={() => router.push(`/add-measurement`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Add Measurement</button>
         <button onClick={exportData} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export Data</button>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full mt-4">
-          <thead>
-            <tr>
-              <th className="whitespace-nowrap min-w-max w-[100px] table-cell">Date</th>
-              <th className="table-cell">DAP</th>
-              <th className="table-cell">End to End</th>
-              <th className="table-cell">Side to Side</th>
-              <th className="table-cell">Circ.</th>
-              <th className="table-cell">Units</th>
-              <th className="table-cell">OTT Weight</th>
-              <th>Edit</th>
-              <th>Delete</th>
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-50">
+          {table.getHeaderGroups().map(headerGroup => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map(header => (
+                <th
+                  key={header.id}
+                  scope="col"
+                  className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
+                >
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(header.column.columnDef.header, header.getContext())}
+                </th>
+              ))}
             </tr>
-          </thead>
-          <tbody>
-          {measurements?.slice(0, isExpanded ? measurements.length : 6)?.map((measurement) => {
-          const measurementDate = new Date(measurement.timestamp);
-          const pollinationDateObj = pollinationDate && pollinationDate !== "Not Set" ? new Date(pollinationDate) : null; // Check if pollinationDate is set and not "Not Set"
-          const dap = pollinationDateObj ? Math.round((measurementDate - pollinationDateObj) / (1000 * 60 * 60 * 24)) : '-'; // If pollinationDate is not set or "Not Set", dap is '-'
-          
-          /* // Debugging
-          console.log("pollinationDate: ", pollinationDate);
-          console.log("pollinationDateObj: ", pollinationDateObj);
-          console.log("dap: ", dap); */
-          
-          return (
-              <tr key={measurement.id}>
-                <td className="whitespace-nowrap table-cell">{measurement.timestamp}</td>
-                <td className="table-cell">{dap}</td>
-                <td className="table-cell">{measurement.endToEnd}</td>
-                <td className="table-cell">{measurement.sideToSide}</td>
-                <td className="table-cell">{measurement.circumference}</td>
-                <td className="table-cell">{measurement.measurementUnit}</td>
-                <td className="table-cell">{measurement.estimatedWeight}</td>
-                <td><button onClick={() => router.push(`/edit-measurement/${pumpkinId}/${measurement.id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Edit</button></td>
-                <td><button onClick={() => deleteMeasurement(measurement.id)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Delete</button></td>
-              </tr>
-            );
-        })}
-          </tbody>
-        </table>
-        </div>
-        {measurements?.length > 6 && (
-          <div className="mt-4">
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className={`green-button inline-flex items-center justify-center px-4 py-1 text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 ${
-                isExpanded ? 'mb-4' : ''
-              }`}
-            >
-              {isExpanded ? (
-                <>
-                  <BsChevronUp className="w-4 h-4 mr-1" />
-                  Show Less
-                </>
-              ) : (
-                <>
-                  <BsChevronDown className="w-4 h-4 mr-1" />
-                  Show More
-                </>
-              )}
-            </button>
-          </div>
-        )}
-      </div>
+          ))}
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
+          {table.getRowModel().rows.map(row => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map(cell => (
+                <td
+                  key={cell.id}
+                  className="px-6 py-4 whitespace-nowrap"
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
