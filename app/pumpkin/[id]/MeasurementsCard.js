@@ -7,7 +7,7 @@ import { toast, Toaster } from 'react-hot-toast';
 import { showDeleteConfirmation } from '../../../components/ui/Alert';
 import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../utilities/error-analytics';
 
-const MeasurementsCard = ({ measurements, pumpkinId }) => {
+const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
   const router = useRouter(); // Call useRouter at the top level
 
   // Define columns inside the component to access `router`
@@ -17,7 +17,15 @@ const MeasurementsCard = ({ measurements, pumpkinId }) => {
       header: 'Date',
     },
     {
-      accessorKey: 'dap',
+      accessorFn: (row) => {
+        if (!pollinationDate || pollinationDate === "Not Set") {
+          return '-';
+        }
+        const pollinationDateObj = new Date(pollinationDate);
+        const measurementDate = new Date(row.timestamp);
+        const dap = Math.round((measurementDate - pollinationDateObj) / (1000 * 60 * 60 * 24));
+        return dap;
+      },
       header: 'DAP',
     },
     {
