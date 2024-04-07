@@ -54,7 +54,7 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
       cell: ({ row }) => (
         <div className="flex justify-center gap-2">
           <button
-            onClick={() => router.push(`/edit-measurement/${row.original.pumpkinId}/${row.original.id}`)}
+            onClick={() => router.push(`/edit-measurement/${pumpkinId}/${row.original.id}`)}
             className="px-4 py-2 text-sm text-white bg-blue-500 rounded hover:bg-blue-700"
           >
             Edit
@@ -171,3 +171,4 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
 };
 
 export default MeasurementsCard;
+
