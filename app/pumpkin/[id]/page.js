@@ -134,8 +134,10 @@ function PumpkinDetail() {
                     <button onClick={() => router.push(`/edit-pumpkin/${id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 self-end">Edit Dates</button>
                 </div>
 
-                {/* Card 3: Measurements */}
-                <MeasurementsCard measurements={measurements} router={router} pumpkinId={id} pumpkin={pumpkin} pollinationDate={pumpkin?.pollinated} />
+                {/* Card 3: Measurements - Wrap this card in a div with a conditional class */}
+                <div className={measurements && measurements.length > 0 ? "md:col-span-2" : ""}>
+                    <MeasurementsCard measurements={measurements} router={router} pumpkinId={id} pumpkin={pumpkin} pollinationDate={pumpkin?.pollinated} />
+                </div>
 
                 {/* Card 4: Graph */}
                 {measurements && pumpkin ? (
