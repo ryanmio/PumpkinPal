@@ -6,11 +6,13 @@ import { auth, db } from '../../../firebase';
 import { toast, Toaster } from 'react-hot-toast';
 import { showDeleteConfirmation } from '../../../components/ui/Alert';
 import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../utilities/error-analytics';
+import { Card, CardHeader, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
+import { Table, TableHead, TableRow, TableHeader, TableCell, TableBody } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
-  const router = useRouter(); // Call useRouter at the top level
+  const router = useRouter();
 
-  // Define columns inside the component to access `router`
   const columns = [
     {
       accessorKey: 'timestamp',
@@ -127,48 +129,54 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
   };
 
   return (
-    <div className="overflow-x-auto">
-      <Toaster />
-      <div className="flex space-x-4 justify-center mb-4">
-        <button onClick={() => router.push(`/add-measurement`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Add Measurement</button>
-        <button onClick={exportData} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export Data</button>
-      </div>
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          {table.getHeaderGroups().map(headerGroup => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map(header => (
-                <th
-                  key={header.id}
-                  scope="col"
-                  className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(header.column.columnDef.header, header.getContext())}
-                </th>
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>Measurements</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto">
+          <Toaster />
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              {table.getHeaderGroups().map(headerGroup => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map(header => (
+                    <th
+                      key={header.id}
+                      scope="col"
+                      className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(header.column.columnDef.header, header.getContext())}
+                    </th>
+                  ))}
+                </tr>
               ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {table.getRowModel().rows.map(row => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map(cell => (
-                <td
-                  key={cell.id}
-                  className="px-6 py-4 whitespace-nowrap"
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {table.getRowModel().rows.map(row => (
+                <tr key={row.id}>
+                  {row.getVisibleCells().map(cell => (
+                    <td
+                      key={cell.id}
+                      className="px-6 py-4 whitespace-nowrap"
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
               ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+            </tbody>
+          </table>
+        </div>
+      </CardContent>
+      <CardFooter className="flex justify-start gap-4">
+        <Button onClick={() => router.push(`/add-measurement`)}>Add Measurement</Button>
+        <Button variant="outline" onClick={exportData}>Export Data</Button>
+      </CardFooter>
+    </Card>
   );
 };
 
 export default MeasurementsCard;
-
