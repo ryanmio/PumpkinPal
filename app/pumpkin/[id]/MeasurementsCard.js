@@ -137,9 +137,15 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
   return (
     <div className={measurements && measurements.length > 0 ? "md:col-span-2" : ""}>
       <Card className="w-full">
-        <CardHeader>
-          <CardTitle>Measurements</CardTitle>
-        </CardHeader>
+        <div className="flex flex-col md:flex-row justify-between items-center">
+          <CardHeader>
+            <CardTitle>Measurements</CardTitle>
+          </CardHeader>
+          <div className="flex justify-center md:justify-end gap-4 w-full md:w-auto mb-4 md:mb-0">
+            <Button className="md:mr-6" variant="outline" onClick={() => router.push(`/add-measurement`)}>Add Measurement</Button>
+            <Button className="md:mr-6" variant="outline" onClick={exportData}>Export Data</Button>
+          </div>
+        </div>
         <CardContent>
           <div className="overflow-x-auto">
             <Toaster />
@@ -186,10 +192,6 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
             </Button>
           </div>
         </CardContent>
-        <CardFooter className="flex justify-start gap-4">
-          <Button onClick={() => router.push(`/add-measurement`)}>Add Measurement</Button>
-          <Button variant="outline" onClick={exportData}>Export Data</Button>
-        </CardFooter>
       </Card>
     </div>
   );
