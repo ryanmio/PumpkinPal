@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useReactTable, getCoreRowModel, flexRender } from '@tanstack/react-table';
 import { useRouter } from 'next/navigation';
 import { doc, deleteDoc } from 'firebase/firestore';
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 
 const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
   const router = useRouter();
+  const [isExpanded, setIsExpanded] = useState(false); // State to track accordion expansion
 
   const columns = [
     {
@@ -56,7 +57,7 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
       cell: ({ row }) => (
         <div className="flex justify-center gap-2">
           <button
-            onClick={() => router.push(`/edit-measurement/${pumpkinId}/${row.original.id}`)}
+            onClick={() => router.push(`/pumpkin/${pumpkinId}/edit-measurement/${row.original.id}`)}
             className="px-4 py-2 text-sm text-white bg-blue-500 rounded hover:bg-blue-700"
           >
             Edit
@@ -128,54 +129,69 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
       });
   };
 
+  // Function to toggle the accordion state
+  const toggleAccordion = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>Measurements</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="overflow-x-auto">
-          <Toaster />
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              {table.getHeaderGroups().map(headerGroup => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <th
-                      key={header.id}
-                      scope="col"
-                      className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {table.getRowModel().rows.map(row => (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map(cell => (
-                    <td
-                      key={cell.id}
-                      className="px-6 py-4 whitespace-nowrap"
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </CardContent>
-      <CardFooter className="flex justify-start gap-4">
-        <Button onClick={() => router.push(`/add-measurement`)}>Add Measurement</Button>
-        <Button variant="outline" onClick={exportData}>Export Data</Button>
-      </CardFooter>
-    </Card>
+    <div className={measurements && measurements.length > 0 ? "md:col-span-2" : ""}>
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>Measurements</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <Toaster />
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                {table.getHeaderGroups().map(headerGroup => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map(header => (
+                      <th
+                        key={header.id}
+                        scope="col"
+                        className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(header.column.columnDef.header, header.getContext())}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {table.getRowModel().rows.map((row, index) => (
+                  isExpanded || index < 5 ? (
+                    <tr key={row.id}>
+                      {row.getVisibleCells().map(cell => (
+                        <td
+                          key={cell.id}
+                          className="px-6 py-4 whitespace-nowrap"
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </td>
+                      ))}
+                    </tr>
+                  ) : null
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {/* Button to toggle the accordion */}
+          <div className="flex justify-center mt-4">
+            <Button onClick={toggleAccordion}>
+              {isExpanded ? 'Show Less' : 'Show More'}
+            </Button>
+          </div>
+        </CardContent>
+        <CardFooter className="flex justify-start gap-4">
+          <Button onClick={() => router.push(`/add-measurement`)}>Add Measurement</Button>
+          <Button variant="outline" onClick={exportData}>Export Data</Button>
+        </CardFooter>
+      </Card>
+    </div>
   );
 };
 
