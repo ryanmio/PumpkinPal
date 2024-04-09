@@ -151,12 +151,12 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
   return (
     <div className="md:col-span-2">
       <Card className={`w-full ${isLoading ? 'min-h-[20rem]' : 'min-h-[10rem]'}`}>
-        <div className="flex flex-col md:flex-row justify-between items-center pb-0 md:pb-4">
+        <div className="flex flex-col md:flex-row justify-between items-center pb-0">
           <CardHeader className="w-full md:w-auto">
             <CardTitle>Measurements</CardTitle>
           </CardHeader>
-          <div className="flex justify-center md:justify-end gap-4 w-full md:w-auto mt-4 md:mt-0">
-            <Button className="md:mr-6" onClick={() => router.push(`/add-measurement`)}>Add Measurement</Button>
+          <div className="flex justify-center md:justify-end gap-4 w-full md:w-auto mt-4 mt-0 pb-4 md:pb-0">
+            <Button className="md:mr-2" variant="outline" onClick={() => router.push(`/add-measurement`)}>Add Measurement</Button>
             <Button className="md:mr-6" variant="outline" onClick={exportData}>Export Data</Button>
           </div>
         </div>
