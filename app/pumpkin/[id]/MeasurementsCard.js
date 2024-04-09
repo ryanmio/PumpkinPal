@@ -61,6 +61,14 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
     {
       accessorKey: 'estimatedWeight',
       header: 'OTT Weight',
+      cell: ({ row }) => {
+        const weight = row.original.estimatedWeight;
+        const measurementUnit = row.original.measurementUnit; // 'cm' or 'in'
+        const isMetric = measurementUnit === 'cm';
+        const convertedWeight = isMetric ? weight * 0.453592 : weight; // Convert lbs to kg if metric
+        const unitLabel = isMetric ? 'kg' : 'lbs';
+        return `${Math.round(convertedWeight)} ${unitLabel}`;
+      },
     },
     {
       id: 'actions',
