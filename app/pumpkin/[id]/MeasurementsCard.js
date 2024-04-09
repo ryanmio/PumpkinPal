@@ -181,7 +181,7 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
                         <th
                           key={header.id}
                           scope="col"
-                          className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
+                          className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase text-center"
                         >
                           {header.isPlaceholder
                             ? null
@@ -197,7 +197,7 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
                       {table.getRowModel().rows.find(row => row.original.id === measurement.id).getVisibleCells().map(cell => (
                         <td
                           key={cell.id}
-                          className="px-6 py-4 whitespace-nowrap"
+                          className="px-6 py-4 whitespace-nowrap text-center"
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>
