@@ -45,18 +45,17 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
     {
       accessorKey: 'endToEnd',
       header: 'End to End',
+      cell: ({ row }) => `${row.original.endToEnd} ${row.original.measurementUnit}`,
     },
     {
       accessorKey: 'sideToSide',
       header: 'Side to Side',
+      cell: ({ row }) => `${row.original.sideToSide} ${row.original.measurementUnit}`,
     },
     {
       accessorKey: 'circumference',
       header: 'Circumference',
-    },
-    {
-      accessorKey: 'measurementUnit',
-      header: 'Units',
+      cell: ({ row }) => `${row.original.circumference} ${row.original.measurementUnit}`,
     },
     {
       accessorKey: 'estimatedWeight',
