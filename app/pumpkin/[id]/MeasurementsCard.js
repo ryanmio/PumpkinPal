@@ -145,8 +145,11 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
     setIsExpanded(!isExpanded);
   };
 
+  // Determine the measurements to display
+  const displayedMeasurements = isExpanded ? measurements : measurements.slice(-5);
+
   return (
-    <div className={measurements && measurements.length > 0 ? "md:col-span-2" : ""}>
+    <div className="md:col-span-2">
       <Card className={`w-full ${isLoading ? 'min-h-[20rem]' : 'min-h-[10rem]'}`}>
         <div className="flex flex-col md:flex-row justify-between items-center pb-0 md:pb-4">
           <CardHeader className="w-full md:w-auto">
@@ -182,19 +185,17 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
                   ))}
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {table.getRowModel().rows.map((row, index) => (
-                    isExpanded || index < 5 ? (
-                      <tr key={row.id}>
-                        {row.getVisibleCells().map(cell => (
-                          <td
-                            key={cell.id}
-                            className="px-6 py-4 whitespace-nowrap"
-                          >
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </td>
-                        ))}
-                      </tr>
-                    ) : null
+                  {displayedMeasurements.map((measurement, index) => (
+                    <tr key={measurement.id}>
+                      {table.getRowModel().rows.find(row => row.original.id === measurement.id).getVisibleCells().map(cell => (
+                        <td
+                          key={cell.id}
+                          className="px-6 py-4 whitespace-nowrap"
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </td>
+                      ))}
+                    </tr>
                   ))}
                 </tbody>
               </table>
