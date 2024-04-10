@@ -9,6 +9,8 @@ import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../uti
 import { Card, CardHeader, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Table, TableHead, TableRow, TableHeader, TableCell, TableBody } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { DropdownMenuTrigger, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuContent, DropdownMenu } from "@/components/ui/dropdown-menu";
+import MoreHorizontalIcon from '../../../public/icons/MoreHorizontalIcon';
 
 const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
   const router = useRouter();
@@ -73,19 +75,18 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
       id: 'actions',
       header: 'Actions',
       cell: ({ row }) => (
-        <div className="flex justify-center gap-2">
-          <button
-            onClick={() => router.push(`/pumpkin/${pumpkinId}/edit-measurement/${row.original.id}`)}
-            className="px-4 py-2 text-sm text-white bg-blue-500 rounded hover:bg-blue-700"
-          >
-            Edit
-          </button>
-          <button
-            onClick={() => deleteMeasurement(row.original.id)}
-            className="px-4 py-2 text-sm text-white bg-red-500 rounded hover:bg-red-700"
-          >
-            Delete
-          </button>
+        <div className="flex justify-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="rounded-full p-1 w-6 h-6" size="icon" variant="ghost">
+                <MoreHorizontalIcon className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onSelect={() => router.push(`/pumpkin/${pumpkinId}/edit-measurement/${row.original.id}`)}>Edit</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => deleteMeasurement(row.original.id)}>Delete</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       ),
     },
