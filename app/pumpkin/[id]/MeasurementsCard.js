@@ -17,7 +17,9 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
   const router = useRouter();
   const [isExpanded, setIsExpanded] = useState(false); // State to track accordion expansion
   const [isLoading, setIsLoading] = useState(true); // Add this line
-  const [columnVisibility, setColumnVisibility] = useState({});
+  const [columnVisibility, setColumnVisibility] = useState({
+    ott: false, // OTT column hidden by default
+  });
 
   useEffect(() => {
     console.log("User's preferred unit:", userPreferredUnit); // Log 1
@@ -43,22 +45,28 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
         endToEnd: false, // Assuming 'endToEnd' is hidable
         sideToSide: false, // Assuming 'sideToSide' is hidable
         circumference: false, // Assuming 'circumference' is hidable
+        ott: false, // OTT column hidden by default
       });
     }
   }, []);
 
   // Function to convert units from cm to in
   const convertCmToIn = (cm) => {
-    const inches = (cm / 2.54).toFixed(2);
+    const inches = parseFloat((cm / 2.54).toFixed(2));
     console.log(`Converting ${cm} cm to inches:`, inches); // Log 2
     return inches;
   };
 
   // Function to convert weight from kg to lbs
   const convertKgToLbs = (kg) => {
-    const pounds = (kg * 2.20462).toFixed(2);
+    const pounds = parseFloat((kg * 2.20462).toFixed(2));
     console.log(`Converting ${kg} kg to pounds:`, pounds); // Log 3
     return pounds;
+  };
+
+  // Function to round to the nearest half
+  const roundToNearestHalf = (value) => {
+    return Math.round(value * 2) / 2;
   };
 
   const columns = [
@@ -86,7 +94,7 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
       enableHiding: true,
       cell: ({ row }) => {
         const originalValue = row.original.endToEnd;
-        const value = userPreferredUnit === 'in' ? convertCmToIn(originalValue) : originalValue;
+        const value = userPreferredUnit === 'in' ? roundToNearestHalf(convertCmToIn(originalValue)) : roundToNearestHalf(originalValue);
         const unitLabel = userPreferredUnit ? userPreferredUnit : 'cm'; // Fallback to 'cm' if undefined
         console.log(`Final value for 'End to End':`, value, unitLabel); // Adjusted log
         return `${value} ${unitLabel}`;
@@ -98,7 +106,7 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
       enableHiding: true,
       cell: ({ row }) => {
         const originalValue = row.original.sideToSide;
-        const value = userPreferredUnit === 'in' ? convertCmToIn(originalValue) : originalValue;
+        const value = userPreferredUnit === 'in' ? roundToNearestHalf(convertCmToIn(originalValue)) : roundToNearestHalf(originalValue);
         const unitLabel = userPreferredUnit ? userPreferredUnit : 'cm'; // Fallback to 'cm' if undefined
         console.log(`Final value for 'Side to Side':`, value, unitLabel); // Adjusted log
         return `${value} ${unitLabel}`;
@@ -110,7 +118,7 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
       enableHiding: true,
       cell: ({ row }) => {
         const originalValue = row.original.circumference;
-        const value = userPreferredUnit === 'in' ? convertCmToIn(originalValue) : originalValue;
+        const value = userPreferredUnit === 'in' ? roundToNearestHalf(convertCmToIn(originalValue)) : roundToNearestHalf(originalValue);
         const unitLabel = userPreferredUnit ? userPreferredUnit : 'cm'; // Fallback to 'cm' if undefined
         console.log(`Final value for 'Circumference':`, value, unitLabel); // Adjusted log
         return `${value} ${unitLabel}`;
@@ -128,6 +136,27 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
         const unitLabel = userPreferredUnit === 'in' ? 'lbs' : 'kg';
         console.log(`Final value for 'OTT Weight':`, Math.round(convertedWeight), unitLabel); // Log for debugging
         return `${Math.round(convertedWeight)} ${unitLabel}`;
+      },
+    },
+    {
+      id: 'ott',
+      header: 'OTT',
+      enableHiding: true,
+      isVisible: false, // This column is hidden by default
+      cell: ({ row }) => {
+        const endToEnd = parseFloat(row.original.endToEnd);
+        const sideToSide = parseFloat(row.original.sideToSide);
+        const circumference = parseFloat(row.original.circumference);
+        const ott = endToEnd + sideToSide + circumference; // Calculate OTT
+        const value = userPreferredUnit === 'in' ? roundToNearestHalf(convertCmToIn(ott)) : roundToNearestHalf(ott);
+        const unitLabel = userPreferredUnit ? userPreferredUnit : 'cm'; // Fallback to 'cm' if undefined
+        const numericValue = Number(value); // Ensure it's a number
+        if (!isNaN(numericValue)) { // Check if it's not NaN
+          return `${numericValue} ${unitLabel}`;
+        } else {
+          console.error('Value is not a number:', value);
+          return `Invalid Value ${unitLabel}`;
+        }
       },
     },
     {
