@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useReactTable, getCoreRowModel, flexRender } from '@tanstack/react-table';
+import { useReactTable, getCoreRowModel, flexRender, VisibilityState } from '@tanstack/react-table';
 import { useRouter } from 'next/navigation';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../../../firebase';
@@ -9,13 +9,15 @@ import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../uti
 import { Card, CardHeader, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Table, TableHead, TableRow, TableHeader, TableCell, TableBody } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { DropdownMenuTrigger, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuContent, DropdownMenu } from "@/components/ui/dropdown-menu";
+import { DropdownMenuTrigger, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuContent, DropdownMenu, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
 import MoreHorizontalIcon from '../../../public/icons/MoreHorizontalIcon';
+import { Checkbox } from "@/components/ui/checkbox";
 
 const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
   const router = useRouter();
   const [isExpanded, setIsExpanded] = useState(false); // State to track accordion expansion
   const [isLoading, setIsLoading] = useState(true); // Add this line
+  const [columnVisibility, setColumnVisibility] = useState({});
 
   useEffect(() => {
     const loadData = async () => {
@@ -31,6 +33,7 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
     {
       accessorKey: 'timestamp',
       header: 'Date',
+      enableHiding: false,
     },
     {
       accessorFn: (row) => {
@@ -43,25 +46,30 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
         return dap;
       },
       header: 'DAP',
+      enableHiding: false,
     },
     {
       accessorKey: 'endToEnd',
       header: 'End to End',
+      enableHiding: true,
       cell: ({ row }) => `${row.original.endToEnd} ${row.original.measurementUnit}`,
     },
     {
       accessorKey: 'sideToSide',
       header: 'Side to Side',
+      enableHiding: true,
       cell: ({ row }) => `${row.original.sideToSide} ${row.original.measurementUnit}`,
     },
     {
       accessorKey: 'circumference',
       header: 'Circumference',
+      enableHiding: true,
       cell: ({ row }) => `${row.original.circumference} ${row.original.measurementUnit}`,
     },
     {
       accessorKey: 'estimatedWeight',
       header: 'OTT Weight',
+      enableHiding: false,
       cell: ({ row }) => {
         const weight = row.original.estimatedWeight;
         const measurementUnit = row.original.measurementUnit; // 'cm' or 'in'
@@ -74,6 +82,7 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
     {
       id: 'actions',
       header: 'Actions',
+      enableHiding: false,
       cell: ({ row }) => (
         <div className="flex justify-center">
           <DropdownMenu>
@@ -96,6 +105,10 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
     data: measurements,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    state: {
+      columnVisibility,
+    },
   });
 
   const deleteMeasurement = async (measurementId) => {
@@ -163,9 +176,31 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
           <CardHeader className="w-full md:w-auto">
             <CardTitle>Measurements</CardTitle>
           </CardHeader>
-          <div className="flex justify-center md:justify-end gap-4 w-full md:w-auto mt-4 mt-0 pb-4 md:pb-0">
-            <Button className="md:mr-2" variant="outline" onClick={() => router.push(`/add-measurement`)}>Add Measurement</Button>
-            <Button className="md:mr-6" variant="outline" onClick={exportData}>Export Data</Button>
+          <div className="flex justify-center md:justify-end gap-4 w-full md:w-auto pb-4 md:pb-0">
+            <Button variant="outline" onClick={() => router.push(`/add-measurement`)}>Add Measurement</Button>
+            
+            {/* Columns dropdown menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline"> 
+                  Columns
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table.getAllColumns().filter(column => column.getCanHide()).map(column => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    checked={column.getIsVisible()}
+                    onCheckedChange={() => column.toggleVisibility()}
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Hide the Export Data button on mobile using the `hidden sm:inline-block` classes */}
+            <Button className="md:mr-6 hidden sm:inline-block" variant="outline" onClick={exportData}>Export Data</Button>
           </div>
         </div>
         <CardContent>
