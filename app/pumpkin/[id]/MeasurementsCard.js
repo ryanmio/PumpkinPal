@@ -29,6 +29,20 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
     loadData();
   }, []);
 
+  useEffect(() => {
+    // Function to check if the device is mobile based on the width
+    const isMobile = window.innerWidth < 768; // Example breakpoint for mobile
+
+    if (isMobile) {
+      // Adjust visibility for hidable columns on mobile
+      setColumnVisibility({
+        endToEnd: false, // Assuming 'endToEnd' is hidable
+        sideToSide: false, // Assuming 'sideToSide' is hidable
+        circumference: false, // Assuming 'circumference' is hidable
+      });
+    }
+  }, []);
+
   const columns = [
     {
       accessorKey: 'timestamp',
