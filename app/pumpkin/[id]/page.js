@@ -15,6 +15,7 @@ const LazyImageCard = lazy(() => import('./ImageCard'));
 
 function PumpkinDetail() {
     const { user, loading } = useContext(UserContext);
+    const [userPreferredUnit, setUserPreferredUnit] = useState('cm'); // Default to 'cm'
     const router = useRouter();
     const { id } = useParams();
     const [pumpkin, setPumpkin] = useState(null);
@@ -25,6 +26,17 @@ function PumpkinDetail() {
         if (!user && !loading) {
             // Redirect to login if user is not logged in and not loading
             router.push('/login');
+        } else if (user) {
+            const fetchUserPreferredUnit = async () => {
+                const userRef = doc(db, 'Users', user.uid);
+                const userDoc = await getDoc(userRef);
+                if (userDoc.exists()) {
+                    const fetchedUnit = userDoc.data().preferredUnit || 'cm'; // Default to 'cm' if not set
+                    setUserPreferredUnit(fetchedUnit);
+                }
+            };
+
+            fetchUserPreferredUnit();
         }
     }, [user, loading, router]);
 
@@ -136,7 +148,7 @@ function PumpkinDetail() {
 
                 {/* Card 3: Measurements */}
                 <div className="md:col-span-2">
-                    <MeasurementsCard measurements={measurements} router={router} pumpkinId={id} pumpkin={pumpkin} pollinationDate={pumpkin?.pollinated} />
+                    <MeasurementsCard measurements={measurements} router={router} pumpkinId={id} pumpkin={pumpkin} pollinationDate={pumpkin?.pollinated} userPreferredUnit={userPreferredUnit} />
                 </div>
 
                 {/* Card 4: Graph */}

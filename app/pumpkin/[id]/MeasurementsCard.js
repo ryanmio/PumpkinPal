@@ -13,11 +13,15 @@ import { DropdownMenuTrigger, DropdownMenuItem, DropdownMenuSeparator, DropdownM
 import MoreHorizontalIcon from '../../../public/icons/MoreHorizontalIcon';
 import { Checkbox } from "@/components/ui/checkbox";
 
-const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
+const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPreferredUnit }) => {
   const router = useRouter();
   const [isExpanded, setIsExpanded] = useState(false); // State to track accordion expansion
   const [isLoading, setIsLoading] = useState(true); // Add this line
   const [columnVisibility, setColumnVisibility] = useState({});
+
+  useEffect(() => {
+    console.log("User's preferred unit:", userPreferredUnit); // Log 1
+  }, [userPreferredUnit]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -43,6 +47,20 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
     }
   }, []);
 
+  // Function to convert units from cm to in
+  const convertCmToIn = (cm) => {
+    const inches = (cm / 2.54).toFixed(2);
+    console.log(`Converting ${cm} cm to inches:`, inches); // Log 2
+    return inches;
+  };
+
+  // Function to convert weight from kg to lbs
+  const convertKgToLbs = (kg) => {
+    const pounds = (kg * 2.20462).toFixed(2);
+    console.log(`Converting ${kg} kg to pounds:`, pounds); // Log 3
+    return pounds;
+  };
+
   const columns = [
     {
       accessorKey: 'timestamp',
@@ -66,19 +84,37 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
       accessorKey: 'endToEnd',
       header: 'End to End',
       enableHiding: true,
-      cell: ({ row }) => `${row.original.endToEnd} ${row.original.measurementUnit}`,
+      cell: ({ row }) => {
+        const originalValue = row.original.endToEnd;
+        const value = userPreferredUnit === 'in' ? convertCmToIn(originalValue) : originalValue;
+        const unitLabel = userPreferredUnit ? userPreferredUnit : 'cm'; // Fallback to 'cm' if undefined
+        console.log(`Final value for 'End to End':`, value, unitLabel); // Adjusted log
+        return `${value} ${unitLabel}`;
+      },
     },
     {
       accessorKey: 'sideToSide',
       header: 'Side to Side',
       enableHiding: true,
-      cell: ({ row }) => `${row.original.sideToSide} ${row.original.measurementUnit}`,
+      cell: ({ row }) => {
+        const originalValue = row.original.sideToSide;
+        const value = userPreferredUnit === 'in' ? convertCmToIn(originalValue) : originalValue;
+        const unitLabel = userPreferredUnit ? userPreferredUnit : 'cm'; // Fallback to 'cm' if undefined
+        console.log(`Final value for 'Side to Side':`, value, unitLabel); // Adjusted log
+        return `${value} ${unitLabel}`;
+      },
     },
     {
       accessorKey: 'circumference',
       header: 'Circumference',
       enableHiding: true,
-      cell: ({ row }) => `${row.original.circumference} ${row.original.measurementUnit}`,
+      cell: ({ row }) => {
+        const originalValue = row.original.circumference;
+        const value = userPreferredUnit === 'in' ? convertCmToIn(originalValue) : originalValue;
+        const unitLabel = userPreferredUnit ? userPreferredUnit : 'cm'; // Fallback to 'cm' if undefined
+        console.log(`Final value for 'Circumference':`, value, unitLabel); // Adjusted log
+        return `${value} ${unitLabel}`;
+      },
     },
     {
       accessorKey: 'estimatedWeight',
@@ -88,8 +124,9 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate }) => {
         const weight = row.original.estimatedWeight;
         const measurementUnit = row.original.measurementUnit; // 'cm' or 'in'
         const isMetric = measurementUnit === 'cm';
-        const convertedWeight = isMetric ? weight * 0.453592 : weight; // Convert lbs to kg if metric
-        const unitLabel = isMetric ? 'kg' : 'lbs';
+        const convertedWeight = isMetric && userPreferredUnit === 'in' ? convertKgToLbs(weight) : weight;
+        const unitLabel = userPreferredUnit === 'in' ? 'lbs' : 'kg';
+        console.log(`Final value for 'OTT Weight':`, Math.round(convertedWeight), unitLabel); // Log for debugging
         return `${Math.round(convertedWeight)} ${unitLabel}`;
       },
     },
