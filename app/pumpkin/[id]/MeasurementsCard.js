@@ -73,12 +73,18 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
     }
 
     const prevMeasurement = measurements[index - 1];
-    const gain = measurement.estimatedWeight - prevMeasurement.estimatedWeight;
+    let gain = measurement.estimatedWeight - prevMeasurement.estimatedWeight;
+
+    // If displaying in a different unit, convert both weights before calculating the gain
+    if (userPreferredUnit === 'in') { // Assuming 'in' implies the user prefers lbs
+      gain = convertKgToLbs(gain); // Convert gain from kg to lbs if the original data is in kg
+    }
+
     const daysBetween = (new Date(measurement.timestamp).getTime() - new Date(prevMeasurement.timestamp).getTime()) / (1000 * 3600 * 24);
     const dailyGain = daysBetween ? gain / daysBetween : 0;
 
     return { ...measurement, gain, dailyGain };
-  }), [measurements]);
+  }), [measurements, userPreferredUnit]);
 
   const columns = useMemo(() => [
     {
