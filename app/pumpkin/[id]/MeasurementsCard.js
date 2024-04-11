@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useReactTable, getCoreRowModel, flexRender, VisibilityState } from '@tanstack/react-table';
 import { useRouter } from 'next/navigation';
 import { doc, deleteDoc } from 'firebase/firestore';
@@ -22,7 +22,6 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
   });
 
   useEffect(() => {
-    console.log("User's preferred unit:", userPreferredUnit); // Log 1
   }, [userPreferredUnit]);
 
   useEffect(() => {
@@ -53,15 +52,13 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
   // Function to convert units from cm to in
   const convertCmToIn = (cm) => {
     const inches = parseFloat((cm / 2.54).toFixed(2));
-    console.log(`Converting ${cm} cm to inches:`, inches); // Log 2
-    return inches;
+    return Math.round(inches * 2) / 2; // Now returns a number rounded to the nearest 0.5
   };
 
   // Function to convert weight from kg to lbs
   const convertKgToLbs = (kg) => {
     const pounds = parseFloat((kg * 2.20462).toFixed(2));
-    console.log(`Converting ${kg} kg to pounds:`, pounds); // Log 3
-    return pounds;
+    return Math.round(pounds * 2) / 2; // Now returns a number rounded to the nearest 0.5
   };
 
   // Function to round to the nearest half
@@ -69,7 +66,21 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
     return Math.round(value * 2) / 2;
   };
 
-  const columns = [
+  const processedMeasurements = useMemo(() => measurements.map((measurement, index) => {
+    if (index === 0) {
+      // No previous measurement to compare with for the first measurement
+      return { ...measurement, gain: 0, dailyGain: 0 };
+    }
+
+    const prevMeasurement = measurements[index - 1];
+    const gain = measurement.estimatedWeight - prevMeasurement.estimatedWeight;
+    const daysBetween = (new Date(measurement.timestamp).getTime() - new Date(prevMeasurement.timestamp).getTime()) / (1000 * 3600 * 24);
+    const dailyGain = daysBetween ? gain / daysBetween : 0;
+
+    return { ...measurement, gain, dailyGain };
+  }), [measurements]);
+
+  const columns = useMemo(() => [
     {
       accessorKey: 'timestamp',
       header: 'Date',
@@ -96,7 +107,6 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
         const originalValue = row.original.endToEnd;
         const value = userPreferredUnit === 'in' ? roundToNearestHalf(convertCmToIn(originalValue)) : roundToNearestHalf(originalValue);
         const unitLabel = userPreferredUnit ? userPreferredUnit : 'cm'; // Fallback to 'cm' if undefined
-        console.log(`Final value for 'End to End':`, value, unitLabel); // Adjusted log
         return `${value} ${unitLabel}`;
       },
     },
@@ -108,7 +118,6 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
         const originalValue = row.original.sideToSide;
         const value = userPreferredUnit === 'in' ? roundToNearestHalf(convertCmToIn(originalValue)) : roundToNearestHalf(originalValue);
         const unitLabel = userPreferredUnit ? userPreferredUnit : 'cm'; // Fallback to 'cm' if undefined
-        console.log(`Final value for 'Side to Side':`, value, unitLabel); // Adjusted log
         return `${value} ${unitLabel}`;
       },
     },
@@ -120,7 +129,6 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
         const originalValue = row.original.circumference;
         const value = userPreferredUnit === 'in' ? roundToNearestHalf(convertCmToIn(originalValue)) : roundToNearestHalf(originalValue);
         const unitLabel = userPreferredUnit ? userPreferredUnit : 'cm'; // Fallback to 'cm' if undefined
-        console.log(`Final value for 'Circumference':`, value, unitLabel); // Adjusted log
         return `${value} ${unitLabel}`;
       },
     },
@@ -134,7 +142,6 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
         const isMetric = measurementUnit === 'cm';
         const convertedWeight = isMetric && userPreferredUnit === 'in' ? convertKgToLbs(weight) : weight;
         const unitLabel = userPreferredUnit === 'in' ? 'lbs' : 'kg';
-        console.log(`Final value for 'OTT Weight':`, Math.round(convertedWeight), unitLabel); // Log for debugging
         return `${Math.round(convertedWeight)} ${unitLabel}`;
       },
     },
@@ -160,6 +167,23 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
       },
     },
     {
+      id: 'gain',
+      header: 'Gain',
+      cell: ({ row }) => {
+        const unitLabel = userPreferredUnit === 'in' ? 'lbs' : 'kg'; // Assuming the unit conversion for weight is already handled
+        return `${row.original.gain.toFixed(2)} ${unitLabel}`;
+      },
+    },
+    {
+      id: 'dailyGain',
+      header: 'Daily Gain',
+      cell: ({ row }) => {
+        const formattedDailyGain = row.original.dailyGain.toFixed(2);
+        const prefix = row.original.dailyGain >= 0 ? '+' : '';
+        return `${prefix}${formattedDailyGain}`;
+      },
+    },
+    {
       id: 'actions',
       header: 'Actions',
       enableHiding: false,
@@ -179,10 +203,10 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
         </div>
       ),
     },
-  ];
+  ], [pollinationDate, userPreferredUnit, measurements]);
 
   const table = useReactTable({
-    data: measurements,
+    data: processedMeasurements, // Use processed measurements here
     columns,
     getCoreRowModel: getCoreRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
