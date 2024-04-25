@@ -13,7 +13,7 @@ import { DropdownMenuTrigger, DropdownMenuItem, DropdownMenuSeparator, DropdownM
 import MoreHorizontalIcon from '../../../public/icons/MoreHorizontalIcon';
 import { Checkbox } from "@/components/ui/checkbox";
 
-const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPreferredUnit }) => {
+const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPreferredUnit, pumpkin }) => {
   const router = useRouter();
   const [isExpanded, setIsExpanded] = useState(false); // State to track accordion expansion
   const [isLoading, setIsLoading] = useState(true); // Add this line
@@ -256,7 +256,7 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
         a.href = url;
         // Format the current date as YYYY-MM-DD
         const date = new Date().toISOString().slice(0, 10);
-        a.download = `PumpkinPal_${pumpkin.name}_${date}.csv`;
+        a.download = `PumpkinPal_${pumpkin ? pumpkin.name : 'Unknown'}_${date}.csv`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
