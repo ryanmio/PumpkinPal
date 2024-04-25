@@ -7,60 +7,123 @@ const createDOMPurify = require('dompurify');
 
 admin.initializeApp();
 
+// Utility functions for unit conversion
+function convertKgToLbs(kg) {
+  return parseFloat((kg * 2.20462).toFixed(2));
+}
+
+function convertCmToIn(cm) {
+  return parseFloat((cm / 2.54).toFixed(2));
+}
+
 exports.exportData = functions.https.onRequest((req, res) => {
   cors(req, res, () => {
     // Check if the user is authenticated
     if (!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) {
+      console.error('No authorization token found');
       res.status(403).send('Unauthorized');
       return;
     }
 
     // Get the user ID from the token
     const idToken = req.headers.authorization.split('Bearer ')[1];
-
     admin.auth().verifyIdToken(idToken)
       .then((decodedIdToken) => {
         const uid = decodedIdToken.uid;
+        console.log(`User ID: ${uid} verified successfully`);
 
-        // Get the pumpkin ID from the request parameters
-        const pumpkinId = req.query.pumpkinId;
+        // Fetch the user's data
+        const userRef = admin.firestore().doc(`Users/${uid}`);
+        userRef.get().then((doc) => {
+          if (!doc.exists) {
+            console.error('No user data found for UID:', uid);
+            res.status(404).send('User data not found');
+            return;
+          }
 
-        // Fetch data from Firestore
-        const db = admin.firestore();
-        const collection = db.collection(`Users/${uid}/Pumpkins/${pumpkinId}/Measurements`);
+          console.log(`User data for UID: ${uid} fetched successfully`);
+          const userData = doc.data();
+          const userPreferredUnit = userData.preferredUnit || 'lbs'; // Default to lbs if not specified
+          console.log(`User preferred unit: ${userPreferredUnit}`);
 
-        collection.get()
-        .then((snapshot) => {
-            const data = snapshot.docs.map((doc) => {
-            const docData = doc.data();
-            // Convert the timestamp to a date string
-            const measurementDate = new Date(docData.timestamp.seconds * 1000);
-            const pollinationDate = new Date(docData.pollinated); // Adjusted this line
-            const dap = Math.floor((measurementDate - pollinationDate) / (1000 * 60 * 60 * 24));
-            docData.date = measurementDate.toLocaleDateString('en-US', { timeZone: req.query.timeZone });
-            docData.dap = dap;
-            return docData;
+          // Fetch the user's measurements
+          const pumpkinId = req.query.pumpkinId; // Use req.query instead of req.params
+          const measurementsRef = admin.firestore().collection(`Users/${uid}/Pumpkins/${pumpkinId}/Measurements`);
+          measurementsRef.get()
+            .then((snapshot) => {
+              if (snapshot.empty) {
+                console.log('No measurements found');
+                res.status(404).send('No measurements data found');
+                return;
+              }
+
+              let measurements = []; // Initialize the measurements array
+              snapshot.docs.forEach(doc => {
+                let data = doc.data();
+                console.log(`Processing measurement data: ${JSON.stringify(data)}`);
+
+                // Convert units if necessary
+                if (userPreferredUnit === 'in') {
+                  data.estimatedWeight = convertKgToLbs(data.estimatedWeight);
+                  data.endToEnd = convertCmToIn(data.endToEnd);
+                  data.sideToSide = convertCmToIn(data.sideToSide);
+                  data.circumference = convertCmToIn(data.circumference);
+                }
+
+                data.date = new Date(data.timestamp.seconds * 1000).toLocaleDateString('en-US', { timeZone: req.query.timeZone });
+                measurements.push(data);
+              });
+
+              console.log(`Total measurements processed: ${measurements.length}`);
+              if (measurements.length === 0) {
+                console.log('No measurements data after processing');
+                res.status(404).send('No measurements data found after processing');
+                return;
+              }
+
+              // Sort measurements by date
+              measurements.sort((a, b) => a.timestamp.seconds - b.timestamp.seconds);
+
+              // Calculate Gain and Daily Gain
+              const processedMeasurements = measurements.map((measurement, index, arr) => {
+                if (index === 0) {
+                  return { ...measurement, gain: 0, dailyGain: 0 };
+                }
+                const prevMeasurement = arr[index - 1];
+                const gain = measurement.estimatedWeight - prevMeasurement.estimatedWeight;
+                const daysBetween = (measurement.timestamp.seconds - prevMeasurement.timestamp.seconds) / (86400); // seconds in a day
+                const dailyGain = daysBetween ? (gain / daysBetween).toFixed(2) : 0;
+                return { ...measurement, gain: gain.toFixed(2), dailyGain: `+${dailyGain}` };
+              });
+
+              // Convert to CSV
+              const json2csv = new Parser({
+                fields: [
+                  'userId',
+                  'date',
+                  'dap',
+                  'endToEnd',
+                  'sideToSide',
+                  'circumference',
+                  'estimatedWeight',
+                  'measurementUnit',
+                  'gain',
+                  'dailyGain'
+                ],
+              });
+              const csv = json2csv.parse(processedMeasurements);
+              console.log('CSV generated successfully');
+
+              res.set('Content-Type', 'text/csv');
+              res.status(200).send(csv);
+            })
+            .catch((err) => {
+              console.error('Error fetching measurements:', err);
+              res.status(500).send('Failed to fetch measurements.');
             });
-
-            const json2csv = new Parser({
-            fields: [
-                'date',
-                'dap',
-                'estimatedWeight',
-                'circumference',
-                'endToEnd',
-                'sideToSide',
-                'measurementUnit',
-            ],
-            });
-            const csv = json2csv.parse(data);
-
-            res.set('Content-Type', 'text/csv');
-            res.status(200).send(csv);
-        })
-        .catch((err) => {
-            console.error(err);
-            res.status(500).send(err);
+        }).catch((error) => {
+          console.error('Error fetching user data:', error);
+          res.status(500).send('Failed to fetch user data.');
         });
       })
       .catch((error) => {

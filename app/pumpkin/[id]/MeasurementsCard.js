@@ -1,15 +1,225 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useReactTable, getCoreRowModel, flexRender, VisibilityState } from '@tanstack/react-table';
 import { useRouter } from 'next/navigation';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../../../firebase';
 import { toast, Toaster } from 'react-hot-toast';
 import { showDeleteConfirmation } from '../../../components/ui/Alert';
 import { trackError, trackUserEvent, GA_CATEGORIES, GA_ACTIONS } from '../../utilities/error-analytics';
-import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
+import { Card, CardHeader, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
+import { Table, TableHead, TableRow, TableHeader, TableCell, TableBody } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { DropdownMenuTrigger, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuContent, DropdownMenu, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
+import MoreHorizontalIcon from '../../../public/icons/MoreHorizontalIcon';
+import { Checkbox } from "@/components/ui/checkbox";
 
-const MeasurementsCard = ({ measurements, pumpkin, pumpkinId, pollinationDate }) => {
-  const router = useRouter(); 
-  const [isExpanded, setIsExpanded] = useState(false);
+const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPreferredUnit, pumpkin }) => {
+  const router = useRouter();
+  const [isExpanded, setIsExpanded] = useState(false); // State to track accordion expansion
+  const [isLoading, setIsLoading] = useState(true); // Add this line
+  const [columnVisibility, setColumnVisibility] = useState({
+    ott: false, // OTT column hidden by default
+  });
+
+  useEffect(() => {
+  }, [userPreferredUnit]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      // Simulate fetching data
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Remove or replace with actual data fetching
+      setIsLoading(false);
+    };
+
+    loadData();
+  }, []);
+
+  useEffect(() => {
+    // Function to check if the device is mobile based on the width
+    const isMobile = window.innerWidth < 768; // Example breakpoint for mobile
+
+    if (isMobile) {
+      // Adjust visibility for hidable columns on mobile
+      setColumnVisibility({
+        endToEnd: false, // Assuming 'endToEnd' is hidable
+        sideToSide: false, // Assuming 'sideToSide' is hidable
+        circumference: false, // Assuming 'circumference' is hidable
+        ott: false, // OTT column hidden by default
+      });
+    }
+  }, []);
+
+  // Function to convert units from cm to in
+  const convertCmToIn = (cm) => {
+    const inches = parseFloat((cm / 2.54).toFixed(2));
+    return Math.round(inches * 2) / 2; // Now returns a number rounded to the nearest 0.5
+  };
+
+  // Function to convert weight from kg to lbs
+  const convertKgToLbs = (kg) => {
+    const pounds = parseFloat((kg * 2.20462).toFixed(2));
+    return Math.round(pounds * 2) / 2; // Now returns a number rounded to the nearest 0.5
+  };
+
+  // Function to round to the nearest half
+  const roundToNearestHalf = (value) => {
+    return Math.round(value * 2) / 2;
+  };
+
+  const processedMeasurements = useMemo(() => measurements.map((measurement, index) => {
+    if (index === 0) {
+      // No previous measurement to compare with for the first measurement
+      return { ...measurement, gain: 0, dailyGain: 0 };
+    }
+
+    const prevMeasurement = measurements[index - 1];
+    let gain = measurement.estimatedWeight - prevMeasurement.estimatedWeight;
+
+    // If displaying in a different unit, convert both weights before calculating the gain
+    if (userPreferredUnit === 'in') { // Assuming 'in' implies the user prefers lbs
+      gain = convertKgToLbs(gain); // Convert gain from kg to lbs if the original data is in kg
+    }
+
+    const daysBetween = (new Date(measurement.timestamp).getTime() - new Date(prevMeasurement.timestamp).getTime()) / (1000 * 3600 * 24);
+    const dailyGain = daysBetween ? gain / daysBetween : 0;
+
+    return { ...measurement, gain, dailyGain };
+  }), [measurements, userPreferredUnit]);
+
+  const columns = useMemo(() => [
+    {
+      accessorKey: 'timestamp',
+      header: 'Date',
+      enableHiding: false,
+    },
+    {
+      accessorFn: (row) => {
+        if (!pollinationDate || pollinationDate === "Not Set") {
+          return '-';
+        }
+        const pollinationDateObj = new Date(pollinationDate);
+        const measurementDate = new Date(row.timestamp);
+        const dap = Math.round((measurementDate - pollinationDateObj) / (1000 * 60 * 60 * 24));
+        return dap;
+      },
+      header: 'DAP',
+      enableHiding: false,
+    },
+    {
+      accessorKey: 'endToEnd',
+      header: 'End to End',
+      enableHiding: true,
+      cell: ({ row }) => {
+        const originalValue = row.original.endToEnd;
+        const value = userPreferredUnit === 'in' ? roundToNearestHalf(convertCmToIn(originalValue)) : roundToNearestHalf(originalValue);
+        const unitLabel = userPreferredUnit ? userPreferredUnit : 'cm'; // Fallback to 'cm' if undefined
+        return `${value} ${unitLabel}`;
+      },
+    },
+    {
+      accessorKey: 'sideToSide',
+      header: 'Side to Side',
+      enableHiding: true,
+      cell: ({ row }) => {
+        const originalValue = row.original.sideToSide;
+        const value = userPreferredUnit === 'in' ? roundToNearestHalf(convertCmToIn(originalValue)) : roundToNearestHalf(originalValue);
+        const unitLabel = userPreferredUnit ? userPreferredUnit : 'cm'; // Fallback to 'cm' if undefined
+        return `${value} ${unitLabel}`;
+      },
+    },
+    {
+      accessorKey: 'circumference',
+      header: 'Circumference',
+      enableHiding: true,
+      cell: ({ row }) => {
+        const originalValue = row.original.circumference;
+        const value = userPreferredUnit === 'in' ? roundToNearestHalf(convertCmToIn(originalValue)) : roundToNearestHalf(originalValue);
+        const unitLabel = userPreferredUnit ? userPreferredUnit : 'cm'; // Fallback to 'cm' if undefined
+        return `${value} ${unitLabel}`;
+      },
+    },
+    {
+      accessorKey: 'estimatedWeight',
+      header: 'OTT Weight',
+      enableHiding: false,
+      cell: ({ row }) => {
+        const weight = row.original.estimatedWeight;
+        const measurementUnit = row.original.measurementUnit; // 'cm' or 'in'
+        const isMetric = measurementUnit === 'cm';
+        const convertedWeight = isMetric && userPreferredUnit === 'in' ? convertKgToLbs(weight) : weight;
+        const unitLabel = userPreferredUnit === 'in' ? 'lbs' : 'kg';
+        return `${Math.round(convertedWeight)} ${unitLabel}`;
+      },
+    },
+    {
+      id: 'ott',
+      header: 'OTT',
+      enableHiding: true,
+      isVisible: false, // This column is hidden by default
+      cell: ({ row }) => {
+        const endToEnd = parseFloat(row.original.endToEnd);
+        const sideToSide = parseFloat(row.original.sideToSide);
+        const circumference = parseFloat(row.original.circumference);
+        const ott = endToEnd + sideToSide + circumference; // Calculate OTT
+        const value = userPreferredUnit === 'in' ? roundToNearestHalf(convertCmToIn(ott)) : roundToNearestHalf(ott);
+        const unitLabel = userPreferredUnit ? userPreferredUnit : 'cm'; // Fallback to 'cm' if undefined
+        const numericValue = Number(value); // Ensure it's a number
+        if (!isNaN(numericValue)) { // Check if it's not NaN
+          return `${numericValue} ${unitLabel}`;
+        } else {
+          console.error('Value is not a number:', value);
+          return `Invalid Value ${unitLabel}`;
+        }
+      },
+    },
+    {
+      id: 'gain',
+      header: 'Gain',
+      cell: ({ row }) => {
+        const unitLabel = userPreferredUnit === 'in' ? 'lbs' : 'kg'; // Assuming the unit conversion for weight is already handled
+        return `${row.original.gain.toFixed(2)} ${unitLabel}`;
+      },
+    },
+    {
+      id: 'dailyGain',
+      header: 'Daily Gain',
+      cell: ({ row }) => {
+        const formattedDailyGain = row.original.dailyGain.toFixed(2);
+        const prefix = row.original.dailyGain >= 0 ? '+' : '';
+        return `${prefix}${formattedDailyGain}`;
+      },
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      enableHiding: false,
+      cell: ({ row }) => (
+        <div className="flex justify-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="rounded-full p-1 w-6 h-6" size="icon" variant="ghost">
+                <MoreHorizontalIcon className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onSelect={() => router.push(`/pumpkin/${pumpkinId}/edit-measurement/${row.original.id}`)}>Edit</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => deleteMeasurement(row.original.id)}>Delete</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      ),
+    },
+  ], [pollinationDate, userPreferredUnit, measurements]);
+
+  const table = useReactTable({
+    data: processedMeasurements, // Use processed measurements here
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    state: {
+      columnVisibility,
+    },
+  });
 
   const deleteMeasurement = async (measurementId) => {
     showDeleteConfirmation('Are you sure you want to delete this measurement?', "You won't be able to undo this.", async () => {
@@ -46,7 +256,7 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId, pollinationDate })
         a.href = url;
         // Format the current date as YYYY-MM-DD
         const date = new Date().toISOString().slice(0, 10);
-        a.download = `PumpkinPal_${pumpkin.name}_${date}.csv`;
+        a.download = `PumpkinPal_${pumpkin ? pumpkin.name : 'Unknown'}_${date}.csv`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -61,80 +271,98 @@ const MeasurementsCard = ({ measurements, pumpkin, pumpkinId, pollinationDate })
       });
   };
 
+  // Function to toggle the accordion state
+  const toggleAccordion = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  // Determine the measurements to display
+  const displayedMeasurements = isExpanded ? measurements : measurements.slice(-5);
+
   return (
-    <div className="bg-white shadow rounded-lg p-4 md:col-span-2 flex flex-col overflow-x-auto">
-      <Toaster />
-      <h3 className="text-xl font-bold mb-2">Measurements</h3>
-      <div className="flex space-x-4 justify-center">
-        <button onClick={() => router.push(`/add-measurement`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Add Measurement</button>
-        <button onClick={exportData} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Export Data</button>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full mt-4">
-          <thead>
-            <tr>
-              <th className="whitespace-nowrap min-w-max w-[100px] table-cell">Date</th>
-              <th className="table-cell">DAP</th>
-              <th className="table-cell">End to End</th>
-              <th className="table-cell">Side to Side</th>
-              <th className="table-cell">Circ.</th>
-              <th className="table-cell">Units</th>
-              <th className="table-cell">OTT Weight</th>
-              <th>Edit</th>
-              <th>Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-          {measurements?.slice(0, isExpanded ? measurements.length : 6)?.map((measurement) => {
-          const measurementDate = new Date(measurement.timestamp);
-          const pollinationDateObj = pollinationDate && pollinationDate !== "Not Set" ? new Date(pollinationDate) : null; // Check if pollinationDate is set and not "Not Set"
-          const dap = pollinationDateObj ? Math.round((measurementDate - pollinationDateObj) / (1000 * 60 * 60 * 24)) : '-'; // If pollinationDate is not set or "Not Set", dap is '-'
-          
-          /* // Debugging
-          console.log("pollinationDate: ", pollinationDate);
-          console.log("pollinationDateObj: ", pollinationDateObj);
-          console.log("dap: ", dap); */
-          
-          return (
-              <tr key={measurement.id}>
-                <td className="whitespace-nowrap table-cell">{measurement.timestamp}</td>
-                <td className="table-cell">{dap}</td>
-                <td className="table-cell">{measurement.endToEnd}</td>
-                <td className="table-cell">{measurement.sideToSide}</td>
-                <td className="table-cell">{measurement.circumference}</td>
-                <td className="table-cell">{measurement.measurementUnit}</td>
-                <td className="table-cell">{measurement.estimatedWeight}</td>
-                <td><button onClick={() => router.push(`/edit-measurement/${pumpkinId}/${measurement.id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Edit</button></td>
-                <td><button onClick={() => deleteMeasurement(measurement.id)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Delete</button></td>
-              </tr>
-            );
-        })}
-          </tbody>
-        </table>
-        </div>
-        {measurements?.length > 6 && (
-          <div className="mt-4">
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className={`green-button inline-flex items-center justify-center px-4 py-1 text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 ${
-                isExpanded ? 'mb-4' : ''
-              }`}
-            >
-              {isExpanded ? (
-                <>
-                  <BsChevronUp className="w-4 h-4 mr-1" />
-                  Show Less
-                </>
-              ) : (
-                <>
-                  <BsChevronDown className="w-4 h-4 mr-1" />
-                  Show More
-                </>
-              )}
-            </button>
+    <div className="md:col-span-2">
+      <Card className={`w-full ${isLoading ? 'min-h-[20rem]' : 'min-h-[10rem]'}`}>
+        <div className="flex flex-col md:flex-row justify-between items-center pb-0">
+          <CardHeader className="w-full md:w-auto">
+            <CardTitle>Measurements</CardTitle>
+          </CardHeader>
+          <div className="flex justify-center md:justify-end gap-4 w-full md:w-auto pb-4 md:pb-0">
+            <Button variant="outline" onClick={() => router.push(`/add-measurement`)}>Add Measurement</Button>
+            
+            {/* Columns dropdown menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline"> 
+                  Columns
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table.getAllColumns().filter(column => column.getCanHide()).map(column => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    checked={column.getIsVisible()}
+                    onCheckedChange={() => column.toggleVisibility()}
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Hide the Export Data button on mobile using the `hidden sm:inline-block` classes */}
+            <Button className="md:mr-6 hidden sm:inline-block" variant="outline" onClick={exportData}>Export Data</Button>
           </div>
-        )}
-      </div>
+        </div>
+        <CardContent>
+          {isLoading ? (
+            <div className="flex justify-center items-center min-h-[10rem]">Loading...</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Toaster />
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  {table.getHeaderGroups().map(headerGroup => (
+                    <tr key={headerGroup.id}>
+                      {headerGroup.headers.map(header => (
+                        <th
+                          key={header.id}
+                          scope="col"
+                          className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase text-center"
+                        >
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(header.column.columnDef.header, header.getContext())}
+                        </th>
+                      ))}
+                    </tr>
+                  ))}
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {displayedMeasurements.map((measurement, index) => (
+                    <tr key={measurement.id}>
+                      {table.getRowModel().rows.find(row => row.original.id === measurement.id).getVisibleCells().map(cell => (
+                        <td
+                          key={cell.id}
+                          className="px-6 py-4 whitespace-nowrap text-center"
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+          {/* Button to toggle the accordion */}
+          <div className="flex justify-center mt-4">
+            <Button onClick={toggleAccordion}>
+              {isExpanded ? 'Show Less' : 'Show More'}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
