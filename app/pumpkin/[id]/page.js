@@ -10,6 +10,8 @@ import { toast } from 'react-hot-toast';
 import Spinner from '../../../components/ui/Spinner';
 import Link from 'next/link';
 import { UserContext } from '../../../contexts/UserContext'; // Adjust the path as necessary
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const LazyImageCard = lazy(() => import('./ImageCard'));
 
@@ -123,28 +125,60 @@ function PumpkinDetail() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow">
 
                 {/* Card 1: Basic Info */}
-                <div className="bg-white shadow rounded-lg p-4 flex flex-col">
-                    <div className="mb-auto">
-                        <h3 className="text-xl font-bold mb-2">Basic Info</h3>
-                        <p><b>Name:</b> {pumpkin?.name}</p>
-                        <p className="description-text"><b>Description:</b> {pumpkin?.description}</p>
-                        <p><b>Seed:</b> {pumpkin?.maternalLineage || 'Not Set'}</p>
-                        <p><b>Cross:</b> {pumpkin?.paternalLineage || 'Not Set'}</p>
-                    </div>
-                    <button onClick={() => router.push(`/edit-pumpkin/${id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 self-end">Edit Info</button>
-                </div>
+                <Card className="w-full">
+                    <CardHeader>
+                        <CardTitle>Basic Info</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-2 text-left">
+                            <p>
+                                <strong>Name:</strong> {pumpkin?.name}
+                            </p>
+                            <p>
+                                <strong>Description:</strong> {pumpkin?.description}
+                            </p>
+                            <p>
+                                <strong>Seed:</strong> {pumpkin?.maternalLineage || 'Not Set'}
+                            </p>
+                            <p>
+                                <strong>Cross:</strong> {pumpkin?.paternalLineage || 'Not Set'}
+                            </p>
+                        </div>
+                    </CardContent>
+                    <CardFooter>
+                        <Button variant="outline" onClick={() => router.push(`/edit-pumpkin/${id}`)}>
+                            Edit Info
+                        </Button>
+                    </CardFooter>
+                </Card>
 
                 {/* Card 2: Key Dates */}
-                <div className="bg-white shadow rounded-lg p-4 flex flex-col">
-                    <div className="mb-auto">
-                        <h3 className="text-xl font-bold mb-2">Key Dates</h3>
-                        <p><b>Seed Started:</b> {pumpkin?.seedStarted}</p>
-                        <p><b>Transplant Out:</b> {pumpkin?.transplantOut}</p>
-                        <p><b>Pollinated:</b> {pumpkin?.pollinated}</p>
-                        <p><b>Weigh-off:</b> {pumpkin?.weighOff}</p>
-                    </div>
-                    <button onClick={() => router.push(`/edit-pumpkin/${id}`)} className="green-button inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 self-end">Edit Dates</button>
-                </div>
+                <Card className="w-full">
+                    <CardHeader>
+                        <CardTitle>Key Dates</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-2 text-left">
+                            <p>
+                                <strong>Seed Started:</strong> {pumpkin?.seedStarted}
+                            </p>
+                            <p>
+                                <strong>Transplant Out:</strong> {pumpkin?.transplantOut}
+                            </p>
+                            <p>
+                                <strong>Pollinated:</strong> {pumpkin?.pollinated}
+                            </p>
+                            <p>
+                                <strong>Weigh-off:</strong> {pumpkin?.weighOff}
+                            </p>
+                        </div>
+                    </CardContent>
+                    <CardFooter>
+                        <Button variant="outline" onClick={() => router.push(`/edit-pumpkin/${id}`)}>
+                            Edit Dates
+                        </Button>
+                    </CardFooter>
+                </Card>
 
                 {/* Card 3: Measurements */}
                 <div className="md:col-span-2">
