@@ -8,10 +8,17 @@ import MeasurementsCard from './MeasurementsCard';
 import GraphCard from './GraphCard';
 import { toast } from 'react-hot-toast';
 import Spinner from '../../../components/ui/Spinner';
-import Link from 'next/link';
 import { UserContext } from '../../../contexts/UserContext'; // Adjust the path as necessary
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 const LazyImageCard = lazy(() => import('./ImageCard'));
 
@@ -114,12 +121,17 @@ function PumpkinDetail() {
     return (
         <div className="container mx-auto px-4 pt-10 flex flex-col">
             <div className="mb-2 text-sm text-left">
-                <Link href="/dashboard" className="text-gray-700 hover:text-gray-900 transition duration-150 ease-in-out text-decoration-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-flex" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                    Dashboard
-                </Link>
+                <Breadcrumb>
+                    <BreadcrumbList>
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                            <BreadcrumbPage>Pumpkin Details</BreadcrumbPage>
+                        </BreadcrumbItem>
+                    </BreadcrumbList>
+                </Breadcrumb>
             </div>
             <h2 className="text-2xl font-bold mb-4 text-center">{pumpkin?.name} Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow">
@@ -131,18 +143,10 @@ function PumpkinDetail() {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-2 text-left">
-                            <p>
-                                <strong>Name:</strong> {pumpkin?.name}
-                            </p>
-                            <p>
-                                <strong>Description:</strong> {pumpkin?.description}
-                            </p>
-                            <p>
-                                <strong>Seed:</strong> {pumpkin?.maternalLineage || 'Not Set'}
-                            </p>
-                            <p>
-                                <strong>Cross:</strong> {pumpkin?.paternalLineage || 'Not Set'}
-                            </p>
+                            <p><strong>Name:</strong> {pumpkin?.name}</p>
+                            <p><strong>Description:</strong> {pumpkin?.description}</p>
+                            <p><strong>Seed:</strong> {pumpkin?.maternalLineage || 'Not Set'}</p>
+                            <p><strong>Cross:</strong> {pumpkin?.paternalLineage || 'Not Set'}</p>
                         </div>
                     </CardContent>
                     <CardFooter>
@@ -159,18 +163,10 @@ function PumpkinDetail() {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-2 text-left">
-                            <p>
-                                <strong>Seed Started:</strong> {pumpkin?.seedStarted}
-                            </p>
-                            <p>
-                                <strong>Transplant Out:</strong> {pumpkin?.transplantOut}
-                            </p>
-                            <p>
-                                <strong>Pollinated:</strong> {pumpkin?.pollinated}
-                            </p>
-                            <p>
-                                <strong>Weigh-off:</strong> {pumpkin?.weighOff}
-                            </p>
+                            <p><strong>Seed Started:</strong> {pumpkin?.seedStarted}</p>
+                            <p><strong>Transplant Out:</strong> {pumpkin?.transplantOut}</p>
+                            <p><strong>Pollinated:</strong> {pumpkin?.pollinated}</p>
+                            <p><strong>Weigh-off:</strong> {pumpkin?.weighOff}</p>
                         </div>
                     </CardContent>
                     <CardFooter>
