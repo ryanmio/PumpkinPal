@@ -28,3 +28,5 @@ TO DO:
 - [ ] Add protected route strategy
 - [ ] Update readme - especially noting the chagne to nextjs
 - [ ] Fix date validation for edit pumpkin form 
+- [ ] Incentive programs
+- [ ] Bug Reporting component
