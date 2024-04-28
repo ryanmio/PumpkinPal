@@ -143,18 +143,10 @@ function PumpkinDetail() {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-2 text-left">
-                            <p>
-                                <strong>Name:</strong> {pumpkin?.name}
-                            </p>
-                            <p>
-                                <strong>Description:</strong> {pumpkin?.description}
-                            </p>
-                            <p>
-                                <strong>Seed:</strong> {pumpkin?.maternalLineage || 'Not Set'}
-                            </p>
-                            <p>
-                                <strong>Cross:</strong> {pumpkin?.paternalLineage || 'Not Set'}
-                            </p>
+                            <p><strong>Name:</strong> {pumpkin?.name}</p>
+                            <p><strong>Description:</strong> {pumpkin?.description}</p>
+                            <p><strong>Seed:</strong> {pumpkin?.maternalLineage || 'Not Set'}</p>
+                            <p><strong>Cross:</strong> {pumpkin?.paternalLineage || 'Not Set'}</p>
                         </div>
                     </CardContent>
                     <CardFooter>
@@ -171,18 +163,10 @@ function PumpkinDetail() {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-2 text-left">
-                            <p>
-                                <strong>Seed Started:</strong> {pumpkin?.seedStarted}
-                            </p>
-                            <p>
-                                <strong>Transplant Out:</strong> {pumpkin?.transplantOut}
-                            </p>
-                            <p>
-                                <strong>Pollinated:</strong> {pumpkin?.pollinated}
-                            </p>
-                            <p>
-                                <strong>Weigh-off:</strong> {pumpkin?.weighOff}
-                            </p>
+                            <p><strong>Seed Started:</strong> {pumpkin?.seedStarted}</p>
+                            <p><strong>Transplant Out:</strong> {pumpkin?.transplantOut}</p>
+                            <p><strong>Pollinated:</strong> {pumpkin?.pollinated}</p>
+                            <p><strong>Weigh-off:</strong> {pumpkin?.weighOff}</p>
                         </div>
                     </CardContent>
                     <CardFooter>
