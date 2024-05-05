@@ -202,7 +202,7 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onSelect={() => router.push(`/pumpkin/${pumpkinId}/edit-measurement/${row.original.id}`)}>Edit</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => router.push(`/edit-measurement/${pumpkinId}/${row.original.id}`)}>Edit</DropdownMenuItem>
               <DropdownMenuItem onSelect={() => deleteMeasurement(row.original.id)}>Delete</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
