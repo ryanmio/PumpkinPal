@@ -20,84 +20,74 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { HiDotsVertical } from "react-icons/hi";
 
 function Dashboard() {
-    const { user: currentUser, loading: userLoading } = useContext(UserContext);
-    const [pumpkins, setPumpkins] = useState([]);
-    const [pumpkinsLoading, setPumpkinsLoading] = useState(true);
-    const [selectedSeason, setSelectedSeason] = useState('');
-    const [seasons, setSeasons] = useState([]);
-    const router = useRouter();
-    const [showComparePopover, setShowComparePopover] = useState(false);
-    
-    useEffect(() => {
-      if (!currentUser && !userLoading) {
-        // If the user is not logged in and not loading, redirect to the login page immediately
-        router.push('/login');
-      }
-    }, [currentUser, userLoading, router]);
-    
-    useEffect(() => {
-      if (currentUser) {
-        const fetchSeasonsAndPreferences = async () => {
-          const q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
-          const userDoc = doc(db, 'Users', currentUser.uid);
-    
-          const [snapshot, userSnapshot] = await Promise.all([getDocs(q), getDoc(userDoc)]); // Use getDoc for userSnapshot
-    
-          const seasons = [...new Set(snapshot.docs.map(doc => doc.data().season))];
-          setSeasons(seasons);
-    
-          const userData = userSnapshot.data();
-          setSelectedSeason(userData.selectedSeason || '');
-        };
-        fetchSeasonsAndPreferences();
-      }
-    }, [currentUser]);
-    
-      const handleSeasonChange = async (e) => {
-        setSelectedSeason(e.target.value);
-        if (currentUser) {
-          const userDoc = doc(db, 'Users', currentUser.uid);
-          await setDoc(userDoc, { selectedSeason: e.target.value }, { merge: true });
-        }
+  const { user: currentUser, loading: userLoading } = useContext(UserContext);
+  const [pumpkins, setPumpkins] = useState([]);
+  const [pumpkinsLoading, setPumpkinsLoading] = useState(true);
+  const [selectedSeason, setSelectedSeason] = useState(null);
+  const [seasons, setSeasons] = useState([]);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!currentUser && !userLoading) {
+      router.push('/login');
+    } else if (currentUser) {
+      const fetchInitialData = async () => {
+        const userDoc = doc(db, 'Users', currentUser.uid);
+        const userSnapshot = await getDoc(userDoc);
+        const userData = userSnapshot.data();
+        const initialSeason = userData.selectedSeason || null;
+        setSelectedSeason(initialSeason);
+
+        const q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
+        const snapshot = await getDocs(q);
+        const seasons = [...new Set(snapshot.docs.map(doc => doc.data().season))];
+        setSeasons(seasons);
+
+        fetchData(initialSeason);
       };
+      fetchInitialData();
+    }
+  }, [currentUser, userLoading]);
+
+  const fetchData = async (season) => {
+    console.log(`Fetching data for season: ${season}`);
+    try {
+      let q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
+      if (season !== null) {
+        q = query(q, where('season', '==', season));
+      }
+      const snapshot = await getDocs(q);
+      let pumpkinsData = [];
+      for (let pumpkinDoc of snapshot.docs) {
+        let pumpkinData = pumpkinDoc.data();
+        const measurementsCollection = collection(db, 'Users', currentUser.uid, 'Pumpkins', pumpkinDoc.id, 'Measurements');
+        const measurementsQuery = query(measurementsCollection, orderBy('timestamp', 'desc'), limit(1));
+        const measurementSnapshot = await getDocs(measurementsQuery);
+        const latestMeasurement = measurementSnapshot.docs[0]?.data() || null;
+        pumpkinData.latestMeasurement = latestMeasurement;
+        pumpkinsData.push({ ...pumpkinData, id: pumpkinDoc.id });
+      }
+      setPumpkins(pumpkinsData);
+      setPumpkinsLoading(false);
+    } catch (error) {
+      toast.error("Error fetching pumpkins");
+      console.error("Error fetching pumpkins: ", error);
+      trackError(error, 'Fetching Pumpkins', GA_CATEGORIES.SYSTEM, GA_ACTIONS.ERROR);
+    }
+  };
+
+  const handleSeasonChange = async (e) => {
+    const value = e.target.value;
+    const newSeason = value === "" ? null : Number(value);
+    setSelectedSeason(newSeason);
+    if (currentUser) {
+      const userDoc = doc(db, 'Users', currentUser.uid);
+      await setDoc(userDoc, { selectedSeason: newSeason }, { merge: true });
+      fetchData(newSeason);
+    }
+  };
     
-      useEffect(() => {
-        if (currentUser && selectedSeason !== '') {
-          const fetchData = async () => {
-            try {
-              let q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
-              if (selectedSeason) {
-                q = query(q, where('season', '==', Number(selectedSeason)));
-              }
-              const snapshot = await getDocs(q);
-              let pumpkinsData = [];
-    
-              for (let pumpkinDoc of snapshot.docs) {
-                let pumpkinData = pumpkinDoc.data();
-    
-                const measurementsCollection = collection(db, 'Users', currentUser.uid, 'Pumpkins', pumpkinDoc.id, 'Measurements');
-                const measurementsQuery = query(measurementsCollection, orderBy('timestamp', 'desc'), limit(1));
-                const measurementSnapshot = await getDocs(measurementsQuery);
-    
-                const latestMeasurement = measurementSnapshot.docs[0]?.data() || null;
-    
-                pumpkinData.latestMeasurement = latestMeasurement;
-                pumpkinsData.push({ ...pumpkinData, id: pumpkinDoc.id });
-              }
-    
-              setPumpkins(pumpkinsData);
-              setPumpkinsLoading(false);
-            } catch (error) {
-              toast.error("Error fetching pumpkins");
-              console.error("Error fetching pumpkins: ", error);
-              trackError(error, 'Fetching Pumpkins', GA_CATEGORIES.SYSTEM, GA_ACTIONS.ERROR);
-            }
-          };
-          fetchData();
-        }
-      }, [currentUser, selectedSeason]);
-      
-    // Function to handle date selection
+  // Function to handle date selection
   const handleDateSelect = async (pumpkinId, date) => {
     try {
       const formattedDate = format(date, 'yyyy-MM-dd'); // Using date-fns to format the date
@@ -137,7 +127,7 @@ function Dashboard() {
   }
 
   
-    async function deletePumpkin(id) {
+  async function deletePumpkin(id) {
     showDeleteConfirmation('Are you sure you want to delete this pumpkin?', "You won't be able to undo this.", async () => {
       try {
         if (currentUser && currentUser.uid && id) {
@@ -181,16 +171,16 @@ function Dashboard() {
         <p className="text-sm text-gray-600">Logged in as {currentUser?.email}</p>
       </div>
       <div className="flex flex-row justify-between items-center gap-4 mb-6">
-        <select 
-            value={selectedSeason} 
-            onChange={handleSeasonChange}
-            className="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          >
-            <option value="" >All Years</option>
-            {seasons.map(season => (
-              <option key={season} value={season} >{season}</option>
-            ))}
-          </select>
+        <select
+          value={selectedSeason !== null ? selectedSeason : ""}
+          onChange={handleSeasonChange}
+          className="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        >
+          <option value="">All Seasons</option>
+          {seasons.map(season => (
+            <option key={season} value={season}>{season}</option>
+          ))}
+        </select>
         <div className="ml-auto flex items-center space-x-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -336,5 +326,4 @@ function Dashboard() {
   }
   
   export default Dashboard;  
-
 
