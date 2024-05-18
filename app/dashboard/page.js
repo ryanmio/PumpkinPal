@@ -62,7 +62,7 @@ function Dashboard() {
       };
     
       useEffect(() => {
-        if (currentUser) {
+        if (currentUser && selectedSeason !== '') {
           const fetchData = async () => {
             try {
               let q = collection(db, 'Users', currentUser.uid, 'Pumpkins');
