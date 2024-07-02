@@ -55,10 +55,20 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
     return Math.round(inches * 2) / 2; // Now returns a number rounded to the nearest 0.5
   };
 
+  // Function to convert units fro// Function to convert units from in to cm
+const convertInToCm = (inches) => {
+  return parseFloat((inches * 2.54).toFixed(2));
+};
+
   // Function to convert weight from kg to lbs
   const convertKgToLbs = (kg) => {
     const pounds = parseFloat((kg * 2.20462).toFixed(2));
     return Math.round(pounds * 2) / 2; // Now returns a number rounded to the nearest 0.5
+  };
+
+  // Function to convert weight from lbs to kg
+  const convertLbsToKg = (lbs) => {
+    return lbs * 0.45359237;
   };
 
   // Function to round to the nearest half
@@ -66,25 +76,81 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
     return Math.round(value * 2) / 2;
   };
 
-  const processedMeasurements = useMemo(() => measurements.map((measurement, index) => {
-    if (index === 0) {
-      // No previous measurement to compare with for the first measurement
-      return { ...measurement, gain: 0, dailyGain: 0 };
+  // Function to calculate estimated weight
+  const calculateEstimatedWeight = (endToEnd, sideToSide, circumference, measurementUnit) => {
+    let ott = parseFloat(endToEnd) + parseFloat(sideToSide) + parseFloat(circumference);
+    if (measurementUnit === 'cm') {
+      ott /= 2.54;  // Convert cm to inches for the calculation
     }
-
-    const prevMeasurement = measurements[index - 1];
-    let gain = measurement.estimatedWeight - prevMeasurement.estimatedWeight;
-
-    // If displaying in a different unit, convert both weights before calculating the gain
-    if (userPreferredUnit === 'in') { // Assuming 'in' implies the user prefers lbs
-      gain = convertKgToLbs(gain); // Convert gain from kg to lbs if the original data is in kg
+    let weight = (((14.2 / (1 + 7.3 * Math.pow(2, -(ott) / 96))) ** 3 + (ott / 51) ** 2.91) - 8) * 0.993;
+  
+    // If weight is less than 0, set it to 0
+    if (weight < 0) {
+      weight = 0;
     }
+  
+    return weight;  // Return as a number, not rounded
+  };
 
-    const daysBetween = (new Date(measurement.timestamp).getTime() - new Date(prevMeasurement.timestamp).getTime()) / (1000 * 3600 * 24);
-    const dailyGain = daysBetween ? gain / daysBetween : 0;
+  const processedMeasurements = useMemo(() => {
+    console.log("Raw measurements:", measurements);
+    
+    // First, convert all measurements
+    const convertedMeasurements = measurements.map((measurement) => {
+      const convertedMeasurement = { ...measurement };
+  
+      // Convert measurements to user's preferred unit
+      if (userPreferredUnit === 'in' && measurement.measurementUnit === 'cm') {
+        console.log("Converting measurement from cm to in:", measurement);
+        convertedMeasurement.endToEnd = convertCmToIn(measurement.endToEnd);
+        convertedMeasurement.sideToSide = convertCmToIn(measurement.sideToSide);
+        convertedMeasurement.circumference = convertCmToIn(measurement.circumference);
+        // Recalculate the weight based on the converted measurements
+        convertedMeasurement.estimatedWeight = calculateEstimatedWeight(
+          convertedMeasurement.endToEnd,
+          convertedMeasurement.sideToSide,
+          convertedMeasurement.circumference,
+          'in'
+        );
+      } else if (userPreferredUnit === 'cm' && measurement.measurementUnit === 'in') {
+        console.log("Converting measurement from in to cm:", measurement);
+        convertedMeasurement.endToEnd = convertInToCm(measurement.endToEnd);
+        convertedMeasurement.sideToSide = convertInToCm(measurement.sideToSide);
+        convertedMeasurement.circumference = convertInToCm(measurement.circumference);
+        // Recalculate the weight based on the converted measurements
+        convertedMeasurement.estimatedWeight = calculateEstimatedWeight(
+          convertedMeasurement.endToEnd,
+          convertedMeasurement.sideToSide,
+          convertedMeasurement.circumference,
+          'cm'
+        );
+      }
+  
+      console.log("Converted measurement:", convertedMeasurement);
+      return convertedMeasurement;
+    });
+  
+    // Then, calculate gain and daily gain
+    const finalMeasurements = convertedMeasurements.map((measurement, index) => {
+      if (index === 0) {
+        measurement.gain = 0;
+        measurement.dailyGain = 0;
+      } else {
+        const prevMeasurement = convertedMeasurements[index - 1];
+        const gain = measurement.estimatedWeight - prevMeasurement.estimatedWeight;
+        const daysBetween = (new Date(measurement.timestamp).getTime() - new Date(prevMeasurement.timestamp).getTime()) / (1000 * 3600 * 24);
+        const dailyGain = daysBetween ? gain / daysBetween : 0;
+        measurement.gain = gain;
+        measurement.dailyGain = dailyGain;
+      }
+      return measurement;
+    });
+  
+    console.log("Final processed measurements:", finalMeasurements);
+    return finalMeasurements;
+  }, [measurements, userPreferredUnit]);
 
-    return { ...measurement, gain, dailyGain };
-  }), [measurements, userPreferredUnit]);
+  console.log("Final processed measurements:", processedMeasurements);
 
   const columns = useMemo(() => [
     {
@@ -110,9 +176,9 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
       header: 'End to End',
       enableHiding: true,
       cell: ({ row }) => {
-        const originalValue = row.original.endToEnd;
-        const value = userPreferredUnit === 'in' ? roundToNearestHalf(convertCmToIn(originalValue)) : roundToNearestHalf(originalValue);
-        const unitLabel = userPreferredUnit ? userPreferredUnit : 'cm'; // Fallback to 'cm' if undefined
+        const value = roundToNearestHalf(row.original.endToEnd);
+        const unitLabel = userPreferredUnit === 'in' ? 'in' : 'cm';
+        console.log("Displaying endToEnd:", value, unitLabel);
         return `${value} ${unitLabel}`;
       },
     },
@@ -121,9 +187,9 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
       header: 'Side to Side',
       enableHiding: true,
       cell: ({ row }) => {
-        const originalValue = row.original.sideToSide;
-        const value = userPreferredUnit === 'in' ? roundToNearestHalf(convertCmToIn(originalValue)) : roundToNearestHalf(originalValue);
-        const unitLabel = userPreferredUnit ? userPreferredUnit : 'cm'; // Fallback to 'cm' if undefined
+        const value = roundToNearestHalf(row.original.sideToSide);
+        const unitLabel = userPreferredUnit === 'in' ? 'in' : 'cm';
+        console.log("Displaying sideToSide:", value, unitLabel);
         return `${value} ${unitLabel}`;
       },
     },
@@ -132,9 +198,9 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
       header: 'Circumference',
       enableHiding: true,
       cell: ({ row }) => {
-        const originalValue = row.original.circumference;
-        const value = userPreferredUnit === 'in' ? roundToNearestHalf(convertCmToIn(originalValue)) : roundToNearestHalf(originalValue);
-        const unitLabel = userPreferredUnit ? userPreferredUnit : 'cm'; // Fallback to 'cm' if undefined
+        const value = roundToNearestHalf(row.original.circumference);
+        const unitLabel = userPreferredUnit === 'in' ? 'in' : 'cm';
+        console.log("Displaying circumference:", value, unitLabel);
         return `${value} ${unitLabel}`;
       },
     },
@@ -144,11 +210,10 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
       enableHiding: false,
       cell: ({ row }) => {
         const weight = row.original.estimatedWeight;
-        const measurementUnit = row.original.measurementUnit; // 'cm' or 'in'
-        const isMetric = measurementUnit === 'cm';
-        const convertedWeight = isMetric && userPreferredUnit === 'in' ? convertKgToLbs(weight) : weight;
         const unitLabel = userPreferredUnit === 'in' ? 'lbs' : 'kg';
-        return `${Math.round(convertedWeight)} ${unitLabel}`;
+        const displayWeight = unitLabel === 'kg' ? weight * 0.453592 : weight; // Convert to kg if necessary
+        console.log("Displaying estimatedWeight:", displayWeight, unitLabel);
+        return `${Math.round(displayWeight)} ${unitLabel}`;
       },
     },
     {
@@ -165,6 +230,7 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
         const unitLabel = userPreferredUnit ? userPreferredUnit : 'cm'; // Fallback to 'cm' if undefined
         const numericValue = Number(value); // Ensure it's a number
         if (!isNaN(numericValue)) { // Check if it's not NaN
+          console.log("Displaying OTT:", numericValue, unitLabel);
           return `${numericValue} ${unitLabel}`;
         } else {
           console.error('Value is not a number:', value);
@@ -177,6 +243,7 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
       header: 'Gain',
       cell: ({ row }) => {
         const unitLabel = userPreferredUnit === 'in' ? 'lbs' : 'kg'; // Assuming the unit conversion for weight is already handled
+        console.log("Displaying gain:", row.original.gain, unitLabel);
         return `${row.original.gain.toFixed(2)} ${unitLabel}`;
       },
     },
@@ -186,6 +253,7 @@ const MeasurementsCard = ({ measurements, pumpkinId, pollinationDate, userPrefer
       cell: ({ row }) => {
         const formattedDailyGain = row.original.dailyGain.toFixed(2);
         const prefix = row.original.dailyGain >= 0 ? '+' : '';
+        console.log("Displaying dailyGain:", formattedDailyGain);
         return `${prefix}${formattedDailyGain}`;
       },
     },
