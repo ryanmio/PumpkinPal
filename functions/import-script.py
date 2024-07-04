@@ -79,6 +79,7 @@ for index, row in df.iterrows():
         "city": row["City"],
         "state": row["State/Prov"],
         "country": row["Country"],
+        "entryType": row["entryType"],
         "timestamp": datetime.now()
     }
     pumpkin_documents.append((pumpkin_id, pumpkin_data))
@@ -101,4 +102,3 @@ try:
     print("Pumpkin data upload completed successfully.")
 except Exception as e:
     print(f"There were errors during the contest data upload: {e}")
-
