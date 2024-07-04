@@ -359,64 +359,83 @@ async function calculateGlobalRankings() {
             return;
         }
 
-        const pumpkins = [];
-        const yearlyPumpkins = new Map(); // Use Map to store pumpkins grouped by year
+        const categories = {
+            overall: [],
+            official: [],
+            nonDmg: [],
+            nonExh: []
+        };
+
+        const yearlyCategories = {
+            overall: new Map(),
+            official: new Map(),
+            nonDmg: new Map(),
+            nonExh: new Map()
+        };
 
         pumpkinsSnapshot.forEach(doc => {
             const pumpkin = doc.data();
-            if (pumpkin.place !== 'DMG' && typeof pumpkin.weight === 'number') {
-                pumpkins.push(pumpkin);
+            if (typeof pumpkin.weight === 'number') {
+                categories.overall.push(pumpkin);
+                if (pumpkin.entryType === 'official') categories.official.push(pumpkin);
+                if (pumpkin.entryType !== 'dmg') categories.nonDmg.push(pumpkin);
+                if (pumpkin.entryType !== 'exh') categories.nonExh.push(pumpkin);
 
-                // Group pumpkins by year
-                if (!yearlyPumpkins.has(pumpkin.year)) {
-                    yearlyPumpkins.set(pumpkin.year, []);
+                // Group pumpkins by year for each category
+                for (const category in yearlyCategories) {
+                    if (!yearlyCategories[category].has(pumpkin.year)) {
+                        yearlyCategories[category].set(pumpkin.year, []);
+                    }
+                    yearlyCategories[category].get(pumpkin.year).push(pumpkin);
                 }
-                yearlyPumpkins.get(pumpkin.year).push(pumpkin);
             }
         });
 
         console.log(`Total pumpkins: ${pumpkinsSnapshot.size}`);
-        console.log(`Valid pumpkins: ${pumpkins.length}`);
+        console.log(`Valid pumpkins: ${categories.overall.length}`);
 
-        // Sort pumpkins by weight in descending order
-        pumpkins.sort((a, b) => b.weight - a.weight);
+        // Sort pumpkins by weight in descending order for each category
+        for (const category in categories) {
+            categories[category].sort((a, b) => b.weight - a.weight);
+        }
 
-        // Sort yearly pumpkins outside the loop
-        yearlyPumpkins.forEach(yearPumpkins => {
-            yearPumpkins.sort((a, b) => b.weight - a.weight);
-        });
+        // Sort yearly pumpkins for each category
+        for (const category in yearlyCategories) {
+            yearlyCategories[category].forEach(yearPumpkins => {
+                yearPumpkins.sort((a, b) => b.weight - a.weight);
+            });
+        }
 
-        // Begin a Firestore batch
         let batch = db.batch();
-
-        // Counter to keep track of how many operations are in the batch
         let batchCounter = 0;
 
-        // Assign rank and update each pumpkin in Firestore
-        for (let i = 0; i < pumpkins.length; i++) {
-            const pumpkin = pumpkins[i];
-            pumpkin.lifetimeGlobalRank = i + 1;
+        // Assign ranks for each category
+        for (const category in categories) {
+            for (let i = 0; i < categories[category].length; i++) {
+                const pumpkin = categories[category][i];
+                pumpkin[`lifetime${category.charAt(0).toUpperCase() + category.slice(1)}Rank`] = i + 1;
 
-            // Assign yearly rank
-            const yearlyRank = yearlyPumpkins.get(pumpkin.year).findIndex(p => p.id === pumpkin.id);
-            if (yearlyRank !== -1) {
-                pumpkin.yearGlobalRank = yearlyRank + 1;
-            }
+                // Assign yearly rank
+                const yearlyRank = yearlyCategories[category].get(pumpkin.year).findIndex(p => p.id === pumpkin.id);
+                if (yearlyRank !== -1) {
+                    pumpkin[`year${category.charAt(0).toUpperCase() + category.slice(1)}Rank`] = yearlyRank + 1;
+                }
 
-            // Add update operation to the batch
-            if (typeof pumpkin.id === 'string' && pumpkin.id !== '') {
-                const docRef = db.collection('Stats_Pumpkins').doc(pumpkin.id);
-                batch.update(docRef, pumpkin);
-                batchCounter++;
-            } else {
-                console.error('Invalid pumpkin id:', pumpkin.id);
-            }
+                // Add update operation to the batch
+                if (typeof pumpkin.id === 'string' && pumpkin.id !== '') {
+                    const docRef = db.collection('Stats_Pumpkins').doc(pumpkin.id);
+                    batch.update(docRef, pumpkin);
+                    batchCounter++;
+                } else {
+                    console.error('Invalid pumpkin id:', pumpkin.id);
+                }
 
-            // If the batch has reached the maximum size (500), commit it and start a new one
-            if (batchCounter === 500) {
-                await batch.commit();
-                batch = db.batch();
-                batchCounter = 0;
+                // If the batch has reached the maximum size (500), commit it and start a new one
+                if (batchCounter === 500) {
+                    await batch.commit();
+                    batch = db.batch();
+                    batchCounter = 0;
+                }
             }
         }
 
