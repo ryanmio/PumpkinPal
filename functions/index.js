@@ -577,56 +577,76 @@ async function calculateCountryRankings() {
             return;
         }
 
-        const countryPumpkins = {};
-        const yearlyCountryPumpkins = {};
+        const categories = {
+            overall: {},
+            official: {},
+            nonDmg: {},
+            nonExh: {}
+        };
+
+        const yearlyCategories = {
+            overall: {},
+            official: {},
+            nonDmg: {},
+            nonExh: {}
+        };
 
         for (const doc of pumpkinsSnapshot.docs) {
             const pumpkin = doc.data();
-            if (pumpkin.place === 'DMG') continue;
-
             const country = pumpkin.country;
 
-            if (!countryPumpkins[country]) countryPumpkins[country] = [];
-            countryPumpkins[country].push(pumpkin);
+            for (const category in categories) {
+                if (!categories[category][country]) categories[category][country] = [];
+                if (!yearlyCategories[category][country]) yearlyCategories[category][country] = {};
+                if (!yearlyCategories[category][country][pumpkin.year]) yearlyCategories[category][country][pumpkin.year] = [];
 
-            if (!yearlyCountryPumpkins[country]) yearlyCountryPumpkins[country] = {};
-            if (!yearlyCountryPumpkins[country][pumpkin.year]) yearlyCountryPumpkins[country][pumpkin.year] = [];
-            yearlyCountryPumpkins[country][pumpkin.year].push(pumpkin);
+                if (category === 'overall' ||
+                    (category === 'official' && pumpkin.entryType === 'official') ||
+                    (category === 'nonDmg' && pumpkin.entryType !== 'dmg') ||
+                    (category === 'nonExh' && pumpkin.entryType !== 'exh')) {
+                    categories[category][country].push(pumpkin);
+                    yearlyCategories[category][country][pumpkin.year].push(pumpkin);
+                }
+            }
         }
 
-        // Sort country pumpkins outside the loop
-        for (const country in countryPumpkins) {
-            countryPumpkins[country].sort((a, b) => b.weight - a.weight);
-            for (const year in yearlyCountryPumpkins[country]) {
-                yearlyCountryPumpkins[country][year].sort((a, b) => b.weight - a.weight);
+        // Sort pumpkins for each category and country
+        for (const category in categories) {
+            for (const country in categories[category]) {
+                categories[category][country].sort((a, b) => b.weight - a.weight);
+                for (const year in yearlyCategories[category][country]) {
+                    yearlyCategories[category][country][year].sort((a, b) => b.weight - a.weight);
+                }
             }
         }
 
         let batch = db.batch();
         let batchCounter = 0;
 
-        for (const country in countryPumpkins) {
-            for (let i = 0; i < countryPumpkins[country].length; i++) {
-                const pumpkin = countryPumpkins[country][i];
-                pumpkin.lifetimeCountryRank = i + 1;
+        for (const category in categories) {
+            for (const country in categories[category]) {
+                for (let i = 0; i < categories[category][country].length; i++) {
+                    const pumpkin = categories[category][country][i];
+                    pumpkin[`lifetimeCountry${category.charAt(0).toUpperCase() + category.slice(1)}Rank`] = i + 1;
 
-                const yearlyRank = yearlyCountryPumpkins[country][pumpkin.year].findIndex(p => p.id === pumpkin.id);
-                if (yearlyRank !== -1) {
-                    pumpkin.yearlyCountryRank = yearlyRank + 1;
-                }
+                    const yearlyRank = yearlyCategories[category][country][pumpkin.year].findIndex(p => p.id === pumpkin.id);
+                    if (yearlyRank !== -1) {
+                        pumpkin[`yearlyCountry${category.charAt(0).toUpperCase() + category.slice(1)}Rank`] = yearlyRank + 1;
+                    }
 
-                if (typeof pumpkin.id === 'string' && pumpkin.id !== '') {
-                    const docRef = pumpkinsCollection.doc(pumpkin.id);
-                    batch.update(docRef, { lifetimeCountryRank: pumpkin.lifetimeCountryRank, yearlyCountryRank: pumpkin.yearlyCountryRank });
-                    batchCounter++;
-                } else {
-                    console.error('Invalid pumpkin id:', pumpkin.id);
-                }
+                    if (typeof pumpkin.id === 'string' && pumpkin.id !== '') {
+                        const docRef = pumpkinsCollection.doc(pumpkin.id);
+                        batch.update(docRef, pumpkin);
+                        batchCounter++;
+                    } else {
+                        console.error('Invalid pumpkin id:', pumpkin.id);
+                    }
 
-                if (batchCounter === 500) {
-                    await batch.commit();
-                    batch = db.batch();
-                    batchCounter = 0;
+                    if (batchCounter === 500) {
+                        await batch.commit();
+                        batch = db.batch();
+                        batchCounter = 0;
+                    }
                 }
             }
         }
