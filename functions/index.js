@@ -994,16 +994,23 @@ async function calculateGrowerRankings() {
             return;
         }
 
-        // Query all pumpkins at once
         const pumpkinsSnapshot = await pumpkinsCollection.get();
         const pumpkinsByGrower = {};
         pumpkinsSnapshot.forEach(doc => {
             const pumpkin = doc.data();
             if (pumpkin.place !== 'DMG') { // Exclude disqualified pumpkins
                 if (!pumpkinsByGrower[pumpkin.grower]) {
-                    pumpkinsByGrower[pumpkin.grower] = [];
+                    pumpkinsByGrower[pumpkin.grower] = {
+                        overall: [],
+                        official: [],
+                        nonDmg: [],
+                        nonExh: []
+                    };
                 }
-                pumpkinsByGrower[pumpkin.grower].push(pumpkin);
+                pumpkinsByGrower[pumpkin.grower].overall.push(pumpkin);
+                if (pumpkin.entryType === 'official') pumpkinsByGrower[pumpkin.grower].official.push(pumpkin);
+                if (pumpkin.entryType !== 'dmg') pumpkinsByGrower[pumpkin.grower].nonDmg.push(pumpkin);
+                if (pumpkin.entryType !== 'exh') pumpkinsByGrower[pumpkin.grower].nonExh.push(pumpkin);
             }
         });
 
@@ -1012,21 +1019,52 @@ async function calculateGrowerRankings() {
 
         for (const doc of growersSnapshot.docs) {
             const grower = doc.data();
-            const pumpkins = pumpkinsByGrower[grower.id] || [];
+            const pumpkins = pumpkinsByGrower[grower.id] || {
+                overall: [],
+                official: [],
+                nonDmg: [],
+                nonExh: []
+            };
 
-            if (pumpkins.length > 0) {
-                const minGlobalRank = Math.min(...pumpkins.map(p => p.lifetimeGlobalRank));
-                const minCountryRank = Math.min(...pumpkins.map(p => p.lifetimeCountryRank));
-                const minStateRank = Math.min(...pumpkins.map(p => p.lifetimeStateRank));
+            const rankings = {
+                overall: {},
+                official: {},
+                nonDmg: {},
+                nonExh: {}
+            };
 
-                const globalRanking = `Global: #${minGlobalRank}`;
-                const countryRanking = `${pumpkins[0].country}: #${minCountryRank}`;
-                const stateRanking = `${pumpkins[0].state}: #${minStateRank}`;
+            for (const category in rankings) {
+                if (pumpkins[category].length > 0) {
+                    const minGlobalRank = Math.min(...pumpkins[category].map(p => p[`lifetimeGlobal${category.charAt(0).toUpperCase() + category.slice(1)}Rank`] || Infinity));
+                    const minCountryRank = Math.min(...pumpkins[category].map(p => p[`lifetimeCountry${category.charAt(0).toUpperCase() + category.slice(1)}Rank`] || Infinity));
+                    const minStateRank = Math.min(...pumpkins[category].map(p => p[`lifetimeState${category.charAt(0).toUpperCase() + category.slice(1)}Rank`] || Infinity));
 
-                const docRef = growersCollection.doc(grower.id);
-                batch.update(docRef, { globalRanking, countryRanking, stateRanking });
-                batchCounter++;
+                    rankings[category] = {
+                        global: minGlobalRank !== Infinity ? `Global: #${minGlobalRank}` : null,
+                        country: minCountryRank !== Infinity ? `${pumpkins[category][0].country}: #${minCountryRank}` : null,
+                        state: minStateRank !== Infinity ? `${pumpkins[category][0].state}: #${minStateRank}` : null
+                    };
+                }
             }
+
+            const updateData = {
+                globalRankingOverall: rankings.overall.global,
+                countryRankingOverall: rankings.overall.country,
+                stateRankingOverall: rankings.overall.state,
+                globalRankingOfficial: rankings.official.global,
+                countryRankingOfficial: rankings.official.country,
+                stateRankingOfficial: rankings.official.state,
+                globalRankingNonDmg: rankings.nonDmg.global,
+                countryRankingNonDmg: rankings.nonDmg.country,
+                stateRankingNonDmg: rankings.nonDmg.state,
+                globalRankingNonExh: rankings.nonExh.global,
+                countryRankingNonExh: rankings.nonExh.country,
+                stateRankingNonExh: rankings.nonExh.state
+            };
+
+            const docRef = growersCollection.doc(grower.id);
+            batch.update(docRef, updateData);
+            batchCounter++;
 
             if (batchCounter === 500) {
                 await batch.commit();
@@ -1046,8 +1084,12 @@ async function calculateGrowerRankings() {
 
 // HTTP function to manually trigger the calculation of Grower Rankings
 exports.calculateGrowerRankings = functions.https.onRequest(async (req, res) => {
-    await calculateGrowerRankings();
-    res.send('Grower rankings calculation completed.');
+    try {
+        await calculateGrowerRankings();
+        res.send('Grower rankings calculation completed.');
+    } catch (err) {
+        res.status(500).send('Error calculating grower rankings: ' + err.toString());
+    }
 });
 
 
