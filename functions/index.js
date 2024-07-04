@@ -469,56 +469,76 @@ async function calculateStateRankings() {
             return;
         }
 
-        const statePumpkins = {};
-        const yearlyStatePumpkins = {};
+        const categories = {
+            overall: {},
+            official: {},
+            nonDmg: {},
+            nonExh: {}
+        };
+
+        const yearlyCategories = {
+            overall: {},
+            official: {},
+            nonDmg: {},
+            nonExh: {}
+        };
 
         for (const doc of pumpkinsSnapshot.docs) {
             const pumpkin = doc.data();
-            if (pumpkin.place === 'DMG') continue;
-
             const state = pumpkin.state;
 
-            if (!statePumpkins[state]) statePumpkins[state] = [];
-            statePumpkins[state].push(pumpkin);
+            for (const category in categories) {
+                if (!categories[category][state]) categories[category][state] = [];
+                if (!yearlyCategories[category][state]) yearlyCategories[category][state] = {};
+                if (!yearlyCategories[category][state][pumpkin.year]) yearlyCategories[category][state][pumpkin.year] = [];
 
-            if (!yearlyStatePumpkins[state]) yearlyStatePumpkins[state] = {};
-            if (!yearlyStatePumpkins[state][pumpkin.year]) yearlyStatePumpkins[state][pumpkin.year] = [];
-            yearlyStatePumpkins[state][pumpkin.year].push(pumpkin);
+                if (category === 'overall' ||
+                    (category === 'official' && pumpkin.entryType === 'official') ||
+                    (category === 'nonDmg' && pumpkin.entryType !== 'dmg') ||
+                    (category === 'nonExh' && pumpkin.entryType !== 'exh')) {
+                    categories[category][state].push(pumpkin);
+                    yearlyCategories[category][state][pumpkin.year].push(pumpkin);
+                }
+            }
         }
 
-        // Sort state pumpkins outside the loop
-        for (const state in statePumpkins) {
-            statePumpkins[state].sort((a, b) => b.weight - a.weight);
-            for (const year in yearlyStatePumpkins[state]) {
-                yearlyStatePumpkins[state][year].sort((a, b) => b.weight - a.weight);
+        // Sort pumpkins for each category and state
+        for (const category in categories) {
+            for (const state in categories[category]) {
+                categories[category][state].sort((a, b) => b.weight - a.weight);
+                for (const year in yearlyCategories[category][state]) {
+                    yearlyCategories[category][state][year].sort((a, b) => b.weight - a.weight);
+                }
             }
         }
 
         let batch = db.batch();
         let batchCounter = 0;
 
-        for (const state in statePumpkins) {
-            for (let i = 0; i < statePumpkins[state].length; i++) {
-                const pumpkin = statePumpkins[state][i];
-                pumpkin.lifetimeStateRank = i + 1;
+        for (const category in categories) {
+            for (const state in categories[category]) {
+                for (let i = 0; i < categories[category][state].length; i++) {
+                    const pumpkin = categories[category][state][i];
+                    pumpkin[`lifetimeState${category.charAt(0).toUpperCase() + category.slice(1)}Rank`] = i + 1;
 
-                const yearlyRank = yearlyStatePumpkins[state][pumpkin.year].findIndex(p => p.id === pumpkin.id);
-                if (yearlyRank !== -1) {
-                    pumpkin.yearlyStateRank = yearlyRank + 1;
-                }
+                    const yearlyRank = yearlyCategories[category][state][pumpkin.year].findIndex(p => p.id === pumpkin.id);
+                    if (yearlyRank !== -1) {
+                        pumpkin[`yearlyState${category.charAt(0).toUpperCase() + category.slice(1)}Rank`] = yearlyRank + 1;
+                    }
 
-                if (typeof pumpkin.id === 'string' && pumpkin.id !== '') {
-                    const docRef = pumpkinsCollection.doc(pumpkin.id);
-                    batch.update(docRef, { lifetimeStateRank: pumpkin.lifetimeStateRank, yearlyStateRank: pumpkin.yearlyStateRank });
-                    batchCounter++;
-                } else {
-                    console.error('Invalid pumpkin id:', pumpkin.id);
-                }
+                    if (typeof pumpkin.id === 'string' && pumpkin.id !== '') {
+                        const docRef = pumpkinsCollection.doc(pumpkin.id);
+                        batch.update(docRef, pumpkin);
+                        batchCounter++;
+                    } else {
+                        console.error('Invalid pumpkin id:', pumpkin.id);
+                    }
 
-                if (batchCounter === 500) {
-                    await batch.commit();
-                    batch = db.batch();
-                    batchCounter = 0;
+                    if (batchCounter === 500) {
+                        await batch.commit();
+                        batch = db.batch();
+                        batchCounter = 0;
+                    }
                 }
             }
         }
