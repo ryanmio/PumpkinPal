@@ -784,7 +784,12 @@ async function calculateContestPopularityRanking() {
         const contestPopularity = {};
         contestsSnapshot.forEach(doc => {
             const contestId = doc.id;
-            contestPopularity[contestId] = { yearly: 0, lifetime: 0 };
+            contestPopularity[contestId] = {
+                overall: { yearly: 0, lifetime: 0 },
+                official: { yearly: 0, lifetime: 0 },
+                nonDmg: { yearly: 0, lifetime: 0 },
+                nonExh: { yearly: 0, lifetime: 0 }
+            };
         });
 
         // Query all pumpkins
@@ -795,13 +800,19 @@ async function calculateContestPopularityRanking() {
             const contestName = pumpkin.contestName;
 
             if (contestPopularity[contestId]) {
-                contestPopularity[contestId].yearly += 1;
+                contestPopularity[contestId].overall.yearly += 1;
+                if (pumpkin.entryType === 'official') contestPopularity[contestId].official.yearly += 1;
+                if (pumpkin.entryType !== 'dmg') contestPopularity[contestId].nonDmg.yearly += 1;
+                if (pumpkin.entryType !== 'exh') contestPopularity[contestId].nonExh.yearly += 1;
             }
 
             // Increment lifetime popularity for all contests with matching name
             for (const contest of contestsSnapshot.docs) {
                 if (contest.data().name === contestName) {
-                    contestPopularity[contest.id].lifetime += 1;
+                    contestPopularity[contest.id].overall.lifetime += 1;
+                    if (pumpkin.entryType === 'official') contestPopularity[contest.id].official.lifetime += 1;
+                    if (pumpkin.entryType !== 'dmg') contestPopularity[contest.id].nonDmg.lifetime += 1;
+                    if (pumpkin.entryType !== 'exh') contestPopularity[contest.id].nonExh.lifetime += 1;
                 }
             }
         });
@@ -809,9 +820,17 @@ async function calculateContestPopularityRanking() {
         // Update Firestore document
         for (const contestId in contestPopularity) {
             const docRef = contestsCollection.doc(contestId);
-            const yearPopularity = contestPopularity[contestId].yearly;
-            const lifetimePopularity = contestPopularity[contestId].lifetime;
-            batch.update(docRef, { LifetimePopularity: lifetimePopularity, YearPopularity: yearPopularity });
+            const updateData = {
+                LifetimePopularity: contestPopularity[contestId].overall.lifetime,
+                YearPopularity: contestPopularity[contestId].overall.yearly,
+                LifetimePopularityOfficial: contestPopularity[contestId].official.lifetime,
+                YearPopularityOfficial: contestPopularity[contestId].official.yearly,
+                LifetimePopularityNonDmg: contestPopularity[contestId].nonDmg.lifetime,
+                YearPopularityNonDmg: contestPopularity[contestId].nonDmg.yearly,
+                LifetimePopularityNonExh: contestPopularity[contestId].nonExh.lifetime,
+                YearPopularityNonExh: contestPopularity[contestId].nonExh.yearly
+            };
+            batch.update(docRef, updateData);
             batchCounter++;
 
             // If the batch has reached the maximum size (500), commit it and start a new one
