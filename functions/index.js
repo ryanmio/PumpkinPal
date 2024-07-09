@@ -352,6 +352,10 @@ async function calculateGlobalRankings() {
     const pumpkinsCollection = db.collection('Stats_Pumpkins');
 
     try {
+        const categories = ['overall', 'official', 'nonDmg', 'nonExh'];
+        const yearlyCategories = {};
+        categories.forEach(category => yearlyCategories[category] = new Map());
+
         const pumpkinsSnapshot = await pumpkinsCollection.get();
 
         if (pumpkinsSnapshot.empty) {
@@ -359,93 +363,53 @@ async function calculateGlobalRankings() {
             return;
         }
 
-        const categories = {
-            overall: [],
-            official: [],
-            nonDmg: [],
-            nonExh: []
-        };
-
-        const yearlyCategories = {
-            overall: new Map(),
-            official: new Map(),
-            nonDmg: new Map(),
-            nonExh: new Map()
-        };
-
-        pumpkinsSnapshot.forEach(doc => {
-            const pumpkin = doc.data();
-            if (typeof pumpkin.weight === 'number') {
-                categories.overall.push(pumpkin);
-                if (pumpkin.entryType === 'official') categories.official.push(pumpkin);
-                if (pumpkin.entryType !== 'dmg') categories.nonDmg.push(pumpkin);
-                if (pumpkin.entryType !== 'exh') categories.nonExh.push(pumpkin);
-
-                // Group pumpkins by year for each category
-                for (const category in yearlyCategories) {
-                    if (!yearlyCategories[category].has(pumpkin.year)) {
-                        yearlyCategories[category].set(pumpkin.year, []);
-                    }
-                    yearlyCategories[category].get(pumpkin.year).push(pumpkin);
-                }
-            }
+        const pumpkins = pumpkinsSnapshot.docs.map(doc => {
+            const data = doc.data();
+            
+            return { ...data, id: doc.id };
         });
 
-        console.log(`Total pumpkins: ${pumpkinsSnapshot.size}`);
-        console.log(`Valid pumpkins: ${categories.overall.length}`);
+        const updatePromises = categories.map(async (category) => {
+            const filteredPumpkins = pumpkins.filter(pumpkin => 
+                category === 'overall' ||
+                (category === 'official' && pumpkin.entryType === 'official') ||
+                (category === 'nonDmg' && pumpkin.entryType !== 'dmg') ||
+                (category === 'nonExh' && pumpkin.entryType !== 'exh')
+            );
 
-        // Sort pumpkins by weight in descending order for each category
-        for (const category in categories) {
-            categories[category].sort((a, b) => b.weight - a.weight);
-        }
+            filteredPumpkins.sort((a, b) => b.weight - a.weight);
 
-        // Sort yearly pumpkins for each category
-        for (const category in yearlyCategories) {
-            yearlyCategories[category].forEach(yearPumpkins => {
-                yearPumpkins.sort((a, b) => b.weight - a.weight);
+            const updates = filteredPumpkins.map((pumpkin, index) => {
+                const rank = index + 1;
+                const yearlyRank = yearlyCategories[category].get(pumpkin.year) || 0;
+                yearlyCategories[category].set(pumpkin.year, yearlyRank + 1);
+
+                return {
+                    id: pumpkin.id,
+                    [`lifetime${category.charAt(0).toUpperCase() + category.slice(1)}Rank`]: rank,
+                    [`year${category.charAt(0).toUpperCase() + category.slice(1)}Rank`]: yearlyRank + 1
+                };
             });
-        }
 
-        let batch = db.batch();
-        let batchCounter = 0;
-
-        // Assign ranks for each category
-        for (const category in categories) {
-            for (let i = 0; i < categories[category].length; i++) {
-                const pumpkin = categories[category][i];
-                pumpkin[`lifetime${category.charAt(0).toUpperCase() + category.slice(1)}Rank`] = i + 1;
-
-                // Assign yearly rank
-                const yearlyRank = yearlyCategories[category].get(pumpkin.year).findIndex(p => p.id === pumpkin.id);
-                if (yearlyRank !== -1) {
-                    pumpkin[`year${category.charAt(0).toUpperCase() + category.slice(1)}Rank`] = yearlyRank + 1;
-                }
-
-                // Add update operation to the batch
-                if (typeof pumpkin.id === 'string' && pumpkin.id !== '') {
-                    const docRef = db.collection('Stats_Pumpkins').doc(pumpkin.id);
-                    batch.update(docRef, pumpkin);
-                    batchCounter++;
-                } else {
-                    console.error('Invalid pumpkin id:', pumpkin.id);
-                }
-
-                // If the batch has reached the maximum size (500), commit it and start a new one
-                if (batchCounter === 500) {
-                    await batch.commit();
-                    batch = db.batch();
-                    batchCounter = 0;
-                }
+            const batches = [];
+            for (let i = 0; i < updates.length; i += 500) {
+                const batch = db.batch();
+                updates.slice(i, i + 500).forEach(update => {
+                    const docRef = pumpkinsCollection.doc(update.id);
+                    batch.update(docRef, update);
+                });
+                batches.push(batch.commit());
             }
-        }
 
-        // Commit any remaining operations in the batch
-        if (batchCounter > 0) {
-            await batch.commit();
-        }
+            await Promise.all(batches);
+        });
 
+        await Promise.all(updatePromises);
+
+        console.log('Global rankings calculation completed.');
     } catch (err) {
-        console.error('Error getting pumpkins:', err);
+        console.error('Error calculating global rankings:', err);
+        throw err;
     }
 }
 
