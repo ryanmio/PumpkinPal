@@ -353,9 +353,6 @@ async function calculateGlobalRankings() {
 
     try {
         const categories = ['overall', 'official', 'nonDmg', 'nonExh'];
-        const yearlyCategories = {};
-        categories.forEach(category => yearlyCategories[category] = new Map());
-
         const pumpkinsSnapshot = await pumpkinsCollection.get();
 
         if (pumpkinsSnapshot.empty) {
@@ -363,48 +360,48 @@ async function calculateGlobalRankings() {
             return;
         }
 
-        const pumpkins = pumpkinsSnapshot.docs.map(doc => {
-            const data = doc.data();
-            
-            return { ...data, id: doc.id };
-        });
+        const pumpkins = pumpkinsSnapshot.docs.map(doc => ({...doc.data(), id: doc.id}));
 
-        const updatePromises = categories.map(async (category) => {
-            const filteredPumpkins = pumpkins.filter(pumpkin => 
-                category === 'overall' ||
-                (category === 'official' && pumpkin.entryType === 'official') ||
-                (category === 'nonDmg' && pumpkin.entryType !== 'dmg') ||
-                (category === 'nonExh' && pumpkin.entryType !== 'exh')
-            );
+        const updates = pumpkins.map(pumpkin => {
+            const lifetimeRanks = {};
+            const yearRanks = {};
 
-            filteredPumpkins.sort((a, b) => b.weight - a.weight);
+            categories.forEach(category => {
+                const filteredPumpkins = pumpkins.filter(p => 
+                    category === 'overall' ||
+                    (category === 'official' && p.entryType === 'official') ||
+                    (category === 'nonDmg' && p.entryType !== 'dmg') ||
+                    (category === 'nonExh' && p.entryType !== 'exh')
+                );
 
-            const updates = filteredPumpkins.map((pumpkin, index) => {
-                const rank = index + 1;
-                const yearlyRank = yearlyCategories[category].get(pumpkin.year) || 0;
-                yearlyCategories[category].set(pumpkin.year, yearlyRank + 1);
+                filteredPumpkins.sort((a, b) => b.weight - a.weight);
 
-                return {
-                    id: pumpkin.id,
-                    [`lifetime${category.charAt(0).toUpperCase() + category.slice(1)}Rank`]: rank,
-                    [`year${category.charAt(0).toUpperCase() + category.slice(1)}Rank`]: yearlyRank + 1
-                };
+                const lifetimeRank = filteredPumpkins.findIndex(p => p.id === pumpkin.id) + 1;
+                const yearFilteredPumpkins = filteredPumpkins.filter(p => p.year === pumpkin.year);
+                const yearRank = yearFilteredPumpkins.findIndex(p => p.id === pumpkin.id) + 1;
+
+                lifetimeRanks[category] = lifetimeRank;
+                yearRanks[category] = yearRank;
             });
 
-            const batches = [];
-            for (let i = 0; i < updates.length; i += 500) {
-                const batch = db.batch();
-                updates.slice(i, i + 500).forEach(update => {
-                    const docRef = pumpkinsCollection.doc(update.id);
-                    batch.update(docRef, update);
-                });
-                batches.push(batch.commit());
-            }
-
-            await Promise.all(batches);
+            return {
+                id: pumpkin.id,
+                lifetimeGlobalRanks: lifetimeRanks,
+                yearGlobalRanks: yearRanks
+            };
         });
 
-        await Promise.all(updatePromises);
+        const batches = [];
+        for (let i = 0; i < updates.length; i += 500) {
+            const batch = db.batch();
+            updates.slice(i, i + 500).forEach(update => {
+                const docRef = pumpkinsCollection.doc(update.id);
+                batch.update(docRef, update);
+            });
+            batches.push(batch.commit());
+        }
+
+        await Promise.all(batches);
 
         console.log('Global rankings calculation completed.');
     } catch (err) {
