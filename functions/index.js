@@ -350,58 +350,106 @@ res.send(`
 async function calculateGlobalRankings() {
     const db = admin.firestore();
     const pumpkinsCollection = db.collection('Stats_Pumpkins');
+    const categories = ['overall', 'official', 'nonDmg', 'nonExh'];
 
     try {
-        const categories = ['overall', 'official', 'nonDmg', 'nonExh'];
-        const pumpkinsSnapshot = await pumpkinsCollection.get();
+        const batchSize = 1000;
+        let lastDoc = null;
+        let allPumpkins = [];
 
-        if (pumpkinsSnapshot.empty) {
-            console.log('No matching pumpkins.');
-            return;
+        // Fetch all pumpkins
+        while (true) {
+            let query = pumpkinsCollection.orderBy('weight', 'desc').limit(batchSize);
+            if (lastDoc) {
+                query = query.startAfter(lastDoc);
+            }
+
+            const pumpkinsSnapshot = await query.get();
+            if (pumpkinsSnapshot.empty) break;
+
+            const pumpkins = pumpkinsSnapshot.docs.map(doc => ({...doc.data(), id: doc.id}));
+            allPumpkins = allPumpkins.concat(pumpkins);
+            lastDoc = pumpkinsSnapshot.docs[pumpkinsSnapshot.docs.length - 1];
+
+            console.log(`Fetched ${allPumpkins.length} pumpkins`);
         }
 
-        const pumpkins = pumpkinsSnapshot.docs.map(doc => ({...doc.data(), id: doc.id}));
-
-        const updates = pumpkins.map(pumpkin => {
-            const lifetimeRanks = {};
-            const yearRanks = {};
-
-            categories.forEach(category => {
-                const filteredPumpkins = pumpkins.filter(p => 
-                    category === 'overall' ||
-                    (category === 'official' && p.entryType === 'official') ||
-                    (category === 'nonDmg' && p.entryType !== 'dmg') ||
-                    (category === 'nonExh' && p.entryType !== 'exh')
-                );
-
-                filteredPumpkins.sort((a, b) => b.weight - a.weight);
-
-                const lifetimeRank = filteredPumpkins.findIndex(p => p.id === pumpkin.id) + 1;
-                const yearFilteredPumpkins = filteredPumpkins.filter(p => p.year === pumpkin.year);
-                const yearRank = yearFilteredPumpkins.findIndex(p => p.id === pumpkin.id) + 1;
-
-                lifetimeRanks[category] = lifetimeRank;
-                yearRanks[category] = yearRank;
+        // Calculate rankings for each category
+        const rankings = {};
+        categories.forEach(category => {
+            let filteredPumpkins = allPumpkins;
+            if (category === 'official') {
+                filteredPumpkins = allPumpkins.filter(p => p.place.toUpperCase() !== 'DMG' && p.place.toUpperCase() !== 'EXH');
+            } else if (category === 'nonDmg') {
+                filteredPumpkins = allPumpkins.filter(p => p.place.toUpperCase() !== 'DMG');
+            } else if (category === 'nonExh') {
+                filteredPumpkins = allPumpkins.filter(p => p.place.toUpperCase() !== 'EXH');
+            }
+            
+            filteredPumpkins.sort((a, b) => b.weight - a.weight);
+            
+            filteredPumpkins.forEach((pumpkin, index) => {
+                if (!rankings[pumpkin.id]) {
+                    rankings[pumpkin.id] = {
+                        lifetimeGlobalRank: null,
+                        yearGlobalRank: null,
+                        lifetimeGlobalRanks: {},
+                        yearlyGlobalRanks: {}
+                    };
+                }
+                rankings[pumpkin.id].lifetimeGlobalRanks[category] = index + 1;
+                
+                // Set the original lifetimeGlobalRank (backward compatibility)
+                if (category === 'official') {
+                    rankings[pumpkin.id].lifetimeGlobalRank = index + 1;
+                }
             });
 
-            return {
-                id: pumpkin.id,
-                lifetimeGlobalRanks: lifetimeRanks,
-                yearGlobalRanks: yearRanks
-            };
+            // Calculate yearly rankings
+            const pumpkinsByYear = {};
+            filteredPumpkins.forEach(pumpkin => {
+                if (!pumpkinsByYear[pumpkin.year]) {
+                    pumpkinsByYear[pumpkin.year] = [];
+                }
+                pumpkinsByYear[pumpkin.year].push(pumpkin);
+            });
+
+            Object.keys(pumpkinsByYear).forEach(year => {
+                pumpkinsByYear[year].sort((a, b) => b.weight - a.weight);
+                pumpkinsByYear[year].forEach((pumpkin, index) => {
+                    if (!rankings[pumpkin.id].yearlyGlobalRanks[pumpkin.year]) {
+                        rankings[pumpkin.id].yearlyGlobalRanks[pumpkin.year] = {};
+                    }
+                    rankings[pumpkin.id].yearlyGlobalRanks[pumpkin.year][category] = index + 1;
+                    
+                    // Set the original yearGlobalRank (backward compatibility)
+                    if (category === 'official') {
+                        rankings[pumpkin.id].yearGlobalRank = index + 1;
+                    }
+                });
+            });
         });
 
-        const batches = [];
-        for (let i = 0; i < updates.length; i += 500) {
-            const batch = db.batch();
-            updates.slice(i, i + 500).forEach(update => {
-                const docRef = pumpkinsCollection.doc(update.id);
-                batch.update(docRef, update);
-            });
-            batches.push(batch.commit());
+        // Update pumpkins with new rankings
+        const updateBatchSize = 500;
+        let batchCounter = 0;
+        let batch = db.batch();
+
+        for (const pumpkinId in rankings) {
+            const docRef = pumpkinsCollection.doc(pumpkinId);
+            batch.update(docRef, rankings[pumpkinId]);
+            batchCounter++;
+
+            if (batchCounter === updateBatchSize) {
+                await batch.commit();
+                batch = db.batch(); // Create a new batch
+                batchCounter = 0;
+            }
         }
 
-        await Promise.all(batches);
+        if (batchCounter > 0) {
+            await batch.commit();
+        }
 
         console.log('Global rankings calculation completed.');
     } catch (err) {
@@ -411,9 +459,12 @@ async function calculateGlobalRankings() {
 }
 
 // HTTP function to manually trigger the calculation of Worldwide Weigh-off Rankings
-exports.calculateGlobalRankings = functions.https.onRequest(async (req, res) => {
-    await calculateGlobalRankings();
-    res.send('Global rankings calculation completed.');
+exports.calculateGlobalRankings = functions.runWith({
+  timeoutSeconds: 300,
+  memory: '1GB'
+}).https.onRequest(async (req, res) => {
+  await calculateGlobalRankings();
+  res.send('Global rankings calculation completed.');
 });
 
 
@@ -762,18 +813,18 @@ async function calculateContestPopularityRanking() {
 
             if (contestPopularity[contestId]) {
                 contestPopularity[contestId].overall.yearly += 1;
-                if (pumpkin.entryType === 'official') contestPopularity[contestId].official.yearly += 1;
-                if (pumpkin.entryType !== 'dmg') contestPopularity[contestId].nonDmg.yearly += 1;
-                if (pumpkin.entryType !== 'exh') contestPopularity[contestId].nonExh.yearly += 1;
+                if (pumpkin.place.toUpperCase() !== 'DMG' && pumpkin.place.toUpperCase() !== 'EXH') contestPopularity[contestId].official.yearly += 1;
+                if (pumpkin.place.toUpperCase() !== 'DMG') contestPopularity[contestId].nonDmg.yearly += 1;
+                if (pumpkin.place.toUpperCase() !== 'EXH') contestPopularity[contestId].nonExh.yearly += 1;
             }
 
             // Increment lifetime popularity for all contests with matching name
             for (const contest of contestsSnapshot.docs) {
                 if (contest.data().name === contestName) {
                     contestPopularity[contest.id].overall.lifetime += 1;
-                    if (pumpkin.entryType === 'official') contestPopularity[contest.id].official.lifetime += 1;
-                    if (pumpkin.entryType !== 'dmg') contestPopularity[contest.id].nonDmg.lifetime += 1;
-                    if (pumpkin.entryType !== 'exh') contestPopularity[contest.id].nonExh.lifetime += 1;
+                    if (pumpkin.place.toUpperCase() !== 'DMG' && pumpkin.place.toUpperCase() !== 'EXH') contestPopularity[contest.id].official.lifetime += 1;
+                    if (pumpkin.place.toUpperCase() !== 'DMG') contestPopularity[contest.id].nonDmg.lifetime += 1;
+                    if (pumpkin.place.toUpperCase() !== 'EXH') contestPopularity[contest.id].nonExh.lifetime += 1;
                 }
             }
         });
@@ -988,9 +1039,9 @@ async function calculateGrowerRankings() {
                     };
                 }
                 pumpkinsByGrower[pumpkin.grower].overall.push(pumpkin);
-                if (pumpkin.entryType === 'official') pumpkinsByGrower[pumpkin.grower].official.push(pumpkin);
-                if (pumpkin.entryType !== 'dmg') pumpkinsByGrower[pumpkin.grower].nonDmg.push(pumpkin);
-                if (pumpkin.entryType !== 'exh') pumpkinsByGrower[pumpkin.grower].nonExh.push(pumpkin);
+                if (pumpkin.place.toUpperCase() !== 'DMG' && pumpkin.place.toUpperCase() !== 'EXH') pumpkinsByGrower[pumpkin.grower].official.push(pumpkin);
+                if (pumpkin.place.toUpperCase() !== 'DMG') pumpkinsByGrower[pumpkin.grower].nonDmg.push(pumpkin);
+                if (pumpkin.place.toUpperCase() !== 'EXH') pumpkinsByGrower[pumpkin.grower].nonExh.push(pumpkin);
             }
         });
 
