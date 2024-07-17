@@ -755,23 +755,34 @@ async function calculateLifetimeBestRank() {
             return;
         }
 
-        const pumpkinsSnapshot = await pumpkinsCollection.get();
-        const pumpkinsByGrower = {};
+        // Create a map to store grower rankings
+        const growerRankings = {};
 
+        // Query all pumpkins and group by grower
+        const pumpkinsSnapshot = await pumpkinsCollection.get();
         pumpkinsSnapshot.forEach(doc => {
             const pumpkin = doc.data();
-            if (!pumpkinsByGrower[pumpkin.grower]) {
-                pumpkinsByGrower[pumpkin.grower] = {
+            const growerId = pumpkin.grower;
+            
+            if (!growerRankings[growerId]) {
+                growerRankings[growerId] = {
                     overall: [],
                     official: [],
                     nonDmg: [],
                     nonExh: []
                 };
             }
-            pumpkinsByGrower[pumpkin.grower].overall.push(pumpkin);
-            if (pumpkin.place.toUpperCase() !== 'DMG' && pumpkin.place.toUpperCase() !== 'EXH') pumpkinsByGrower[pumpkin.grower].official.push(pumpkin);
-            if (pumpkin.place.toUpperCase() !== 'DMG') pumpkinsByGrower[pumpkin.grower].nonDmg.push(pumpkin);
-            if (pumpkin.place.toUpperCase() !== 'EXH') pumpkinsByGrower[pumpkin.grower].nonExh.push(pumpkin);
+            
+            growerRankings[growerId].overall.push(pumpkin.yearlyGlobalRanks?.[pumpkin.year]?.overall);
+            if (pumpkin.place.toUpperCase() !== 'DMG' && pumpkin.place.toUpperCase() !== 'EXH') {
+                growerRankings[growerId].official.push(pumpkin.yearlyGlobalRanks?.[pumpkin.year]?.official);
+            }
+            if (pumpkin.place.toUpperCase() !== 'DMG') {
+                growerRankings[growerId].nonDmg.push(pumpkin.yearlyGlobalRanks?.[pumpkin.year]?.nonDmg);
+            }
+            if (pumpkin.place.toUpperCase() !== 'EXH') {
+                growerRankings[growerId].nonExh.push(pumpkin.yearlyGlobalRanks?.[pumpkin.year]?.nonExh);
+            }
         });
 
         let batch = db.batch();
@@ -779,25 +790,23 @@ async function calculateLifetimeBestRank() {
 
         for (const doc of growersSnapshot.docs) {
             const grower = doc.data();
-            const pumpkins = pumpkinsByGrower[grower.id] || {
+            const rankings = growerRankings[grower.id] || {
                 overall: [],
                 official: [],
                 nonDmg: [],
                 nonExh: []
             };
 
-            const lifetimeBestRanks = {
-                overall: Math.min(...pumpkins.overall.map(p => p.lifetimeOverallRank || Infinity)),
-                official: Math.min(...pumpkins.official.map(p => p.lifetimeOfficialRank || Infinity)),
-                nonDmg: Math.min(...pumpkins.nonDmg.map(p => p.lifetimeNonDmgRank || Infinity)),
-                nonExh: Math.min(...pumpkins.nonExh.map(p => p.lifetimeNonExhRank || Infinity))
-            };
+            const bestRanks = {};
+            categories.forEach(category => {
+                const validRankings = rankings[category].filter(rank => rank !== undefined && rank !== null);
+                bestRanks[category] = validRankings.length > 0 ? Math.min(...validRankings) : null;
+            });
 
             const updateData = {
-                lifetimeBestOverallRank: lifetimeBestRanks.overall !== Infinity ? lifetimeBestRanks.overall : null,
-                lifetimeBestOfficialRank: lifetimeBestRanks.official !== Infinity ? lifetimeBestRanks.official : null,
-                lifetimeBestNonDmgRank: lifetimeBestRanks.nonDmg !== Infinity ? lifetimeBestRanks.nonDmg : null,
-                lifetimeBestNonExhRank: lifetimeBestRanks.nonExh !== Infinity ? lifetimeBestRanks.nonExh : null
+                bestRanks: bestRanks,
+                // Maintain backward compatibility
+                bestRank: bestRanks.official
             };
 
             const docRef = growersCollection.doc(grower.id);
@@ -815,22 +824,129 @@ async function calculateLifetimeBestRank() {
             await batch.commit();
         }
 
+        console.log('Lifetime Best Rank calculation completed.');
     } catch (err) {
         console.error('Error calculating lifetime best rank:', err);
         throw err;
     }
 }
 
-// HTTP function to manually trigger the calculation of lifetime best rank
-exports.calculateLifetimeBestRank = functions.https.onRequest(async (req, res) => {
+// HTTP function to manually trigger the calculation of Lifetime Best Rank
+exports.calculateLifetimeBestRank = functions.runWith({
+    timeoutSeconds: 300,
+    memory: '1GB'
+}).https.onRequest(async (req, res) => {
     try {
         await calculateLifetimeBestRank();
-        res.send('Lifetime best rank calculation completed.');
+        res.send('Lifetime Best Rank calculation completed.');
     } catch (err) {
         res.status(500).send('Error calculating lifetime best rank: ' + err.toString());
     }
 });
 
+// Lifetime Best Rank
+async function calculateLifetimeBestRank() {
+    const db = admin.firestore();
+    const growersCollection = db.collection('Stats_Growers');
+    const pumpkinsCollection = db.collection('Stats_Pumpkins');
+    const categories = ['overall', 'official', 'nonDmg', 'nonExh'];
+
+    try {
+        const growersSnapshot = await growersCollection.get();
+
+        if (growersSnapshot.empty) {
+            console.log('No matching growers.');
+            return;
+        }
+
+        // Create a map to store grower rankings
+        const growerRankings = {};
+
+        // Query all pumpkins and group by grower
+        const pumpkinsSnapshot = await pumpkinsCollection.get();
+        pumpkinsSnapshot.forEach(doc => {
+            const pumpkin = doc.data();
+            const growerId = pumpkin.grower;
+            
+            if (!growerRankings[growerId]) {
+                growerRankings[growerId] = {
+                    overall: [],
+                    official: [],
+                    nonDmg: [],
+                    nonExh: []
+                };
+            }
+            
+            growerRankings[growerId].overall.push(pumpkin.yearlyGlobalRanks?.[pumpkin.year]?.overall);
+            if (pumpkin.place.toUpperCase() !== 'DMG' && pumpkin.place.toUpperCase() !== 'EXH') {
+                growerRankings[growerId].official.push(pumpkin.yearlyGlobalRanks?.[pumpkin.year]?.official);
+            }
+            if (pumpkin.place.toUpperCase() !== 'DMG') {
+                growerRankings[growerId].nonDmg.push(pumpkin.yearlyGlobalRanks?.[pumpkin.year]?.nonDmg);
+            }
+            if (pumpkin.place.toUpperCase() !== 'EXH') {
+                growerRankings[growerId].nonExh.push(pumpkin.yearlyGlobalRanks?.[pumpkin.year]?.nonExh);
+            }
+        });
+
+        let batch = db.batch();
+        let batchCounter = 0;
+
+        for (const doc of growersSnapshot.docs) {
+            const grower = doc.data();
+            const rankings = growerRankings[grower.id] || {
+                overall: [],
+                official: [],
+                nonDmg: [],
+                nonExh: []
+            };
+
+            const bestRanks = {};
+            categories.forEach(category => {
+                const validRankings = rankings[category].filter(rank => rank !== undefined && rank !== null);
+                bestRanks[category] = validRankings.length > 0 ? Math.min(...validRankings) : null;
+            });
+
+            const updateData = {
+                bestRanks: bestRanks,
+                // Maintain backward compatibility
+                bestRank: bestRanks.official
+            };
+
+            const docRef = growersCollection.doc(grower.id);
+            batch.update(docRef, updateData);
+            batchCounter++;
+
+            if (batchCounter === 500) {
+                await batch.commit();
+                batch = db.batch();
+                batchCounter = 0;
+            }
+        }
+
+        if (batchCounter > 0) {
+            await batch.commit();
+        }
+
+        console.log('Lifetime Best Rank calculation completed.');
+    } catch (err) {
+        console.error('Error calculating lifetime best rank:', err);
+        throw err;
+    }
+}
+
+// HTTP function to manually trigger the calculation of Lifetime Best Rank
+exports.calculateLifetimeBestRank = functions.runWith({
+    timeoutSeconds: 300,
+    memory: '1GB'
+}).https.onRequest(async (req, res) => {
+    try {
+        await calculateLifetimeBestRank();
+        res.send('Lifetime Best Rank calculation completed.');
+    } catch (err) {
+        res.status(500).send('Error calculating lifetime best rank: ' + err.toString());
+    }
+});
 
 // Contest Popularity Ranking (Lifetime and Yearly)
 async function calculateContestPopularityRanking() {
