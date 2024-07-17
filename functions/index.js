@@ -606,6 +606,18 @@ exports.calculateStateRankings = functions.runWith({
 
 
 // Country Ranking (Lifetime and Yearly)
+exports.calculateCountryRankings = functions.runWith({
+  timeoutSeconds: 300,
+  memory: '1GB'
+}).https.onRequest(async (req, res) => {
+  try {
+    await calculateCountryRankings();
+    res.send('Country rankings calculation completed.');
+  } catch (err) {
+    res.status(500).send('Error calculating country rankings: ' + err.toString());
+  }
+});
+
 async function calculateCountryRankings() {
     const db = admin.firestore();
     const pumpkinsCollection = db.collection('Stats_Pumpkins');
@@ -728,16 +740,6 @@ async function calculateCountryRankings() {
     }
 }
 
-// HTTP function to manually trigger the calculation of country rankings
-exports.calculateCountryRankings = functions.https.onRequest(async (req, res) => {
-    try {
-        await calculateCountryRankings();
-        res.send('Country rankings calculation completed.');
-    } catch (err) {
-        res.status(500).send('Error calculating country rankings: ' + err.toString());
-    }
-});
-
 // Lifetime Best Rank
 async function calculateLifetimeBestRank() {
     const db = admin.firestore();
@@ -767,9 +769,9 @@ async function calculateLifetimeBestRank() {
                 };
             }
             pumpkinsByGrower[pumpkin.grower].overall.push(pumpkin);
-            if (pumpkin.entryType === 'official') pumpkinsByGrower[pumpkin.grower].official.push(pumpkin);
-            if (pumpkin.entryType !== 'dmg') pumpkinsByGrower[pumpkin.grower].nonDmg.push(pumpkin);
-            if (pumpkin.entryType !== 'exh') pumpkinsByGrower[pumpkin.grower].nonExh.push(pumpkin);
+            if (pumpkin.place.toUpperCase() !== 'DMG' && pumpkin.place.toUpperCase() !== 'EXH') pumpkinsByGrower[pumpkin.grower].official.push(pumpkin);
+            if (pumpkin.place.toUpperCase() !== 'DMG') pumpkinsByGrower[pumpkin.grower].nonDmg.push(pumpkin);
+            if (pumpkin.place.toUpperCase() !== 'EXH') pumpkinsByGrower[pumpkin.grower].nonExh.push(pumpkin);
         });
 
         let batch = db.batch();
