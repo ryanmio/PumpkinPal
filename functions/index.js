@@ -1283,35 +1283,17 @@ async function calculateSiteStats() {
 
             if (!(siteName in siteStats)) {
                 siteStats[siteName] = {
-                    'Site Record': {
-                        overall: 0,
-                        official: 0,
-                        nonDmg: 0,
-                        nonExh: 0
-                    },
+                    'Site Record': 0,
                     'Total Entries': 0,
                     'Popularity by Year': {},
-                    'Max Weight by Year': {
-                        overall: {},
-                        official: {},
-                        nonDmg: {},
-                        nonExh: {}
-                    }
+                    'Max Weight by Year': {}
                 };
             }
 
-            siteStats[siteName]['Site Record'].overall = Math.max(siteStats[siteName]['Site Record'].overall, contestData.recordWeight);
-            siteStats[siteName]['Site Record'].official = Math.max(siteStats[siteName]['Site Record'].official, contestData.recordWeightOfficial);
-            siteStats[siteName]['Site Record'].nonDmg = Math.max(siteStats[siteName]['Site Record'].nonDmg, contestData.recordWeightNonDmg);
-            siteStats[siteName]['Site Record'].nonExh = Math.max(siteStats[siteName]['Site Record'].nonExh, contestData.recordWeightNonExh);
-
+            siteStats[siteName]['Site Record'] = Math.max(siteStats[siteName]['Site Record'], contestData.recordWeight);
             siteStats[siteName]['Total Entries'] = Math.max(siteStats[siteName]['Total Entries'], contestData.LifetimePopularity);
             siteStats[siteName]['Popularity by Year'][year] = contestData.YearPopularity;
-
-            siteStats[siteName]['Max Weight by Year'].overall[year] = contestData.recordWeight;
-            siteStats[siteName]['Max Weight by Year'].official[year] = contestData.recordWeightOfficial;
-            siteStats[siteName]['Max Weight by Year'].nonDmg[year] = contestData.recordWeightNonDmg;
-            siteStats[siteName]['Max Weight by Year'].nonExh[year] = contestData.recordWeightNonExh;
+            siteStats[siteName]['Max Weight by Year'][year] = contestData.recordWeight;
         }
 
         let batch = db.batch();
