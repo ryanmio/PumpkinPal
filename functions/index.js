@@ -962,85 +962,88 @@ async function calculateContestPopularityRanking() {
             return;
         }
 
-        // Begin a Firestore batch
-        let batch = db.batch();
-        let batchCounter = 0;
-
         // Initialize contest popularity counts
         const contestPopularity = {};
         contestsSnapshot.forEach(doc => {
             const contestId = doc.id;
-            contestPopularity[contestId] = {
-                overall: { yearly: 0, lifetime: 0 },
-                official: { yearly: 0, lifetime: 0 },
-                nonDmg: { yearly: 0, lifetime: 0 },
-                nonExh: { yearly: 0, lifetime: 0 }
+            contestPopularity[contestId] = { 
+                LifetimePopularity: 0, 
+                YearPopularity: {} 
             };
         });
 
-        // Query all pumpkins
-        const pumpkinsSnapshot = await pumpkinsCollection.get();
+        // Query all official pumpkins
+        const pumpkinsSnapshot = await pumpkinsCollection
+            .where('place', 'not-in', ['DMG', 'EXH'])
+            .get();
+
         pumpkinsSnapshot.forEach(doc => {
             const pumpkin = doc.data();
             const contestId = pumpkin.contest;
             const contestName = pumpkin.contestName;
+            const year = pumpkin.year;
 
             if (contestPopularity[contestId]) {
-                contestPopularity[contestId].overall.yearly += 1;
-                if (pumpkin.place.toUpperCase() !== 'DMG' && pumpkin.place.toUpperCase() !== 'EXH') contestPopularity[contestId].official.yearly += 1;
-                if (pumpkin.place.toUpperCase() !== 'DMG') contestPopularity[contestId].nonDmg.yearly += 1;
-                if (pumpkin.place.toUpperCase() !== 'EXH') contestPopularity[contestId].nonExh.yearly += 1;
+                contestPopularity[contestId].LifetimePopularity++;
+                if (!contestPopularity[contestId].YearPopularity[year]) {
+                    contestPopularity[contestId].YearPopularity[year] = 0;
+                }
+                contestPopularity[contestId].YearPopularity[year]++;
             }
 
             // Increment lifetime popularity for all contests with matching name
             for (const contest of contestsSnapshot.docs) {
                 if (contest.data().name === contestName) {
-                    contestPopularity[contest.id].overall.lifetime += 1;
-                    if (pumpkin.place.toUpperCase() !== 'DMG' && pumpkin.place.toUpperCase() !== 'EXH') contestPopularity[contest.id].official.lifetime += 1;
-                    if (pumpkin.place.toUpperCase() !== 'DMG') contestPopularity[contest.id].nonDmg.lifetime += 1;
-                    if (pumpkin.place.toUpperCase() !== 'EXH') contestPopularity[contest.id].nonExh.lifetime += 1;
+                    contestPopularity[contest.id].LifetimePopularity++;
                 }
             }
         });
 
-        // Update Firestore document
+        // Update Firestore documents
+        const updateBatchSize = 500;
+        let batchCounter = 0;
+        let batch = db.batch();
+
         for (const contestId in contestPopularity) {
             const docRef = contestsCollection.doc(contestId);
             const updateData = {
-                LifetimePopularity: contestPopularity[contestId].overall.lifetime,
-                YearPopularity: contestPopularity[contestId].overall.yearly,
-                LifetimePopularityOfficial: contestPopularity[contestId].official.lifetime,
-                YearPopularityOfficial: contestPopularity[contestId].official.yearly,
-                LifetimePopularityNonDmg: contestPopularity[contestId].nonDmg.lifetime,
-                YearPopularityNonDmg: contestPopularity[contestId].nonDmg.yearly,
-                LifetimePopularityNonExh: contestPopularity[contestId].nonExh.lifetime,
-                YearPopularityNonExh: contestPopularity[contestId].nonExh.yearly
+                LifetimePopularity: contestPopularity[contestId].LifetimePopularity,
+                YearPopularity: Object.values(contestPopularity[contestId].YearPopularity).reduce((a, b) => a + b, 0),
+                YearlyPopularity: contestPopularity[contestId].YearPopularity
             };
+
             batch.update(docRef, updateData);
             batchCounter++;
 
-            // If the batch has reached the maximum size (500), commit it and start a new one
-            if (batchCounter === 500) {
+            if (batchCounter === updateBatchSize) {
                 await batch.commit();
                 batch = db.batch();
                 batchCounter = 0;
             }
         }
 
-        // Commit any remaining operations in the batch
         if (batchCounter > 0) {
             await batch.commit();
         }
 
+        console.log('Contest Popularity Ranking calculation completed.');
     } catch (err) {
         console.error('Error calculating contest popularity ranking:', err);
+        throw err;
     }
 }
 
 // HTTP function to manually trigger the calculation of Contest Popularity Ranking
-exports.calculateContestPopularityRanking = functions.https.onRequest(async (req, res) => {
-    await calculateContestPopularityRanking();
-    res.send('Contest Popularity Ranking calculation completed.');
+exports.calculateContestPopularityRanking = functions.runWith({
+    timeoutSeconds: 300,
+    memory: '1GB'
+}).https.onRequest(async (req, res) => {
+    try {
+        await calculateContestPopularityRanking();
+        res.send('Contest Popularity Ranking calculation completed.');
+    } catch (err) {
+        res.status(500).send('Error calculating contest popularity ranking: ' + err.toString());
+    }
 });
 
 
