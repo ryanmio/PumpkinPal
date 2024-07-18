@@ -1144,12 +1144,10 @@ async function calculateGrowerMetrics() {
         const pumpkinsByGrower = {};
         pumpkinsSnapshot.forEach(doc => {
             const pumpkin = doc.data();
-            if (pumpkin.place !== 'DMG') { // Exclude disqualified pumpkins
-                if (!pumpkinsByGrower[pumpkin.grower]) {
-                    pumpkinsByGrower[pumpkin.grower] = [];
-                }
-                pumpkinsByGrower[pumpkin.grower].push(pumpkin);
+            if (!pumpkinsByGrower[pumpkin.grower]) {
+                pumpkinsByGrower[pumpkin.grower] = [];
             }
+            pumpkinsByGrower[pumpkin.grower].push(pumpkin);
         });
 
         let batch = db.batch();
@@ -1159,15 +1157,16 @@ async function calculateGrowerMetrics() {
             const grower = doc.data();
             const pumpkins = pumpkinsByGrower[grower.id] || [];
 
-            // LifetimeMaxWeight
-            if (pumpkins.length > 0) {
-                const maxWeight = Math.max(...pumpkins.map(pumpkin => pumpkin.weight));
+            // LifetimeMaxWeight (excluding DMG and EXH)
+            const officialPumpkins = pumpkins.filter(p => p.place !== 'DMG' && p.place !== 'EXH');
+            if (officialPumpkins.length > 0) {
+                const maxWeight = Math.max(...officialPumpkins.map(pumpkin => pumpkin.weight));
                 grower.LifetimeMaxWeight = maxWeight;
             } else {
-                grower.LifetimeMaxWeight = null; // or some other value indicating no pumpkins
+                grower.LifetimeMaxWeight = null;
             }
 
-            // NumberOfEntries
+            // NumberOfEntries (including all entries)
             grower.NumberOfEntries = pumpkins.length;
 
             const docRef = growersCollection.doc(grower.id);
@@ -1185,15 +1184,24 @@ async function calculateGrowerMetrics() {
             await batch.commit();
         }
 
+        console.log('Grower metrics calculation completed.');
     } catch (err) {
         console.error('Error calculating grower metrics:', err);
+        throw err;
     }
 }
 
 // HTTP function to manually trigger the calculation of grower metrics
-exports.calculateGrowerMetrics = functions.https.onRequest(async (req, res) => {
-    await calculateGrowerMetrics();
-    res.send('Grower metrics calculation completed.');
+exports.calculateGrowerMetrics = functions.runWith({
+    timeoutSeconds: 300,
+    memory: '1GB'
+}).https.onRequest(async (req, res) => {
+    try {
+        await calculateGrowerMetrics();
+        res.send('Grower metrics calculation completed.');
+    } catch (err) {
+        res.status(500).send('Error calculating grower metrics: ' + err.toString());
+    }
 });
 
 
