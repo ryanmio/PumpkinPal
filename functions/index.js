@@ -1061,58 +1061,67 @@ async function calculateSiteRecords() {
             return;
         }
 
-        // Begin a Firestore batch
-        let batch = db.batch();
-        let batchCounter = 0;
-
-        // Query all pumpkins
-        const pumpkinsSnapshot = await pumpkinsCollection.get();
-
         // Create a map to store the record weight for each contest
         const contestRecords = {};
         contestsSnapshot.forEach(doc => {
             contestRecords[doc.id] = 0;
         });
 
+        // Query all official pumpkins (excluding DMG and EXH)
+        const pumpkinsSnapshot = await pumpkinsCollection
+            .where('place', 'not-in', ['DMG', 'EXH'])
+            .get();
+
         // Process pumpkins and update record weights
         pumpkinsSnapshot.forEach(doc => {
             const pumpkin = doc.data();
             const contestId = pumpkin.contest;
 
-            if (pumpkin.place !== 'DMG' && pumpkin.weight > contestRecords[contestId]) {
+            if (pumpkin.weight > contestRecords[contestId]) {
                 contestRecords[contestId] = pumpkin.weight;
             }
         });
 
         // Update Firestore documents with record weights
+        const updateBatchSize = 500;
+        let batchCounter = 0;
+        let batch = db.batch();
+
         for (const contestId in contestRecords) {
             const docRef = contestsCollection.doc(contestId);
             const recordWeight = contestRecords[contestId];
             batch.update(docRef, { recordWeight });
             batchCounter++;
 
-            // If the batch has reached the maximum size (500), commit it and start a new one
-            if (batchCounter === 500) {
+            if (batchCounter === updateBatchSize) {
                 await batch.commit();
                 batch = db.batch();
                 batchCounter = 0;
             }
         }
 
-        // Commit any remaining operations in the batch
         if (batchCounter > 0) {
             await batch.commit();
         }
 
+        console.log('Site records calculation completed.');
     } catch (err) {
         console.error('Error calculating site records:', err);
+        throw err;
     }
 }
 
 // HTTP function to manually trigger the calculation of site records
-exports.calculateSiteRecords = functions.https.onRequest(async (req, res) => {
-    await calculateSiteRecords();
-    res.send('Site records calculation completed.');
+exports.calculateSiteRecords = functions.runWith({
+    timeoutSeconds: 300,
+    memory: '1GB'
+}).https.onRequest(async (req, res) => {
+    try {
+        await calculateSiteRecords();
+        res.send('Site records calculation completed.');
+    } catch (err) {
+        res.status(500).send('Error calculating site records: ' + err.toString());
+    }
 });
 
 
