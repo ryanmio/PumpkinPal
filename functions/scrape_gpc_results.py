@@ -76,17 +76,13 @@ async def insert_data(supabase, category: str, year: int, data: Dict[str, Any]) 
     try:
         print(f"\nInserting {len(data['data'])} records into {table_name}")
         
-        # Process each row from the scraped data
-        for i, row in enumerate(data['data'], 1):
+        # Build a single INSERT statement with multiple VALUES
+        values_list = []
+        for row in data['data']:
             # Clean up the weight value (remove commas)
             weight = row['Weight (lbs)'].replace(',', '')
             
-            query = f"""
-            INSERT INTO raw_data.{table_name} (
-                place, weight_lbs, grower_name, city, state_prov, 
-                country, gpc_site, seed_mother, pollinator_father, 
-                ott, est_weight, pct_chart
-            ) VALUES (
+            values_list.append(f"""(
                 '{row['Place']}',
                 {weight},
                 '{row['Grower Name'].replace("'", "''")}',
@@ -99,12 +95,22 @@ async def insert_data(supabase, category: str, year: int, data: Dict[str, Any]) 
                 {row['OTT'] or 0},
                 {row['Est. Weight'].replace(',', '') if row['Est. Weight'] else 0},
                 {row['Pct. Chart'] or 0}
-            );
+            )""")
+        
+        # Create batches of 100 records each
+        batch_size = 100
+        for i in range(0, len(values_list), batch_size):
+            batch = values_list[i:i + batch_size]
+            query = f"""
+            INSERT INTO raw_data.{table_name} (
+                place, weight_lbs, grower_name, city, state_prov, 
+                country, gpc_site, seed_mother, pollinator_father, 
+                ott, est_weight, pct_chart
+            ) VALUES {','.join(batch)};
             """
             
-            result = supabase.rpc('execute_sql', {'query': query}).execute()
-            if i % 50 == 0:  # Show progress every 50 records
-                print(f"Processed {i}/{len(data['data'])} records")
+            supabase.rpc('execute_sql', {'query': query}).execute()
+            print(f"Processed {min(i + batch_size, len(values_list))}/{len(values_list)} records")
             
         print(f"Successfully inserted all {len(data['data'])} records into {table_name}")
         return True
