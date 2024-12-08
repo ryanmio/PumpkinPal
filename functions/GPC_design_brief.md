@@ -56,6 +56,12 @@ Database design for storing and processing Giant Pumpkin Commonwealth (GPC) comp
   - `site_stats`
 - Purpose: Pre-calculated rankings and statistics
 
+### 6. Public Layer
+- Schema: `public`
+- Views:
+  - TBD
+- Purpose: Public-facing views of data
+
 ## Data Processing Stages
 
 1. **Historical Data ETL**
@@ -109,3 +115,4 @@ Database design for storing and processing Giant Pumpkin Commonwealth (GPC) comp
 - Fuzzy matching algorithms for historical data
 - Manual review interface for uncertain matches
 - Grower merge capability for duplicate resolution
+
