@@ -33,12 +33,18 @@ Database design for storing and processing Giant Pumpkin Commonwealth (GPC) comp
 ### 3. Core Layer
 - Schema: `core`
 - Tables:
-  - `categories`
-  - `growers`
-  - `sites`
-  - `entries`
-- Purpose: Normalized, relational data structure
-- Features: Full history, relationships, and data integrity
+  - `entries`: Single source of truth for all competition entries
+    - Full column set from staging
+    - Properly typed and validated
+    - Indexed for efficient querying
+    - Supports cross-category analysis
+    - Maintains complete entry history
+- Purpose: Clean, validated data ready for analytics
+- Features: 
+  - Data integrity constraints
+  - Efficient indexing
+  - Full audit trail
+  - Cross-category querying support
 
 ### 4. Site Submission Layer
 - Schema: `submissions`
@@ -50,11 +56,21 @@ Database design for storing and processing Giant Pumpkin Commonwealth (GPC) comp
 
 ### 5. Analytics Layer
 - Schema: `analytics`
-- Views/Tables:
-  - `rankings_{category}_{year}`
-  - `grower_stats`
-  - `site_stats`
-- Purpose: Pre-calculated rankings and statistics
+- Tables/Views:
+  - `annual_records`: Year-by-year records and achievements
+  - `state_rankings`: Performance by state/province
+  - `site_performance`: Site-level statistics and trends
+  - `grower_records`: Individual achievements and records
+  - `category_trends`: Category-specific analysis
+  - `competition_metrics`: Entry and participation analysis
+  - `weight_statistics`: Statistical distributions
+  - `growth_patterns`: Genetics and growing condition analysis
+- Purpose: Derived insights and statistics
+- Features:
+  - Built from core.entries
+  - Optimized for specific analyses
+  - Materialized views where needed
+  - Rebuilable from core data
 
 ### 6. Public Layer
 - Schema: `public`
