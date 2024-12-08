@@ -8,100 +8,153 @@ from dotenv import load_dotenv
 from supabase import create_client
 from postgrest import AsyncPostgrestClient
 from tqdm import tqdm
+import requests
+from bs4 import BeautifulSoup
 
-# Setup logging
+# Setup logging - only show WARNING and above for httpx
+logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.basicConfig(level=logging.INFO)
 
 async def test_supabase_connection(supabase) -> bool:
     """Test Supabase connection and permissions."""
     try:
-        postgrest = AsyncPostgrestClient(
-            base_url=f"{os.getenv('SUPABASE_URL')}/rest/v1",
-            headers={
-                "apikey": os.getenv("SUPABASE_KEY"),
-                "Authorization": f"Bearer {os.getenv('SUPABASE_KEY')}"
-            }
-        )
-        
-        # Test SQL execution permissions
-        test_query = "SELECT current_database(), current_user, version();"
-        print("\nTesting SQL execution...")
-        result = await postgrest.rpc('run_sql', {'query': test_query}).execute()
-        print("SQL execution test successful")
-        
-        # Try to create the schema
-        print("\nTesting schema creation...")
-        schema_query = "CREATE SCHEMA IF NOT EXISTS raw_data;"
-        result = await postgrest.rpc('run_sql', {'query': schema_query}).execute()
+        # Create schema if it doesn't exist
+        print("\nCreating raw_data schema if it doesn't exist...")
+        create_schema_query = "CREATE SCHEMA IF NOT EXISTS raw_data;"
+        supabase.rpc('execute_sql', {'query': create_schema_query}).execute()
         print("Schema creation successful")
-        
         return True
         
     except Exception as e:
         print(f"\nConnection test failed: {str(e)}")
+        print(f"Type of error: {type(e)}")
         return False
 
 async def create_raw_table(supabase, category: str, year: int) -> bool:
-    """Create a raw data table for a specific category and year."""
+    """Create a properly structured raw data table for a specific category and year."""
     table_name = f"{category.lower()}_{year}"
-    schema_name = "raw_data"
     
     try:
-        postgrest = AsyncPostgrestClient(
-            base_url=f"{os.getenv('SUPABASE_URL')}/rest/v1",
-            headers={
-                "apikey": os.getenv("SUPABASE_KEY"),
-                "Authorization": f"Bearer {os.getenv('SUPABASE_KEY')}"
-            }
-        )
+        # Drop the table if it exists (for testing)
+        drop_query = f"DROP TABLE IF EXISTS raw_data.{table_name};"
+        print(f"\nDropping table if exists: {table_name}")
+        supabase.rpc('execute_sql', {'query': drop_query}).execute()
         
-        table_query = f"""
-        CREATE TABLE IF NOT EXISTS {schema_name}.{table_name} (
+        # Create new table
+        create_query = f"""
+        CREATE TABLE raw_data.{table_name} (
             id BIGSERIAL PRIMARY KEY,
-            raw_data JSONB NOT NULL,
-            scraped_at TIMESTAMPTZ DEFAULT NOW()
+            place VARCHAR(10),
+            weight_lbs DECIMAL(10,2),
+            grower_name VARCHAR(255),
+            city VARCHAR(100),
+            state_prov VARCHAR(100),
+            country VARCHAR(100),
+            gpc_site VARCHAR(255),
+            seed_mother VARCHAR(255),
+            pollinator_father VARCHAR(255),
+            ott DECIMAL(10,1),
+            est_weight DECIMAL(10,2),
+            pct_chart DECIMAL(10,1),
+            created_at TIMESTAMPTZ DEFAULT NOW()
         );
         """
         
-        print(f"\nAttempting to create table: {schema_name}.{table_name}")
-        result = await postgrest.rpc('run_sql', {'query': table_query}).execute()
-        print("Table creation successful")
-        
+        print(f"Creating table: {table_name}")
+        supabase.rpc('execute_sql', {'query': create_query}).execute()
+        print(f"Table {table_name} created successfully")
         return True
         
     except Exception as e:
-        logging.error(f"Error creating table {schema_name}.{table_name}: {str(e)}")
+        logging.error(f"Error creating table {table_name}: {str(e)}")
         return False
 
 async def insert_data(supabase, category: str, year: int, data: Dict[str, Any]) -> bool:
-    """Insert scraped data into the appropriate table."""
+    """Insert scraped data into structured table."""
     table_name = f"{category.lower()}_{year}"
-    schema_name = "raw_data"
     
     try:
-        postgrest = AsyncPostgrestClient(
-            base_url=f"{os.getenv('SUPABASE_URL')}/rest/v1",
-            headers={
-                "apikey": os.getenv("SUPABASE_KEY"),
-                "Authorization": f"Bearer {os.getenv('SUPABASE_KEY')}"
-            }
-        )
+        print(f"\nInserting {len(data['data'])} records into {table_name}")
         
-        insert_query = f"""
-        INSERT INTO {schema_name}.{table_name} (raw_data)
-        VALUES ($1);
-        """
-        
-        await postgrest.rpc('run_sql', {
-            'query': insert_query,
-            'params': [json.dumps(data)]
-        }).execute()
-        
+        # Process each row from the scraped data
+        for i, row in enumerate(data['data'], 1):
+            # Clean up the weight value (remove commas)
+            weight = row['Weight (lbs)'].replace(',', '')
+            
+            query = f"""
+            INSERT INTO raw_data.{table_name} (
+                place, weight_lbs, grower_name, city, state_prov, 
+                country, gpc_site, seed_mother, pollinator_father, 
+                ott, est_weight, pct_chart
+            ) VALUES (
+                '{row['Place']}',
+                {weight},
+                '{row['Grower Name'].replace("'", "''")}',
+                '{row['City'].replace("'", "''")}',
+                '{row['State/Prov'].replace("'", "''")}',
+                '{row['Country'].replace("'", "''")}',
+                '{row['GPC Site'].replace("'", "''")}',
+                '{row['Seed (Mother)'].replace("'", "''")}',
+                '{row['Pollinator (Father)'].replace("'", "''")}',
+                {row['OTT'] or 0},
+                {row['Est. Weight'].replace(',', '') if row['Est. Weight'] else 0},
+                {row['Pct. Chart'] or 0}
+            );
+            """
+            
+            result = supabase.rpc('execute_sql', {'query': query}).execute()
+            if i % 50 == 0:  # Show progress every 50 records
+                print(f"Processed {i}/{len(data['data'])} records")
+            
+        print(f"Successfully inserted all {len(data['data'])} records into {table_name}")
         return True
         
     except Exception as e:
-        logging.error(f"Error inserting data into {schema_name}.{table_name}: {str(e)}")
+        logging.error(f"Error inserting data: {str(e)}")
+        print(f"Detailed error: {str(e)}")
         return False
+
+async def scrape_data(category: str, year: int) -> Dict[str, Any]:
+    """Scrape data for a specific category and year."""
+    try:
+        # URL of the page to scrape
+        url = f"http://www.bigpumpkins.com/WeighoffResultsGPC.aspx?c={category}&y={year}"
+        
+        # Send HTTP request
+        response = requests.get(url)
+        
+        # Parse HTML content
+        soup = BeautifulSoup(response.content, 'html.parser')
+        
+        # Find the table
+        table = soup.find('table')
+        if not table:
+            return None
+            
+        # Extract table headers
+        headers = [th.text for th in table.find_all('th')]
+        
+        # Extract table rows
+        rows = table.find_all('tr')
+        data = []
+        for row in rows[1:]:  # Skip header row
+            row_data = [td.text for td in row.find_all('td')]
+            if len(row_data) == len(headers):
+                data.append(dict(zip(headers, row_data)))
+        
+        if not data:
+            return None
+            
+        return {
+            "headers": headers,
+            "data": data,
+            "url": url,
+            "scraped_at": datetime.now().isoformat()
+        }
+        
+    except Exception as e:
+        logging.error(f"Error scraping {category} {year}: {str(e)}")
+        return None
 
 async def scrape_and_store(supabase, category: str, year: int) -> Dict[str, Any]:
     """Scrape data for a category and year, and store it in Supabase."""
@@ -119,9 +172,12 @@ async def scrape_and_store(supabase, category: str, year: int) -> Dict[str, Any]
             result["error"] = "Failed to create table"
             return result
             
-        # TODO: Add your actual scraping logic here
-        # For now, we'll just simulate success
-        scraped_data = {"dummy": "data"}
+        # Scrape the data
+        scraped_data = await scrape_data(category, year)
+        
+        if not scraped_data:
+            result["error"] = "No data found"
+            return result
         
         # Insert the scraped data
         if await insert_data(supabase, category, year, scraped_data):
