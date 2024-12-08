@@ -580,7 +580,7 @@ class GPCPipeline:
             raise
 
     def _ensure_core_tables(self) -> None:
-        """Ensure core analytics tables exist with correct schema."""
+        """Ensure core tables exist with correct schema."""
         try:
             # Create core schema if it doesn't exist
             create_schema_sql = """
@@ -588,81 +588,69 @@ class GPCPipeline:
             """
             self.supabase.rpc('execute_sql', {'query': create_schema_sql}).execute()
             
-            # Rankings by state
-            create_state_rankings_sql = """
-            DROP TABLE IF EXISTS core.state_rankings;
-            CREATE TABLE core.state_rankings (
-                ranking_id SERIAL PRIMARY KEY,
-                year INTEGER,
-                category CHAR(1),
-                state_prov TEXT,
-                total_entries INTEGER,
-                avg_weight NUMERIC,
-                max_weight NUMERIC,
-                min_weight NUMERIC,
-                unique_growers INTEGER,
-                rank INTEGER,
-                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-            );
+            # Drop and recreate entries table
+            drop_entries_sql = """
+            DROP TABLE IF EXISTS core.entries CASCADE;
             """
-            self.supabase.rpc('execute_sql', {'query': create_state_rankings_sql}).execute()
-            logger.info("Created state_rankings table")
-
-            # Rankings by site
-            create_site_rankings_sql = """
-            DROP TABLE IF EXISTS core.site_rankings;
-            CREATE TABLE core.site_rankings (
-                ranking_id SERIAL PRIMARY KEY,
-                year INTEGER,
-                category CHAR(1),
-                gpc_site TEXT,
-                total_entries INTEGER,
-                avg_weight NUMERIC,
-                max_weight NUMERIC,
-                min_weight NUMERIC,
-                unique_growers INTEGER,
-                rank INTEGER,
-                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-            );
-            """
-            self.supabase.rpc('execute_sql', {'query': create_site_rankings_sql}).execute()
-            logger.info("Created site_rankings table")
-
-            # Grower achievements
-            create_grower_achievements_sql = """
-            DROP TABLE IF EXISTS core.grower_achievements;
-            CREATE TABLE core.grower_achievements (
-                achievement_id SERIAL PRIMARY KEY,
+            self.supabase.rpc('execute_sql', {'query': drop_entries_sql}).execute()
+            
+            create_entries_sql = """
+            CREATE TABLE core.entries (
+                -- Primary key and metadata
+                entry_id SERIAL PRIMARY KEY,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                
+                -- Competition identifiers
+                category CHAR(1) NOT NULL,
+                year INTEGER NOT NULL,
+                
+                -- Weight and placement
+                place TEXT,
+                weight_lbs NUMERIC,
+                est_weight NUMERIC,
+                ott NUMERIC,
+                
+                -- Grower information
+                original_grower_name TEXT,
                 processed_grower_name TEXT,
-                year INTEGER,
-                achievement_type TEXT,
-                categories_qualified TEXT[],
-                qualification_details JSONB,
-                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                
+                -- Location information
+                city TEXT,
+                state_prov TEXT,
+                country TEXT,
+                gpc_site TEXT,
+                
+                -- Genetics
+                seed_mother TEXT,
+                pollinator_father TEXT,
+                
+                -- Entry metadata
+                entry_type TEXT,
+                data_quality_score INTEGER,
+                
+                -- Constraints
+                CONSTRAINT valid_category CHECK (category IN ('P', 'S', 'L', 'W', 'T', 'F', 'B', 'M')),
+                CONSTRAINT valid_year CHECK (year >= 1970 AND year <= EXTRACT(YEAR FROM CURRENT_DATE)),
+                CONSTRAINT valid_weight CHECK (weight_lbs > 0),
+                CONSTRAINT valid_quality_score CHECK (data_quality_score >= 0 AND data_quality_score <= 100)
             );
-            """
-            self.supabase.rpc('execute_sql', {'query': create_grower_achievements_sql}).execute()
-            logger.info("Created grower_achievements table")
 
-            # Annual statistics
-            create_annual_stats_sql = """
-            DROP TABLE IF EXISTS core.annual_statistics;
-            CREATE TABLE core.annual_statistics (
-                stat_id SERIAL PRIMARY KEY,
-                year INTEGER,
-                category CHAR(1),
-                total_entries INTEGER,
-                unique_growers INTEGER,
-                unique_sites INTEGER,
-                avg_weight NUMERIC,
-                median_weight NUMERIC,
-                weight_std_dev NUMERIC,
-                top_10_avg_weight NUMERIC,
-                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-            );
+            -- Indexes for common queries
+            CREATE INDEX ON core.entries(category, year);
+            CREATE INDEX ON core.entries(processed_grower_name);
+            CREATE INDEX ON core.entries(gpc_site);
+            CREATE INDEX ON core.entries(state_prov);
+            CREATE INDEX ON core.entries(weight_lbs DESC);
+            CREATE INDEX ON core.entries(year DESC, category);
+
+            -- Composite indexes for common analytics queries
+            CREATE INDEX ON core.entries(year, category, weight_lbs DESC);
+            CREATE INDEX ON core.entries(processed_grower_name, year, category);
+            CREATE INDEX ON core.entries(state_prov, year, category);
             """
-            self.supabase.rpc('execute_sql', {'query': create_annual_stats_sql}).execute()
-            logger.info("Created annual_statistics table")
+            self.supabase.rpc('execute_sql', {'query': create_entries_sql}).execute()
+            logger.info("Created core.entries table")
 
         except Exception as e:
             logger.error(f"Error ensuring core tables exist: {str(e)}")
@@ -707,126 +695,37 @@ class GPCPipeline:
             logger.warning(f"Failed to track quality issue: {str(e)}")
 
     def process_staging_to_core(self) -> None:
-        """Process staging data into core analytics tables."""
+        """Process staging data into core entries table."""
         try:
-            # Calculate state rankings
-            state_rankings_sql = """
-            INSERT INTO core.state_rankings (
-                year, category, state_prov, total_entries, avg_weight,
-                max_weight, min_weight, unique_growers, rank
-            )
-            WITH stats AS (
-                SELECT 
-                    year,
-                    category,
-                    state_prov,
-                    COUNT(*) as total_entries,
-                    AVG(weight_lbs) as avg_weight,
-                    MAX(weight_lbs) as max_weight,
-                    MIN(weight_lbs) as min_weight,
-                    COUNT(DISTINCT processed_grower_name) as unique_growers
-                FROM staging.entries_staging
-                GROUP BY year, category, state_prov
+            # Insert entries from staging to core
+            entries_sql = """
+            INSERT INTO core.entries (
+                category, year, place, weight_lbs, original_grower_name,
+                processed_grower_name, city, state_prov, country, gpc_site,
+                seed_mother, pollinator_father, ott, est_weight, entry_type,
+                data_quality_score
             )
             SELECT 
-                year,
                 category,
-                state_prov,
-                total_entries,
-                avg_weight,
-                max_weight,
-                min_weight,
-                unique_growers,
-                RANK() OVER (
-                    PARTITION BY year, category 
-                    ORDER BY max_weight DESC
-                ) as rank
-            FROM stats;
-            """
-            self.supabase.rpc('execute_sql', {'query': state_rankings_sql}).execute()
-            logger.info("Processed state rankings")
-
-            # Calculate annual statistics
-            annual_stats_sql = """
-            INSERT INTO core.annual_statistics (
-                year, category, total_entries, unique_growers, unique_sites,
-                avg_weight, median_weight, weight_std_dev, top_10_avg_weight
-            )
-            WITH stats AS (
-                SELECT 
-                    year,
-                    category,
-                    COUNT(*) as total_entries,
-                    COUNT(DISTINCT processed_grower_name) as unique_growers,
-                    COUNT(DISTINCT gpc_site) as unique_sites,
-                    AVG(weight_lbs) as avg_weight,
-                    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY weight_lbs) as median_weight,
-                    STDDEV(weight_lbs) as weight_std_dev
-                FROM staging.entries_staging
-                GROUP BY year, category
-            ),
-            top_10 AS (
-                SELECT 
-                    year,
-                    category,
-                    AVG(weight_lbs) as top_10_avg
-                FROM (
-                    SELECT 
-                        year,
-                        category,
-                        weight_lbs,
-                        RANK() OVER (PARTITION BY year, category ORDER BY weight_lbs DESC) as rnk
-                    FROM staging.entries_staging
-                ) ranked
-                WHERE rnk <= 10
-                GROUP BY year, category
-            )
-            SELECT 
-                s.*,
-                t.top_10_avg as top_10_avg_weight
-            FROM stats s
-            JOIN top_10 t USING (year, category);
-            """
-            self.supabase.rpc('execute_sql', {'query': annual_stats_sql}).execute()
-            logger.info("Processed annual statistics")
-
-            # Process grower achievements
-            achievements_sql = """
-            WITH grower_stats AS (
-                SELECT 
-                    processed_grower_name,
-                    year,
-                    array_agg(DISTINCT category) as categories,
-                    json_build_object(
-                        'top_weights', json_agg(
-                            json_build_object(
-                                'category', category,
-                                'weight', weight_lbs,
-                                'rank', RANK() OVER (PARTITION BY year, category ORDER BY weight_lbs DESC)
-                            )
-                        )
-                    ) as details
-                FROM staging.entries_staging
-                GROUP BY processed_grower_name, year
-            )
-            INSERT INTO core.grower_achievements (
-                processed_grower_name, year, achievement_type, 
-                categories_qualified, qualification_details
-            )
-            SELECT 
-                processed_grower_name,
                 year,
-                CASE 
-                    WHEN array_length(categories, 1) >= 3 THEN 'Triple Crown Contender'
-                    WHEN array_length(categories, 1) >= 2 THEN 'Double Category Champion'
-                    ELSE 'Single Category Expert'
-                END as achievement_type,
-                categories as categories_qualified,
-                details as qualification_details
-            FROM grower_stats;
+                place,
+                weight_lbs,
+                original_grower_name,
+                processed_grower_name,
+                city,
+                state_prov,
+                country,
+                gpc_site,
+                seed_mother,
+                pollinator_father,
+                ott,
+                est_weight,
+                entry_type,
+                data_quality_score
+            FROM staging.entries_staging;
             """
-            self.supabase.rpc('execute_sql', {'query': achievements_sql}).execute()
-            logger.info("Processed grower achievements")
+            self.supabase.rpc('execute_sql', {'query': entries_sql}).execute()
+            logger.info("Processed staging entries to core")
 
         except Exception as e:
             logger.error(f"Error processing staging to core: {str(e)}")
