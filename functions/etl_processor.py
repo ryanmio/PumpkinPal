@@ -58,38 +58,30 @@ class GPCPipeline:
     def _ensure_staging_tables(self) -> None:
         """Ensure staging tables exist with correct schema."""
         try:
-            # Drop and recreate sites_staging table
-            drop_sites_sql = """
-            DROP TABLE IF EXISTS staging.sites_staging;
+            # Drop any existing views first
+            drop_views_sql = """
+            DROP VIEW IF EXISTS staging.name_changes CASCADE;
+            DROP VIEW IF EXISTS staging.site_changes CASCADE;
+            DROP VIEW IF EXISTS staging.data_quality_view CASCADE;
             """
-            self.supabase.rpc('execute_sql', {'query': drop_sites_sql}).execute()
+            self.supabase.rpc('execute_sql', {'query': drop_views_sql}).execute()
+            logger.info("Dropped existing views")
             
-            create_sites_sql = """
-            CREATE TABLE staging.sites_staging (
-                year INTEGER,
-                gpc_site TEXT,
-                city TEXT,
-                state_prov TEXT,
-                country TEXT
-            );
-            """
-            self.supabase.rpc('execute_sql', {'query': create_sites_sql}).execute()
-            logger.info("Recreated sites_staging table")
-            
-            # Drop and recreate entries_staging table
+            # Drop and recreate entries_staging table with CASCADE
             drop_entries_sql = """
-            DROP TABLE IF EXISTS staging.entries_staging;
+            DROP TABLE IF EXISTS staging.entries_staging CASCADE;
             """
             self.supabase.rpc('execute_sql', {'query': drop_entries_sql}).execute()
             
             create_entries_sql = """
             CREATE TABLE staging.entries_staging (
+                entry_id SERIAL PRIMARY KEY,
                 category CHAR(1),
                 year INTEGER,
                 place TEXT,
                 weight_lbs NUMERIC,
-                processed_grower_name TEXT,
                 original_grower_name TEXT,
+                processed_grower_name TEXT,
                 city TEXT,
                 state_prov TEXT,
                 country TEXT,
@@ -98,12 +90,116 @@ class GPCPipeline:
                 pollinator_father TEXT,
                 ott NUMERIC,
                 est_weight NUMERIC,
-                entry_type TEXT
+                entry_type TEXT,
+                data_quality_score INTEGER,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
             );
             """
             self.supabase.rpc('execute_sql', {'query': create_entries_sql}).execute()
             logger.info("Recreated entries_staging table")
-            
+
+            # Create name_changes as a view instead of a table
+            create_name_changes_sql = """
+            CREATE VIEW staging.name_changes AS
+            SELECT 
+                ROW_NUMBER() OVER () as change_id,
+                original_grower_name as original_name,
+                processed_grower_name as processed_name,
+                CASE 
+                    WHEN original_grower_name = processed_grower_name THEN 1.0
+                    WHEN processed_grower_name = 'Unknown' THEN 0.0
+                    ELSE 0.8
+                END as confidence_score,
+                CASE
+                    WHEN original_grower_name = processed_grower_name THEN 'NO_CHANGE'
+                    WHEN processed_grower_name = 'Unknown' THEN 'INVALID_NAME'
+                    ELSE 'STANDARDIZED'
+                END as change_type,
+                MIN(created_at) as first_seen_at
+            FROM staging.entries_staging
+            WHERE original_grower_name IS NOT NULL
+            GROUP BY original_grower_name, processed_grower_name;
+            """
+            self.supabase.rpc('execute_sql', {'query': create_name_changes_sql}).execute()
+            logger.info("Created name_changes view")
+
+            # Create site_standardization as a view
+            create_site_std_sql = """
+            CREATE VIEW staging.site_standardization AS
+            SELECT 
+                ROW_NUMBER() OVER () as site_id,
+                gpc_site as original_site,
+                gpc_site as standardized_site,
+                city,
+                state_prov,
+                country,
+                1.0 as confidence_score,
+                MIN(created_at) as first_seen_at
+            FROM staging.entries_staging
+            WHERE gpc_site IS NOT NULL
+            GROUP BY gpc_site, city, state_prov, country;
+            """
+            self.supabase.rpc('execute_sql', {'query': create_site_std_sql}).execute()
+            logger.info("Created site_standardization view")
+
+            # Create data_quality_issues as a view
+            create_quality_issues_sql = """
+            CREATE VIEW staging.data_quality_issues AS
+            WITH quality_checks AS (
+                SELECT 
+                    entry_id,
+                    'WEIGHT' as field_name,
+                    weight_lbs::text as original_value,
+                    weight_lbs::text as corrected_value,
+                    CASE 
+                        WHEN weight_lbs <= 0 THEN 'INVALID_WEIGHT'
+                        WHEN weight_lbs > 3000 THEN 'SUSPICIOUS_WEIGHT'
+                        ELSE 'VALID_WEIGHT'
+                    END as issue_type,
+                    CASE 
+                        WHEN weight_lbs > 0 AND weight_lbs <= 3000 THEN 1.0
+                        ELSE 0.5
+                    END as confidence_score,
+                    created_at
+                FROM staging.entries_staging
+                WHERE weight_lbs IS NOT NULL
+                
+                UNION ALL
+                
+                SELECT 
+                    entry_id,
+                    'GROWER_NAME' as field_name,
+                    original_grower_name as original_value,
+                    processed_grower_name as corrected_value,
+                    CASE 
+                        WHEN processed_grower_name = 'Unknown' THEN 'INVALID_NAME'
+                        WHEN original_grower_name != processed_grower_name THEN 'STANDARDIZED_NAME'
+                        ELSE 'VALID_NAME'
+                    END as issue_type,
+                    CASE 
+                        WHEN original_grower_name = processed_grower_name THEN 1.0
+                        WHEN processed_grower_name = 'Unknown' THEN 0.0
+                        ELSE 0.8
+                    END as confidence_score,
+                    created_at
+                FROM staging.entries_staging
+                WHERE original_grower_name IS NOT NULL
+            )
+            SELECT 
+                ROW_NUMBER() OVER () as issue_id,
+                entry_id,
+                issue_type,
+                field_name,
+                original_value,
+                corrected_value,
+                confidence_score,
+                created_at
+            FROM quality_checks
+            WHERE issue_type NOT IN ('VALID_WEIGHT', 'VALID_NAME');
+            """
+            self.supabase.rpc('execute_sql', {'query': create_quality_issues_sql}).execute()
+            logger.info("Created data_quality_issues view")
+
         except Exception as e:
             logger.error(f"Error ensuring staging tables exist: {str(e)}")
             if hasattr(e, 'message'):
@@ -481,6 +577,287 @@ class GPCPipeline:
             logger.info(f"Successfully inserted batch of {len(sites_batch)} records into staging.sites_staging")
         except Exception as e:
             logger.error(f"Error inserting sites batch: {str(e)}")
+            raise
+
+    def _ensure_core_tables(self) -> None:
+        """Ensure core analytics tables exist with correct schema."""
+        try:
+            # Create core schema if it doesn't exist
+            create_schema_sql = """
+            CREATE SCHEMA IF NOT EXISTS core;
+            """
+            self.supabase.rpc('execute_sql', {'query': create_schema_sql}).execute()
+            
+            # Rankings by state
+            create_state_rankings_sql = """
+            DROP TABLE IF EXISTS core.state_rankings;
+            CREATE TABLE core.state_rankings (
+                ranking_id SERIAL PRIMARY KEY,
+                year INTEGER,
+                category CHAR(1),
+                state_prov TEXT,
+                total_entries INTEGER,
+                avg_weight NUMERIC,
+                max_weight NUMERIC,
+                min_weight NUMERIC,
+                unique_growers INTEGER,
+                rank INTEGER,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+            """
+            self.supabase.rpc('execute_sql', {'query': create_state_rankings_sql}).execute()
+            logger.info("Created state_rankings table")
+
+            # Rankings by site
+            create_site_rankings_sql = """
+            DROP TABLE IF EXISTS core.site_rankings;
+            CREATE TABLE core.site_rankings (
+                ranking_id SERIAL PRIMARY KEY,
+                year INTEGER,
+                category CHAR(1),
+                gpc_site TEXT,
+                total_entries INTEGER,
+                avg_weight NUMERIC,
+                max_weight NUMERIC,
+                min_weight NUMERIC,
+                unique_growers INTEGER,
+                rank INTEGER,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+            """
+            self.supabase.rpc('execute_sql', {'query': create_site_rankings_sql}).execute()
+            logger.info("Created site_rankings table")
+
+            # Grower achievements
+            create_grower_achievements_sql = """
+            DROP TABLE IF EXISTS core.grower_achievements;
+            CREATE TABLE core.grower_achievements (
+                achievement_id SERIAL PRIMARY KEY,
+                processed_grower_name TEXT,
+                year INTEGER,
+                achievement_type TEXT,
+                categories_qualified TEXT[],
+                qualification_details JSONB,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+            """
+            self.supabase.rpc('execute_sql', {'query': create_grower_achievements_sql}).execute()
+            logger.info("Created grower_achievements table")
+
+            # Annual statistics
+            create_annual_stats_sql = """
+            DROP TABLE IF EXISTS core.annual_statistics;
+            CREATE TABLE core.annual_statistics (
+                stat_id SERIAL PRIMARY KEY,
+                year INTEGER,
+                category CHAR(1),
+                total_entries INTEGER,
+                unique_growers INTEGER,
+                unique_sites INTEGER,
+                avg_weight NUMERIC,
+                median_weight NUMERIC,
+                weight_std_dev NUMERIC,
+                top_10_avg_weight NUMERIC,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+            """
+            self.supabase.rpc('execute_sql', {'query': create_annual_stats_sql}).execute()
+            logger.info("Created annual_statistics table")
+
+        except Exception as e:
+            logger.error(f"Error ensuring core tables exist: {str(e)}")
+            if hasattr(e, 'message'):
+                logger.error(f"Error message: {e.message}")
+            raise
+
+    def _track_name_change(self, original_name: str, processed_name: str, confidence: float, change_type: str) -> None:
+        """Track a grower name change in the name_changes table."""
+        sql = """
+        INSERT INTO staging.name_changes (
+            original_name, processed_name, confidence_score, change_type
+        ) VALUES (
+            $1, $2, $3, $4
+        );
+        """
+        try:
+            self.supabase.rpc('execute_sql', {
+                'query': sql,
+                'params': [original_name, processed_name, confidence, change_type]
+            }).execute()
+        except Exception as e:
+            logger.warning(f"Failed to track name change: {str(e)}")
+
+    def _track_quality_issue(self, entry_id: int, issue_type: str, field: str, 
+                           original: str, corrected: str, confidence: float) -> None:
+        """Track a data quality issue."""
+        sql = """
+        INSERT INTO staging.data_quality_issues (
+            entry_id, issue_type, field_name, original_value, 
+            corrected_value, confidence_score
+        ) VALUES (
+            $1, $2, $3, $4, $5, $6
+        );
+        """
+        try:
+            self.supabase.rpc('execute_sql', {
+                'query': sql,
+                'params': [entry_id, issue_type, field, original, corrected, confidence]
+            }).execute()
+        except Exception as e:
+            logger.warning(f"Failed to track quality issue: {str(e)}")
+
+    def process_staging_to_core(self) -> None:
+        """Process staging data into core analytics tables."""
+        try:
+            # Calculate state rankings
+            state_rankings_sql = """
+            INSERT INTO core.state_rankings (
+                year, category, state_prov, total_entries, avg_weight,
+                max_weight, min_weight, unique_growers, rank
+            )
+            WITH stats AS (
+                SELECT 
+                    year,
+                    category,
+                    state_prov,
+                    COUNT(*) as total_entries,
+                    AVG(weight_lbs) as avg_weight,
+                    MAX(weight_lbs) as max_weight,
+                    MIN(weight_lbs) as min_weight,
+                    COUNT(DISTINCT processed_grower_name) as unique_growers
+                FROM staging.entries_staging
+                GROUP BY year, category, state_prov
+            )
+            SELECT 
+                year,
+                category,
+                state_prov,
+                total_entries,
+                avg_weight,
+                max_weight,
+                min_weight,
+                unique_growers,
+                RANK() OVER (
+                    PARTITION BY year, category 
+                    ORDER BY max_weight DESC
+                ) as rank
+            FROM stats;
+            """
+            self.supabase.rpc('execute_sql', {'query': state_rankings_sql}).execute()
+            logger.info("Processed state rankings")
+
+            # Calculate annual statistics
+            annual_stats_sql = """
+            INSERT INTO core.annual_statistics (
+                year, category, total_entries, unique_growers, unique_sites,
+                avg_weight, median_weight, weight_std_dev, top_10_avg_weight
+            )
+            WITH stats AS (
+                SELECT 
+                    year,
+                    category,
+                    COUNT(*) as total_entries,
+                    COUNT(DISTINCT processed_grower_name) as unique_growers,
+                    COUNT(DISTINCT gpc_site) as unique_sites,
+                    AVG(weight_lbs) as avg_weight,
+                    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY weight_lbs) as median_weight,
+                    STDDEV(weight_lbs) as weight_std_dev
+                FROM staging.entries_staging
+                GROUP BY year, category
+            ),
+            top_10 AS (
+                SELECT 
+                    year,
+                    category,
+                    AVG(weight_lbs) as top_10_avg
+                FROM (
+                    SELECT 
+                        year,
+                        category,
+                        weight_lbs,
+                        RANK() OVER (PARTITION BY year, category ORDER BY weight_lbs DESC) as rnk
+                    FROM staging.entries_staging
+                ) ranked
+                WHERE rnk <= 10
+                GROUP BY year, category
+            )
+            SELECT 
+                s.*,
+                t.top_10_avg as top_10_avg_weight
+            FROM stats s
+            JOIN top_10 t USING (year, category);
+            """
+            self.supabase.rpc('execute_sql', {'query': annual_stats_sql}).execute()
+            logger.info("Processed annual statistics")
+
+            # Process grower achievements
+            achievements_sql = """
+            WITH grower_stats AS (
+                SELECT 
+                    processed_grower_name,
+                    year,
+                    array_agg(DISTINCT category) as categories,
+                    json_build_object(
+                        'top_weights', json_agg(
+                            json_build_object(
+                                'category', category,
+                                'weight', weight_lbs,
+                                'rank', RANK() OVER (PARTITION BY year, category ORDER BY weight_lbs DESC)
+                            )
+                        )
+                    ) as details
+                FROM staging.entries_staging
+                GROUP BY processed_grower_name, year
+            )
+            INSERT INTO core.grower_achievements (
+                processed_grower_name, year, achievement_type, 
+                categories_qualified, qualification_details
+            )
+            SELECT 
+                processed_grower_name,
+                year,
+                CASE 
+                    WHEN array_length(categories, 1) >= 3 THEN 'Triple Crown Contender'
+                    WHEN array_length(categories, 1) >= 2 THEN 'Double Category Champion'
+                    ELSE 'Single Category Expert'
+                END as achievement_type,
+                categories as categories_qualified,
+                details as qualification_details
+            FROM grower_stats;
+            """
+            self.supabase.rpc('execute_sql', {'query': achievements_sql}).execute()
+            logger.info("Processed grower achievements")
+
+        except Exception as e:
+            logger.error(f"Error processing staging to core: {str(e)}")
+            if hasattr(e, 'message'):
+                logger.error(f"Error message: {e.message}")
+            raise
+
+    def run_pipeline(self, start_year: int = 2005, end_year: int = 2023, categories: List[str] = ['P', 'F', 'L', 'T', 'S']) -> None:
+        """Run the complete ETL pipeline."""
+        try:
+            # Initialize all tables
+            self._ensure_staging_tables()
+            self._ensure_core_tables()
+            
+            # Process each category and year
+            for category in categories:
+                for year in range(start_year, end_year + 1):
+                    # Fetch and process raw data to staging
+                    df = self._fetch_raw_data(year, category)
+                    if df is not None:
+                        self._process_data_to_staging(df, category, year)
+            
+            # Process staging to core
+            self.process_staging_to_core()
+            
+            logger.info("ETL pipeline completed successfully")
+            
+        except Exception as e:
+            logger.error(f"Error running ETL pipeline: {str(e)}")
+            if hasattr(e, 'message'):
+                logger.error(f"Error message: {e.message}")
             raise
 
 def main():
