@@ -587,73 +587,52 @@ class GPCPipeline:
             CREATE SCHEMA IF NOT EXISTS core;
             """
             self.supabase.rpc('execute_sql', {'query': create_schema_sql}).execute()
+            logger.info("Created core schema")
             
             # Drop and recreate entries table
             drop_entries_sql = """
             DROP TABLE IF EXISTS core.entries CASCADE;
             """
             self.supabase.rpc('execute_sql', {'query': drop_entries_sql}).execute()
+            logger.info("Dropped existing core.entries table")
             
             create_entries_sql = """
             CREATE TABLE core.entries (
-                -- Primary key and metadata
                 entry_id SERIAL PRIMARY KEY,
-                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-                
-                -- Competition identifiers
-                category CHAR(1) NOT NULL,
-                year INTEGER NOT NULL,
-                
-                -- Weight and placement
+                category CHAR(1),
+                year INTEGER,
                 place TEXT,
                 weight_lbs NUMERIC,
-                est_weight NUMERIC,
-                ott NUMERIC,
-                
-                -- Grower information
+                grower_name TEXT,
                 original_grower_name TEXT,
-                processed_grower_name TEXT,
-                
-                -- Location information
                 city TEXT,
                 state_prov TEXT,
                 country TEXT,
                 gpc_site TEXT,
-                
-                -- Genetics
                 seed_mother TEXT,
                 pollinator_father TEXT,
-                
-                -- Entry metadata
+                ott NUMERIC,
+                est_weight NUMERIC,
                 entry_type TEXT,
-                data_quality_score INTEGER,
-                
-                -- Constraints
-                CONSTRAINT valid_category CHECK (category IN ('P', 'S', 'L', 'W', 'T', 'F', 'B', 'M')),
-                CONSTRAINT valid_year CHECK (year >= 1970 AND year <= EXTRACT(YEAR FROM CURRENT_DATE)),
-                CONSTRAINT valid_weight CHECK (weight_lbs > 0),
-                CONSTRAINT valid_quality_score CHECK (data_quality_score >= 0 AND data_quality_score <= 100)
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
             );
-
-            -- Indexes for common queries
-            CREATE INDEX ON core.entries(category, year);
-            CREATE INDEX ON core.entries(processed_grower_name);
-            CREATE INDEX ON core.entries(gpc_site);
-            CREATE INDEX ON core.entries(state_prov);
-            CREATE INDEX ON core.entries(weight_lbs DESC);
-            CREATE INDEX ON core.entries(year DESC, category);
-
-            -- Composite indexes for common analytics queries
-            CREATE INDEX ON core.entries(year, category, weight_lbs DESC);
-            CREATE INDEX ON core.entries(processed_grower_name, year, category);
-            CREATE INDEX ON core.entries(state_prov, year, category);
             """
             self.supabase.rpc('execute_sql', {'query': create_entries_sql}).execute()
             logger.info("Created core.entries table")
-
+            
+            # Add indexes for common queries
+            indexes_sql = """
+            CREATE INDEX IF NOT EXISTS entries_category_year_idx ON core.entries (category, year);
+            CREATE INDEX IF NOT EXISTS entries_grower_name_idx ON core.entries (grower_name);
+            CREATE INDEX IF NOT EXISTS entries_gpc_site_idx ON core.entries (gpc_site);
+            CREATE INDEX IF NOT EXISTS entries_weight_idx ON core.entries (weight_lbs DESC);
+            """
+            self.supabase.rpc('execute_sql', {'query': indexes_sql}).execute()
+            logger.info("Created indexes on core.entries table")
+            
         except Exception as e:
-            logger.error(f"Error ensuring core tables exist: {str(e)}")
+            logger.error(f"Error ensuring core tables: {str(e)}")
             if hasattr(e, 'message'):
                 logger.error(f"Error message: {e.message}")
             raise
@@ -694,24 +673,266 @@ class GPCPipeline:
         except Exception as e:
             logger.warning(f"Failed to track quality issue: {str(e)}")
 
-    def process_staging_to_core(self) -> None:
-        """Process staging data into core entries table."""
+    def create_analytics_views(self) -> None:
+        """Create materialized views for analytics."""
         try:
-            # Insert entries from staging to core
-            entries_sql = """
+            # Create analytics schema if it doesn't exist
+            create_schema_sql = """
+            CREATE SCHEMA IF NOT EXISTS analytics;
+            """
+            self.supabase.rpc('execute_sql', {'query': create_schema_sql}).execute()
+            logger.info("Created analytics schema")
+            
+            # Create and populate category points reference table
+            category_points_sql = """
+            DROP TABLE IF EXISTS analytics.category_points;
+            CREATE TABLE analytics.category_points (
+                category CHAR(1),
+                points_per_pound NUMERIC(10,6),
+                points_per_kg NUMERIC(10,6),
+                measurement_type TEXT,
+                PRIMARY KEY (category)
+            );
+
+            INSERT INTO analytics.category_points VALUES
+            ('P', 0.024, 0.052912, 'weight'),  -- Atlantic Giant
+            ('S', 0.039, 0.085984, 'weight'),  -- Squash
+            ('B', 0.140, 0.30865, 'weight'),   -- Bushel Gourd
+            ('W', 0.160, 0.35266, 'weight'),   -- Watermelon
+            ('L', 0.270, 0.10632, 'length'),   -- Long Gourd (points per inch/cm)
+            ('F', 0.290, 0.63929, 'weight'),   -- Field Pumpkin
+            ('M', 0.390, 0.86022, 'weight'),   -- Marrow
+            ('T', 7.000, 15.432, 'weight');    -- Tomato
+            """
+            self.supabase.rpc('execute_sql', {'query': category_points_sql}).execute()
+            logger.info("Created and populated category_points table")
+
+            # Create master gardener calculations view
+            master_gardener_sql = """
+            DROP MATERIALIZED VIEW IF EXISTS analytics.master_gardener_entries;
+            CREATE MATERIALIZED VIEW analytics.master_gardener_entries AS
+            WITH ranked_entries AS (
+                SELECT 
+                    e.grower_name,
+                    e.year,
+                    e.category,
+                    e.weight_lbs,
+                    e.ott as length_inches,
+                    cp.points_per_pound,
+                    cp.measurement_type,
+                    -- Calculate points based on measurement type
+                    CASE 
+                        WHEN cp.measurement_type = 'weight' THEN 
+                            e.weight_lbs * cp.points_per_pound
+                        WHEN cp.measurement_type = 'length' THEN 
+                            e.ott * cp.points_per_pound
+                        ELSE 0
+                    END as points,
+                    -- Rank within category for the year
+                    ROW_NUMBER() OVER (
+                        PARTITION BY e.grower_name, e.year, e.category 
+                        ORDER BY e.weight_lbs DESC
+                    ) as entry_rank
+                FROM core.entries e
+                JOIN analytics.category_points cp ON e.category = cp.category
+                WHERE e.entry_type = 'official'
+            )
+            SELECT 
+                grower_name,
+                year,
+                category,
+                weight_lbs,
+                length_inches,
+                points,
+                entry_rank
+            FROM ranked_entries
+            WHERE entry_rank = 1  -- Only keep best entry per category per grower per year
+            ORDER BY grower_name, year, points DESC;
+
+            -- Create master gardener qualifiers view
+            DROP MATERIALIZED VIEW IF EXISTS analytics.master_gardener_qualifiers;
+            CREATE MATERIALIZED VIEW analytics.master_gardener_qualifiers AS
+            WITH grower_yearly_totals AS (
+                SELECT 
+                    grower_name,
+                    year,
+                    COUNT(DISTINCT category) as categories_entered,
+                    SUM(points) as total_points,
+                    array_agg(DISTINCT category ORDER BY category) as categories,
+                    array_agg(points ORDER BY category) as category_points
+                FROM analytics.master_gardener_entries
+                GROUP BY grower_name, year
+            )
+            SELECT 
+                grower_name,
+                year,
+                categories_entered,
+                total_points,
+                categories,
+                category_points,
+                CASE 
+                    WHEN total_points >= 110 THEN 'Qualified'
+                    WHEN total_points >= 90 THEN 'Close'
+                    ELSE 'Not Qualified'
+                END as qualification_status
+            FROM grower_yearly_totals
+            WHERE categories_entered >= 3  -- Must enter at least 3 categories
+            ORDER BY year DESC, total_points DESC;
+            """
+            self.supabase.rpc('execute_sql', {'query': master_gardener_sql}).execute()
+            logger.info("Created master gardener views")
+
+            # Create heaviest_by_category materialized view
+            heaviest_sql = """
+            DROP MATERIALIZED VIEW IF EXISTS analytics.heaviest_by_category;
+            CREATE MATERIALIZED VIEW analytics.heaviest_by_category AS
+            WITH ranked_entries AS (
+                SELECT 
+                    category,
+                    weight_lbs,
+                    grower_name,
+                    gpc_site,
+                    year,
+                    ROW_NUMBER() OVER (PARTITION BY category ORDER BY weight_lbs DESC) as rank_all_time
+                FROM core.entries
+                WHERE entry_type = 'official'
+            )
+            SELECT *
+            FROM ranked_entries
+            WHERE rank_all_time <= 10
+            ORDER BY category, rank_all_time;
+            """
+            self.supabase.rpc('execute_sql', {'query': heaviest_sql}).execute()
+            logger.info("Created heaviest_by_category materialized view")
+            
+            # Create annual_top_ten materialized view
+            annual_sql = """
+            DROP MATERIALIZED VIEW IF EXISTS analytics.annual_top_ten;
+            CREATE MATERIALIZED VIEW analytics.annual_top_ten AS
+            WITH ranked_entries AS (
+                SELECT 
+                    year,
+                    category,
+                    weight_lbs,
+                    grower_name,
+                    gpc_site,
+                    state_prov,
+                    ROW_NUMBER() OVER (PARTITION BY year, category ORDER BY weight_lbs DESC) as rank
+                FROM core.entries
+                WHERE entry_type = 'official'
+            )
+            SELECT *
+            FROM ranked_entries
+            WHERE rank <= 10
+            ORDER BY year DESC, category, rank;
+            """
+            self.supabase.rpc('execute_sql', {'query': annual_sql}).execute()
+            logger.info("Created annual_top_ten materialized view")
+            
+            # Create site_records materialized view
+            site_records_sql = """
+            DROP MATERIALIZED VIEW IF EXISTS analytics.site_records;
+            CREATE MATERIALIZED VIEW analytics.site_records AS
+            WITH ranked_site_entries AS (
+                SELECT 
+                    gpc_site,
+                    category,
+                    weight_lbs,
+                    grower_name,
+                    year,
+                    state_prov,
+                    country,
+                    ROW_NUMBER() OVER (PARTITION BY gpc_site, category ORDER BY weight_lbs DESC) as rank_at_site
+                FROM core.entries
+                WHERE entry_type = 'official'
+            )
+            SELECT 
+                gpc_site,
+                category,
+                weight_lbs,
+                grower_name,
+                year,
+                state_prov,
+                country
+            FROM ranked_site_entries
+            WHERE rank_at_site = 1
+            ORDER BY gpc_site, category;
+            """
+            self.supabase.rpc('execute_sql', {'query': site_records_sql}).execute()
+            logger.info("Created site_records materialized view")
+            
+            # Create grower_achievements materialized view
+            achievements_sql = """
+            DROP MATERIALIZED VIEW IF EXISTS analytics.grower_achievements;
+            CREATE MATERIALIZED VIEW analytics.grower_achievements AS
+            WITH grower_stats AS (
+                SELECT 
+                    grower_name,
+                    category,
+                    MAX(weight_lbs) as personal_best_weight,
+                    MIN(year) as first_entry_year,
+                    MAX(year) as last_entry_year,
+                    COUNT(*) as total_entries,
+                    SUM(CASE WHEN rank <= 10 THEN 1 ELSE 0 END) as top_ten_count,
+                    SUM(CASE WHEN rank = 1 THEN 1 ELSE 0 END) as first_place_count
+                FROM (
+                    SELECT 
+                        grower_name,
+                        category,
+                        weight_lbs,
+                        year,
+                        ROW_NUMBER() OVER (PARTITION BY year, category ORDER BY weight_lbs DESC) as rank
+                    FROM core.entries
+                    WHERE entry_type = 'official'
+                ) ranked_entries
+                GROUP BY grower_name, category
+            )
+            SELECT 
+                grower_name,
+                category,
+                personal_best_weight,
+                (
+                    SELECT year 
+                    FROM core.entries e2 
+                    WHERE e2.grower_name = grower_stats.grower_name 
+                    AND e2.category = grower_stats.category 
+                    AND e2.weight_lbs = grower_stats.personal_best_weight
+                    LIMIT 1
+                ) as personal_best_year,
+                total_entries,
+                first_entry_year,
+                last_entry_year,
+                top_ten_count,
+                first_place_count
+            FROM grower_stats
+            ORDER BY grower_name, category;
+            """
+            self.supabase.rpc('execute_sql', {'query': achievements_sql}).execute()
+            logger.info("Created grower_achievements materialized view")
+
+        except Exception as e:
+            logger.error(f"Error creating analytics views: {str(e)}")
+            if hasattr(e, 'message'):
+                logger.error(f"Error message: {e.message}")
+            raise
+
+    def process_staging_to_core(self) -> None:
+        """Process data from staging to core tables."""
+        try:
+            # Insert from staging to core
+            insert_sql = """
             INSERT INTO core.entries (
-                category, year, place, weight_lbs, original_grower_name,
-                processed_grower_name, city, state_prov, country, gpc_site,
-                seed_mother, pollinator_father, ott, est_weight, entry_type,
-                data_quality_score
+                category, year, place, weight_lbs, grower_name, original_grower_name,
+                city, state_prov, country, gpc_site, seed_mother, pollinator_father,
+                ott, est_weight, entry_type
             )
             SELECT 
                 category,
                 year,
                 place,
                 weight_lbs,
+                processed_grower_name as grower_name,
                 original_grower_name,
-                processed_grower_name,
                 city,
                 state_prov,
                 country,
@@ -720,13 +941,16 @@ class GPCPipeline:
                 pollinator_father,
                 ott,
                 est_weight,
-                entry_type,
-                data_quality_score
+                entry_type
             FROM staging.entries_staging;
             """
-            self.supabase.rpc('execute_sql', {'query': entries_sql}).execute()
-            logger.info("Processed staging entries to core")
-
+            self.supabase.rpc('execute_sql', {'query': insert_sql}).execute()
+            logger.info("Successfully processed staging data to core.entries table")
+            
+            # Create analytics views
+            self.create_analytics_views()
+            logger.info("Successfully created analytics views")
+            
         except Exception as e:
             logger.error(f"Error processing staging to core: {str(e)}")
             if hasattr(e, 'message'):
@@ -774,6 +998,9 @@ def main():
         supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
         pipeline = GPCPipeline(supabase)
         
+        # Ensure core tables exist
+        pipeline._ensure_core_tables()
+        
         # Define categories and years
         categories = ["P", "S", "L", "W", "T", "F", "B", "M"]
         years = range(2005, 2025)  # Updated to include through 2024
@@ -786,6 +1013,15 @@ def main():
                 except Exception as e:
                     logger.error(f"Failed to process year {year} category {category}: {str(e)}")
                     continue
+        
+        # After all data is in staging, process to core
+        try:
+            logger.info("Processing staging data to core tables...")
+            pipeline.process_staging_to_core()
+            logger.info("Successfully processed staging data to core tables")
+        except Exception as e:
+            logger.error(f"Failed to process staging to core: {str(e)}")
+            raise
 
     except Exception as e:
         logger.error(f"Critical error in ETL pipeline: {str(e)}")
