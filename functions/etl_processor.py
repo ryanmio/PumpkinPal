@@ -317,14 +317,27 @@ class GPCPipeline:
 
             # Prepare entries for staging
             entries = []
-            sites = []  # Track unique sites
+            sites = set()  # Use set for unique sites
+            seen_entries = set()  # Track unique entries for deduplication
             
             for _, row in df.iterrows():
-                # Process entry information
+                # Determine entry type based on place field
+                place = str(row.get('place', '')).strip()
+                entry_type = 'Unknown'
+                if place.upper() == 'DMG':
+                    entry_type = 'Damaged'
+                elif place.upper() == 'EXH':
+                    entry_type = 'Exhibition'
+                elif place.isnumeric() or place.replace('T-', '').isnumeric():
+                    entry_type = 'Official'
+                elif 'DNQ' in place.upper():
+                    entry_type = 'Disqualified'
+                
+                # Create entry record
                 entry = {
                     'category': category,
                     'year': year,
-                    'place': str(row.get('place', '')).strip() or 'Unknown',
+                    'place': place or 'Unknown',
                     'weight_lbs': self._clean_numeric(row.get('weight_lbs')),
                     'processed_grower_name': row['processed_grower_name'],
                     'original_grower_name': str(row.get('grower_name', '')).strip() or 'Unknown',
@@ -336,36 +349,57 @@ class GPCPipeline:
                     'pollinator_father': str(row.get('pollinator_father', '')).strip() or 'Unknown',
                     'ott': self._clean_numeric(row.get('ott')),
                     'est_weight': self._clean_numeric(row.get('est_weight')),
-                    'entry_type': str(row.get('entry_type', '')).strip() or 'Unknown'
+                    'entry_type': entry_type
                 }
-                entries.append(entry)
 
-                # Process site information if not already added
-                site_key = (
-                    str(row.get('gpc_site', '')).strip() or 'Unknown',
-                    str(row.get('city', '')).strip() or 'Unknown',
-                    str(row.get('state_prov', '')).strip() or 'Unknown',
-                    str(row.get('country', '')).strip() or 'Unknown'
+                # Create deduplication key
+                dedup_key = (
+                    entry['processed_grower_name'],
+                    entry['gpc_site'],
+                    entry['year'],
+                    entry['weight_lbs'],
+                    entry['category']
                 )
                 
-                if site_key not in {(s['gpc_site'], s['city'], s['state_prov'], s['country']) for s in sites}:
-                    site = {
-                        'category': category,
-                        'year': year,
-                        'gpc_site': site_key[0],
-                        'city': site_key[1],
-                        'state_prov': site_key[2],
-                        'country': site_key[3]
-                    }
-                    sites.append(site)
+                # Only add if we haven't seen this exact entry before
+                if dedup_key not in seen_entries:
+                    entries.append(entry)
+                    seen_entries.add(dedup_key)
+
+                    # Process site information
+                    site_key = (
+                        year,
+                        str(row.get('gpc_site', '')).strip() or 'Unknown',
+                        str(row.get('city', '')).strip() or 'Unknown',
+                        str(row.get('state_prov', '')).strip() or 'Unknown',
+                        str(row.get('country', '')).strip() or 'Unknown'
+                    )
+                    
+                    if site_key not in sites:
+                        sites.add(site_key)
+
+            # Convert sites set to list of dictionaries
+            sites_list = [
+                {
+                    'year': site[0],
+                    'gpc_site': site[1],
+                    'city': site[2],
+                    'state_prov': site[3],
+                    'country': site[4]
+                }
+                for site in sites
+            ]
 
             # Insert entries into staging
             logger.info("Inserting processed data into staging tables...")
-            self._batch_insert('entries_staging', entries)
+            if entries:
+                self._batch_insert('entries_staging', entries)
+                logger.info(f"Inserted {len(entries)} unique entries (removed {len(df) - len(entries)} duplicates)")
 
             # Insert sites into staging
             logger.info("Inserting sites into staging tables...")
-            self._batch_insert('sites_staging', sites)
+            if sites_list:
+                self._batch_insert('sites_staging', sites_list)
 
         except Exception as e:
             logger.error(f"Error processing year {year} category {category}: {str(e)}")
