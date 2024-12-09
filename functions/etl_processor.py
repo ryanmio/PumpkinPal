@@ -1236,58 +1236,128 @@ class GPCPipeline:
             self.supabase.rpc('execute_sql', {'query': genetics_sql}).execute()
             logger.info("Created genetics analysis views")
 
-            # Create site entries summary view
+            # Create site entries summary views
             site_entries_summary_sql = """
-            -- Create site entries summary view
+            -- Create site entries summary views
             DROP MATERIALIZED VIEW IF EXISTS analytics.site_entries_summary;
+            DROP MATERIALIZED VIEW IF EXISTS analytics.yearly_site_analysis;
+
+            -- Lifetime summary
             CREATE MATERIALIZED VIEW analytics.site_entries_summary AS
             WITH normalized_entries AS (
                 SELECT 
                     REGEXP_REPLACE(TRIM(gpc_site), '\s+', ' ', 'g') as gpc_site,
-                    state_prov,
-                    country,
+                    COALESCE(NULLIF(state_prov, ''), country) as location,
                     category,
-                    entry_type
+                    entry_type,
+                    weight_lbs,
+                    year
                 FROM core.entries
                 WHERE entry_type IS NOT NULL
             ),
             category_counts AS (
                 SELECT 
                     gpc_site,
-                    COALESCE(NULLIF(state_prov, ''), country) as state_prov,
-                    -- Count entries by category
-                    COUNT(CASE WHEN category = 'P' THEN 1 END) as ag_count,
-                    COUNT(CASE WHEN category = 'S' THEN 1 END) as sq_count,
-                    COUNT(CASE WHEN category = 'L' THEN 1 END) as lg_count,
-                    COUNT(CASE WHEN category = 'T' THEN 1 END) as tom_count,
-                    COUNT(CASE WHEN category = 'W' THEN 1 END) as water_count,
-                    COUNT(CASE WHEN category = 'F' THEN 1 END) as fp_count,
-                    COUNT(CASE WHEN category = 'B' THEN 1 END) as bg_count,
+                    location,
+                    COUNT(CASE WHEN category = 'P' THEN 1 END) as pumpkin_count,
+                    COUNT(CASE WHEN category = 'S' THEN 1 END) as squash_count,
+                    COUNT(CASE WHEN category = 'L' THEN 1 END) as long_gourd_count,
+                    COUNT(CASE WHEN category = 'T' THEN 1 END) as tomato_count,
+                    COUNT(CASE WHEN category = 'W' THEN 1 END) as watermelon_count,
+                    COUNT(CASE WHEN category = 'F' THEN 1 END) as field_pumpkin_count,
+                    COUNT(CASE WHEN category = 'B' THEN 1 END) as bushel_gourd_count,
                     COUNT(CASE WHEN category = 'M' THEN 1 END) as marrow_count,
-                    COUNT(*) as total_entries
+                    COUNT(*) as total_entries,
+                    MAX(weight_lbs) as heaviest_entry,
+                    COUNT(DISTINCT year) as years_active
                 FROM normalized_entries
-                GROUP BY gpc_site, COALESCE(NULLIF(state_prov, ''), country)
+                GROUP BY gpc_site, location
             )
             SELECT 
                 ROW_NUMBER() OVER (ORDER BY total_entries DESC, gpc_site) as rank,
                 gpc_site as site,
-                state_prov,
-                ag_count as "AG's",
-                sq_count as "Sq",
-                lg_count as "LG",
-                tom_count as "Tom",
-                water_count as "Water",
-                fp_count as "FP'S",
-                bg_count as "BG'S",
-                marrow_count as "MARROW",
-                total_entries as "TOTAL"
+                location,
+                pumpkin_count as pumpkin,
+                squash_count as squash,
+                long_gourd_count as long_gourd,
+                tomato_count as tomato,
+                watermelon_count as watermelon,
+                field_pumpkin_count as field_pumpkin,
+                bushel_gourd_count as bushel_gourd,
+                marrow_count as marrow,
+                total_entries as total,
+                heaviest_entry as heaviest,
+                years_active
             FROM category_counts
             WHERE total_entries > 0
             ORDER BY total_entries DESC, gpc_site;
 
             -- Create index for better query performance
             CREATE INDEX IF NOT EXISTS idx_site_entries_summary_total 
-            ON analytics.site_entries_summary ("TOTAL" DESC);
+            ON analytics.site_entries_summary (total DESC);
+
+            -- Yearly analysis with year-over-year changes
+            CREATE MATERIALIZED VIEW analytics.yearly_site_analysis AS
+            WITH yearly_stats AS (
+                SELECT 
+                    REGEXP_REPLACE(TRIM(gpc_site), '\s+', ' ', 'g') as gpc_site,
+                    COALESCE(NULLIF(state_prov, ''), country) as location,
+                    year,
+                    COUNT(*) as entries,
+                    AVG(weight_lbs) as avg_weight,
+                    MAX(weight_lbs) as max_weight,
+                    COUNT(DISTINCT category) as categories_participated
+                FROM core.entries
+                WHERE entry_type IS NOT NULL
+                GROUP BY gpc_site, COALESCE(NULLIF(state_prov, ''), country), year
+            ),
+            year_over_year AS (
+                SELECT 
+                    y.*,
+                    LAG(entries) OVER (PARTITION BY gpc_site ORDER BY year) as prev_year_entries,
+                    LAG(avg_weight) OVER (PARTITION BY gpc_site ORDER BY year) as prev_year_avg,
+                    LAG(max_weight) OVER (PARTITION BY gpc_site ORDER BY year) as prev_year_max
+                FROM yearly_stats y
+            ),
+            site_metrics AS (
+                SELECT 
+                    gpc_site,
+                    location,
+                    year,
+                    entries,
+                    avg_weight,
+                    max_weight,
+                    categories_participated,
+                    entries - COALESCE(prev_year_entries, 0) as entry_growth,
+                    CASE 
+                        WHEN prev_year_entries > 0 THEN 
+                            ROUND(((entries::float - prev_year_entries) / prev_year_entries * 100)::numeric, 1)
+                        ELSE NULL 
+                    END as entry_growth_pct,
+                    CASE 
+                        WHEN prev_year_max > 0 THEN 
+                            ROUND(((max_weight - prev_year_max) / prev_year_max * 100)::numeric, 1)
+                        ELSE NULL 
+                    END as weight_improvement_pct,
+                    AVG(entries) OVER (PARTITION BY gpc_site) as avg_yearly_entries,
+                    STDDEV(entries) OVER (PARTITION BY gpc_site) as stddev_entries
+                FROM year_over_year
+            )
+            SELECT 
+                ROW_NUMBER() OVER (PARTITION BY year ORDER BY entries DESC) as year_rank,
+                *,
+                CASE 
+                    WHEN stddev_entries = 0 THEN 100
+                    ELSE ROUND((1 - (stddev_entries / NULLIF(avg_yearly_entries, 0))) * 100)
+                END as consistency_score
+            FROM site_metrics
+            ORDER BY year DESC, entries DESC;
+
+            -- Create indices for better query performance
+            CREATE INDEX IF NOT EXISTS idx_yearly_site_analysis_year 
+            ON analytics.yearly_site_analysis (year DESC);
+            CREATE INDEX IF NOT EXISTS idx_yearly_site_analysis_entries 
+            ON analytics.yearly_site_analysis (entries DESC);
             """
             self.supabase.rpc('execute_sql', {'query': site_entries_summary_sql}).execute()
             logger.info("Created site_entries_summary materialized view")
