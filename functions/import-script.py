@@ -4,6 +4,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from decouple import config
 from datetime import datetime
+from tqdm import tqdm
 
 # Set up Firestore
 cred = credentials.Certificate("pumpkinpal-b60be-firebase-adminsdk-jtia5-63bbe231d8.json")  # Replace with your service account key file path
@@ -24,7 +25,7 @@ def upload_to_firestore(collection, documents):
     # Split documents into batches of 500
     batches = [documents[i:i + 500] for i in range(0, len(documents), 500)]
 
-    for batch_documents in batches:
+    for batch_documents in tqdm(batches, desc=f"Uploading {collection}"):
         batch = db.batch()
         for doc_id, data in batch_documents:
             doc_ref = db.collection(collection).document(doc_id)
@@ -38,8 +39,8 @@ grower_documents = []
 contest_documents = []
 pumpkin_documents = []
 
-# Process each row in the dataframe (only the first # rows for testing)
-for index, row in df.iterrows():
+# Process each row in the dataframe
+for index, row in tqdm(df.iterrows(), total=len(df), desc="Processing records"):
     # Create or update grower document
     grower_data = {
         "id": row["Processed Name"],
@@ -79,6 +80,7 @@ for index, row in df.iterrows():
         "city": row["City"],
         "state": row["State/Prov"],
         "country": row["Country"],
+        "entryType": row["entryType"],
         "timestamp": datetime.now()
     }
     pumpkin_documents.append((pumpkin_id, pumpkin_data))
@@ -101,4 +103,3 @@ try:
     print("Pumpkin data upload completed successfully.")
 except Exception as e:
     print(f"There were errors during the contest data upload: {e}")
-

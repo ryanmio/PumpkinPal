@@ -10,7 +10,7 @@ print("Starting script...")
 
 # Load the data
 print("Loading data...")
-pumpkins_df = pd.read_csv('bigpumpkins_2004_2023_2023-10-11.csv')
+pumpkins_df = pd.read_csv('functions/bigpumpkins_2004_2024_2024-12-06.csv')
 
 # Function to preprocess names
 print("Preprocessing names...")
@@ -53,6 +53,15 @@ def handle_team_names(name):
         return name
     else:
         return parse_name(name)
+
+# Function to determine entry type
+def determine_entry_type(place):
+    if place == 'DMG':
+        return 'dmg'
+    elif place == 'EXH':
+        return 'exh'
+    else:
+        return 'official'
 
 # Preprocess the names
 pumpkins_df['Processed Name'] = pumpkins_df['Grower Name'].apply(preprocess_name)
@@ -139,6 +148,9 @@ pumpkins_df[['Last Name', 'First Name']] = pumpkins_df['Processed Name'].apply(
 # Clean up the 'Last Name' and 'First Name' columns by removing extra spaces
 pumpkins_df['Last Name'] = pumpkins_df['Last Name'].str.strip().str.title()  # Convert to title case
 pumpkins_df['First Name'] = pumpkins_df['First Name'].str.strip().str.title()  # Convert to title case
+
+# Add 'entryType' column
+pumpkins_df['entryType'] = pumpkins_df['Place'].apply(determine_entry_type)
 
 # Save the modified dataframe to a CSV file
 print("Saving preprocessed data to CSV file...")

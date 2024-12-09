@@ -4,7 +4,7 @@ import pandas as pd
 import datetime
 
 # List of years to scrape. Note: To include 2023, the range is set to 2024 because range() excludes the end value.
-years = list(range(2005, 2024))
+years = list(range(2005, 2025))
 
 # List to hold all the data
 all_data = []
@@ -47,4 +47,4 @@ for year in years:
 all_data = pd.concat(all_data, ignore_index=True)
 
 # Save the dataframe to a CSV file with today's date
-all_data.to_csv(f'bigpumpkins_2004_2023_{datetime.date.today()}.csv', index=False)
+all_data.to_csv(f'bigpumpkins_2004_2024_{datetime.date.today()}.csv', index=False)

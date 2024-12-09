@@ -350,90 +350,121 @@ res.send(`
 async function calculateGlobalRankings() {
     const db = admin.firestore();
     const pumpkinsCollection = db.collection('Stats_Pumpkins');
+    const categories = ['overall', 'official', 'nonDmg', 'nonExh'];
 
     try {
-        const pumpkinsSnapshot = await pumpkinsCollection.get();
+        const batchSize = 1000;
+        let lastDoc = null;
+        let allPumpkins = [];
 
-        if (pumpkinsSnapshot.empty) {
-            console.log('No matching pumpkins.');
-            return;
+        // Fetch all pumpkins
+        while (true) {
+            let query = pumpkinsCollection.orderBy('weight', 'desc').limit(batchSize);
+            if (lastDoc) {
+                query = query.startAfter(lastDoc);
+            }
+
+            const pumpkinsSnapshot = await query.get();
+            if (pumpkinsSnapshot.empty) break;
+
+            const pumpkins = pumpkinsSnapshot.docs.map(doc => ({...doc.data(), id: doc.id}));
+            allPumpkins = allPumpkins.concat(pumpkins);
+            lastDoc = pumpkinsSnapshot.docs[pumpkinsSnapshot.docs.length - 1];
+
+            console.log(`Fetched ${allPumpkins.length} pumpkins`);
         }
 
-        const pumpkins = [];
-        const yearlyPumpkins = new Map(); // Use Map to store pumpkins grouped by year
-
-        pumpkinsSnapshot.forEach(doc => {
-            const pumpkin = doc.data();
-            if (pumpkin.place !== 'DMG' && typeof pumpkin.weight === 'number') {
-                pumpkins.push(pumpkin);
-
-                // Group pumpkins by year
-                if (!yearlyPumpkins.has(pumpkin.year)) {
-                    yearlyPumpkins.set(pumpkin.year, []);
-                }
-                yearlyPumpkins.get(pumpkin.year).push(pumpkin);
+        // Calculate rankings for each category
+        const rankings = {};
+        categories.forEach(category => {
+            let filteredPumpkins = allPumpkins;
+            if (category === 'official') {
+                filteredPumpkins = allPumpkins.filter(p => p.place.toUpperCase() !== 'DMG' && p.place.toUpperCase() !== 'EXH');
+            } else if (category === 'nonDmg') {
+                filteredPumpkins = allPumpkins.filter(p => p.place.toUpperCase() !== 'DMG');
+            } else if (category === 'nonExh') {
+                filteredPumpkins = allPumpkins.filter(p => p.place.toUpperCase() !== 'EXH');
             }
+            
+            filteredPumpkins.sort((a, b) => b.weight - a.weight);
+            
+            filteredPumpkins.forEach((pumpkin, index) => {
+                if (!rankings[pumpkin.id]) {
+                    rankings[pumpkin.id] = {
+                        lifetimeGlobalRank: null,
+                        yearGlobalRank: null,
+                        lifetimeGlobalRanks: {},
+                        yearlyGlobalRanks: {}
+                    };
+                }
+                rankings[pumpkin.id].lifetimeGlobalRanks[category] = index + 1;
+                
+                // Set the original lifetimeGlobalRank (backward compatibility)
+                if (category === 'official') {
+                    rankings[pumpkin.id].lifetimeGlobalRank = index + 1;
+                }
+            });
+
+            // Calculate yearly rankings
+            const pumpkinsByYear = {};
+            filteredPumpkins.forEach(pumpkin => {
+                if (!pumpkinsByYear[pumpkin.year]) {
+                    pumpkinsByYear[pumpkin.year] = [];
+                }
+                pumpkinsByYear[pumpkin.year].push(pumpkin);
+            });
+
+            Object.keys(pumpkinsByYear).forEach(year => {
+                pumpkinsByYear[year].sort((a, b) => b.weight - a.weight);
+                pumpkinsByYear[year].forEach((pumpkin, index) => {
+                    if (!rankings[pumpkin.id].yearlyGlobalRanks[pumpkin.year]) {
+                        rankings[pumpkin.id].yearlyGlobalRanks[pumpkin.year] = {};
+                    }
+                    rankings[pumpkin.id].yearlyGlobalRanks[pumpkin.year][category] = index + 1;
+                    
+                    // Set the original yearGlobalRank (backward compatibility)
+                    if (category === 'official') {
+                        rankings[pumpkin.id].yearGlobalRank = index + 1;
+                    }
+                });
+            });
         });
 
-        console.log(`Total pumpkins: ${pumpkinsSnapshot.size}`);
-        console.log(`Valid pumpkins: ${pumpkins.length}`);
-
-        // Sort pumpkins by weight in descending order
-        pumpkins.sort((a, b) => b.weight - a.weight);
-
-        // Sort yearly pumpkins outside the loop
-        yearlyPumpkins.forEach(yearPumpkins => {
-            yearPumpkins.sort((a, b) => b.weight - a.weight);
-        });
-
-        // Begin a Firestore batch
+        // Update pumpkins with new rankings
+        const updateBatchSize = 500;
+        let batchCounter = 0;
         let batch = db.batch();
 
-        // Counter to keep track of how many operations are in the batch
-        let batchCounter = 0;
+        for (const pumpkinId in rankings) {
+            const docRef = pumpkinsCollection.doc(pumpkinId);
+            batch.update(docRef, rankings[pumpkinId]);
+            batchCounter++;
 
-        // Assign rank and update each pumpkin in Firestore
-        for (let i = 0; i < pumpkins.length; i++) {
-            const pumpkin = pumpkins[i];
-            pumpkin.lifetimeGlobalRank = i + 1;
-
-            // Assign yearly rank
-            const yearlyRank = yearlyPumpkins.get(pumpkin.year).findIndex(p => p.id === pumpkin.id);
-            if (yearlyRank !== -1) {
-                pumpkin.yearGlobalRank = yearlyRank + 1;
-            }
-
-            // Add update operation to the batch
-            if (typeof pumpkin.id === 'string' && pumpkin.id !== '') {
-                const docRef = db.collection('Stats_Pumpkins').doc(pumpkin.id);
-                batch.update(docRef, pumpkin);
-                batchCounter++;
-            } else {
-                console.error('Invalid pumpkin id:', pumpkin.id);
-            }
-
-            // If the batch has reached the maximum size (500), commit it and start a new one
-            if (batchCounter === 500) {
+            if (batchCounter === updateBatchSize) {
                 await batch.commit();
-                batch = db.batch();
+                batch = db.batch(); // Create a new batch
                 batchCounter = 0;
             }
         }
 
-        // Commit any remaining operations in the batch
         if (batchCounter > 0) {
             await batch.commit();
         }
 
+        console.log('Global rankings calculation completed.');
     } catch (err) {
-        console.error('Error getting pumpkins:', err);
+        console.error('Error calculating global rankings:', err);
+        throw err;
     }
 }
 
 // HTTP function to manually trigger the calculation of Worldwide Weigh-off Rankings
-exports.calculateGlobalRankings = functions.https.onRequest(async (req, res) => {
-    await calculateGlobalRankings();
-    res.send('Global rankings calculation completed.');
+exports.calculateGlobalRankings = functions.runWith({
+  timeoutSeconds: 300,
+  memory: '1GB'
+}).https.onRequest(async (req, res) => {
+  await calculateGlobalRankings();
+  res.send('Global rankings calculation completed.');
 });
 
 
@@ -441,66 +472,111 @@ exports.calculateGlobalRankings = functions.https.onRequest(async (req, res) => 
 async function calculateStateRankings() {
     const db = admin.firestore();
     const pumpkinsCollection = db.collection('Stats_Pumpkins');
+    const categories = ['overall', 'official', 'nonDmg', 'nonExh'];
 
     try {
-        const pumpkinsSnapshot = await pumpkinsCollection.get();
+        const batchSize = 1000;
+        let lastDoc = null;
+        let allPumpkins = [];
 
-        if (pumpkinsSnapshot.empty) {
-            console.log('No matching pumpkins.');
-            return;
-        }
-
-        const statePumpkins = {};
-        const yearlyStatePumpkins = {};
-
-        for (const doc of pumpkinsSnapshot.docs) {
-            const pumpkin = doc.data();
-            if (pumpkin.place === 'DMG') continue;
-
-            const state = pumpkin.state;
-
-            if (!statePumpkins[state]) statePumpkins[state] = [];
-            statePumpkins[state].push(pumpkin);
-
-            if (!yearlyStatePumpkins[state]) yearlyStatePumpkins[state] = {};
-            if (!yearlyStatePumpkins[state][pumpkin.year]) yearlyStatePumpkins[state][pumpkin.year] = [];
-            yearlyStatePumpkins[state][pumpkin.year].push(pumpkin);
-        }
-
-        // Sort state pumpkins outside the loop
-        for (const state in statePumpkins) {
-            statePumpkins[state].sort((a, b) => b.weight - a.weight);
-            for (const year in yearlyStatePumpkins[state]) {
-                yearlyStatePumpkins[state][year].sort((a, b) => b.weight - a.weight);
+        // Fetch all pumpkins
+        while (true) {
+            let query = pumpkinsCollection.orderBy('weight', 'desc').limit(batchSize);
+            if (lastDoc) {
+                query = query.startAfter(lastDoc);
             }
+
+            const pumpkinsSnapshot = await query.get();
+            if (pumpkinsSnapshot.empty) break;
+
+            const pumpkins = pumpkinsSnapshot.docs.map(doc => ({...doc.data(), id: doc.id}));
+            allPumpkins = allPumpkins.concat(pumpkins);
+            lastDoc = pumpkinsSnapshot.docs[pumpkinsSnapshot.docs.length - 1];
+
+            console.log(`Fetched ${allPumpkins.length} pumpkins`);
         }
 
-        let batch = db.batch();
+        // Calculate rankings for each category and state
+        const rankings = {};
+        categories.forEach(category => {
+            const stateRankings = {};
+            let filteredPumpkins = allPumpkins;
+            if (category === 'official') {
+                filteredPumpkins = allPumpkins.filter(p => p.place.toUpperCase() !== 'DMG' && p.place.toUpperCase() !== 'EXH');
+            } else if (category === 'nonDmg') {
+                filteredPumpkins = allPumpkins.filter(p => p.place.toUpperCase() !== 'DMG');
+            } else if (category === 'nonExh') {
+                filteredPumpkins = allPumpkins.filter(p => p.place.toUpperCase() !== 'EXH');
+            }
+            
+            filteredPumpkins.forEach(pumpkin => {
+                if (!stateRankings[pumpkin.state]) {
+                    stateRankings[pumpkin.state] = [];
+                }
+                stateRankings[pumpkin.state].push(pumpkin);
+            });
+            
+            Object.keys(stateRankings).forEach(state => {
+                stateRankings[state].sort((a, b) => b.weight - a.weight);
+                stateRankings[state].forEach((pumpkin, index) => {
+                    if (!rankings[pumpkin.id]) {
+                        rankings[pumpkin.id] = {
+                            lifetimeStateRank: null,
+                            yearlyStateRank: null,
+                            lifetimeStateRanks: {},
+                            yearlyStateRanks: {}
+                        };
+                    }
+                    rankings[pumpkin.id].lifetimeStateRanks[category] = index + 1;
+                    
+                    // Set the original lifetimeStateRank (backward compatibility)
+                    if (category === 'official') {
+                        rankings[pumpkin.id].lifetimeStateRank = index + 1;
+                    }
+                });
+            });
+
+            // Calculate yearly rankings
+            Object.keys(stateRankings).forEach(state => {
+                const pumpkinsByYear = {};
+                stateRankings[state].forEach(pumpkin => {
+                    if (!pumpkinsByYear[pumpkin.year]) {
+                        pumpkinsByYear[pumpkin.year] = [];
+                    }
+                    pumpkinsByYear[pumpkin.year].push(pumpkin);
+                });
+
+                Object.keys(pumpkinsByYear).forEach(year => {
+                    pumpkinsByYear[year].sort((a, b) => b.weight - a.weight);
+                    pumpkinsByYear[year].forEach((pumpkin, index) => {
+                        if (!rankings[pumpkin.id].yearlyStateRanks[pumpkin.year]) {
+                            rankings[pumpkin.id].yearlyStateRanks[pumpkin.year] = {};
+                        }
+                        rankings[pumpkin.id].yearlyStateRanks[pumpkin.year][category] = index + 1;
+                        
+                        // Set the original yearlyStateRank (backward compatibility)
+                        if (category === 'official') {
+                            rankings[pumpkin.id].yearlyStateRank = index + 1;
+                        }
+                    });
+                });
+            });
+        });
+
+        // Update pumpkins with new rankings
+        const updateBatchSize = 500;
         let batchCounter = 0;
+        let batch = db.batch();
 
-        for (const state in statePumpkins) {
-            for (let i = 0; i < statePumpkins[state].length; i++) {
-                const pumpkin = statePumpkins[state][i];
-                pumpkin.lifetimeStateRank = i + 1;
+        for (const pumpkinId in rankings) {
+            const docRef = pumpkinsCollection.doc(pumpkinId);
+            batch.update(docRef, rankings[pumpkinId]);
+            batchCounter++;
 
-                const yearlyRank = yearlyStatePumpkins[state][pumpkin.year].findIndex(p => p.id === pumpkin.id);
-                if (yearlyRank !== -1) {
-                    pumpkin.yearlyStateRank = yearlyRank + 1;
-                }
-
-                if (typeof pumpkin.id === 'string' && pumpkin.id !== '') {
-                    const docRef = pumpkinsCollection.doc(pumpkin.id);
-                    batch.update(docRef, { lifetimeStateRank: pumpkin.lifetimeStateRank, yearlyStateRank: pumpkin.yearlyStateRank });
-                    batchCounter++;
-                } else {
-                    console.error('Invalid pumpkin id:', pumpkin.id);
-                }
-
-                if (batchCounter === 500) {
-                    await batch.commit();
-                    batch = db.batch();
-                    batchCounter = 0;
-                }
+            if (batchCounter === updateBatchSize) {
+                await batch.commit();
+                batch = db.batch(); // Create a new batch
+                batchCounter = 0;
             }
         }
 
@@ -508,6 +584,7 @@ async function calculateStateRankings() {
             await batch.commit();
         }
 
+        console.log('State rankings calculation completed.');
     } catch (err) {
         console.error('Error calculating state rankings:', err);
         throw err;
@@ -515,80 +592,140 @@ async function calculateStateRankings() {
 }
 
 // HTTP function to manually trigger the calculation of state rankings
-exports.calculateStateRankings = functions.https.onRequest(async (req, res) => {
-    try {
-        await calculateStateRankings();
-        res.send('State rankings calculation completed.');
-    } catch (err) {
-        res.status(500).send('Error calculating state rankings: ' + err.toString());
-    }
+exports.calculateStateRankings = functions.runWith({
+  timeoutSeconds: 300,
+  memory: '1GB'
+}).https.onRequest(async (req, res) => {
+  try {
+    await calculateStateRankings();
+    res.send('State rankings calculation completed.');
+  } catch (err) {
+    res.status(500).send('Error calculating state rankings: ' + err.toString());
+  }
 });
 
 
 // Country Ranking (Lifetime and Yearly)
+exports.calculateCountryRankings = functions.runWith({
+  timeoutSeconds: 300,
+  memory: '1GB'
+}).https.onRequest(async (req, res) => {
+  try {
+    await calculateCountryRankings();
+    res.send('Country rankings calculation completed.');
+  } catch (err) {
+    res.status(500).send('Error calculating country rankings: ' + err.toString());
+  }
+});
+
 async function calculateCountryRankings() {
     const db = admin.firestore();
     const pumpkinsCollection = db.collection('Stats_Pumpkins');
+    const categories = ['overall', 'official', 'nonDmg', 'nonExh'];
 
     try {
-        const pumpkinsSnapshot = await pumpkinsCollection.get();
+        const batchSize = 1000;
+        let lastDoc = null;
+        let allPumpkins = [];
 
-        if (pumpkinsSnapshot.empty) {
-            console.log('No matching pumpkins.');
-            return;
-        }
-
-        const countryPumpkins = {};
-        const yearlyCountryPumpkins = {};
-
-        for (const doc of pumpkinsSnapshot.docs) {
-            const pumpkin = doc.data();
-            if (pumpkin.place === 'DMG') continue;
-
-            const country = pumpkin.country;
-
-            if (!countryPumpkins[country]) countryPumpkins[country] = [];
-            countryPumpkins[country].push(pumpkin);
-
-            if (!yearlyCountryPumpkins[country]) yearlyCountryPumpkins[country] = {};
-            if (!yearlyCountryPumpkins[country][pumpkin.year]) yearlyCountryPumpkins[country][pumpkin.year] = [];
-            yearlyCountryPumpkins[country][pumpkin.year].push(pumpkin);
-        }
-
-        // Sort country pumpkins outside the loop
-        for (const country in countryPumpkins) {
-            countryPumpkins[country].sort((a, b) => b.weight - a.weight);
-            for (const year in yearlyCountryPumpkins[country]) {
-                yearlyCountryPumpkins[country][year].sort((a, b) => b.weight - a.weight);
+        // Fetch all pumpkins
+        while (true) {
+            let query = pumpkinsCollection.orderBy('weight', 'desc').limit(batchSize);
+            if (lastDoc) {
+                query = query.startAfter(lastDoc);
             }
+
+            const pumpkinsSnapshot = await query.get();
+            if (pumpkinsSnapshot.empty) break;
+
+            const pumpkins = pumpkinsSnapshot.docs.map(doc => ({...doc.data(), id: doc.id}));
+            allPumpkins = allPumpkins.concat(pumpkins);
+            lastDoc = pumpkinsSnapshot.docs[pumpkinsSnapshot.docs.length - 1];
+
+            console.log(`Fetched ${allPumpkins.length} pumpkins`);
         }
 
-        let batch = db.batch();
+        // Calculate rankings for each category and country
+        const rankings = {};
+        categories.forEach(category => {
+            const countryRankings = {};
+            let filteredPumpkins = allPumpkins;
+            if (category === 'official') {
+                filteredPumpkins = allPumpkins.filter(p => p.place.toUpperCase() !== 'DMG' && p.place.toUpperCase() !== 'EXH');
+            } else if (category === 'nonDmg') {
+                filteredPumpkins = allPumpkins.filter(p => p.place.toUpperCase() !== 'DMG');
+            } else if (category === 'nonExh') {
+                filteredPumpkins = allPumpkins.filter(p => p.place.toUpperCase() !== 'EXH');
+            }
+            
+            filteredPumpkins.forEach(pumpkin => {
+                if (!countryRankings[pumpkin.country]) {
+                    countryRankings[pumpkin.country] = [];
+                }
+                countryRankings[pumpkin.country].push(pumpkin);
+            });
+            
+            Object.keys(countryRankings).forEach(country => {
+                countryRankings[country].sort((a, b) => b.weight - a.weight);
+                countryRankings[country].forEach((pumpkin, index) => {
+                    if (!rankings[pumpkin.id]) {
+                        rankings[pumpkin.id] = {
+                            lifetimeCountryRank: null,
+                            yearlyCountryRank: null,
+                            lifetimeCountryRanks: {},
+                            yearlyCountryRanks: {}
+                        };
+                    }
+                    rankings[pumpkin.id].lifetimeCountryRanks[category] = index + 1;
+                    
+                    // Set the original lifetimeCountryRank (backward compatibility)
+                    if (category === 'official') {
+                        rankings[pumpkin.id].lifetimeCountryRank = index + 1;
+                    }
+                });
+            });
+
+            // Calculate yearly rankings
+            Object.keys(countryRankings).forEach(country => {
+                const pumpkinsByYear = {};
+                countryRankings[country].forEach(pumpkin => {
+                    if (!pumpkinsByYear[pumpkin.year]) {
+                        pumpkinsByYear[pumpkin.year] = [];
+                    }
+                    pumpkinsByYear[pumpkin.year].push(pumpkin);
+                });
+
+                Object.keys(pumpkinsByYear).forEach(year => {
+                    pumpkinsByYear[year].sort((a, b) => b.weight - a.weight);
+                    pumpkinsByYear[year].forEach((pumpkin, index) => {
+                        if (!rankings[pumpkin.id].yearlyCountryRanks[pumpkin.year]) {
+                            rankings[pumpkin.id].yearlyCountryRanks[pumpkin.year] = {};
+                        }
+                        rankings[pumpkin.id].yearlyCountryRanks[pumpkin.year][category] = index + 1;
+                        
+                        // Set the original yearlyCountryRank (backward compatibility)
+                        if (category === 'official') {
+                            rankings[pumpkin.id].yearlyCountryRank = index + 1;
+                        }
+                    });
+                });
+            });
+        });
+
+        // Update pumpkins with new rankings
+        const updateBatchSize = 500;
         let batchCounter = 0;
+        let batch = db.batch();
 
-        for (const country in countryPumpkins) {
-            for (let i = 0; i < countryPumpkins[country].length; i++) {
-                const pumpkin = countryPumpkins[country][i];
-                pumpkin.lifetimeCountryRank = i + 1;
+        for (const pumpkinId in rankings) {
+            const docRef = pumpkinsCollection.doc(pumpkinId);
+            batch.update(docRef, rankings[pumpkinId]);
+            batchCounter++;
 
-                const yearlyRank = yearlyCountryPumpkins[country][pumpkin.year].findIndex(p => p.id === pumpkin.id);
-                if (yearlyRank !== -1) {
-                    pumpkin.yearlyCountryRank = yearlyRank + 1;
-                }
-
-                if (typeof pumpkin.id === 'string' && pumpkin.id !== '') {
-                    const docRef = pumpkinsCollection.doc(pumpkin.id);
-                    batch.update(docRef, { lifetimeCountryRank: pumpkin.lifetimeCountryRank, yearlyCountryRank: pumpkin.yearlyCountryRank });
-                    batchCounter++;
-                } else {
-                    console.error('Invalid pumpkin id:', pumpkin.id);
-                }
-
-                if (batchCounter === 500) {
-                    await batch.commit();
-                    batch = db.batch();
-                    batchCounter = 0;
-                }
+            if (batchCounter === updateBatchSize) {
+                await batch.commit();
+                batch = db.batch(); // Create a new batch
+                batchCounter = 0;
             }
         }
 
@@ -596,27 +733,19 @@ async function calculateCountryRankings() {
             await batch.commit();
         }
 
+        console.log('Country rankings calculation completed.');
     } catch (err) {
         console.error('Error calculating country rankings:', err);
         throw err;
     }
 }
 
-// HTTP function to manually trigger the calculation of country rankings
-exports.calculateCountryRankings = functions.https.onRequest(async (req, res) => {
-    try {
-        await calculateCountryRankings();
-        res.send('Country rankings calculation completed.');
-    } catch (err) {
-        res.status(500).send('Error calculating country rankings: ' + err.toString());
-    }
-});
-
 // Lifetime Best Rank
 async function calculateLifetimeBestRank() {
     const db = admin.firestore();
     const growersCollection = db.collection('Stats_Growers');
     const pumpkinsCollection = db.collection('Stats_Pumpkins');
+    const categories = ['overall', 'official', 'nonDmg', 'nonExh'];
 
     try {
         const growersSnapshot = await growersCollection.get();
@@ -633,11 +762,27 @@ async function calculateLifetimeBestRank() {
         const pumpkinsSnapshot = await pumpkinsCollection.get();
         pumpkinsSnapshot.forEach(doc => {
             const pumpkin = doc.data();
-            if (pumpkin.place === 'DMG') return;
-
             const growerId = pumpkin.grower;
-            if (!growerRankings[growerId]) growerRankings[growerId] = [];
-            growerRankings[growerId].push(pumpkin.yearGlobalRank);
+            
+            if (!growerRankings[growerId]) {
+                growerRankings[growerId] = {
+                    overall: [],
+                    official: [],
+                    nonDmg: [],
+                    nonExh: []
+                };
+            }
+            
+            growerRankings[growerId].overall.push(pumpkin.yearlyGlobalRanks?.[pumpkin.year]?.overall);
+            if (pumpkin.place.toUpperCase() !== 'DMG' && pumpkin.place.toUpperCase() !== 'EXH') {
+                growerRankings[growerId].official.push(pumpkin.yearlyGlobalRanks?.[pumpkin.year]?.official);
+            }
+            if (pumpkin.place.toUpperCase() !== 'DMG') {
+                growerRankings[growerId].nonDmg.push(pumpkin.yearlyGlobalRanks?.[pumpkin.year]?.nonDmg);
+            }
+            if (pumpkin.place.toUpperCase() !== 'EXH') {
+                growerRankings[growerId].nonExh.push(pumpkin.yearlyGlobalRanks?.[pumpkin.year]?.nonExh);
+            }
         });
 
         let batch = db.batch();
@@ -645,16 +790,27 @@ async function calculateLifetimeBestRank() {
 
         for (const doc of growersSnapshot.docs) {
             const grower = doc.data();
-            const rankings = growerRankings[grower.id] || [];
+            const rankings = growerRankings[grower.id] || {
+                overall: [],
+                official: [],
+                nonDmg: [],
+                nonExh: []
+            };
 
-            if (rankings.length > 0) {
-                grower.bestRank = Math.min(...rankings);
-            } else {
-                grower.bestRank = null; // or some other value indicating no pumpkins
-            }
+            const bestRanks = {};
+            categories.forEach(category => {
+                const validRankings = rankings[category].filter(rank => rank !== undefined && rank !== null);
+                bestRanks[category] = validRankings.length > 0 ? Math.min(...validRankings) : null;
+            });
+
+            const updateData = {
+                bestRanks: bestRanks,
+                // Maintain backward compatibility
+                bestRank: bestRanks.official
+            };
 
             const docRef = growersCollection.doc(grower.id);
-            batch.update(docRef, { bestRank: grower.bestRank });
+            batch.update(docRef, updateData);
             batchCounter++;
 
             if (batchCounter === 500) {
@@ -668,17 +824,25 @@ async function calculateLifetimeBestRank() {
             await batch.commit();
         }
 
+        console.log('Lifetime Best Rank calculation completed.');
     } catch (err) {
         console.error('Error calculating lifetime best rank:', err);
+        throw err;
     }
 }
 
 // HTTP function to manually trigger the calculation of Lifetime Best Rank
-exports.calculateLifetimeBestRank = functions.https.onRequest(async (req, res) => {
-    await calculateLifetimeBestRank();
-    res.send('Lifetime Best Rank calculation completed.');
+exports.calculateLifetimeBestRank = functions.runWith({
+    timeoutSeconds: 300,
+    memory: '1GB'
+}).https.onRequest(async (req, res) => {
+    try {
+        await calculateLifetimeBestRank();
+        res.send('Lifetime Best Rank calculation completed.');
+    } catch (err) {
+        res.status(500).send('Error calculating lifetime best rank: ' + err.toString());
+    }
 });
-
 
 // Contest Popularity Ranking (Lifetime and Yearly)
 async function calculateContestPopularityRanking() {
@@ -694,66 +858,88 @@ async function calculateContestPopularityRanking() {
             return;
         }
 
-        // Begin a Firestore batch
-        let batch = db.batch();
-        let batchCounter = 0;
-
         // Initialize contest popularity counts
         const contestPopularity = {};
         contestsSnapshot.forEach(doc => {
             const contestId = doc.id;
-            contestPopularity[contestId] = { yearly: 0, lifetime: 0 };
+            contestPopularity[contestId] = { 
+                LifetimePopularity: 0, 
+                YearPopularity: {} 
+            };
         });
 
-        // Query all pumpkins
-        const pumpkinsSnapshot = await pumpkinsCollection.get();
+        // Query all official pumpkins
+        const pumpkinsSnapshot = await pumpkinsCollection
+            .where('place', 'not-in', ['DMG', 'EXH'])
+            .get();
+
         pumpkinsSnapshot.forEach(doc => {
             const pumpkin = doc.data();
             const contestId = pumpkin.contest;
             const contestName = pumpkin.contestName;
+            const year = pumpkin.year;
 
             if (contestPopularity[contestId]) {
-                contestPopularity[contestId].yearly += 1;
+                contestPopularity[contestId].LifetimePopularity++;
+                if (!contestPopularity[contestId].YearPopularity[year]) {
+                    contestPopularity[contestId].YearPopularity[year] = 0;
+                }
+                contestPopularity[contestId].YearPopularity[year]++;
             }
 
             // Increment lifetime popularity for all contests with matching name
             for (const contest of contestsSnapshot.docs) {
                 if (contest.data().name === contestName) {
-                    contestPopularity[contest.id].lifetime += 1;
+                    contestPopularity[contest.id].LifetimePopularity++;
                 }
             }
         });
 
-        // Update Firestore document
+        // Update Firestore documents
+        const updateBatchSize = 500;
+        let batchCounter = 0;
+        let batch = db.batch();
+
         for (const contestId in contestPopularity) {
             const docRef = contestsCollection.doc(contestId);
-            const yearPopularity = contestPopularity[contestId].yearly;
-            const lifetimePopularity = contestPopularity[contestId].lifetime;
-            batch.update(docRef, { LifetimePopularity: lifetimePopularity, YearPopularity: yearPopularity });
+            const updateData = {
+                LifetimePopularity: contestPopularity[contestId].LifetimePopularity,
+                YearPopularity: Object.values(contestPopularity[contestId].YearPopularity).reduce((a, b) => a + b, 0),
+                YearlyPopularity: contestPopularity[contestId].YearPopularity
+            };
+
+            batch.update(docRef, updateData);
             batchCounter++;
 
-            // If the batch has reached the maximum size (500), commit it and start a new one
-            if (batchCounter === 500) {
+            if (batchCounter === updateBatchSize) {
                 await batch.commit();
                 batch = db.batch();
                 batchCounter = 0;
             }
         }
 
-        // Commit any remaining operations in the batch
         if (batchCounter > 0) {
             await batch.commit();
         }
 
+        console.log('Contest Popularity Ranking calculation completed.');
     } catch (err) {
         console.error('Error calculating contest popularity ranking:', err);
+        throw err;
     }
 }
 
 // HTTP function to manually trigger the calculation of Contest Popularity Ranking
-exports.calculateContestPopularityRanking = functions.https.onRequest(async (req, res) => {
-    await calculateContestPopularityRanking();
-    res.send('Contest Popularity Ranking calculation completed.');
+exports.calculateContestPopularityRanking = functions.runWith({
+    timeoutSeconds: 300,
+    memory: '1GB'
+}).https.onRequest(async (req, res) => {
+    try {
+        await calculateContestPopularityRanking();
+        res.send('Contest Popularity Ranking calculation completed.');
+    } catch (err) {
+        res.status(500).send('Error calculating contest popularity ranking: ' + err.toString());
+    }
 });
 
 
@@ -771,58 +957,67 @@ async function calculateSiteRecords() {
             return;
         }
 
-        // Begin a Firestore batch
-        let batch = db.batch();
-        let batchCounter = 0;
-
-        // Query all pumpkins
-        const pumpkinsSnapshot = await pumpkinsCollection.get();
-
         // Create a map to store the record weight for each contest
         const contestRecords = {};
         contestsSnapshot.forEach(doc => {
             contestRecords[doc.id] = 0;
         });
 
+        // Query all official pumpkins (excluding DMG and EXH)
+        const pumpkinsSnapshot = await pumpkinsCollection
+            .where('place', 'not-in', ['DMG', 'EXH'])
+            .get();
+
         // Process pumpkins and update record weights
         pumpkinsSnapshot.forEach(doc => {
             const pumpkin = doc.data();
             const contestId = pumpkin.contest;
 
-            if (pumpkin.place !== 'DMG' && pumpkin.weight > contestRecords[contestId]) {
+            if (pumpkin.weight > contestRecords[contestId]) {
                 contestRecords[contestId] = pumpkin.weight;
             }
         });
 
         // Update Firestore documents with record weights
+        const updateBatchSize = 500;
+        let batchCounter = 0;
+        let batch = db.batch();
+
         for (const contestId in contestRecords) {
             const docRef = contestsCollection.doc(contestId);
             const recordWeight = contestRecords[contestId];
             batch.update(docRef, { recordWeight });
             batchCounter++;
 
-            // If the batch has reached the maximum size (500), commit it and start a new one
-            if (batchCounter === 500) {
+            if (batchCounter === updateBatchSize) {
                 await batch.commit();
                 batch = db.batch();
                 batchCounter = 0;
             }
         }
 
-        // Commit any remaining operations in the batch
         if (batchCounter > 0) {
             await batch.commit();
         }
 
+        console.log('Site records calculation completed.');
     } catch (err) {
         console.error('Error calculating site records:', err);
+        throw err;
     }
 }
 
 // HTTP function to manually trigger the calculation of site records
-exports.calculateSiteRecords = functions.https.onRequest(async (req, res) => {
-    await calculateSiteRecords();
-    res.send('Site records calculation completed.');
+exports.calculateSiteRecords = functions.runWith({
+    timeoutSeconds: 300,
+    memory: '1GB'
+}).https.onRequest(async (req, res) => {
+    try {
+        await calculateSiteRecords();
+        res.send('Site records calculation completed.');
+    } catch (err) {
+        res.status(500).send('Error calculating site records: ' + err.toString());
+    }
 });
 
 
@@ -845,12 +1040,10 @@ async function calculateGrowerMetrics() {
         const pumpkinsByGrower = {};
         pumpkinsSnapshot.forEach(doc => {
             const pumpkin = doc.data();
-            if (pumpkin.place !== 'DMG') { // Exclude disqualified pumpkins
-                if (!pumpkinsByGrower[pumpkin.grower]) {
-                    pumpkinsByGrower[pumpkin.grower] = [];
-                }
-                pumpkinsByGrower[pumpkin.grower].push(pumpkin);
+            if (!pumpkinsByGrower[pumpkin.grower]) {
+                pumpkinsByGrower[pumpkin.grower] = [];
             }
+            pumpkinsByGrower[pumpkin.grower].push(pumpkin);
         });
 
         let batch = db.batch();
@@ -860,15 +1053,16 @@ async function calculateGrowerMetrics() {
             const grower = doc.data();
             const pumpkins = pumpkinsByGrower[grower.id] || [];
 
-            // LifetimeMaxWeight
-            if (pumpkins.length > 0) {
-                const maxWeight = Math.max(...pumpkins.map(pumpkin => pumpkin.weight));
+            // LifetimeMaxWeight (excluding DMG and EXH)
+            const officialPumpkins = pumpkins.filter(p => p.place !== 'DMG' && p.place !== 'EXH');
+            if (officialPumpkins.length > 0) {
+                const maxWeight = Math.max(...officialPumpkins.map(pumpkin => pumpkin.weight));
                 grower.LifetimeMaxWeight = maxWeight;
             } else {
-                grower.LifetimeMaxWeight = null; // or some other value indicating no pumpkins
+                grower.LifetimeMaxWeight = null;
             }
 
-            // NumberOfEntries
+            // NumberOfEntries (including all entries)
             grower.NumberOfEntries = pumpkins.length;
 
             const docRef = growersCollection.doc(grower.id);
@@ -886,15 +1080,24 @@ async function calculateGrowerMetrics() {
             await batch.commit();
         }
 
+        console.log('Grower metrics calculation completed.');
     } catch (err) {
         console.error('Error calculating grower metrics:', err);
+        throw err;
     }
 }
 
 // HTTP function to manually trigger the calculation of grower metrics
-exports.calculateGrowerMetrics = functions.https.onRequest(async (req, res) => {
-    await calculateGrowerMetrics();
-    res.send('Grower metrics calculation completed.');
+exports.calculateGrowerMetrics = functions.runWith({
+    timeoutSeconds: 300,
+    memory: '1GB'
+}).https.onRequest(async (req, res) => {
+    try {
+        await calculateGrowerMetrics();
+        res.send('Grower metrics calculation completed.');
+    } catch (err) {
+        res.status(500).send('Error calculating grower metrics: ' + err.toString());
+    }
 });
 
 
@@ -917,12 +1120,10 @@ async function calculateGrowerRankings() {
         const pumpkinsByGrower = {};
         pumpkinsSnapshot.forEach(doc => {
             const pumpkin = doc.data();
-            if (pumpkin.place !== 'DMG') { // Exclude disqualified pumpkins
-                if (!pumpkinsByGrower[pumpkin.grower]) {
-                    pumpkinsByGrower[pumpkin.grower] = [];
-                }
-                pumpkinsByGrower[pumpkin.grower].push(pumpkin);
+            if (!pumpkinsByGrower[pumpkin.grower]) {
+                pumpkinsByGrower[pumpkin.grower] = [];
             }
+            pumpkinsByGrower[pumpkin.grower].push(pumpkin);
         });
 
         let batch = db.batch();
@@ -933,17 +1134,22 @@ async function calculateGrowerRankings() {
             const pumpkins = pumpkinsByGrower[grower.id] || [];
 
             if (pumpkins.length > 0) {
-                const minGlobalRank = Math.min(...pumpkins.map(p => p.lifetimeGlobalRank));
-                const minCountryRank = Math.min(...pumpkins.map(p => p.lifetimeCountryRank));
-                const minStateRank = Math.min(...pumpkins.map(p => p.lifetimeStateRank));
+                // Filter out DMG and EXH pumpkins
+                const officialPumpkins = pumpkins.filter(p => p.place.toUpperCase() !== 'DMG' && p.place.toUpperCase() !== 'EXH');
 
-                const globalRanking = `Global: #${minGlobalRank}`;
-                const countryRanking = `${pumpkins[0].country}: #${minCountryRank}`;
-                const stateRanking = `${pumpkins[0].state}: #${minStateRank}`;
+                if (officialPumpkins.length > 0) {
+                    const minGlobalRank = Math.min(...officialPumpkins.map(p => p.lifetimeGlobalRank || Infinity));
+                    const minCountryRank = Math.min(...officialPumpkins.map(p => p.lifetimeCountryRank || Infinity));
+                    const minStateRank = Math.min(...officialPumpkins.map(p => p.lifetimeStateRank || Infinity));
 
-                const docRef = growersCollection.doc(grower.id);
-                batch.update(docRef, { globalRanking, countryRanking, stateRanking });
-                batchCounter++;
+                    const globalRanking = `Global: #${minGlobalRank}`;
+                    const countryRanking = `${officialPumpkins[0].country}: #${minCountryRank}`;
+                    const stateRanking = `${officialPumpkins[0].state}: #${minStateRank}`;
+
+                    const docRef = growersCollection.doc(grower.id);
+                    batch.update(docRef, { globalRanking, countryRanking, stateRanking });
+                    batchCounter++;
+                }
             }
 
             if (batchCounter === 500) {
@@ -957,22 +1163,33 @@ async function calculateGrowerRankings() {
             await batch.commit();
         }
 
+        console.log('Grower rankings calculation completed.');
     } catch (err) {
         console.error('Error calculating grower rankings:', err);
+        throw err;
     }
 }
 
 // HTTP function to manually trigger the calculation of Grower Rankings
-exports.calculateGrowerRankings = functions.https.onRequest(async (req, res) => {
-    await calculateGrowerRankings();
-    res.send('Grower rankings calculation completed.');
+exports.calculateGrowerRankings = functions.runWith({
+    timeoutSeconds: 300,
+    memory: '1GB'
+}).https.onRequest(async (req, res) => {
+    try {
+        await calculateGrowerRankings();
+        res.send('Grower rankings calculation completed.');
+    } catch (err) {
+        res.status(500).send('Error calculating grower rankings: ' + err.toString());
+    }
 });
+
 
 
 // Calculate Site Stats
 async function calculateSiteStats() {
     const db = admin.firestore();
     const contestsCollection = db.collection('Stats_Contests');
+    const pumpkinsCollection = db.collection('Stats_Pumpkins');
     const sitesCollection = db.collection('Stats_Sites');
 
     try {
@@ -985,6 +1202,22 @@ async function calculateSiteStats() {
 
         let siteStats = {};
 
+        // Query all pumpkins to get entry counts
+        const pumpkinsSnapshot = await pumpkinsCollection.get();
+        const entriesByContest = {};
+        const officialEntriesByContest = {};
+        pumpkinsSnapshot.forEach(doc => {
+            const pumpkin = doc.data();
+            if (!entriesByContest[pumpkin.contest]) {
+                entriesByContest[pumpkin.contest] = 0;
+                officialEntriesByContest[pumpkin.contest] = 0;
+            }
+            entriesByContest[pumpkin.contest]++;
+            if (pumpkin.place !== 'DMG' && pumpkin.place !== 'EXH') {
+                officialEntriesByContest[pumpkin.contest]++;
+            }
+        });
+
         for (const doc of contestsSnapshot.docs) {
             const contestData = doc.data();
             const siteName = contestData.name;
@@ -994,15 +1227,25 @@ async function calculateSiteStats() {
                 siteStats[siteName] = {
                     'Site Record': 0,
                     'Total Entries': 0,
+                    'Official Entries': 0,
                     'Popularity by Year': {},
                     'Max Weight by Year': {}
                 };
             }
 
-            siteStats[siteName]['Site Record'] = Math.max(siteStats[siteName]['Site Record'], contestData.recordWeight);
-            siteStats[siteName]['Total Entries'] = Math.max(siteStats[siteName]['Total Entries'], contestData.LifetimePopularity);
-            siteStats[siteName]['Popularity by Year'][year] = contestData.YearPopularity;
-            siteStats[siteName]['Max Weight by Year'][year] = contestData.recordWeight;
+            // Update Site Record and Max Weight by Year only for official entries
+            if (officialEntriesByContest[doc.id]) {
+                siteStats[siteName]['Site Record'] = Math.max(siteStats[siteName]['Site Record'], contestData.recordWeight);
+                siteStats[siteName]['Max Weight by Year'][year] = Math.max(siteStats[siteName]['Max Weight by Year'][year] || 0, contestData.recordWeight);
+            }
+
+            // Update Total Entries and Popularity by Year for all entries
+            const totalEntries = entriesByContest[doc.id] || 0;
+            siteStats[siteName]['Total Entries'] += totalEntries;
+            siteStats[siteName]['Popularity by Year'][year] = (siteStats[siteName]['Popularity by Year'][year] || 0) + totalEntries;
+
+            // Update Official Entries count
+            siteStats[siteName]['Official Entries'] += officialEntriesByContest[doc.id] || 0;
         }
 
         let batch = db.batch();
@@ -1029,15 +1272,24 @@ async function calculateSiteStats() {
             await batch.commit();
         }
 
+        console.log('Site stats calculation completed.');
     } catch (err) {
         console.error('Error calculating site stats:', err);
+        throw err;
     }
 }
 
 // HTTP function to manually trigger the calculation of site stats
-exports.calculateSiteStats = functions.https.onRequest(async (req, res) => {
-    await calculateSiteStats();
-    res.send('Site stats calculation completed.');
+exports.calculateSiteStats = functions.runWith({
+    timeoutSeconds: 300,
+    memory: '1GB'
+}).https.onRequest(async (req, res) => {
+    try {
+        await calculateSiteStats();
+        res.send('Site stats calculation completed.');
+    } catch (err) {
+        res.status(500).send('Error calculating site stats: ' + err.toString());
+    }
 });
 
 
