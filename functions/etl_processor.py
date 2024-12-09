@@ -1086,147 +1086,155 @@ class GPCPipeline:
                 raise
 
             # Create genetics analysis views
-            try:
-                genetics_sql = """
-                -- Create parent performance view
-                DROP MATERIALIZED VIEW IF EXISTS analytics.parent_performance;
-                CREATE MATERIALIZED VIEW analytics.parent_performance AS
-                WITH parent_stats AS (
+            genetics_sql = """
+                -- Create seed performance view for 2024
+                DROP MATERIALIZED VIEW IF EXISTS analytics.seed_performance_2024;
+                CREATE MATERIALIZED VIEW analytics.seed_performance_2024 AS
+                WITH parent_performance AS (
+                    -- Calculate historical performance of each parent genetics
                     SELECT 
-                        CASE 
-                            WHEN seed_mother = 'Unknown' OR seed_mother IS NULL THEN 'Unknown'
-                            ELSE seed_mother 
-                        END as parent_name,
-                        'Mother' as parent_type,
-                        COUNT(*) as times_used,
-                        AVG(weight_lbs) as avg_weight,
-                        MAX(weight_lbs) as max_weight,
-                        COUNT(CASE WHEN est_weight IS NOT NULL AND weight_lbs >= est_weight THEN 1 END)::float / 
-                            NULLIF(COUNT(CASE WHEN est_weight IS NOT NULL THEN 1 END), 0) as success_rate,
+                        seed_mother as seed_name,
+                        AVG(weight_lbs) as historical_avg_weight,
+                        MAX(weight_lbs) as historical_max_weight,
                         AVG(CASE 
-                            WHEN est_weight > 0 THEN weight_lbs::float / est_weight 
+                            WHEN est_weight > 0 THEN (weight_lbs / est_weight * 100)
                             ELSE NULL 
-                        END) as avg_accuracy_ratio
+                        END) as historical_pct_over_estimate,
+                        COUNT(*) as historical_appearances
                     FROM core.entries
-                    WHERE seed_mother != 'Unknown'
-                    GROUP BY CASE WHEN seed_mother = 'Unknown' OR seed_mother IS NULL THEN 'Unknown' ELSE seed_mother END
+                    WHERE year < 2024 
+                    AND category = 'P'
+                    AND seed_mother != 'Unknown'
+                    AND est_weight > 0
+                    GROUP BY seed_mother
+                    HAVING COUNT(*) >= 3
 
                     UNION ALL
 
                     SELECT 
-                        CASE 
-                            WHEN pollinator_father = 'Unknown' OR pollinator_father IS NULL THEN 'Unknown'
-                            ELSE pollinator_father 
-                        END as parent_name,
-                        'Father' as parent_type,
-                        COUNT(*) as times_used,
-                        AVG(weight_lbs) as avg_weight,
-                        MAX(weight_lbs) as max_weight,
-                        COUNT(CASE WHEN est_weight IS NOT NULL AND weight_lbs >= est_weight THEN 1 END)::float / 
-                            NULLIF(COUNT(CASE WHEN est_weight IS NOT NULL THEN 1 END), 0) as success_rate,
+                        pollinator_father as seed_name,
+                        AVG(weight_lbs) as historical_avg_weight,
+                        MAX(weight_lbs) as historical_max_weight,
                         AVG(CASE 
-                            WHEN est_weight > 0 THEN weight_lbs::float / est_weight 
+                            WHEN est_weight > 0 THEN (weight_lbs / est_weight * 100)
                             ELSE NULL 
-                        END) as avg_accuracy_ratio
+                        END) as historical_pct_over_estimate,
+                        COUNT(*) as historical_appearances
                     FROM core.entries
-                    WHERE pollinator_father != 'Unknown'
-                    GROUP BY CASE WHEN pollinator_father = 'Unknown' OR pollinator_father IS NULL THEN 'Unknown' ELSE pollinator_father END
-                )
-                SELECT 
-                    parent_name,
-                    parent_type,
-                    times_used,
-                    ROUND(avg_weight::numeric, 2) as avg_weight,
-                    max_weight,
-                    ROUND((success_rate * 100)::numeric, 1) as success_rate_pct,
-                    ROUND(avg_accuracy_ratio::numeric, 2) as avg_accuracy_ratio
-                FROM parent_stats
-                WHERE parent_name != 'Unknown'
-                ORDER BY avg_weight DESC;
-
-                -- Create cross performance view
-                DROP MATERIALIZED VIEW IF EXISTS analytics.cross_performance;
-                CREATE MATERIALIZED VIEW analytics.cross_performance AS
-                WITH cross_stats AS (
-                    SELECT 
-                        CASE 
-                            WHEN seed_mother = 'Unknown' OR seed_mother IS NULL THEN 'Unknown'
-                            ELSE seed_mother 
-                        END as mother,
-                        CASE 
-                            WHEN pollinator_father = 'Unknown' OR pollinator_father IS NULL THEN 'Unknown'
-                            ELSE pollinator_father 
-                        END as father,
-                        COUNT(*) as times_used,
-                        AVG(weight_lbs) as avg_weight,
-                        MAX(weight_lbs) as max_weight,
-                        MIN(weight_lbs) as min_weight,
-                        COUNT(CASE WHEN est_weight IS NOT NULL AND weight_lbs >= est_weight THEN 1 END)::float / 
-                            NULLIF(COUNT(CASE WHEN est_weight IS NOT NULL THEN 1 END), 0) as success_rate,
-                        AVG(CASE 
-                            WHEN est_weight > 0 THEN weight_lbs::float / est_weight 
-                            ELSE NULL 
-                        END) as avg_accuracy_ratio,
-                        array_agg(DISTINCT year ORDER BY year) as years_used,
-                        array_agg(DISTINCT grower_name) as growers
-                    FROM core.entries
-                    WHERE seed_mother != 'Unknown' 
+                    WHERE year < 2024
+                    AND category = 'P'
                     AND pollinator_father != 'Unknown'
-                    GROUP BY 
-                        CASE WHEN seed_mother = 'Unknown' OR seed_mother IS NULL THEN 'Unknown' ELSE seed_mother END,
-                        CASE WHEN pollinator_father = 'Unknown' OR pollinator_father IS NULL THEN 'Unknown' ELSE pollinator_father END
+                    AND est_weight > 0
+                    GROUP BY pollinator_father
+                    HAVING COUNT(*) >= 3
+                ),
+                current_year_performance AS (
+                    -- Get 2024 pumpkins and their parent genetics performance
+                    SELECT 
+                        e.weight_lbs as current_weight,
+                        e.est_weight as current_est_weight,
+                        CASE 
+                            WHEN e.est_weight > 0 THEN (e.weight_lbs / e.est_weight * 100)
+                            ELSE NULL 
+                        END as current_pct_over_estimate,
+                        e.grower_name,
+                        e.gpc_site,
+                        m.seed_name as mother,
+                        m.historical_avg_weight as mother_avg_weight,
+                        m.historical_max_weight as mother_max_weight,
+                        m.historical_pct_over_estimate as mother_pct_over_estimate,
+                        f.seed_name as father,
+                        f.historical_avg_weight as father_avg_weight,
+                        f.historical_max_weight as father_max_weight,
+                        f.historical_pct_over_estimate as father_pct_over_estimate
+                    FROM core.entries e
+                    LEFT JOIN parent_performance m ON e.seed_mother = m.seed_name
+                    LEFT JOIN parent_performance f ON e.pollinator_father = f.seed_name
+                    WHERE e.year = 2024
+                    AND e.category = 'P'
+                    AND e.est_weight > 0
+                    AND (e.seed_mother != 'Unknown' OR e.pollinator_father != 'Unknown')
                 )
                 SELECT 
+                    current_weight as weight_lbs,
+                    current_est_weight as est_weight,
+                    ROUND(current_pct_over_estimate::numeric, 1) as pct_over_estimate,
+                    grower_name,
+                    gpc_site,
                     mother,
+                    ROUND(mother_avg_weight::numeric, 2) as mother_avg_weight,
+                    mother_max_weight,
+                    ROUND(mother_pct_over_estimate::numeric, 1) as mother_pct_over_estimate,
                     father,
-                    times_used,
-                    ROUND(avg_weight::numeric, 2) as avg_weight,
-                    max_weight,
-                    min_weight,
-                    ROUND((success_rate * 100)::numeric, 1) as success_rate_pct,
-                    ROUND(avg_accuracy_ratio::numeric, 2) as avg_accuracy_ratio,
-                    years_used,
-                    growers
-                FROM cross_stats
-                WHERE mother != 'Unknown' AND father != 'Unknown'
-                ORDER BY avg_weight DESC;
+                    ROUND(father_avg_weight::numeric, 2) as father_avg_weight,
+                    father_max_weight,
+                    ROUND(father_pct_over_estimate::numeric, 1) as father_pct_over_estimate
+                FROM current_year_performance
+                ORDER BY current_weight DESC;
 
-                -- Create yearly genetics trends view
-                DROP MATERIALIZED VIEW IF EXISTS analytics.yearly_genetics_trends;
-                CREATE MATERIALIZED VIEW analytics.yearly_genetics_trends AS
-                WITH yearly_stats AS (
+                -- Create top genetics view that ranks 2024 pumpkins by overall genetic potential
+                DROP MATERIALIZED VIEW IF EXISTS analytics.top_genetics_2024;
+                CREATE MATERIALIZED VIEW analytics.top_genetics_2024 AS
+                WITH pumpkin_scores AS (
                     SELECT 
-                        year,
-                        COUNT(DISTINCT seed_mother) as unique_mothers,
-                        COUNT(DISTINCT pollinator_father) as unique_fathers,
-                        COUNT(DISTINCT CONCAT(seed_mother, ' x ', pollinator_father)) as unique_crosses,
-                        AVG(CASE 
-                            WHEN est_weight > 0 THEN weight_lbs::float / est_weight 
-                            ELSE NULL 
-                        END) as avg_accuracy_ratio,
-                        AVG(weight_lbs) as avg_weight,
-                        MAX(weight_lbs) as max_weight
-                    FROM core.entries
-                    WHERE seed_mother != 'Unknown' 
-                    AND pollinator_father != 'Unknown'
-                    GROUP BY year
+                        weight_lbs,
+                        est_weight,
+                        pct_over_estimate,
+                        grower_name,
+                        gpc_site,
+                        mother,
+                        mother_avg_weight,
+                        mother_max_weight,
+                        mother_pct_over_estimate,
+                        father,
+                        father_avg_weight,
+                        father_max_weight,
+                        father_pct_over_estimate,
+                        -- Create weighted score (higher is better):
+                        -- 40% weight on current weight (normalized to 2500 max)
+                        -- 30% weight on current % over estimate (normalized to 120%)
+                        -- 15% weight on mother's historical performance
+                        -- 15% weight on father's historical performance
+                        (
+                            (weight_lbs / 2500 * 40) +  -- Current weight component
+                            (LEAST(pct_over_estimate, 120) / 120 * 30) +  -- Current % over estimate component
+                            (CASE 
+                                WHEN mother IS NOT NULL THEN
+                                    ((mother_avg_weight / 2000 * 5) +  -- Mother's avg weight (norm to 2000)
+                                     (mother_max_weight / 2500 * 5) +  -- Mother's max weight (norm to 2500)
+                                     (LEAST(mother_pct_over_estimate, 120) / 120 * 5))  -- Mother's % over est
+                                ELSE 0
+                            END) +
+                            (CASE 
+                                WHEN father IS NOT NULL THEN
+                                    ((father_avg_weight / 2000 * 5) +  -- Father's avg weight (norm to 2000)
+                                     (father_max_weight / 2500 * 5) +  -- Father's max weight (norm to 2500)
+                                     (LEAST(father_pct_over_estimate, 120) / 120 * 5))  -- Father's % over est
+                                ELSE 0
+                            END)
+                        ) as performance_score
+                    FROM analytics.seed_performance_2024
                 )
                 SELECT 
-                    year,
-                    unique_mothers,
-                    unique_fathers,
-                    unique_crosses,
-                    ROUND(avg_accuracy_ratio::numeric, 2) as avg_accuracy_ratio,
-                    ROUND(avg_weight::numeric, 2) as avg_weight,
-                    max_weight
-                FROM yearly_stats
-                ORDER BY year DESC;
+                    weight_lbs,
+                    est_weight,
+                    ROUND(pct_over_estimate::numeric, 1) as pct_over_estimate,
+                    grower_name,
+                    gpc_site,
+                    mother,
+                    ROUND(mother_avg_weight::numeric, 2) as mother_avg_weight,
+                    mother_max_weight,
+                    ROUND(mother_pct_over_estimate::numeric, 1) as mother_pct_over_estimate,
+                    father,
+                    ROUND(father_avg_weight::numeric, 2) as father_avg_weight,
+                    father_max_weight,
+                    ROUND(father_pct_over_estimate::numeric, 1) as father_pct_over_estimate,
+                    ROUND(performance_score::numeric, 1) as performance_score
+                FROM pumpkin_scores
+                ORDER BY performance_score DESC;
                 """
-                self.supabase.rpc('execute_sql', {'query': genetics_sql}).execute()
-                logger.info("Created genetics analysis views")
-            except Exception as e:
-                logger.error(f"Error creating genetics analysis views: {str(e)}")
-                raise
+            self.supabase.rpc('execute_sql', {'query': genetics_sql}).execute()
+            logger.info("Created genetics analysis views")
 
         except Exception as e:
             logger.error(f"Error creating analytics views: {str(e)}")
