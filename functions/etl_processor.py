@@ -1085,6 +1085,149 @@ class GPCPipeline:
                 logger.error(f"Error creating regional records views: {str(e)}")
                 raise
 
+            # Create genetics analysis views
+            try:
+                genetics_sql = """
+                -- Create parent performance view
+                DROP MATERIALIZED VIEW IF EXISTS analytics.parent_performance;
+                CREATE MATERIALIZED VIEW analytics.parent_performance AS
+                WITH parent_stats AS (
+                    SELECT 
+                        CASE 
+                            WHEN seed_mother = 'Unknown' OR seed_mother IS NULL THEN 'Unknown'
+                            ELSE seed_mother 
+                        END as parent_name,
+                        'Mother' as parent_type,
+                        COUNT(*) as times_used,
+                        AVG(weight_lbs) as avg_weight,
+                        MAX(weight_lbs) as max_weight,
+                        COUNT(CASE WHEN est_weight IS NOT NULL AND weight_lbs >= est_weight THEN 1 END)::float / 
+                            NULLIF(COUNT(CASE WHEN est_weight IS NOT NULL THEN 1 END), 0) as success_rate,
+                        AVG(CASE 
+                            WHEN est_weight > 0 THEN weight_lbs::float / est_weight 
+                            ELSE NULL 
+                        END) as avg_accuracy_ratio
+                    FROM core.entries
+                    WHERE seed_mother != 'Unknown'
+                    GROUP BY CASE WHEN seed_mother = 'Unknown' OR seed_mother IS NULL THEN 'Unknown' ELSE seed_mother END
+
+                    UNION ALL
+
+                    SELECT 
+                        CASE 
+                            WHEN pollinator_father = 'Unknown' OR pollinator_father IS NULL THEN 'Unknown'
+                            ELSE pollinator_father 
+                        END as parent_name,
+                        'Father' as parent_type,
+                        COUNT(*) as times_used,
+                        AVG(weight_lbs) as avg_weight,
+                        MAX(weight_lbs) as max_weight,
+                        COUNT(CASE WHEN est_weight IS NOT NULL AND weight_lbs >= est_weight THEN 1 END)::float / 
+                            NULLIF(COUNT(CASE WHEN est_weight IS NOT NULL THEN 1 END), 0) as success_rate,
+                        AVG(CASE 
+                            WHEN est_weight > 0 THEN weight_lbs::float / est_weight 
+                            ELSE NULL 
+                        END) as avg_accuracy_ratio
+                    FROM core.entries
+                    WHERE pollinator_father != 'Unknown'
+                    GROUP BY CASE WHEN pollinator_father = 'Unknown' OR pollinator_father IS NULL THEN 'Unknown' ELSE pollinator_father END
+                )
+                SELECT 
+                    parent_name,
+                    parent_type,
+                    times_used,
+                    ROUND(avg_weight::numeric, 2) as avg_weight,
+                    max_weight,
+                    ROUND((success_rate * 100)::numeric, 1) as success_rate_pct,
+                    ROUND(avg_accuracy_ratio::numeric, 2) as avg_accuracy_ratio
+                FROM parent_stats
+                WHERE parent_name != 'Unknown'
+                ORDER BY avg_weight DESC;
+
+                -- Create cross performance view
+                DROP MATERIALIZED VIEW IF EXISTS analytics.cross_performance;
+                CREATE MATERIALIZED VIEW analytics.cross_performance AS
+                WITH cross_stats AS (
+                    SELECT 
+                        CASE 
+                            WHEN seed_mother = 'Unknown' OR seed_mother IS NULL THEN 'Unknown'
+                            ELSE seed_mother 
+                        END as mother,
+                        CASE 
+                            WHEN pollinator_father = 'Unknown' OR pollinator_father IS NULL THEN 'Unknown'
+                            ELSE pollinator_father 
+                        END as father,
+                        COUNT(*) as times_used,
+                        AVG(weight_lbs) as avg_weight,
+                        MAX(weight_lbs) as max_weight,
+                        MIN(weight_lbs) as min_weight,
+                        COUNT(CASE WHEN est_weight IS NOT NULL AND weight_lbs >= est_weight THEN 1 END)::float / 
+                            NULLIF(COUNT(CASE WHEN est_weight IS NOT NULL THEN 1 END), 0) as success_rate,
+                        AVG(CASE 
+                            WHEN est_weight > 0 THEN weight_lbs::float / est_weight 
+                            ELSE NULL 
+                        END) as avg_accuracy_ratio,
+                        array_agg(DISTINCT year ORDER BY year) as years_used,
+                        array_agg(DISTINCT grower_name) as growers
+                    FROM core.entries
+                    WHERE seed_mother != 'Unknown' 
+                    AND pollinator_father != 'Unknown'
+                    GROUP BY 
+                        CASE WHEN seed_mother = 'Unknown' OR seed_mother IS NULL THEN 'Unknown' ELSE seed_mother END,
+                        CASE WHEN pollinator_father = 'Unknown' OR pollinator_father IS NULL THEN 'Unknown' ELSE pollinator_father END
+                )
+                SELECT 
+                    mother,
+                    father,
+                    times_used,
+                    ROUND(avg_weight::numeric, 2) as avg_weight,
+                    max_weight,
+                    min_weight,
+                    ROUND((success_rate * 100)::numeric, 1) as success_rate_pct,
+                    ROUND(avg_accuracy_ratio::numeric, 2) as avg_accuracy_ratio,
+                    years_used,
+                    growers
+                FROM cross_stats
+                WHERE mother != 'Unknown' AND father != 'Unknown'
+                ORDER BY avg_weight DESC;
+
+                -- Create yearly genetics trends view
+                DROP MATERIALIZED VIEW IF EXISTS analytics.yearly_genetics_trends;
+                CREATE MATERIALIZED VIEW analytics.yearly_genetics_trends AS
+                WITH yearly_stats AS (
+                    SELECT 
+                        year,
+                        COUNT(DISTINCT seed_mother) as unique_mothers,
+                        COUNT(DISTINCT pollinator_father) as unique_fathers,
+                        COUNT(DISTINCT CONCAT(seed_mother, ' x ', pollinator_father)) as unique_crosses,
+                        AVG(CASE 
+                            WHEN est_weight > 0 THEN weight_lbs::float / est_weight 
+                            ELSE NULL 
+                        END) as avg_accuracy_ratio,
+                        AVG(weight_lbs) as avg_weight,
+                        MAX(weight_lbs) as max_weight
+                    FROM core.entries
+                    WHERE seed_mother != 'Unknown' 
+                    AND pollinator_father != 'Unknown'
+                    GROUP BY year
+                )
+                SELECT 
+                    year,
+                    unique_mothers,
+                    unique_fathers,
+                    unique_crosses,
+                    ROUND(avg_accuracy_ratio::numeric, 2) as avg_accuracy_ratio,
+                    ROUND(avg_weight::numeric, 2) as avg_weight,
+                    max_weight
+                FROM yearly_stats
+                ORDER BY year DESC;
+                """
+                self.supabase.rpc('execute_sql', {'query': genetics_sql}).execute()
+                logger.info("Created genetics analysis views")
+            except Exception as e:
+                logger.error(f"Error creating genetics analysis views: {str(e)}")
+                raise
+
         except Exception as e:
             logger.error(f"Error creating analytics views: {str(e)}")
             if hasattr(e, 'message'):
