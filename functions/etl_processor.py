@@ -754,7 +754,7 @@ class GPCPipeline:
                 WHERE entry_rank = 1  -- Only keep best entry per category per grower per year
                 ORDER BY grower_name, year, points DESC;
 
-                -- Create master gardener qualifiers view
+                -- Create master gardener qualifiers view (only Qualified and Close)
                 DROP MATERIALIZED VIEW IF EXISTS analytics.master_gardener_qualifiers;
                 CREATE MATERIALIZED VIEW analytics.master_gardener_qualifiers AS
                 WITH grower_yearly_totals AS (
@@ -777,17 +777,81 @@ class GPCPipeline:
                     category_points,
                     CASE 
                         WHEN total_points >= 110 THEN 'Qualified'
-                        WHEN total_points >= 90 THEN 'Close'
-                        ELSE 'Not Qualified'
+                        ELSE 'Close'
                     END as qualification_status
                 FROM grower_yearly_totals
                 WHERE categories_entered >= 3  -- Must enter at least 3 categories
+                AND total_points >= 90  -- Only show Qualified and Close
                 ORDER BY year DESC, total_points DESC;
+
+                -- Create state/province records view
+                DROP MATERIALIZED VIEW IF EXISTS analytics.state_records;
+                CREATE MATERIALIZED VIEW analytics.state_records AS
+                WITH ranked_entries AS (
+                    SELECT 
+                        category,
+                        state_prov,
+                        country,
+                        weight_lbs,
+                        grower_name,
+                        year,
+                        gpc_site,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY category, state_prov, country 
+                            ORDER BY weight_lbs DESC
+                        ) as rank_in_state
+                    FROM core.entries
+                    WHERE entry_type = 'Official'
+                    AND state_prov != 'Unknown'
+                )
+                SELECT 
+                    category,
+                    state_prov,
+                    country,
+                    weight_lbs,
+                    grower_name,
+                    year,
+                    gpc_site
+                FROM ranked_entries
+                WHERE rank_in_state = 1
+                ORDER BY category, country, state_prov;
+
+                -- Create country records view
+                DROP MATERIALIZED VIEW IF EXISTS analytics.country_records;
+                CREATE MATERIALIZED VIEW analytics.country_records AS
+                WITH ranked_entries AS (
+                    SELECT 
+                        category,
+                        country,
+                        weight_lbs,
+                        grower_name,
+                        state_prov,
+                        year,
+                        gpc_site,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY category, country 
+                            ORDER BY weight_lbs DESC
+                        ) as rank_in_country
+                    FROM core.entries
+                    WHERE entry_type = 'Official'
+                    AND country != 'Unknown'
+                )
+                SELECT 
+                    category,
+                    country,
+                    weight_lbs,
+                    grower_name,
+                    state_prov,
+                    year,
+                    gpc_site
+                FROM ranked_entries
+                WHERE rank_in_country = 1
+                ORDER BY category, country;
                 """
                 self.supabase.rpc('execute_sql', {'query': master_gardener_sql}).execute()
-                logger.info("Created master gardener views")
+                logger.info("Created master gardener and regional records views")
             except Exception as e:
-                logger.error(f"Error creating master gardener views: {str(e)}")
+                logger.error(f"Error creating master gardener and regional records views: {str(e)}")
                 raise
 
             # Create heaviest_by_category materialized view
