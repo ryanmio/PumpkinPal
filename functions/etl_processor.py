@@ -1236,6 +1236,62 @@ class GPCPipeline:
             self.supabase.rpc('execute_sql', {'query': genetics_sql}).execute()
             logger.info("Created genetics analysis views")
 
+            # Create site entries summary view
+            site_entries_summary_sql = """
+            -- Create site entries summary view
+            DROP MATERIALIZED VIEW IF EXISTS analytics.site_entries_summary;
+            CREATE MATERIALIZED VIEW analytics.site_entries_summary AS
+            WITH normalized_entries AS (
+                SELECT 
+                    REGEXP_REPLACE(TRIM(gpc_site), '\s+', ' ', 'g') as gpc_site,
+                    state_prov,
+                    country,
+                    category,
+                    entry_type
+                FROM core.entries
+                WHERE entry_type IS NOT NULL
+            ),
+            category_counts AS (
+                SELECT 
+                    gpc_site,
+                    COALESCE(NULLIF(state_prov, ''), country) as state_prov,
+                    -- Count entries by category
+                    COUNT(CASE WHEN category = 'P' THEN 1 END) as ag_count,
+                    COUNT(CASE WHEN category = 'S' THEN 1 END) as sq_count,
+                    COUNT(CASE WHEN category = 'L' THEN 1 END) as lg_count,
+                    COUNT(CASE WHEN category = 'T' THEN 1 END) as tom_count,
+                    COUNT(CASE WHEN category = 'W' THEN 1 END) as water_count,
+                    COUNT(CASE WHEN category = 'F' THEN 1 END) as fp_count,
+                    COUNT(CASE WHEN category = 'B' THEN 1 END) as bg_count,
+                    COUNT(CASE WHEN category = 'M' THEN 1 END) as marrow_count,
+                    COUNT(*) as total_entries
+                FROM normalized_entries
+                GROUP BY gpc_site, COALESCE(NULLIF(state_prov, ''), country)
+            )
+            SELECT 
+                ROW_NUMBER() OVER (ORDER BY total_entries DESC, gpc_site) as rank,
+                gpc_site as site,
+                state_prov,
+                ag_count as "AG's",
+                sq_count as "Sq",
+                lg_count as "LG",
+                tom_count as "Tom",
+                water_count as "Water",
+                fp_count as "FP'S",
+                bg_count as "BG'S",
+                marrow_count as "MARROW",
+                total_entries as "TOTAL"
+            FROM category_counts
+            WHERE total_entries > 0
+            ORDER BY total_entries DESC, gpc_site;
+
+            -- Create index for better query performance
+            CREATE INDEX IF NOT EXISTS idx_site_entries_summary_total 
+            ON analytics.site_entries_summary ("TOTAL" DESC);
+            """
+            self.supabase.rpc('execute_sql', {'query': site_entries_summary_sql}).execute()
+            logger.info("Created site_entries_summary materialized view")
+
         except Exception as e:
             logger.error(f"Error creating analytics views: {str(e)}")
             if hasattr(e, 'message'):
