@@ -684,156 +684,185 @@ class GPCPipeline:
             logger.info("Created analytics schema")
             
             # Create and populate category points reference table
-            category_points_sql = """
-            DROP TABLE IF EXISTS analytics.category_points;
-            CREATE TABLE analytics.category_points (
-                category CHAR(1),
-                points_per_pound NUMERIC(10,6),
-                points_per_kg NUMERIC(10,6),
-                measurement_type TEXT,
-                PRIMARY KEY (category)
-            );
+            try:
+                category_points_sql = """
+                DROP TABLE IF EXISTS analytics.category_points;
+                CREATE TABLE analytics.category_points (
+                    category CHAR(1),
+                    points_per_pound NUMERIC(10,6),
+                    points_per_kg NUMERIC(10,6),
+                    measurement_type TEXT,
+                    PRIMARY KEY (category)
+                );
 
-            INSERT INTO analytics.category_points VALUES
-            ('P', 0.024, 0.052912, 'weight'),  -- Atlantic Giant
-            ('S', 0.039, 0.085984, 'weight'),  -- Squash
-            ('B', 0.140, 0.30865, 'weight'),   -- Bushel Gourd
-            ('W', 0.160, 0.35266, 'weight'),   -- Watermelon
-            ('L', 0.270, 0.10632, 'length'),   -- Long Gourd (points per inch/cm)
-            ('F', 0.290, 0.63929, 'weight'),   -- Field Pumpkin
-            ('M', 0.390, 0.86022, 'weight'),   -- Marrow
-            ('T', 7.000, 15.432, 'weight');    -- Tomato
-            """
-            self.supabase.rpc('execute_sql', {'query': category_points_sql}).execute()
-            logger.info("Created and populated category_points table")
+                INSERT INTO analytics.category_points VALUES
+                ('P', 0.024, 0.052912, 'weight'),  -- Atlantic Giant
+                ('S', 0.039, 0.085984, 'weight'),  -- Squash
+                ('B', 0.140, 0.30865, 'weight'),   -- Bushel Gourd
+                ('W', 0.160, 0.35266, 'weight'),   -- Watermelon
+                ('L', 0.270, 0.10632, 'length'),   -- Long Gourd (points per inch/cm)
+                ('F', 0.290, 0.63929, 'weight'),   -- Field Pumpkin
+                ('M', 0.390, 0.86022, 'weight'),   -- Marrow
+                ('T', 7.000, 15.432, 'weight');    -- Tomato
+                """
+                self.supabase.rpc('execute_sql', {'query': category_points_sql}).execute()
+                logger.info("Created and populated category_points table")
+            except Exception as e:
+                logger.error(f"Error creating category_points table: {str(e)}")
+                raise
 
             # Create master gardener calculations view
-            master_gardener_sql = """
-            DROP MATERIALIZED VIEW IF EXISTS analytics.master_gardener_entries;
-            CREATE MATERIALIZED VIEW analytics.master_gardener_entries AS
-            WITH ranked_entries AS (
-                SELECT 
-                    e.grower_name,
-                    e.year,
-                    e.category,
-                    e.weight_lbs,
-                    e.ott as length_inches,
-                    cp.points_per_pound,
-                    cp.measurement_type,
-                    -- Calculate points based on measurement type
-                    CASE 
-                        WHEN cp.measurement_type = 'weight' THEN 
-                            e.weight_lbs * cp.points_per_pound
-                        WHEN cp.measurement_type = 'length' THEN 
-                            e.ott * cp.points_per_pound
-                        ELSE 0
-                    END as points,
-                    -- Rank within category for the year
-                    ROW_NUMBER() OVER (
-                        PARTITION BY e.grower_name, e.year, e.category 
-                        ORDER BY e.weight_lbs DESC
-                    ) as entry_rank
-                FROM core.entries e
-                JOIN analytics.category_points cp ON e.category = cp.category
-                WHERE e.entry_type = 'official'
-            )
-            SELECT 
-                grower_name,
-                year,
-                category,
-                weight_lbs,
-                length_inches,
-                points,
-                entry_rank
-            FROM ranked_entries
-            WHERE entry_rank = 1  -- Only keep best entry per category per grower per year
-            ORDER BY grower_name, year, points DESC;
-
-            -- Create master gardener qualifiers view
-            DROP MATERIALIZED VIEW IF EXISTS analytics.master_gardener_qualifiers;
-            CREATE MATERIALIZED VIEW analytics.master_gardener_qualifiers AS
-            WITH grower_yearly_totals AS (
+            try:
+                master_gardener_sql = """
+                DROP MATERIALIZED VIEW IF EXISTS analytics.master_gardener_entries;
+                CREATE MATERIALIZED VIEW analytics.master_gardener_entries AS
+                WITH ranked_entries AS (
+                    SELECT 
+                        e.grower_name,
+                        e.year,
+                        e.category,
+                        e.weight_lbs,
+                        e.ott as length_inches,
+                        cp.points_per_pound,
+                        cp.measurement_type,
+                        -- Calculate points based on measurement type
+                        CASE 
+                            WHEN cp.measurement_type = 'weight' THEN 
+                                e.weight_lbs * cp.points_per_pound
+                            WHEN cp.measurement_type = 'length' THEN 
+                                e.ott * cp.points_per_pound
+                            ELSE 0
+                        END as points,
+                        -- Rank within category for the year
+                        ROW_NUMBER() OVER (
+                            PARTITION BY e.grower_name, e.year, e.category 
+                            ORDER BY e.weight_lbs DESC
+                        ) as entry_rank
+                    FROM core.entries e
+                    JOIN analytics.category_points cp ON e.category = cp.category
+                    WHERE e.entry_type = 'Official'
+                )
                 SELECT 
                     grower_name,
                     year,
-                    COUNT(DISTINCT category) as categories_entered,
-                    SUM(points) as total_points,
-                    array_agg(DISTINCT category ORDER BY category) as categories,
-                    array_agg(points ORDER BY category) as category_points
-                FROM analytics.master_gardener_entries
-                GROUP BY grower_name, year
-            )
-            SELECT 
-                grower_name,
-                year,
-                categories_entered,
-                total_points,
-                categories,
-                category_points,
-                CASE 
-                    WHEN total_points >= 110 THEN 'Qualified'
-                    WHEN total_points >= 90 THEN 'Close'
-                    ELSE 'Not Qualified'
-                END as qualification_status
-            FROM grower_yearly_totals
-            WHERE categories_entered >= 3  -- Must enter at least 3 categories
-            ORDER BY year DESC, total_points DESC;
-            """
-            self.supabase.rpc('execute_sql', {'query': master_gardener_sql}).execute()
-            logger.info("Created master gardener views")
+                    category,
+                    weight_lbs,
+                    length_inches,
+                    points,
+                    entry_rank
+                FROM ranked_entries
+                WHERE entry_rank = 1  -- Only keep best entry per category per grower per year
+                ORDER BY grower_name, year, points DESC;
+
+                -- Create master gardener qualifiers view
+                DROP MATERIALIZED VIEW IF EXISTS analytics.master_gardener_qualifiers;
+                CREATE MATERIALIZED VIEW analytics.master_gardener_qualifiers AS
+                WITH grower_yearly_totals AS (
+                    SELECT 
+                        grower_name,
+                        year,
+                        COUNT(DISTINCT category) as categories_entered,
+                        SUM(points) as total_points,
+                        array_agg(DISTINCT category ORDER BY category) as categories,
+                        array_agg(points ORDER BY category) as category_points
+                    FROM analytics.master_gardener_entries
+                    GROUP BY grower_name, year
+                )
+                SELECT 
+                    grower_name,
+                    year,
+                    categories_entered,
+                    total_points,
+                    categories,
+                    category_points,
+                    CASE 
+                        WHEN total_points >= 110 THEN 'Qualified'
+                        WHEN total_points >= 90 THEN 'Close'
+                        ELSE 'Not Qualified'
+                    END as qualification_status
+                FROM grower_yearly_totals
+                WHERE categories_entered >= 3  -- Must enter at least 3 categories
+                ORDER BY year DESC, total_points DESC;
+                """
+                self.supabase.rpc('execute_sql', {'query': master_gardener_sql}).execute()
+                logger.info("Created master gardener views")
+            except Exception as e:
+                logger.error(f"Error creating master gardener views: {str(e)}")
+                raise
 
             # Create heaviest_by_category materialized view
-            heaviest_sql = """
-            DROP MATERIALIZED VIEW IF EXISTS analytics.heaviest_by_category;
-            CREATE MATERIALIZED VIEW analytics.heaviest_by_category AS
-            WITH ranked_entries AS (
-                SELECT 
-                    category,
-                    weight_lbs,
-                    grower_name,
-                    gpc_site,
-                    year,
-                    ROW_NUMBER() OVER (PARTITION BY category ORDER BY weight_lbs DESC) as rank_all_time
-                FROM core.entries
-                WHERE entry_type = 'official'
-            )
-            SELECT *
-            FROM ranked_entries
-            WHERE rank_all_time <= 10
-            ORDER BY category, rank_all_time;
-            """
-            self.supabase.rpc('execute_sql', {'query': heaviest_sql}).execute()
-            logger.info("Created heaviest_by_category materialized view")
+            try:
+                heaviest_sql = """
+                DROP MATERIALIZED VIEW IF EXISTS analytics.heaviest_by_category;
+                CREATE MATERIALIZED VIEW analytics.heaviest_by_category AS
+                WITH ranked_entries AS (
+                    SELECT 
+                        category,
+                        weight_lbs,
+                        grower_name,
+                        gpc_site,
+                        year,
+                        ROW_NUMBER() OVER (PARTITION BY category ORDER BY weight_lbs DESC) as rank_all_time
+                    FROM core.entries
+                    WHERE entry_type = 'Official'
+                )
+                SELECT *
+                FROM ranked_entries
+                WHERE rank_all_time <= 10
+                ORDER BY category, rank_all_time;
+                """
+                self.supabase.rpc('execute_sql', {'query': heaviest_sql}).execute()
+                logger.info("Created heaviest_by_category materialized view")
+            except Exception as e:
+                logger.error(f"Error creating heaviest_by_category view: {str(e)}")
+                raise
             
             # Create annual_top_ten materialized view
-            annual_sql = """
-            DROP MATERIALIZED VIEW IF EXISTS analytics.annual_top_ten;
-            CREATE MATERIALIZED VIEW analytics.annual_top_ten AS
-            WITH ranked_entries AS (
-                SELECT 
-                    year,
-                    category,
-                    weight_lbs,
-                    grower_name,
-                    gpc_site,
-                    state_prov,
-                    ROW_NUMBER() OVER (PARTITION BY year, category ORDER BY weight_lbs DESC) as rank
-                FROM core.entries
-                WHERE entry_type = 'official'
-            )
-            SELECT *
-            FROM ranked_entries
-            WHERE rank <= 10
-            ORDER BY year DESC, category, rank;
-            """
-            self.supabase.rpc('execute_sql', {'query': annual_sql}).execute()
-            logger.info("Created annual_top_ten materialized view")
+            try:
+                annual_sql = """
+                DROP MATERIALIZED VIEW IF EXISTS analytics.annual_top_ten;
+                CREATE MATERIALIZED VIEW analytics.annual_top_ten AS
+                WITH ranked_entries AS (
+                    SELECT 
+                        year,
+                        category,
+                        weight_lbs,
+                        grower_name,
+                        gpc_site,
+                        state_prov,
+                        ROW_NUMBER() OVER (PARTITION BY year, category ORDER BY weight_lbs DESC) as rank
+                    FROM core.entries
+                    WHERE entry_type = 'Official'
+                )
+                SELECT *
+                FROM ranked_entries
+                WHERE rank <= 10
+                ORDER BY year DESC, category, rank;
+                """
+                self.supabase.rpc('execute_sql', {'query': annual_sql}).execute()
+                logger.info("Created annual_top_ten materialized view")
+            except Exception as e:
+                logger.error(f"Error creating annual_top_ten view: {str(e)}")
+                raise
             
             # Create site_records materialized view
-            site_records_sql = """
-            DROP MATERIALIZED VIEW IF EXISTS analytics.site_records;
-            CREATE MATERIALIZED VIEW analytics.site_records AS
-            WITH ranked_site_entries AS (
+            try:
+                site_records_sql = """
+                DROP MATERIALIZED VIEW IF EXISTS analytics.site_records;
+                CREATE MATERIALIZED VIEW analytics.site_records AS
+                WITH ranked_site_entries AS (
+                    SELECT 
+                        gpc_site,
+                        category,
+                        weight_lbs,
+                        grower_name,
+                        year,
+                        state_prov,
+                        country,
+                        ROW_NUMBER() OVER (PARTITION BY gpc_site, category ORDER BY weight_lbs DESC) as rank_at_site
+                    FROM core.entries
+                    WHERE entry_type = 'Official'
+                )
                 SELECT 
                     gpc_site,
                     category,
@@ -841,74 +870,69 @@ class GPCPipeline:
                     grower_name,
                     year,
                     state_prov,
-                    country,
-                    ROW_NUMBER() OVER (PARTITION BY gpc_site, category ORDER BY weight_lbs DESC) as rank_at_site
-                FROM core.entries
-                WHERE entry_type = 'official'
-            )
-            SELECT 
-                gpc_site,
-                category,
-                weight_lbs,
-                grower_name,
-                year,
-                state_prov,
-                country
-            FROM ranked_site_entries
-            WHERE rank_at_site = 1
-            ORDER BY gpc_site, category;
-            """
-            self.supabase.rpc('execute_sql', {'query': site_records_sql}).execute()
-            logger.info("Created site_records materialized view")
+                    country
+                FROM ranked_site_entries
+                WHERE rank_at_site = 1
+                ORDER BY gpc_site, category;
+                """
+                self.supabase.rpc('execute_sql', {'query': site_records_sql}).execute()
+                logger.info("Created site_records materialized view")
+            except Exception as e:
+                logger.error(f"Error creating site_records view: {str(e)}")
+                raise
             
             # Create grower_achievements materialized view
-            achievements_sql = """
-            DROP MATERIALIZED VIEW IF EXISTS analytics.grower_achievements;
-            CREATE MATERIALIZED VIEW analytics.grower_achievements AS
-            WITH grower_stats AS (
-                SELECT 
-                    grower_name,
-                    category,
-                    MAX(weight_lbs) as personal_best_weight,
-                    MIN(year) as first_entry_year,
-                    MAX(year) as last_entry_year,
-                    COUNT(*) as total_entries,
-                    SUM(CASE WHEN rank <= 10 THEN 1 ELSE 0 END) as top_ten_count,
-                    SUM(CASE WHEN rank = 1 THEN 1 ELSE 0 END) as first_place_count
-                FROM (
+            try:
+                achievements_sql = """
+                DROP MATERIALIZED VIEW IF EXISTS analytics.grower_achievements;
+                CREATE MATERIALIZED VIEW analytics.grower_achievements AS
+                WITH grower_stats AS (
                     SELECT 
                         grower_name,
                         category,
-                        weight_lbs,
-                        year,
-                        ROW_NUMBER() OVER (PARTITION BY year, category ORDER BY weight_lbs DESC) as rank
-                    FROM core.entries
-                    WHERE entry_type = 'official'
-                ) ranked_entries
-                GROUP BY grower_name, category
-            )
-            SELECT 
-                grower_name,
-                category,
-                personal_best_weight,
-                (
-                    SELECT year 
-                    FROM core.entries e2 
-                    WHERE e2.grower_name = grower_stats.grower_name 
-                    AND e2.category = grower_stats.category 
-                    AND e2.weight_lbs = grower_stats.personal_best_weight
-                    LIMIT 1
-                ) as personal_best_year,
-                total_entries,
-                first_entry_year,
-                last_entry_year,
-                top_ten_count,
-                first_place_count
-            FROM grower_stats
-            ORDER BY grower_name, category;
-            """
-            self.supabase.rpc('execute_sql', {'query': achievements_sql}).execute()
-            logger.info("Created grower_achievements materialized view")
+                        MAX(weight_lbs) as personal_best_weight,
+                        MIN(year) as first_entry_year,
+                        MAX(year) as last_entry_year,
+                        COUNT(*) as total_entries,
+                        SUM(CASE WHEN rank <= 10 THEN 1 ELSE 0 END) as top_ten_count,
+                        SUM(CASE WHEN rank = 1 THEN 1 ELSE 0 END) as first_place_count
+                    FROM (
+                        SELECT 
+                            grower_name,
+                            category,
+                            weight_lbs,
+                            year,
+                            ROW_NUMBER() OVER (PARTITION BY year, category ORDER BY weight_lbs DESC) as rank
+                        FROM core.entries
+                        WHERE entry_type = 'Official'
+                    ) ranked_entries
+                    GROUP BY grower_name, category
+                )
+                SELECT 
+                    grower_name,
+                    category,
+                    personal_best_weight,
+                    (
+                        SELECT year 
+                        FROM core.entries e2 
+                        WHERE e2.grower_name = grower_stats.grower_name 
+                        AND e2.category = grower_stats.category 
+                        AND e2.weight_lbs = grower_stats.personal_best_weight
+                        LIMIT 1
+                    ) as personal_best_year,
+                    total_entries,
+                    first_entry_year,
+                    last_entry_year,
+                    top_ten_count,
+                    first_place_count
+                FROM grower_stats
+                ORDER BY grower_name, category;
+                """
+                self.supabase.rpc('execute_sql', {'query': achievements_sql}).execute()
+                logger.info("Created grower_achievements materialized view")
+            except Exception as e:
+                logger.error(f"Error creating grower_achievements view: {str(e)}")
+                raise
 
         except Exception as e:
             logger.error(f"Error creating analytics views: {str(e)}")
