@@ -1002,6 +1002,89 @@ class GPCPipeline:
                 logger.error(f"Error creating grower_achievements view: {str(e)}")
                 raise
 
+            # Create regional records views
+            try:
+                regional_records_sql = """
+                -- Create regional records view
+                DROP MATERIALIZED VIEW IF EXISTS analytics.regional_records;
+                CREATE MATERIALIZED VIEW analytics.regional_records AS
+                WITH ranked_entries AS (
+                    SELECT 
+                        e.category,
+                        e.weight_lbs,
+                        e.grower_name,
+                        e.gpc_site,
+                        e.year,
+                        e.state_prov,
+                        e.country,
+                        r.region_name,
+                        RANK() OVER (
+                            PARTITION BY e.category, rm.region_id 
+                            ORDER BY e.weight_lbs DESC
+                        ) as rank_in_region
+                    FROM core.entries e
+                    JOIN analytics.region_mappings rm ON 
+                        e.country = rm.country AND 
+                        (e.state_prov = rm.state_prov OR rm.state_prov IS NULL)
+                    JOIN analytics.regions r ON rm.region_id = r.region_id
+                    WHERE e.entry_type NOT IN ('DMG', 'EXH')
+                )
+                SELECT 
+                    category,
+                    region_name,
+                    weight_lbs,
+                    grower_name,
+                    gpc_site,
+                    year,
+                    state_prov,
+                    country
+                FROM ranked_entries 
+                WHERE rank_in_region = 1
+                ORDER BY category, region_name;
+
+                -- Create regional records by year view
+                DROP MATERIALIZED VIEW IF EXISTS analytics.regional_records_by_year;
+                CREATE MATERIALIZED VIEW analytics.regional_records_by_year AS
+                WITH ranked_entries AS (
+                    SELECT 
+                        e.category,
+                        e.weight_lbs,
+                        e.grower_name,
+                        e.gpc_site,
+                        e.year,
+                        e.state_prov,
+                        e.country,
+                        r.region_name,
+                        RANK() OVER (
+                            PARTITION BY e.category, rm.region_id, e.year
+                            ORDER BY e.weight_lbs DESC
+                        ) as rank_in_region
+                    FROM core.entries e
+                    JOIN analytics.region_mappings rm ON 
+                        e.country = rm.country AND 
+                        (e.state_prov = rm.state_prov OR rm.state_prov IS NULL)
+                    JOIN analytics.regions r ON rm.region_id = r.region_id
+                    WHERE e.entry_type NOT IN ('DMG', 'EXH')
+                )
+                SELECT 
+                    category,
+                    region_name,
+                    year,
+                    weight_lbs,
+                    grower_name,
+                    gpc_site,
+                    state_prov,
+                    country
+                FROM ranked_entries 
+                WHERE rank_in_region = 1
+                ORDER BY category, region_name, year DESC;
+                """
+                self.supabase.rpc('execute_sql', {'query': regional_records_sql}).execute()
+                logger.info("Created regional records views")
+            except Exception as e:
+                logger.error(f"Error creating regional records views: {str(e)}")
+                raise
+
         except Exception as e:
             logger.error(f"Error creating analytics views: {str(e)}")
             if hasattr(e, 'message'):
