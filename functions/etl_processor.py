@@ -2,7 +2,7 @@ import pandas as pd
 from nameparser import HumanName
 from fuzzywuzzy import process, fuzz
 import logging
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Tuple
 from tqdm import tqdm
 from supabase import create_client, Client
 from dotenv import load_dotenv
@@ -13,8 +13,16 @@ import time
 from datetime import datetime
 import json
 
-# Setup logging
+# Setup logging with more restrictive configuration
 log_filename = f'etl_pipeline_{datetime.now().strftime("%Y%m%d_%H%M%S")}.log'
+
+# Configure logging levels for different loggers
+logging.getLogger('httpx').setLevel(logging.WARNING)  # Suppress HTTP request logs
+logging.getLogger('httpcore').setLevel(logging.WARNING)  # Suppress HTTP core logs
+logging.getLogger('urllib3').setLevel(logging.WARNING)  # Suppress urllib3 logs
+logging.getLogger('requests').setLevel(logging.WARNING)  # Suppress requests logs
+
+# Configure root logger
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -24,6 +32,10 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
+
+# Only log errors and critical messages from supabase client
+logging.getLogger('postgrest').setLevel(logging.ERROR)
+logging.getLogger('supabase').setLevel(logging.ERROR)
 
 def escape_sql_string(value):
     """Escape single quotes in SQL strings."""
@@ -65,7 +77,6 @@ class GPCPipeline:
             DROP VIEW IF EXISTS staging.data_quality_view CASCADE;
             """
             self.supabase.rpc('execute_sql', {'query': drop_views_sql}).execute()
-            logger.info("Dropped existing views")
             
             # Drop and recreate entries_staging table with CASCADE
             drop_entries_sql = """
@@ -96,7 +107,6 @@ class GPCPipeline:
             );
             """
             self.supabase.rpc('execute_sql', {'query': create_entries_sql}).execute()
-            logger.info("Recreated entries_staging table")
 
             # Create name_changes as a view instead of a table
             create_name_changes_sql = """
@@ -121,7 +131,6 @@ class GPCPipeline:
             GROUP BY original_grower_name, processed_grower_name;
             """
             self.supabase.rpc('execute_sql', {'query': create_name_changes_sql}).execute()
-            logger.info("Created name_changes view")
 
             # Create site_standardization as a view
             create_site_std_sql = """
@@ -140,7 +149,6 @@ class GPCPipeline:
             GROUP BY gpc_site, city, state_prov, country;
             """
             self.supabase.rpc('execute_sql', {'query': create_site_std_sql}).execute()
-            logger.info("Created site_standardization view")
 
             # Create data_quality_issues as a view
             create_quality_issues_sql = """
@@ -198,7 +206,6 @@ class GPCPipeline:
             WHERE issue_type NOT IN ('VALID_WEIGHT', 'VALID_NAME');
             """
             self.supabase.rpc('execute_sql', {'query': create_quality_issues_sql}).execute()
-            logger.info("Created data_quality_issues view")
 
         except Exception as e:
             logger.error(f"Error ensuring staging tables exist: {str(e)}")
@@ -219,22 +226,19 @@ class GPCPipeline:
                 
                 if result.data:
                     df = pd.DataFrame(result.data)
-                    logger.info(f"Successfully fetched {len(df)} records from raw_data.{table_name}")
                     return df
                 else:
-                    logger.warning(f"No data found in raw_data.{table_name}")
                     return None
                     
             except Exception as e:
                 if attempt < self.max_retries - 1:
-                    logger.warning(f"Retry {attempt + 1} for raw_data.{table_name}: {str(e)}")
                     time.sleep(self.retry_delay)
                 else:
                     logger.error(f"Failed to fetch data from raw_data.{table_name} after {self.max_retries} attempts")
                     logger.error(f"Error details: {str(e)}")
                     if hasattr(e, 'message'):
                         logger.error(f"Error message: {e.message}")
-                    raise
+                raise
 
         return None
 
@@ -336,12 +340,12 @@ class GPCPipeline:
                     # Use execute_sql with 'query' parameter
                     self.supabase.rpc('execute_sql', {'query': sql}).execute()
                     successful_inserts += len(batch)
-                    logger.info(f"Successfully inserted batch of {len(batch)} records into {schema}.{table_name}")
+                    # Only log batch completions for large batches or final batches
+                    if len(batch) >= 500 or i + len(batch) >= len(records):
+                        logger.info(f"Successfully inserted batch of {len(batch)} records into {schema}.{table_name}")
                     break
                 except Exception as e:
                     error_msg = str(e)
-                    logger.warning(f"Insert attempt {attempt + 1} failed: {error_msg}")
-                    
                     if attempt == self.max_retries - 1:
                         logger.error(f"Failed to insert batch after {self.max_retries} attempts")
                         failed_batches.append((i, batch))
@@ -356,7 +360,9 @@ class GPCPipeline:
             total_failed = sum(len(batch) for _, batch in failed_batches)
             logger.error(f"Failed to insert {total_failed} records into {schema}.{table_name}")
 
-        logger.info(f"Completed inserting {successful_inserts} records into {schema}.{table_name}")
+        # Only log final completion message
+        if successful_inserts > 0:
+            logger.info(f"Completed inserting {successful_inserts} records into {schema}.{table_name}")
 
     def _save_failed_records(self, failed_batches: List[tuple], table_name: str) -> None:
         """Save failed records to a file for later analysis."""
@@ -379,22 +385,26 @@ class GPCPipeline:
             logger.error(f"Failed to save failed records: {str(e)}")
 
     def process_year(self, year: int, category: str) -> None:
-        """Process a single year's data with improved error handling."""
-        logger.info(f"Starting processing for year {year} category {category}")
-        
-        # Fetch raw data
-        df = self._fetch_raw_data(year, category)
-        if df is None or df.empty:
-            logger.warning(f"No data to process for year {year} category {category}")
-            return
-
+        """Process data for a specific year and category."""
         try:
-            # Process names
-            logger.info("Processing grower names...")
+            # Fetch data
+            df = self._fetch_raw_data(year, category)
+            
+            # Skip processing if no data found
+            if df is None or len(df) == 0:
+                return
+            
+            # Initialize counters
+            name_changes = 0
+            total_name_standardizations = 0
+            
+            # Process names - now with aggregated logging
             df['processed_grower_name'] = df['grower_name'].apply(self._process_name)
+            name_changes = sum(df['processed_grower_name'] != df['grower_name'])
 
             # Process by state/province for better matching
             states = df['state_prov'].unique()
+            
             for state in states:
                 state_mask = df['state_prov'] == state
                 state_names = df.loc[state_mask, 'processed_grower_name'].unique()
@@ -407,9 +417,9 @@ class GPCPipeline:
                     if similar_names:
                         # Use the alphabetically first name as the standard
                         standard_name = min([name1] + similar_names)
-                        df.loc[df['processed_grower_name'].isin(similar_names), 'processed_grower_name'] = standard_name
-
-            logger.info(f"Processing category: {category}")
+                        mask = df['processed_grower_name'].isin(similar_names)
+                        total_name_standardizations += sum(mask)
+                        df.loc[mask, 'processed_grower_name'] = standard_name
 
             # Prepare entries for staging
             entries = []
@@ -486,14 +496,20 @@ class GPCPipeline:
                 for site in sites
             ]
 
+            # Log summary information only for significant data
+            if len(df) > 0:
+                logger.info(f"Year {year} Category {category} Summary:")
+                logger.info(f"- Total records processed: {len(df)}")
+                logger.info(f"- Unique entries after deduplication: {len(entries)}")
+                logger.info(f"- Unique sites: {len(sites_list)}")
+                logger.info(f"- Name changes: {name_changes}")
+                logger.info(f"- Name standardizations: {total_name_standardizations}")
+
             # Insert entries into staging
-            logger.info("Inserting processed data into staging tables...")
             if entries:
                 self._batch_insert('entries_staging', entries)
-                logger.info(f"Inserted {len(entries)} unique entries (removed {len(df) - len(entries)} duplicates)")
 
             # Insert sites into staging
-            logger.info("Inserting sites into staging tables...")
             if sites_list:
                 self._batch_insert('sites_staging', sites_list)
 
@@ -587,14 +603,12 @@ class GPCPipeline:
             CREATE SCHEMA IF NOT EXISTS core;
             """
             self.supabase.rpc('execute_sql', {'query': create_schema_sql}).execute()
-            logger.info("Created core schema")
             
             # Drop and recreate entries table
             drop_entries_sql = """
             DROP TABLE IF EXISTS core.entries CASCADE;
             """
             self.supabase.rpc('execute_sql', {'query': drop_entries_sql}).execute()
-            logger.info("Dropped existing core.entries table")
             
             create_entries_sql = """
             CREATE TABLE core.entries (
@@ -619,7 +633,6 @@ class GPCPipeline:
             );
             """
             self.supabase.rpc('execute_sql', {'query': create_entries_sql}).execute()
-            logger.info("Created core.entries table")
             
             # Add indexes for common queries
             indexes_sql = """
@@ -629,7 +642,6 @@ class GPCPipeline:
             CREATE INDEX IF NOT EXISTS entries_weight_idx ON core.entries (weight_lbs DESC);
             """
             self.supabase.rpc('execute_sql', {'query': indexes_sql}).execute()
-            logger.info("Created indexes on core.entries table")
             
         except Exception as e:
             logger.error(f"Error ensuring core tables: {str(e)}")
@@ -1409,20 +1421,57 @@ class GPCPipeline:
                 logger.error(f"Error message: {e.message}")
             raise
 
-    def run_pipeline(self, start_year: int = 2005, end_year: int = 2023, categories: List[str] = ['P', 'F', 'L', 'T', 'S']) -> None:
+    def _get_tables_with_data(self) -> List[Tuple[str, int]]:
+        """Get list of raw data tables that actually contain meaningful data."""
+        try:
+            query = """
+            SELECT table_name, 
+                   (SELECT COUNT(*) 
+                    FROM raw_data.|| quote_ident(table_name) 
+                    WHERE weight_lbs IS NOT NULL 
+                    AND weight_lbs > 0) as row_count
+            FROM information_schema.tables 
+            WHERE table_schema = 'raw_data' 
+            AND table_name ~ '^[a-z]_[0-9]{4}$'
+            ORDER BY table_name;
+            """
+            result = self.supabase.rpc('execute_sql', {'query': query}).execute()
+            
+            # Parse table names into (category, year) tuples if they have data
+            tables = []
+            for row in result.data:
+                table_name = row['table_name']
+                row_count = row['row_count']
+                if row_count > 0 and '_' in table_name:
+                    category, year_str = table_name.split('_')
+                    try:
+                        year = int(year_str)
+                        tables.append((category.upper(), year))
+                    except ValueError:
+                        continue
+            return tables
+        except Exception as e:
+            logger.error(f"Error getting raw data tables: {str(e)}")
+            raise
+
+    def run_pipeline(self) -> None:
         """Run the complete ETL pipeline."""
         try:
             # Initialize all tables
             self._ensure_staging_tables()
             self._ensure_core_tables()
             
-            # Process each category and year
-            for category in categories:
-                for year in range(start_year, end_year + 1):
-                    # Fetch and process raw data to staging
-                    df = self._fetch_raw_data(year, category)
-                    if df is not None:
-                        self._process_data_to_staging(df, category, year)
+            # Get list of tables that have data
+            tables_with_data = self._get_tables_with_data()
+            
+            if not tables_with_data:
+                logger.warning("No raw data tables found with data to process")
+                return
+                
+            # Process each table that has data
+            for category, year in tables_with_data:
+                logger.info(f"Processing data for year {year} category {category}")
+                self.process_year(year, category)
             
             # Process staging to core
             self.process_staging_to_core()
