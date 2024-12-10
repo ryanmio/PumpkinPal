@@ -1450,12 +1450,14 @@ def main():
         supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
         pipeline = GPCPipeline(supabase)
         
-        # Ensure core tables exist
-        pipeline._ensure_core_tables()
+        # Ensure staging tables exist
+        pipeline._ensure_staging_tables()
         
         # Define categories and years
         categories = ["P", "S", "L", "W", "T", "F", "B", "M"]
-        years = range(2005, 2025)  # Updated to include through 2024
+        years = range(2005, 2025)
+        
+        staging_success = True  # Track if staging process completes successfully
         
         # Process each category for each year
         for year in years:
@@ -1464,16 +1466,24 @@ def main():
                     pipeline.process_year(year, category)
                 except Exception as e:
                     logger.error(f"Failed to process year {year} category {category}: {str(e)}")
-                    continue
-        
-        # After all data is in staging, process to core
-        try:
-            logger.info("Processing staging data to core tables...")
-            pipeline.process_staging_to_core()
-            logger.info("Successfully processed staging data to core tables")
-        except Exception as e:
-            logger.error(f"Failed to process staging to core: {str(e)}")
-            raise
+                    staging_success = False
+                    break
+            if not staging_success:
+                break
+
+        # Only proceed to core processing if staging was successful
+        if staging_success:
+            try:
+                logger.info("Starting core table refresh and data migration...")
+                pipeline._ensure_core_tables()
+                pipeline.process_staging_to_core()
+                logger.info("Successfully processed staging data to core tables")
+            except Exception as e:
+                logger.error(f"Failed to process staging to core: {str(e)}")
+                raise
+        else:
+            logger.error("Skipping core table processing due to staging errors")
+            sys.exit(1)
 
     except Exception as e:
         logger.error(f"Critical error in ETL pipeline: {str(e)}")
