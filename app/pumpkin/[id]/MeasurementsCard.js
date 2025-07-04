@@ -226,7 +226,11 @@ const convertInToCm = (inches) => {
         const sideToSide = parseFloat(row.original.sideToSide);
         const circumference = parseFloat(row.original.circumference);
         const ott = endToEnd + sideToSide + circumference; // Calculate OTT
-        const value = userPreferredUnit === 'in' ? roundToNearestHalf(convertCmToIn(ott)) : roundToNearestHalf(ott);
+        // At this point endToEnd, sideToSide and circumference are already in
+        // the user's preferred unit. Previously we attempted to convert to
+        // inches again which resulted in an incorrect OTT value when inches
+        // were selected. Simply sum the measurements and round.
+        const value = roundToNearestHalf(ott);
         const unitLabel = userPreferredUnit ? userPreferredUnit : 'cm'; // Fallback to 'cm' if undefined
         const numericValue = Number(value); // Ensure it's a number
         if (!isNaN(numericValue)) { // Check if it's not NaN
